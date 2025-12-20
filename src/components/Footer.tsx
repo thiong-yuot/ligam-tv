@@ -1,31 +1,31 @@
 import { Link } from "react-router-dom";
-import { Video, Twitter, Instagram, Youtube, Github } from "lucide-react";
+import { Video, Twitter, Instagram, Youtube, Github, Linkedin } from "lucide-react";
 
 const Footer = () => {
   const footerLinks = {
     product: [
-      { name: "Browse", path: "/browse" },
+      { name: "Browse Streams", path: "/browse" },
       { name: "Categories", path: "/categories" },
       { name: "Go Live", path: "/go-live" },
-      { name: "Download App", path: "/download" },
+      { name: "Pricing", path: "/pricing" },
+    ],
+    creators: [
+      { name: "Creator Dashboard", path: "/dashboard" },
+      { name: "Monetization", path: "/monetization" },
+      { name: "Analytics", path: "/analytics" },
+      { name: "Get Featured", path: "/premium" },
     ],
     company: [
-      { name: "About", path: "/about" },
+      { name: "About Us", path: "/about" },
       { name: "Careers", path: "/careers" },
       { name: "Press", path: "/press" },
-      { name: "Partners", path: "/partners" },
+      { name: "Contact", path: "/contact" },
     ],
     support: [
       { name: "Help Center", path: "/help" },
-      { name: "Safety Center", path: "/safety" },
+      { name: "Safety", path: "/safety" },
       { name: "Community Guidelines", path: "/guidelines" },
-      { name: "Creator Support", path: "/creator-support" },
-    ],
-    legal: [
-      { name: "Terms of Service", path: "/terms" },
-      { name: "Privacy Policy", path: "/privacy" },
-      { name: "Cookie Policy", path: "/cookies" },
-      { name: "DMCA", path: "/dmca" },
+      { name: "FAQ", path: "/faq" },
     ],
   };
 
@@ -33,25 +33,25 @@ const Footer = () => {
     { icon: Twitter, href: "#", label: "Twitter" },
     { icon: Instagram, href: "#", label: "Instagram" },
     { icon: Youtube, href: "#", label: "YouTube" },
-    { icon: Github, href: "#", label: "GitHub" },
+    { icon: Linkedin, href: "#", label: "LinkedIn" },
   ];
 
   return (
     <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <Video className="w-5 h-5 text-primary-foreground" />
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <Video className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="text-xl font-display font-bold text-gradient">
-                Ligam.tv
+              <span className="text-xl font-display font-bold text-foreground">
+                Ligam<span className="text-primary">.tv</span>
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground mb-4">
-              The next generation streaming platform for creators and viewers worldwide.
+            <p className="text-sm text-muted-foreground mb-6">
+              Stream, Connect & Monetize. The next generation live streaming platform.
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
@@ -70,7 +70,7 @@ const Footer = () => {
           {/* Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Product</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
                   <Link
@@ -85,8 +85,24 @@ const Footer = () => {
           </div>
 
           <div>
+            <h4 className="font-semibold text-foreground mb-4">Creators</h4>
+            <ul className="space-y-3">
+              {footerLinks.creators.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    to={link.path}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
             <h4 className="font-semibold text-foreground mb-4">Company</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
                   <Link
@@ -102,24 +118,8 @@ const Footer = () => {
 
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {footerLinks.support.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Legal</h4>
-            <ul className="space-y-2">
-              {footerLinks.legal.map((link) => (
                 <li key={link.name}>
                   <Link
                     to={link.path}
@@ -138,9 +138,17 @@ const Footer = () => {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Ligam.tv. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground">
-            Made with ❤️ for streamers everywhere
-          </p>
+          <div className="flex gap-6">
+            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Terms of Service
+            </Link>
+            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              Cookies
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

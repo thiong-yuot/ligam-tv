@@ -1,4 +1,5 @@
-import Layout from "@/components/Layout";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -26,86 +27,99 @@ const Categories = () => {
       tags: ["Live DJ", "Production"],
     },
     {
-      id: "art",
-      name: "Art & Creative",
+      id: "creative",
+      name: "Creative",
       image: streamThumb3,
       viewers: 45000,
-      tags: ["Digital", "Traditional"],
+      tags: ["Digital Art", "Design"],
     },
     {
-      id: "esports",
-      name: "Esports",
-      image: streamThumb1,
-      viewers: 180000,
-      tags: ["Tournament", "Pro"],
-    },
-    {
-      id: "just-chatting",
-      name: "Just Chatting",
+      id: "talk-shows",
+      name: "Talk Shows",
       image: streamThumb2,
       viewers: 320000,
-      tags: ["Talk Shows", "IRL"],
+      tags: ["Podcast", "Interview"],
     },
     {
-      id: "sports",
-      name: "Sports",
+      id: "coding",
+      name: "Coding",
       image: streamThumb1,
-      viewers: 95000,
-      tags: ["Football", "Basketball"],
+      viewers: 55000,
+      tags: ["Programming", "Tech"],
     },
     {
-      id: "science",
-      name: "Science & Tech",
-      image: streamThumb3,
-      viewers: 35000,
-      tags: ["Coding", "Hardware"],
-    },
-    {
-      id: "food",
-      name: "Food & Drink",
+      id: "fitness",
+      name: "Fitness",
       image: streamThumb2,
-      viewers: 28000,
-      tags: ["Cooking", "Reviews"],
+      viewers: 38000,
+      tags: ["Workout", "Health"],
+    },
+    {
+      id: "lifestyle",
+      name: "Lifestyle",
+      image: streamThumb3,
+      viewers: 62000,
+      tags: ["Vlog", "Travel"],
+    },
+    {
+      id: "entertainment",
+      name: "Entertainment",
+      image: streamThumb1,
+      viewers: 180000,
+      tags: ["Comedy", "Shows"],
+    },
+    {
+      id: "education",
+      name: "Education",
+      image: streamThumb2,
+      viewers: 42000,
+      tags: ["Tutorials", "Learning"],
     },
   ];
 
   return (
-    <Layout>
-      <div className="min-h-screen p-4 md:p-6 lg:p-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-            Categories
-          </h1>
-          <p className="text-muted-foreground">
-            Explore streams by category
-          </p>
-        </div>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      
+      <main className="pt-24 pb-12 px-4">
+        <div className="container mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+              Categories
+            </h1>
+            <p className="text-muted-foreground">
+              Explore streams by category
+            </p>
+          </div>
 
-        {/* Search */}
-        <div className="relative max-w-md mb-8">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder="Search categories..."
-            className="pl-10 bg-secondary border-border"
-          />
-        </div>
+          {/* Search */}
+          <div className="relative max-w-md mb-8">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search categories..."
+              className="pl-10 bg-secondary border-border"
+            />
+          </div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-          {categories.map((category, index) => (
-            <div
-              key={category.id}
-              className="animate-fadeIn"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <CategoryCard {...category} />
-            </div>
-          ))}
+          {/* Categories Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {categories.map((category, index) => (
+              <div
+                key={category.id}
+                className="animate-fadeIn"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <CategoryCard {...category} />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </Layout>
+      </main>
+
+      <Footer />
+    </div>
   );
 };
 
