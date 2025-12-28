@@ -1,27 +1,23 @@
 import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import { useSidebar } from "@/contexts/SidebarContext";
-import { cn } from "@/lib/utils";
+import Footer from "./Footer";
 
 interface LayoutProps {
   children: ReactNode;
   showSidebar?: boolean;
+  showFooter?: boolean;
 }
 
-const Layout = ({ children, showSidebar = true }: LayoutProps) => {
-  const { isCollapsed } = useSidebar();
-
+const Layout = ({ children, showSidebar = true, showFooter = true }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-14">
+      <div className="pt-16">
         {showSidebar && <Sidebar />}
-        <main className={cn(
-          "transition-all duration-300",
-          showSidebar && (isCollapsed ? "lg:pl-[72px]" : "lg:pl-60")
-        )}>
+        <main className={`${showSidebar ? "lg:pl-60" : ""}`}>
           {children}
+          {showFooter && <Footer />}
         </main>
       </div>
     </div>
