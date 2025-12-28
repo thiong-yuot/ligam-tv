@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Check, Loader2, Crown } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -66,6 +66,7 @@ const pricingPlans = [
 
 const Pricing = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { tier: currentTier, subscribed, isLoading, createSubscriptionCheckout, openCustomerPortal, checkSubscription } = useSubscription();
   const { toast } = useToast();
@@ -90,7 +91,7 @@ const Pricing = () => {
     if (!priceId) {
       // Free plan - just redirect to auth if not logged in
       if (!user) {
-        window.location.href = "/auth";
+        navigate("/login");
       }
       return;
     }
@@ -101,7 +102,7 @@ const Pricing = () => {
         description: "Please sign in to subscribe to a plan.",
         variant: "destructive",
       });
-      window.location.href = "/auth";
+      navigate("/login");
       return;
     }
 
