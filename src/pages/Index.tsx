@@ -4,7 +4,7 @@ import Layout from "@/components/Layout";
 import StreamCard from "@/components/StreamCard";
 import CategoryFilter from "@/components/CategoryFilter";
 import { Button } from "@/components/ui/button";
-import { Loader2, ChevronRight } from "lucide-react";
+import { Loader2, ChevronRight, Sparkles, Zap, Users } from "lucide-react";
 import { useStreams } from "@/hooks/useStreams";
 import { useCategories } from "@/hooks/useCategories";
 
@@ -23,8 +23,8 @@ const Index = () => {
   return (
     <Layout showSidebar={true}>
       <div className="min-h-screen">
-        {/* Category Filter - Fixed at top like YouTube */}
-        <div className="sticky top-14 z-40 bg-background border-b border-border py-3 px-4 lg:px-6">
+        {/* Category Pills - Sticky */}
+        <div className="sticky top-14 z-40 bg-background/80 backdrop-blur-xl border-b border-border/30 py-3 px-4 lg:px-6">
           <CategoryFilter 
             categories={categoryNames}
             activeCategory={activeCategory}
@@ -33,15 +33,53 @@ const Index = () => {
         </div>
 
         {/* Main Content */}
-        <div className="p-4 lg:p-6">
-          {/* Live Streams Section */}
-          <section className="mb-10">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-foreground">
-                {activeCategory === "All" ? "Recommended Live" : `${activeCategory}`}
-              </h2>
-              <Link to="/browse" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1">
-                View all
+        <div className="p-4 lg:p-6 space-y-10">
+          {/* Featured Banner */}
+          <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-background to-emerald-500/10 p-6 lg:p-8 border border-primary/20">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <Zap className="w-5 h-5 text-primary" />
+                <span className="text-sm font-semibold text-primary">Live Now</span>
+              </div>
+              <h1 className="text-2xl lg:text-3xl font-display font-bold text-foreground mb-2">
+                Discover Amazing Streams
+              </h1>
+              <p className="text-muted-foreground mb-4 max-w-md">
+                Watch live content from creators around the world. Gaming, music, art, and more.
+              </p>
+              <div className="flex items-center gap-3">
+                <Link to="/browse">
+                  <Button className="rounded-xl shadow-lg shadow-primary/20">
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Explore Now
+                  </Button>
+                </Link>
+                <Link to="/go-live">
+                  <Button variant="outline" className="rounded-xl">
+                    Start Streaming
+                  </Button>
+                </Link>
+              </div>
+            </div>
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-1/2 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl" />
+          </section>
+
+          {/* Live Streams */}
+          <section>
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                <h2 className="text-lg font-semibold text-foreground">
+                  {activeCategory === "All" ? "Live Now" : activeCategory}
+                </h2>
+                <span className="text-sm text-muted-foreground">
+                  {filteredStreams.length} streaming
+                </span>
+              </div>
+              <Link to="/browse" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 font-medium">
+                See all
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -55,7 +93,7 @@ const Index = () => {
                 {filteredStreams.map((stream, index) => (
                   <div
                     key={stream.id}
-                    className="animate-fadeIn"
+                    className="animate-fade-in"
                     style={{ animationDelay: `${index * 30}ms` }}
                   >
                     <StreamCard 
@@ -72,15 +110,18 @@ const Index = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20 bg-card rounded-xl border border-border">
+              <div className="text-center py-16 bg-secondary/30 rounded-2xl border border-border/50">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-primary" />
+                </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  No live streams right now
+                  No streams right now
                 </h3>
                 <p className="text-muted-foreground mb-6 text-sm">
-                  Be the first to go live!
+                  Be the first to go live and start your community!
                 </p>
                 <Link to="/go-live">
-                  <Button variant="default" size="sm">
+                  <Button className="rounded-xl">
                     Start Streaming
                   </Button>
                 </Link>
@@ -88,14 +129,14 @@ const Index = () => {
             )}
           </section>
 
-          {/* Trending Categories */}
-          <section className="mb-10">
-            <div className="flex items-center justify-between mb-4">
+          {/* Categories */}
+          <section>
+            <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-semibold text-foreground">
-                Trending Categories
+                Browse Categories
               </h2>
-              <Link to="/categories" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1">
-                Browse all
+              <Link to="/categories" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 font-medium">
+                View all
                 <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
@@ -112,25 +153,28 @@ const Index = () => {
                     to={`/browse?category=${encodeURIComponent(category.name)}`}
                     className="group"
                   >
-                    <div className="aspect-video rounded-lg bg-card border border-border overflow-hidden relative mb-2 group-hover:ring-2 ring-primary transition-all">
+                    <div className="aspect-[4/5] rounded-xl bg-secondary/50 border border-border/50 overflow-hidden relative mb-2 group-hover:border-primary/50 transition-all group-hover:shadow-lg group-hover:shadow-primary/10">
                       {category.image_url ? (
                         <img 
                           src={category.image_url} 
                           alt={category.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                          <span className="text-2xl font-bold text-primary/50">{category.name[0]}</span>
+                        <div className="w-full h-full bg-gradient-to-br from-primary/30 to-emerald-500/20 flex items-center justify-center">
+                          <span className="text-4xl font-bold text-primary/30">{category.name[0]}</span>
                         </div>
                       )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <h3 className="font-semibold text-sm text-foreground line-clamp-1">
+                          {category.name}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {category.viewer_count || 0} watching
+                        </p>
+                      </div>
                     </div>
-                    <h3 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1">
-                      {category.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground">
-                      {category.viewer_count || 0} viewers
-                    </p>
                   </Link>
                 ))}
               </div>
@@ -141,20 +185,23 @@ const Index = () => {
             )}
           </section>
 
-          {/* Continue Watching / Popular */}
-          <section className="mb-10">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-foreground">
-                Popular streams
-              </h2>
-            </div>
-            
-            {streams.length > 0 ? (
+          {/* Popular Section */}
+          {streams.length > 0 && (
+            <section>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-amber-500" />
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Trending
+                  </h2>
+                </div>
+              </div>
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                {streams.slice(0, 10).map((stream, index) => (
+                {streams.slice(0, 5).map((stream, index) => (
                   <div
-                    key={`popular-${stream.id}`}
-                    className="animate-fadeIn"
+                    key={`trending-${stream.id}`}
+                    className="animate-fade-in"
                     style={{ animationDelay: `${index * 30}ms` }}
                   >
                     <StreamCard 
@@ -170,8 +217,8 @@ const Index = () => {
                   </div>
                 ))}
               </div>
-            ) : null}
-          </section>
+            </section>
+          )}
         </div>
       </div>
     </Layout>
