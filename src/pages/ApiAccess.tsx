@@ -42,7 +42,11 @@ import {
   Edit2,
   CheckCircle2,
   XCircle,
-  Radio
+  Radio,
+  Clock,
+  Activity,
+  AlertTriangle,
+  RotateCcw
 } from "lucide-react";
 
 interface WebhookEndpoint {
@@ -54,6 +58,17 @@ interface WebhookEndpoint {
   createdAt: string;
 }
 
+interface WebhookDelivery {
+  id: string;
+  webhookId: string;
+  webhookUrl: string;
+  event: string;
+  statusCode: number;
+  timestamp: string;
+  duration: number;
+  success: boolean;
+}
+
 const WEBHOOK_EVENTS = [
   { id: "stream.started", label: "Stream Started", description: "When a stream goes live" },
   { id: "stream.ended", label: "Stream Ended", description: "When a stream ends" },
@@ -63,6 +78,70 @@ const WEBHOOK_EVENTS = [
   { id: "subscription.cancelled", label: "Subscription Cancelled", description: "When a subscription is cancelled" },
   { id: "follower.new", label: "New Follower", description: "When someone follows you" },
   { id: "chat.message", label: "Chat Message", description: "When a chat message is sent" },
+];
+
+// Mock webhook delivery logs
+const MOCK_DELIVERIES: WebhookDelivery[] = [
+  {
+    id: "del_1",
+    webhookId: "1",
+    webhookUrl: "https://myapp.com/webhooks/ligam",
+    event: "stream.started",
+    statusCode: 200,
+    timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+    duration: 245,
+    success: true,
+  },
+  {
+    id: "del_2",
+    webhookId: "1",
+    webhookUrl: "https://myapp.com/webhooks/ligam",
+    event: "gift.received",
+    statusCode: 200,
+    timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
+    duration: 189,
+    success: true,
+  },
+  {
+    id: "del_3",
+    webhookId: "1",
+    webhookUrl: "https://myapp.com/webhooks/ligam",
+    event: "follower.new",
+    statusCode: 500,
+    timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+    duration: 1502,
+    success: false,
+  },
+  {
+    id: "del_4",
+    webhookId: "1",
+    webhookUrl: "https://myapp.com/webhooks/ligam",
+    event: "stream.ended",
+    statusCode: 200,
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    duration: 312,
+    success: true,
+  },
+  {
+    id: "del_5",
+    webhookId: "1",
+    webhookUrl: "https://myapp.com/webhooks/ligam",
+    event: "subscription.created",
+    statusCode: 408,
+    timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+    duration: 30000,
+    success: false,
+  },
+  {
+    id: "del_6",
+    webhookId: "1",
+    webhookUrl: "https://myapp.com/webhooks/ligam",
+    event: "gift.received",
+    statusCode: 200,
+    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    duration: 156,
+    success: true,
+  },
 ];
 
 const ApiAccess = () => {
@@ -101,6 +180,20 @@ const ApiAccess = () => {
     };
     checkAuth();
   }, [navigate]);
+
+  const getTimeAgo = (timestamp: string): string => {
+    const now = new Date();
+    const date = new Date(timestamp);
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "Just now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+  };
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -566,6 +659,98 @@ if (signature !== expectedSig) {
   throw new Error('Invalid signature');
 }`}
               </pre>
+            </div>
+          </Card>
+
+          {/* Webhook Delivery Log */}
+          <Card className="p-6 bg-card border-border mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">Delivery Log</h2>
+                  <p className="text-sm text-muted-foreground">Recent webhook delivery attempts</p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" className="gap-2">
+                <RotateCcw className="w-4 h-4" />
+                Refresh
+              </Button>
+            </div>
+
+            <div className="space-y-2">
+              {MOCK_DELIVERIES.map((delivery) => {
+                const eventLabel = WEBHOOK_EVENTS.find(e => e.id === delivery.event)?.label || delivery.event;
+                const timeAgo = getTimeAgo(delivery.timestamp);
+                
+                return (
+                  <div
+                    key={delivery.id}
+                    className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
+                      delivery.success 
+                        ? "bg-green-500/5 hover:bg-green-500/10" 
+                        : "bg-red-500/5 hover:bg-red-500/10"
+                    }`}
+                  >
+                    {/* Status Icon */}
+                    <div className={`flex-shrink-0 ${delivery.success ? "text-green-500" : "text-red-500"}`}>
+                      {delivery.success ? (
+                        <CheckCircle2 className="w-5 h-5" />
+                      ) : (
+                        <AlertTriangle className="w-5 h-5" />
+                      )}
+                    </div>
+
+                    {/* Event & URL */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <Badge variant="secondary" className="text-xs">
+                          {eventLabel}
+                        </Badge>
+                        <code className="text-xs text-muted-foreground truncate hidden sm:block">
+                          {delivery.webhookUrl}
+                        </code>
+                      </div>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {timeAgo}
+                        </span>
+                        <span>{delivery.duration}ms</span>
+                      </div>
+                    </div>
+
+                    {/* Status Code */}
+                    <Badge 
+                      variant="outline" 
+                      className={`font-mono text-xs ${
+                        delivery.statusCode >= 200 && delivery.statusCode < 300
+                          ? "text-green-500 border-green-500/50"
+                          : delivery.statusCode >= 400 && delivery.statusCode < 500
+                            ? "text-amber-500 border-amber-500/50"
+                            : "text-red-500 border-red-500/50"
+                      }`}
+                    >
+                      {delivery.statusCode}
+                    </Badge>
+                  </div>
+                );
+              })}
+            </div>
+
+            {MOCK_DELIVERIES.length === 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                <Activity className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No delivery attempts yet</p>
+                <p className="text-sm">Webhook deliveries will appear here</p>
+              </div>
+            )}
+
+            <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+              <span>Showing last {MOCK_DELIVERIES.length} deliveries</span>
+              <button className="text-primary hover:underline">View all logs</button>
             </div>
           </Card>
 
