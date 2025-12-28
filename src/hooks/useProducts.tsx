@@ -13,6 +13,7 @@ export interface Product {
   stock_quantity: number;
   is_active: boolean;
   seller_id?: string | null;
+  created_at?: string | null;
 }
 
 export const useProducts = (category?: string) => {

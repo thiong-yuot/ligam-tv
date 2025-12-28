@@ -3,16 +3,21 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Search, ShoppingCart, Star, Filter, Heart, Loader2 } from "lucide-react";
+import { Loader2, Store, Users, TrendingUp } from "lucide-react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
-import CartSheet from "@/components/CartSheet";
 import BecomeSellerDialog from "@/components/BecomeSellerDialog";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import ShopSidebar from "@/components/shop/ShopSidebar";
+import ProductCard from "@/components/shop/ProductCard";
+import FeaturedCarousel from "@/components/shop/FeaturedCarousel";
+import ShopHeader from "@/components/shop/ShopHeader";
+import MobileFilters from "@/components/shop/MobileFilters";
+
+type SortOption = "newest" | "price-low" | "price-high" | "popular" | "rating";
+type ViewMode = "grid" | "list";
 
 const Shop = () => {
   const navigate = useNavigate();
@@ -20,9 +25,21 @@ const Shop = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [onSaleOnly, setOnSaleOnly] = useState(false);
+  const [inStockOnly, setInStockOnly] = useState(false);
   
   const { data: products, isLoading, error } = useProducts();
   const { addToCart, totalItems } = useCart();
+
+  // Calculate max price from products
+  const maxPrice = useMemo(() => {
+    if (!products || products.length === 0) return 1000;
+    return Math.ceil(Math.max(...products.map((p) => p.price)));
+  }, [products]);
 
   // Extract unique categories from products
   const categories = useMemo(() => {
@@ -31,14 +48,45 @@ const Shop = () => {
     return ["All", ...uniqueCategories];
   }, [products]);
 
+  // Filter and sort products
   const filteredProducts = useMemo(() => {
     if (!products) return [];
-    return products.filter((p) => {
+    
+    let result = products.filter((p) => {
       const matchesCategory = activeCategory === "All" || p.category === activeCategory;
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (p.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+      const matchesPrice = p.price >= priceRange[0] && p.price <= priceRange[1];
+      const matchesSale = !onSaleOnly || (p.sale_price !== null && p.sale_price < p.price);
+      const matchesStock = !inStockOnly || p.stock_quantity > 0;
+      
+      return matchesCategory && matchesSearch && matchesPrice && matchesSale && matchesStock;
     });
-  }, [products, activeCategory, searchQuery]);
+
+    // Sort
+    switch (sortBy) {
+      case "price-low":
+        result = [...result].sort((a, b) => 
+          (a.sale_price ?? a.price) - (b.sale_price ?? b.price)
+        );
+        break;
+      case "price-high":
+        result = [...result].sort((a, b) => 
+          (b.sale_price ?? b.price) - (a.sale_price ?? a.price)
+        );
+        break;
+      case "newest":
+        result = [...result].sort((a, b) => 
+          new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
+        );
+        break;
+      // popular and rating would need real data
+      default:
+        break;
+    }
+
+    return result;
+  }, [products, activeCategory, searchQuery, priceRange, onSaleOnly, inStockOnly, sortBy]);
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -49,228 +97,205 @@ const Shop = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-12 px-4">
-        <div className="container mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <ShoppingCart className="w-4 h-4" />
-            Official Shop
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-foreground mb-6">
-            Level Up Your <span className="text-primary">Stream</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Premium overlays, alerts, emotes, and gear to make your stream stand out.
-          </p>
+      {/* Main Content */}
+      <main className="pt-24 pb-12">
+        <div className="container mx-auto px-4">
+          {/* Header with Search and Controls */}
+          <ShopHeader
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            totalItems={totalItems}
+            productCount={filteredProducts.length}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            onMobileFilterClick={() => setMobileFiltersOpen(true)}
+          />
 
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-14 text-lg bg-card border-border"
+          <div className="flex gap-8 mt-6">
+            {/* Sidebar */}
+            <ShopSidebar
+              categories={categories}
+              activeCategory={activeCategory}
+              onCategoryChange={setActiveCategory}
+              priceRange={priceRange}
+              onPriceRangeChange={setPriceRange}
+              maxPrice={maxPrice}
+              onSaleOnly={onSaleOnly}
+              onSaleOnlyChange={setOnSaleOnly}
+              inStockOnly={inStockOnly}
+              onInStockOnlyChange={setInStockOnly}
             />
-          </div>
 
-          {/* Cart Button */}
-          <div className="mt-6">
-            <CartSheet
-              trigger={
-                <Button variant="outline" className="relative gap-2">
-                  <ShoppingCart className="w-4 h-4" />
-                  Cart
-                  {totalItems > 0 && (
-                    <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                      {totalItems}
-                    </Badge>
-                  )}
-                </Button>
-              }
-            />
-          </div>
-        </div>
-      </section>
+            {/* Main Content Area */}
+            <div className="flex-1 min-w-0">
+              {/* Featured Carousel */}
+              <FeaturedCarousel />
 
-      {/* Categories */}
-      <section className="py-6 px-4 border-y border-border bg-card/30">
-        <div className="container mx-auto">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            <Filter className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={activeCategory === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveCategory(category as string)}
-                className="flex-shrink-0"
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Products Grid */}
-      <section className="py-12 px-4">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-display font-bold text-foreground">
-              {activeCategory === "All" ? "All Products" : activeCategory}
-            </h2>
-            <span className="text-muted-foreground">
-              {filteredProducts.length} products
-            </span>
-          </div>
-
-          {error && (
-            <div className="text-center py-20">
-              <h3 className="text-xl font-semibold text-destructive mb-2">
-                Error loading products
-              </h3>
-              <p className="text-muted-foreground">Please try again later</p>
-            </div>
-          )}
-
-          {isLoading && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="rounded-2xl bg-card border border-border overflow-hidden">
-                  <Skeleton className="aspect-[4/3] w-full" />
-                  <div className="p-5 space-y-3">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-6 w-full" />
-                    <Skeleton className="h-4 w-24" />
-                    <div className="flex justify-between">
-                      <Skeleton className="h-6 w-16" />
-                      <Skeleton className="h-9 w-24" />
-                    </div>
-                  </div>
+              {/* Products Section */}
+              <section className="mt-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-display font-bold text-foreground">
+                    {activeCategory === "All" ? "All Products" : activeCategory}
+                  </h2>
                 </div>
-              ))}
-            </div>
-          )}
 
-          {!isLoading && !error && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
-                <div
-                  key={product.id}
-                  className="rounded-2xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all duration-300 group"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    {product.image_url ? (
-                      <img
-                        src={product.image_url}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-muted flex items-center justify-center">
-                        <ShoppingCart className="w-12 h-12 text-muted-foreground" />
-                      </div>
-                    )}
-                    {product.sale_price && (
-                      <Badge className="absolute top-3 right-3 bg-destructive text-destructive-foreground">
-                        Sale
-                      </Badge>
-                    )}
-                    {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
-                      <Badge className="absolute top-3 left-3 bg-warning text-warning-foreground">
-                        Low Stock
-                      </Badge>
-                    )}
-                    {product.stock_quantity === 0 && (
-                      <Badge className="absolute top-3 left-3 bg-muted text-muted-foreground">
-                        Out of Stock
-                      </Badge>
-                    )}
-                    <button className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background">
-                      <Heart className="w-5 h-5 text-foreground" />
-                    </button>
-                  </div>
-
-                  <div className="p-5">
-                    <p className="text-sm text-muted-foreground mb-1">
-                      {product.category}
-                    </p>
-                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                      {product.name}
+                {error && (
+                  <div className="text-center py-20 rounded-xl bg-card border border-border">
+                    <h3 className="text-xl font-semibold text-destructive mb-2">
+                      Error loading products
                     </h3>
-
-                    {product.description && (
-                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                        {product.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl font-bold text-primary">
-                          ${(product.sale_price ?? product.price).toFixed(2)}
-                        </span>
-                        {product.sale_price && (
-                          <span className="text-sm text-muted-foreground line-through">
-                            ${product.price.toFixed(2)}
-                          </span>
-                        )}
-                      </div>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => handleAddToCart(product)}
-                        disabled={product.stock_quantity === 0}
-                      >
-                        {product.stock_quantity === 0 ? "Sold Out" : "Add to Cart"}
-                      </Button>
-                    </div>
+                    <p className="text-muted-foreground">Please try again later</p>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
+                )}
 
-          {!isLoading && !error && filteredProducts.length === 0 && (
-            <div className="text-center py-20">
-              <h3 className="text-xl font-semibold text-foreground mb-2">
-                No products found
-              </h3>
-              <p className="text-muted-foreground">
-                Try adjusting your search or category filter
-              </p>
+                {isLoading && (
+                  <div className={viewMode === "grid" 
+                    ? "grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
+                    : "space-y-4"
+                  }>
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="rounded-xl bg-card border border-border overflow-hidden">
+                        <Skeleton className="aspect-square w-full" />
+                        <div className="p-4 space-y-3">
+                          <Skeleton className="h-3 w-16" />
+                          <Skeleton className="h-5 w-full" />
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-6 w-20" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {!isLoading && !error && filteredProducts.length > 0 && (
+                  <div className={viewMode === "grid" 
+                    ? "grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
+                    : "space-y-4"
+                  }>
+                    {filteredProducts.map((product) => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        onAddToCart={handleAddToCart}
+                        viewMode={viewMode}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {!isLoading && !error && filteredProducts.length === 0 && (
+                  <div className="text-center py-20 rounded-xl bg-card border border-border">
+                    <h3 className="text-xl font-semibold text-foreground mb-2">
+                      No products found
+                    </h3>
+                    <p className="text-muted-foreground mb-4">
+                      Try adjusting your search or filters
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setActiveCategory("All");
+                        setSearchQuery("");
+                        setPriceRange([0, maxPrice]);
+                        setOnSaleOnly(false);
+                        setInStockOnly(false);
+                      }}
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
+                )}
+              </section>
             </div>
-          )}
+          </div>
         </div>
-      </section>
+      </main>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-card/30 border-t border-border">
-        <div className="container mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-            Sell Your Creations
-          </h2>
-          <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-            Are you a designer? List your overlays, emotes, and more on the Ligam marketplace.
-          </p>
-          <Button
-            variant="default"
-            size="lg"
-            className="glow"
-            onClick={() => {
-              if (user) {
-                navigate("/seller/dashboard");
-              } else {
-                setBecomeSellerOpen(true);
-              }
-            }}
-          >
-            Become a Seller
-          </Button>
+      <section className="py-20 px-4 bg-card/50 border-t border-border">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                <Store className="w-4 h-4" />
+                Start Selling
+              </div>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+                Sell Your Creations on Ligam
+              </h2>
+              <p className="text-muted-foreground text-lg mb-8">
+                Join our growing community of sellers. List your products, reach millions of customers, and grow your business with zero hassle.
+              </p>
+              <div className="flex flex-wrap gap-6 mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-foreground">500+</p>
+                    <p className="text-sm text-muted-foreground">Active Sellers</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-foreground">$50K+</p>
+                    <p className="text-sm text-muted-foreground">Monthly Sales</p>
+                  </div>
+                </div>
+              </div>
+              <Button
+                size="lg"
+                className="glow"
+                onClick={() => {
+                  if (user) {
+                    navigate("/seller/dashboard");
+                  } else {
+                    setBecomeSellerOpen(true);
+                  }
+                }}
+              >
+                Become a Seller
+              </Button>
+            </div>
+            <div className="hidden md:block">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 rounded-3xl blur-3xl" />
+                <div className="relative grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div className="h-32 rounded-2xl bg-card border border-border" />
+                    <div className="h-48 rounded-2xl bg-card border border-primary/20" />
+                  </div>
+                  <div className="space-y-4 pt-8">
+                    <div className="h-48 rounded-2xl bg-card border border-primary/20" />
+                    <div className="h-32 rounded-2xl bg-card border border-border" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* Mobile Filters Sheet */}
+      <MobileFilters
+        open={mobileFiltersOpen}
+        onOpenChange={setMobileFiltersOpen}
+        categories={categories}
+        activeCategory={activeCategory}
+        onCategoryChange={setActiveCategory}
+        priceRange={priceRange}
+        onPriceRangeChange={setPriceRange}
+        maxPrice={maxPrice}
+        onSaleOnly={onSaleOnly}
+        onSaleOnlyChange={setOnSaleOnly}
+        inStockOnly={inStockOnly}
+        onInStockOnlyChange={setInStockOnly}
+      />
 
       <BecomeSellerDialog open={becomeSellerOpen} onOpenChange={setBecomeSellerOpen} />
 
