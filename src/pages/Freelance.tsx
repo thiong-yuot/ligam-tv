@@ -1,17 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BecomeFreelancerDialog from "@/components/BecomeFreelancerDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Star, Clock, DollarSign, Briefcase, Filter, Loader2 } from "lucide-react";
+import { Search, Star, DollarSign, Briefcase, Filter, Loader2, LayoutDashboard } from "lucide-react";
 import { useFreelancers } from "@/hooks/useFreelancers";
+import { useMyFreelancerProfile } from "@/hooks/useFreelancerProfile";
+import { useAuth } from "@/hooks/useAuth";
 
 const Freelance = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [becomeFreelancerOpen, setBecomeFreelancerOpen] = useState(false);
   
   const { data: freelancers = [], isLoading } = useFreelancers();
+  const { data: myProfile } = useMyFreelancerProfile();
 
   const categories = [
     "All",
@@ -32,6 +40,18 @@ const Freelance = () => {
       f.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const handleBecomeFreelancer = () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (myProfile) {
+      navigate("/freelance/dashboard");
+    } else {
+      setBecomeFreelancerOpen(true);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,6 +82,16 @@ const Freelance = () => {
               className="pl-12 h-14 text-lg bg-card border-border"
             />
           </div>
+
+          {/* Quick action for existing freelancers */}
+          {myProfile && (
+            <div className="mt-6">
+              <Button variant="outline" onClick={() => navigate("/freelance/dashboard")}>
+                <LayoutDashboard className="w-4 h-4 mr-2" />
+                Go to Your Dashboard
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -154,10 +184,7 @@ const Freelance = () => {
                   )}
 
                   <div className="flex items-center gap-2">
-                    <Button variant="default" className="flex-1">
-                      Contact
-                    </Button>
-                    <Button variant="outline" className="flex-1">
+                    <Button variant="default" className="flex-1" onClick={() => navigate(`/freelance/${freelancer.id}`)}>
                       View Profile
                     </Button>
                   </div>
@@ -190,11 +217,16 @@ const Freelance = () => {
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
             Join our marketplace and connect with streamers looking for your skills. Set your own rates and work on exciting projects.
           </p>
-          <Button variant="default" size="xl" className="glow">
-            Become a Freelancer
+          <Button variant="default" size="lg" className="glow" onClick={handleBecomeFreelancer}>
+            {myProfile ? "Go to Dashboard" : "Become a Freelancer"}
           </Button>
         </div>
       </section>
+
+      <BecomeFreelancerDialog
+        open={becomeFreelancerOpen}
+        onOpenChange={setBecomeFreelancerOpen}
+      />
 
       <Footer />
     </div>

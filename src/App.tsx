@@ -13,6 +13,8 @@ import Pricing from "./pages/Pricing";
 import FAQ from "./pages/FAQ";
 import About from "./pages/About";
 import Freelance from "./pages/Freelance";
+import FreelancerDashboard from "./pages/FreelancerDashboard";
+import FreelancerProfile from "./pages/FreelancerProfile";
 import Technology from "./pages/Technology";
 import Shop from "./pages/Shop";
 import Auth from "./pages/Auth";
@@ -54,6 +56,8 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/live" element={<Browse />} />
           <Route path="/freelance" element={<Freelance />} />
+          <Route path="/freelance/dashboard" element={<FreelancerDashboard />} />
+          <Route path="/freelance/:id" element={<FreelancerProfile />} />
           <Route path="/technology" element={<Technology />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/login" element={<Auth mode="login" />} />
