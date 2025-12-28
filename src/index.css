@@ -203,3 +203,38 @@
 .animate-count-up {
   animation: countUp 0.5s ease-out forwards;
 }
+
+/* Ligam Skeleton Animation */
+@keyframes ligam-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes ligam-pulse-glow {
+  0%, 100% {
+    opacity: 0.4;
+    box-shadow: 0 0 0 hsl(var(--ligam-green) / 0);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 8px hsl(var(--ligam-green) / 0.15);
+  }
+}
+
+.skeleton-ligam {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--ligam-green) / 0.08) 25%,
+    hsl(var(--ligam-green) / 0.15) 50%,
+    hsl(var(--ligam-green) / 0.08) 75%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: ligam-shimmer 2s ease-in-out infinite, ligam-pulse-glow 2s ease-in-out infinite;
+  border-radius: 0.5rem;
+}
