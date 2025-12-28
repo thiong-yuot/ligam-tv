@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { FeatureGate, FeatureLockedOverlay } from "@/components/FeatureGate";
+import { useUserStream } from "@/hooks/useStreams";
 import { 
   Video, 
   Copy, 
@@ -28,11 +29,13 @@ import {
   Crown,
   Sparkles,
   Tv,
-  Palette
+  Palette,
+  Key
 } from "lucide-react";
 
 const GoLive = () => {
   const [checking, setChecking] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
   const [showStreamKey, setShowStreamKey] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -43,8 +46,8 @@ const GoLive = () => {
   const { toast } = useToast();
   const { hasAccess, tier } = useFeatureAccess();
 
-  // Mock stream key
-  const streamKey = "live_sk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  const { data: userStream, isLoading: streamLoading } = useUserStream(userId || "");
+
   const rtmpUrl = "rtmp://ingest.ligam.tv/live";
 
   useEffect(() => {
@@ -52,6 +55,8 @@ const GoLive = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         navigate("/login");
+      } else {
+        setUserId(session.user.id);
       }
       setChecking(false);
     };
@@ -66,7 +71,7 @@ const GoLive = () => {
     });
   };
 
-  if (checking) {
+  if (checking || streamLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -78,6 +83,8 @@ const GoLive = () => {
     "Gaming", "Music", "Creative", "Talk Shows", "Coding", 
     "Fitness", "Lifestyle", "Entertainment", "Education"
   ];
+
+  const streamKey = userStream?.stream_key || null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -288,30 +295,38 @@ const GoLive = () => {
 
                 <div className="space-y-2">
                   <Label>Stream Key</Label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Input
-                        type={showStreamKey ? "text" : "password"}
-                        value={streamKey}
-                        readOnly
-                        className="font-mono text-sm pr-10"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowStreamKey(!showStreamKey)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  {streamKey ? (
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          type={showStreamKey ? "text" : "password"}
+                          value={streamKey}
+                          readOnly
+                          className="font-mono text-sm pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowStreamKey(!showStreamKey)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showStreamKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="icon"
+                        onClick={() => copyToClipboard(streamKey, "Stream Key")}
                       >
-                        {showStreamKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
+                        <Copy className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="icon"
-                      onClick={() => copyToClipboard(streamKey, "Stream Key")}
-                    >
-                      <Copy className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  ) : (
+                    <div className="text-center py-6 bg-secondary/30 rounded-lg">
+                      <Key className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No stream key available</p>
+                      <p className="text-xs text-muted-foreground">Create a stream to get your key</p>
+                    </div>
+                  )}
                   <p className="text-xs text-muted-foreground">
                     Never share your stream key with anyone
                   </p>

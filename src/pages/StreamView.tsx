@@ -9,18 +9,17 @@ import {
   MessageCircle, 
   Users, 
   Settings, 
-  MoreVertical,
   Send,
   Smile,
   Gift,
-  Flag,
   Volume2,
   Maximize,
   Play,
-  Pause
+  Pause,
+  Loader2
 } from "lucide-react";
-
-import heroFeatured from "@/assets/hero-featured.jpg";
+import { useStream } from "@/hooks/useStreams";
+import { useChat } from "@/hooks/useChat";
 
 const StreamView = () => {
   const { id } = useParams();
@@ -28,33 +27,37 @@ const StreamView = () => {
   const [chatMessage, setChatMessage] = useState("");
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const stream = {
-    id: id || "1",
-    title: "Championship Finals - Live Tournament",
-    streamer: "LigamEsports",
-    category: "Gaming",
-    thumbnail: heroFeatured,
-    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
-    viewers: 156000,
-    followers: 2400000,
-    description: "Watch the most intense esports action as top teams compete for the championship title.",
-    isLive: true,
-    tags: ["Tournament", "Pro", "English"],
-  };
-
-  const chatMessages = [
-    { id: 1, user: "GamerPro", message: "Let's go!!! 🔥", color: "hsl(105, 100%, 50%)" },
-    { id: 2, user: "StreamFan", message: "This is insane", color: "hsl(280, 100%, 65%)" },
-    { id: 3, user: "NightOwl", message: "Best stream ever", color: "hsl(330, 100%, 65%)" },
-    { id: 4, user: "ProPlayer", message: "GG!", color: "hsl(210, 100%, 60%)" },
-    { id: 5, user: "Viewer123", message: "Amazing plays", color: "hsl(40, 100%, 50%)" },
-  ];
+  const { data: stream, isLoading } = useStream(id || "");
+  const { messages } = useChat(id || "");
 
   const formatViewers = (count: number) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!stream) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="pt-24 text-center">
+          <h1 className="text-2xl font-bold text-foreground mb-4">Stream Not Found</h1>
+          <p className="text-muted-foreground mb-6">This stream doesn't exist or has ended.</p>
+          <Link to="/browse">
+            <Button>Browse Streams</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -65,22 +68,30 @@ const StreamView = () => {
         <div className="flex-1 flex flex-col">
           {/* Video Player */}
           <div className="relative aspect-video bg-ligam-dark group">
-            <img
-              src={stream.thumbnail}
-              alt={stream.title}
-              className="w-full h-full object-cover"
-            />
+            {stream.thumbnail_url ? (
+              <img
+                src={stream.thumbnail_url}
+                alt={stream.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-secondary flex items-center justify-center">
+                <Play className="w-16 h-16 text-muted-foreground" />
+              </div>
+            )}
             
             {/* Player Controls Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <div className="absolute top-4 left-4 flex items-center gap-2">
-                <span className="px-2 py-1 bg-destructive text-destructive-foreground text-xs font-bold rounded flex items-center gap-1">
-                  <span className="w-2 h-2 bg-destructive-foreground rounded-full animate-pulse-live" />
-                  LIVE
-                </span>
+                {stream.is_live && (
+                  <span className="px-2 py-1 bg-destructive text-destructive-foreground text-xs font-bold rounded flex items-center gap-1">
+                    <span className="w-2 h-2 bg-destructive-foreground rounded-full animate-pulse-live" />
+                    LIVE
+                  </span>
+                )}
                 <span className="px-2 py-1 bg-background/80 text-foreground text-xs font-medium rounded flex items-center gap-1">
                   <Users className="w-3 h-3" />
-                  {formatViewers(stream.viewers)}
+                  {formatViewers(stream.viewer_count || 0)}
                 </span>
               </div>
 
@@ -114,36 +125,31 @@ const StreamView = () => {
           <div className="p-4 md:p-6 border-b border-border">
             <div className="flex flex-col md:flex-row gap-4 md:items-start justify-between">
               <div className="flex gap-4">
-                <Link to={`/browse?streamer=${encodeURIComponent(stream.streamer)}`}>
-                  <img
-                    src={stream.avatar}
-                    alt={stream.streamer}
-                    className="w-14 h-14 rounded-full ring-2 ring-primary"
-                  />
-                </Link>
+                <div className="w-14 h-14 rounded-full ring-2 ring-primary bg-secondary flex items-center justify-center">
+                  <Users className="w-6 h-6 text-muted-foreground" />
+                </div>
                 <div>
                   <h1 className="text-xl font-display font-bold text-foreground mb-1">
                     {stream.title}
                   </h1>
-                  <Link 
-                    to={`/browse?streamer=${encodeURIComponent(stream.streamer)}`}
-                    className="text-primary font-semibold hover:underline"
-                  >
-                    {stream.streamer}
-                  </Link>
-                  <p className="text-sm text-muted-foreground">
-                    {formatViewers(stream.followers)} followers • Streaming {stream.category}
+                  <p className="text-primary font-semibold">
+                    Streamer
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {stream.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {formatViewers(stream.viewer_count || 0)} viewers
+                  </p>
+                  {stream.tags && stream.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {stream.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -169,7 +175,7 @@ const StreamView = () => {
           {/* Description */}
           <div className="p-4 md:p-6">
             <h3 className="font-semibold text-foreground mb-2">About this stream</h3>
-            <p className="text-muted-foreground">{stream.description}</p>
+            <p className="text-muted-foreground">{stream.description || "No description provided."}</p>
           </div>
         </div>
 
@@ -186,14 +192,22 @@ const StreamView = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] lg:min-h-0">
-            {chatMessages.map((msg) => (
-              <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
-                <span className="font-semibold" style={{ color: msg.color }}>
-                  {msg.user}:
-                </span>
-                <span className="text-foreground">{msg.message}</span>
+            {messages.length === 0 ? (
+              <div className="text-center text-muted-foreground py-8">
+                <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">No messages yet</p>
+                <p className="text-xs">Be the first to say something!</p>
               </div>
-            ))}
+            ) : (
+              messages.map((msg) => (
+                <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
+                  <span className="font-semibold text-primary">
+                    User:
+                  </span>
+                  <span className="text-foreground">{msg.message}</span>
+                </div>
+              ))
+            )}
           </div>
 
           <div className="p-4 border-t border-border">

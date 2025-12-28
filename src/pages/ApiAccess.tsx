@@ -84,108 +84,21 @@ const WEBHOOK_EVENTS = [
   { id: "chat.message", label: "Chat Message", description: "When a chat message is sent" },
 ];
 
-// Mock webhook delivery logs
-const INITIAL_MOCK_DELIVERIES: WebhookDelivery[] = [
-  {
-    id: "del_1",
-    webhookId: "1",
-    webhookUrl: "https://myapp.com/webhooks/ligam",
-    event: "stream.started",
-    statusCode: 200,
-    timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    duration: 245,
-    success: true,
-    retryCount: 0,
-    maxRetries: 5,
-  },
-  {
-    id: "del_2",
-    webhookId: "1",
-    webhookUrl: "https://myapp.com/webhooks/ligam",
-    event: "gift.received",
-    statusCode: 200,
-    timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-    duration: 189,
-    success: true,
-    retryCount: 0,
-    maxRetries: 5,
-  },
-  {
-    id: "del_3",
-    webhookId: "1",
-    webhookUrl: "https://myapp.com/webhooks/ligam",
-    event: "follower.new",
-    statusCode: 500,
-    timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
-    duration: 1502,
-    success: false,
-    retryCount: 2,
-    maxRetries: 5,
-    nextRetryAt: new Date(Date.now() + 4 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "del_4",
-    webhookId: "1",
-    webhookUrl: "https://myapp.com/webhooks/ligam",
-    event: "stream.ended",
-    statusCode: 200,
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    duration: 312,
-    success: true,
-    retryCount: 0,
-    maxRetries: 5,
-  },
-  {
-    id: "del_5",
-    webhookId: "1",
-    webhookUrl: "https://myapp.com/webhooks/ligam",
-    event: "subscription.created",
-    statusCode: 408,
-    timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-    duration: 30000,
-    success: false,
-    retryCount: 5,
-    maxRetries: 5,
-  },
-  {
-    id: "del_6",
-    webhookId: "1",
-    webhookUrl: "https://myapp.com/webhooks/ligam",
-    event: "gift.received",
-    statusCode: 200,
-    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    duration: 156,
-    success: true,
-    retryCount: 1,
-    maxRetries: 5,
-  },
-];
-
 const ApiAccess = () => {
   const [checking, setChecking] = useState(true);
   const [showApiKey, setShowApiKey] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
-  const [webhooks, setWebhooks] = useState<WebhookEndpoint[]>([
-    {
-      id: "1",
-      url: "https://myapp.com/webhooks/ligam",
-      events: ["stream.started", "stream.ended", "gift.received"],
-      active: true,
-      secret: "whsec_xxxxxxxxxxxxxxxxxxxxxxxx",
-      createdAt: "2024-01-15",
-    },
-  ]);
+  const [webhooks, setWebhooks] = useState<WebhookEndpoint[]>([]);
   const [isAddingWebhook, setIsAddingWebhook] = useState(false);
   const [newWebhookUrl, setNewWebhookUrl] = useState("");
   const [newWebhookEvents, setNewWebhookEvents] = useState<string[]>([]);
   const [editingWebhook, setEditingWebhook] = useState<WebhookEndpoint | null>(null);
-  const [deliveries, setDeliveries] = useState<WebhookDelivery[]>(INITIAL_MOCK_DELIVERIES);
+  const [deliveries, setDeliveries] = useState<WebhookDelivery[]>([]);
+  const [apiKey, setApiKey] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hasAccess, isLoading: featureLoading } = useFeatureAccess();
 
-  // Mock API key (in production, this would come from the backend)
-  const apiKey = "ligam_sk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
   const apiEndpoint = "https://api.ligam.tv/v1";
 
   useEffect(() => {
@@ -199,9 +112,7 @@ const ApiAccess = () => {
     checkAuth();
   }, [navigate]);
 
-  // Calculate exponential backoff delay
   const getBackoffDelay = (retryCount: number): number => {
-    // Base delay of 1 second, doubles with each retry, max 5 minutes
     const baseDelay = 1000;
     const maxDelay = 5 * 60 * 1000;
     return Math.min(baseDelay * Math.pow(2, retryCount), maxDelay);
@@ -213,15 +124,12 @@ const ApiAccess = () => {
   };
 
   const handleRetryDelivery = async (deliveryId: string) => {
-    // Mark as retrying
     setDeliveries(prev => 
       prev.map(d => d.id === deliveryId ? { ...d, isRetrying: true } : d)
     );
 
-    // Simulate retry with exponential backoff
     await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // Simulate random success/failure (70% success rate)
     const isSuccess = Math.random() > 0.3;
 
     setDeliveries(prev =>
@@ -297,8 +205,9 @@ const ApiAccess = () => {
 
   const regenerateKey = async () => {
     setIsRegenerating(true);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
+    const newKey = `ligam_sk_live_${crypto.randomUUID().replace(/-/g, '')}`;
+    setApiKey(newKey);
     setIsRegenerating(false);
     toast({
       title: "API Key Regenerated",
@@ -375,7 +284,6 @@ const ApiAccess = () => {
     );
   }
 
-  // Check if user has API access (Pro tier only)
   if (!hasAccess("api_access")) {
     return (
       <div className="min-h-screen bg-background">
@@ -418,7 +326,7 @@ const ApiAccess = () => {
                 <Link to="/pricing">
                   <Button size="lg" className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600">
                     <Crown className="w-5 h-5 mr-2" />
-                    Upgrade to Pro - $15.99/mo
+                    Upgrade to Pro
                   </Button>
                 </Link>
               </div>
@@ -430,14 +338,16 @@ const ApiAccess = () => {
     );
   }
 
+  const displayKey = apiKey || "No API key generated yet";
+
   const codeExamples = {
     curl: `curl -X GET "${apiEndpoint}/streams" \\
-  -H "Authorization: Bearer ${showApiKey ? apiKey : "ligam_sk_live_****"}" \\
+  -H "Authorization: Bearer ${showApiKey && apiKey ? apiKey : "YOUR_API_KEY"}" \\
   -H "Content-Type: application/json"`,
     javascript: `const response = await fetch("${apiEndpoint}/streams", {
   method: "GET",
   headers: {
-    "Authorization": "Bearer ${showApiKey ? apiKey : "ligam_sk_live_****"}",
+    "Authorization": "Bearer ${showApiKey && apiKey ? apiKey : "YOUR_API_KEY"}",
     "Content-Type": "application/json"
   }
 });
@@ -447,7 +357,7 @@ console.log(data);`,
     python: `import requests
 
 headers = {
-    "Authorization": "Bearer ${showApiKey ? apiKey : "ligam_sk_live_****"}",
+    "Authorization": "Bearer ${showApiKey && apiKey ? apiKey : "YOUR_API_KEY"}",
     "Content-Type": "application/json"
 }
 
@@ -489,100 +399,77 @@ print(data)`,
             </div>
 
             <div className="space-y-4">
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Input
-                    type={showApiKey ? "text" : "password"}
-                    value={apiKey}
-                    readOnly
-                    className="font-mono text-sm pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowApiKey(!showApiKey)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+              {!apiKey ? (
+                <div className="text-center py-8">
+                  <Key className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground mb-4">No API key generated yet</p>
+                  <Button onClick={regenerateKey} disabled={isRegenerating}>
+                    {isRegenerating ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Key className="w-4 h-4 mr-2" />
+                    )}
+                    Generate API Key
+                  </Button>
                 </div>
-                <Button 
-                  variant="outline" 
-                  size="icon"
-                  onClick={() => copyToClipboard(apiKey, "API Key")}
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={regenerateKey}
-                  disabled={isRegenerating}
-                >
-                  <RefreshCw className={`w-4 h-4 mr-2 ${isRegenerating ? "animate-spin" : ""}`} />
-                  Regenerate
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <Shield className="w-3 h-3" />
-                Keep your API key secure. Do not share it publicly or commit it to version control.
-              </p>
-            </div>
-          </Card>
-
-          {/* API Endpoint */}
-          <Card className="p-6 bg-card border-border mb-8">
-            <h3 className="font-semibold text-foreground mb-4">Base URL</h3>
-            <div className="flex gap-2">
-              <Input
-                value={apiEndpoint}
-                readOnly
-                className="font-mono text-sm"
-              />
-              <Button 
-                variant="outline" 
-                size="icon"
-                onClick={() => copyToClipboard(apiEndpoint, "API Endpoint")}
-              >
-                <Copy className="w-4 h-4" />
-              </Button>
-            </div>
-          </Card>
-
-          {/* Code Examples */}
-          <Card className="p-6 bg-card border-border mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Code className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-foreground">Quick Start</h2>
-                <p className="text-sm text-muted-foreground">Get started with these code examples</p>
-              </div>
-            </div>
-
-            <Tabs defaultValue="curl" className="w-full">
-              <TabsList className="mb-4">
-                <TabsTrigger value="curl">cURL</TabsTrigger>
-                <TabsTrigger value="javascript">JavaScript</TabsTrigger>
-                <TabsTrigger value="python">Python</TabsTrigger>
-              </TabsList>
-              {Object.entries(codeExamples).map(([lang, code]) => (
-                <TabsContent key={lang} value={lang}>
-                  <div className="relative">
-                    <pre className="bg-secondary/50 rounded-lg p-4 overflow-x-auto">
-                      <code className="text-sm font-mono text-foreground">{code}</code>
-                    </pre>
+              ) : (
+                <>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        type={showApiKey ? "text" : "password"}
+                        value={apiKey}
+                        readOnly
+                        className="font-mono text-sm pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowApiKey(!showApiKey)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      className="absolute top-2 right-2"
-                      onClick={() => copyToClipboard(code, "Code example")}
+                      variant="outline"
+                      size="icon"
+                      onClick={() => copyToClipboard(apiKey, "API Key")}
                     >
                       <Copy className="w-4 h-4" />
                     </Button>
                   </div>
-                </TabsContent>
-              ))}
-            </Tabs>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-border">
+                    <p className="text-sm text-muted-foreground">
+                      Keep your API key secure and never share it publicly
+                    </p>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-2">
+                          <RefreshCw className="w-4 h-4" />
+                          Regenerate
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Regenerate API Key?</DialogTitle>
+                          <DialogDescription>
+                            This will invalidate your current API key. Any applications using the old key will stop working.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <DialogFooter>
+                          <Button variant="outline">Cancel</Button>
+                          <Button variant="destructive" onClick={regenerateKey} disabled={isRegenerating}>
+                            {isRegenerating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                            Regenerate Key
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </>
+              )}
+            </div>
           </Card>
 
           {/* Webhooks Section */}
@@ -597,346 +484,162 @@ print(data)`,
                   <p className="text-sm text-muted-foreground">Receive real-time event notifications</p>
                 </div>
               </div>
-              <Dialog open={isAddingWebhook} onOpenChange={setIsAddingWebhook}>
-                <DialogTrigger asChild>
-                  <Button size="sm" className="gap-2">
-                    <Plus className="w-4 h-4" />
-                    Add Webhook
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-lg">
-                  <DialogHeader>
-                    <DialogTitle>Add Webhook Endpoint</DialogTitle>
-                    <DialogDescription>
-                      Configure a URL to receive event notifications from Ligam.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="webhook-url">Endpoint URL</Label>
-                      <Input
-                        id="webhook-url"
-                        placeholder="https://your-app.com/webhooks/ligam"
-                        value={newWebhookUrl}
-                        onChange={(e) => setNewWebhookUrl(e.target.value)}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Must be a valid HTTPS URL
-                      </p>
-                    </div>
-                    <div className="space-y-3">
-                      <Label>Events to Listen</Label>
-                      <div className="grid gap-2 max-h-[200px] overflow-y-auto">
-                        {WEBHOOK_EVENTS.map((event) => (
-                          <div
-                            key={event.id}
-                            className="flex items-start gap-3 p-2 rounded-lg hover:bg-secondary/50"
-                          >
-                            <Checkbox
-                              id={event.id}
-                              checked={newWebhookEvents.includes(event.id)}
-                              onCheckedChange={() => toggleEventSelection(event.id)}
-                            />
-                            <div className="flex-1">
-                              <label
-                                htmlFor={event.id}
-                                className="text-sm font-medium cursor-pointer"
-                              >
-                                {event.label}
-                              </label>
-                              <p className="text-xs text-muted-foreground">
-                                {event.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsAddingWebhook(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleAddWebhook}>Create Webhook</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <Button onClick={() => setIsAddingWebhook(true)} className="gap-2">
+                <Plus className="w-4 h-4" />
+                Add Webhook
+              </Button>
             </div>
 
             {webhooks.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Webhook className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>No webhooks configured</p>
-                <p className="text-sm">Add a webhook to receive real-time events</p>
+              <div className="text-center py-12">
+                <Webhook className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground mb-2">No webhooks configured</p>
+                <p className="text-sm text-muted-foreground">Add a webhook to receive real-time event notifications</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {webhooks.map((webhook) => (
-                  <div
-                    key={webhook.id}
-                    className={`p-4 rounded-lg border ${
-                      webhook.active ? "border-border bg-secondary/30" : "border-border/50 bg-secondary/10 opacity-60"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          {webhook.active ? (
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          ) : (
-                            <XCircle className="w-4 h-4 text-muted-foreground" />
-                          )}
-                          <code className="text-sm font-mono text-foreground truncate">
-                            {webhook.url}
-                          </code>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {webhook.events.map((eventId) => {
-                            const event = WEBHOOK_EVENTS.find((e) => e.id === eventId);
-                            return (
-                              <Badge key={eventId} variant="secondary" className="text-xs">
-                                {event?.label || eventId}
-                              </Badge>
-                            );
-                          })}
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span>Created: {webhook.createdAt}</span>
-                          <button
-                            onClick={() => copyToClipboard(webhook.secret, "Webhook secret")}
-                            className="flex items-center gap-1 hover:text-foreground transition-colors"
-                          >
-                            <Key className="w-3 h-3" />
-                            Copy Secret
-                          </button>
-                        </div>
+                  <div key={webhook.id} className="p-4 rounded-lg border border-border bg-secondary/30">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${webhook.active ? 'bg-green-500' : 'bg-muted-foreground'}`} />
+                        <span className="font-mono text-sm text-foreground truncate max-w-md">{webhook.url}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Switch
-                          checked={webhook.active}
-                          onCheckedChange={() => handleToggleWebhook(webhook.id)}
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => handleDeleteWebhook(webhook.id)}
-                        >
+                        <Switch checked={webhook.active} onCheckedChange={() => handleToggleWebhook(webhook.id)} />
+                        <Button variant="ghost" size="icon" onClick={() => handleDeleteWebhook(webhook.id)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {webhook.events.map((event) => (
+                        <Badge key={event} variant="secondary" className="text-xs">{event}</Badge>
+                      ))}
                     </div>
                   </div>
                 ))}
               </div>
             )}
 
-            <div className="mt-6 p-4 rounded-lg bg-secondary/30 border border-dashed border-border">
-              <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-primary" />
-                Webhook Security
-              </h4>
-              <p className="text-sm text-muted-foreground mb-3">
-                Verify webhook signatures to ensure requests are from Ligam. Include the secret in your verification logic.
-              </p>
-              <pre className="bg-background/50 rounded p-3 text-xs font-mono overflow-x-auto">
-{`// Verify webhook signature
-const signature = req.headers['x-ligam-signature'];
-const expectedSig = crypto
-  .createHmac('sha256', webhookSecret)
-  .update(JSON.stringify(req.body))
-  .digest('hex');
-
-if (signature !== expectedSig) {
-  throw new Error('Invalid signature');
-}`}
-              </pre>
-            </div>
+            {/* Add Webhook Dialog */}
+            <Dialog open={isAddingWebhook} onOpenChange={setIsAddingWebhook}>
+              <DialogContent className="max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Add Webhook Endpoint</DialogTitle>
+                  <DialogDescription>
+                    Configure a new webhook to receive event notifications
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="webhookUrl">Endpoint URL</Label>
+                    <Input
+                      id="webhookUrl"
+                      placeholder="https://your-app.com/webhooks/ligam"
+                      value={newWebhookUrl}
+                      onChange={(e) => setNewWebhookUrl(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Events to Subscribe</Label>
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+                      {WEBHOOK_EVENTS.map((event) => (
+                        <label key={event.id} className="flex items-center gap-2 p-2 rounded border border-border hover:bg-secondary/50 cursor-pointer">
+                          <Checkbox
+                            checked={newWebhookEvents.includes(event.id)}
+                            onCheckedChange={() => toggleEventSelection(event.id)}
+                          />
+                          <span className="text-sm">{event.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsAddingWebhook(false)}>Cancel</Button>
+                  <Button onClick={handleAddWebhook}>Add Webhook</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </Card>
 
-          {/* Webhook Delivery Log */}
-          <Card className="p-6 bg-card border-border mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
+          {/* Webhook Deliveries */}
+          {deliveries.length > 0 && (
+            <Card className="p-6 bg-card border-border mb-8">
+              <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Activity className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-foreground">Delivery Log</h2>
-                  <p className="text-sm text-muted-foreground">Recent webhook delivery attempts</p>
+                  <h2 className="text-xl font-semibold text-foreground">Recent Deliveries</h2>
+                  <p className="text-sm text-muted-foreground">Webhook delivery history</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="gap-2">
-                <RotateCcw className="w-4 h-4" />
-                Refresh
-              </Button>
-            </div>
-
-            {/* Retry Info Banner */}
-            <div className="mb-4 p-3 rounded-lg bg-secondary/30 border border-border flex items-start gap-3">
-              <RefreshCw className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-              <div className="text-sm">
-                <p className="font-medium text-foreground mb-1">Exponential Backoff Retries</p>
-                <p className="text-muted-foreground">
-                  Failed deliveries are automatically retried with exponential backoff: 1s → 2s → 4s → 8s → 16s (up to 5 min max). 
-                  You can also manually retry at any time.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              {deliveries.map((delivery) => {
-                const eventLabel = WEBHOOK_EVENTS.find(e => e.id === delivery.event)?.label || delivery.event;
-                const timeAgo = getTimeAgo(delivery.timestamp);
-                const canRetry = !delivery.success && !delivery.isRetrying;
-                const isMaxRetriesReached = delivery.retryCount >= delivery.maxRetries;
-                
-                return (
-                  <div
-                    key={delivery.id}
-                    className={`flex items-center gap-4 p-3 rounded-lg transition-colors ${
-                      delivery.success 
-                        ? "bg-green-500/5 hover:bg-green-500/10" 
-                        : "bg-red-500/5 hover:bg-red-500/10"
-                    }`}
-                  >
-                    {/* Status Icon */}
-                    <div className={`flex-shrink-0 ${delivery.success ? "text-green-500" : "text-red-500"}`}>
-                      {delivery.isRetrying ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                      ) : delivery.success ? (
-                        <CheckCircle2 className="w-5 h-5" />
+              <div className="space-y-3">
+                {deliveries.map((delivery) => (
+                  <div key={delivery.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
+                    <div className="flex items-center gap-3">
+                      {delivery.success ? (
+                        <CheckCircle2 className="w-5 h-5 text-green-500" />
                       ) : (
-                        <AlertTriangle className="w-5 h-5" />
+                        <XCircle className="w-5 h-5 text-destructive" />
+                      )}
+                      <div>
+                        <span className="text-sm font-medium">{delivery.event}</span>
+                        <p className="text-xs text-muted-foreground">{getTimeAgo(delivery.timestamp)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={delivery.success ? "secondary" : "destructive"}>{delivery.statusCode}</Badge>
+                      {!delivery.success && delivery.retryCount < delivery.maxRetries && (
+                        <Button variant="ghost" size="sm" onClick={() => handleRetryDelivery(delivery.id)} disabled={delivery.isRetrying}>
+                          {delivery.isRetrying ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                        </Button>
                       )}
                     </div>
-
-                    {/* Event & URL */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <Badge variant="secondary" className="text-xs">
-                          {eventLabel}
-                        </Badge>
-                        <code className="text-xs text-muted-foreground truncate hidden sm:block">
-                          {delivery.webhookUrl}
-                        </code>
-                      </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {timeAgo}
-                        </span>
-                        <span>{delivery.duration}ms</span>
-                        {!delivery.success && (
-                          <span className="flex items-center gap-1">
-                            <RotateCcw className="w-3 h-3" />
-                            {delivery.retryCount}/{delivery.maxRetries} retries
-                          </span>
-                        )}
-                        {delivery.nextRetryAt && !delivery.success && !isMaxRetriesReached && (
-                          <span className="text-amber-500">
-                            Next: {formatBackoffTime(getBackoffDelay(delivery.retryCount))}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Status Code */}
-                    <Badge 
-                      variant="outline" 
-                      className={`font-mono text-xs ${
-                        delivery.statusCode >= 200 && delivery.statusCode < 300
-                          ? "text-green-500 border-green-500/50"
-                          : delivery.statusCode >= 400 && delivery.statusCode < 500
-                            ? "text-amber-500 border-amber-500/50"
-                            : "text-red-500 border-red-500/50"
-                      }`}
-                    >
-                      {delivery.statusCode}
-                    </Badge>
-
-                    {/* Retry Button */}
-                    {canRetry && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={`gap-1.5 ${isMaxRetriesReached ? "text-muted-foreground" : "text-primary hover:text-primary"}`}
-                        onClick={() => handleRetryDelivery(delivery.id)}
-                        disabled={isMaxRetriesReached}
-                        title={isMaxRetriesReached ? "Maximum retries reached" : "Retry delivery"}
-                      >
-                        <RefreshCw className="w-4 h-4" />
-                        <span className="hidden sm:inline">Retry</span>
-                      </Button>
-                    )}
                   </div>
-                );
-              })}
-            </div>
-
-            {deliveries.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <Activity className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>No delivery attempts yet</p>
-                <p className="text-sm">Webhook deliveries will appear here</p>
+                ))}
               </div>
-            )}
+            </Card>
+          )}
 
-            <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-              <span>Showing last {deliveries.length} deliveries</span>
-              <button className="text-primary hover:underline">View all logs</button>
-            </div>
-          </Card>
-
-          {/* API Endpoints Documentation */}
+          {/* Code Examples */}
           <Card className="p-6 bg-card border-border">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-primary" />
+                <Code className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold text-foreground">API Endpoints</h2>
-                <p className="text-sm text-muted-foreground">Available endpoints and their usage</p>
+                <h2 className="text-xl font-semibold text-foreground">Quick Start</h2>
+                <p className="text-sm text-muted-foreground">Get started with our API</p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              {[
-                { method: "GET", path: "/streams", description: "List all your streams" },
-                { method: "GET", path: "/streams/:id", description: "Get stream details" },
-                { method: "POST", path: "/streams", description: "Create a new stream" },
-                { method: "PUT", path: "/streams/:id", description: "Update stream settings" },
-                { method: "DELETE", path: "/streams/:id", description: "Delete a stream" },
-                { method: "GET", path: "/analytics", description: "Get analytics data" },
-                { method: "GET", path: "/viewers", description: "Get viewer statistics" },
-                { method: "GET", path: "/webhooks", description: "List webhook endpoints" },
-                { method: "POST", path: "/webhooks", description: "Register a webhook" },
-                { method: "DELETE", path: "/webhooks/:id", description: "Delete a webhook" },
-              ].map((endpoint, index) => (
-                <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors">
-                  <Badge 
-                    variant="outline" 
-                    className={`font-mono text-xs min-w-[60px] justify-center ${
-                      endpoint.method === "GET" ? "text-green-500 border-green-500/50" :
-                      endpoint.method === "POST" ? "text-blue-500 border-blue-500/50" :
-                      endpoint.method === "PUT" ? "text-amber-500 border-amber-500/50" :
-                      "text-red-500 border-red-500/50"
-                    }`}
-                  >
-                    {endpoint.method}
-                  </Badge>
-                  <code className="font-mono text-sm text-foreground flex-1">{endpoint.path}</code>
-                  <span className="text-sm text-muted-foreground hidden sm:block">{endpoint.description}</span>
-                </div>
+            <Tabs defaultValue="curl">
+              <TabsList className="mb-4">
+                <TabsTrigger value="curl">cURL</TabsTrigger>
+                <TabsTrigger value="javascript">JavaScript</TabsTrigger>
+                <TabsTrigger value="python">Python</TabsTrigger>
+              </TabsList>
+              {Object.entries(codeExamples).map(([lang, code]) => (
+                <TabsContent key={lang} value={lang}>
+                  <div className="relative">
+                    <pre className="p-4 rounded-lg bg-secondary/50 overflow-x-auto text-sm font-mono">
+                      <code>{code}</code>
+                    </pre>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={() => copyToClipboard(code, "Code")}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </TabsContent>
               ))}
-            </div>
-
-            <div className="mt-6 pt-6 border-t border-border">
-              <Button variant="outline" className="w-full gap-2">
-                <BookOpen className="w-4 h-4" />
-                View Full Documentation
-              </Button>
-            </div>
+            </Tabs>
           </Card>
         </div>
       </section>

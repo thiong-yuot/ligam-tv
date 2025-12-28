@@ -5,107 +5,26 @@ import StreamCard from "@/components/StreamCard";
 import CategoryFilter from "@/components/CategoryFilter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, Grid3X3, LayoutGrid } from "lucide-react";
-
-import streamThumb1 from "@/assets/stream-thumb-1.jpg";
-import streamThumb2 from "@/assets/stream-thumb-2.jpg";
-import streamThumb3 from "@/assets/stream-thumb-3.jpg";
+import { Search, Grid3X3, LayoutGrid, Loader2, Radio } from "lucide-react";
+import { useStreams } from "@/hooks/useStreams";
+import { useCategories } from "@/hooks/useCategories";
 
 const Browse = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const categories = [
-    "All", "Gaming", "Music", "Creative", "Talk Shows", 
-    "Coding", "Fitness", "Lifestyle", "Entertainment", "Education"
-  ];
+  const { data: categoriesData } = useCategories();
+  const { data: streams, isLoading } = useStreams(
+    activeCategory !== "All" ? activeCategory.toLowerCase() : undefined,
+    true
+  );
 
-  const streams = [
-    {
-      id: "1",
-      title: "Epic Gaming Marathon - Day 3!",
-      streamer: "NightOwl",
-      category: "Gaming",
-      thumbnail: streamThumb1,
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
-      viewers: 15420,
-      isLive: true,
-    },
-    {
-      id: "2",
-      title: "Live DJ Set - House Music Vibes",
-      streamer: "BeatMaster",
-      category: "Music",
-      thumbnail: streamThumb2,
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-      viewers: 8930,
-      isLive: true,
-    },
-    {
-      id: "3",
-      title: "Digital Art Creation - Fantasy Theme",
-      streamer: "ArtistPro",
-      category: "Creative",
-      thumbnail: streamThumb3,
-      avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop",
-      viewers: 4250,
-      isLive: true,
-    },
-    {
-      id: "4",
-      title: "Competitive Ranked Gameplay",
-      streamer: "ProGamer99",
-      category: "Gaming",
-      thumbnail: streamThumb1,
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-      viewers: 12800,
-      isLive: true,
-    },
-    {
-      id: "5",
-      title: "Late Night Talk Show",
-      streamer: "StreamQueen",
-      category: "Talk Shows",
-      thumbnail: streamThumb2,
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-      viewers: 6540,
-      isLive: true,
-    },
-    {
-      id: "6",
-      title: "Music Production Session",
-      streamer: "SoundWave",
-      category: "Music",
-      thumbnail: streamThumb3,
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
-      viewers: 3200,
-      isLive: true,
-    },
-    {
-      id: "7",
-      title: "Retro Gaming Night",
-      streamer: "ClassicGamer",
-      category: "Gaming",
-      thumbnail: streamThumb1,
-      avatar: "https://images.unsplash.com/photo-1599566150163-29194dcabd36?w=100&h=100&fit=crop",
-      viewers: 2100,
-      isLive: true,
-    },
-    {
-      id: "8",
-      title: "Live Concert Stream",
-      streamer: "MusicLive",
-      category: "Music",
-      thumbnail: streamThumb2,
-      avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop",
-      viewers: 18500,
-      isLive: true,
-    },
-  ];
+  const categories = ["All", ...(categoriesData?.map(c => c.name) || [])];
 
-  const filteredStreams = activeCategory === "All" 
-    ? streams 
-    : streams.filter(s => s.category === activeCategory);
+  const filteredStreams = streams?.filter(stream => 
+    stream.title.toLowerCase().includes(searchQuery.toLowerCase())
+  ) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -130,6 +49,8 @@ const Browse = () => {
               <Input
                 type="text"
                 placeholder="Search streams..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 bg-secondary border-border"
               />
             </div>
@@ -162,33 +83,57 @@ const Browse = () => {
           </div>
 
           {/* Results */}
-          <p className="text-sm text-muted-foreground mb-6">
-            {filteredStreams.length} streams live
-          </p>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : filteredStreams.length > 0 ? (
+            <>
+              <p className="text-sm text-muted-foreground mb-6">
+                {filteredStreams.length} stream{filteredStreams.length !== 1 ? 's' : ''} live
+              </p>
 
-          {/* Stream Grid */}
-          <div className={`grid gap-6 ${
-            viewMode === "grid" 
-              ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-              : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-          }`}>
-            {filteredStreams.map((stream, index) => (
-              <div
-                key={stream.id}
-                className="animate-fadeIn"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <StreamCard {...stream} />
+              {/* Stream Grid */}
+              <div className={`grid gap-6 ${
+                viewMode === "grid" 
+                  ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
+                  : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+              }`}>
+                {filteredStreams.map((stream, index) => (
+                  <div
+                    key={stream.id}
+                    className="animate-fadeIn"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <StreamCard
+                      id={stream.id}
+                      title={stream.title}
+                      streamer={stream.user_id}
+                      category={stream.category?.name || "Uncategorized"}
+                      thumbnail={stream.thumbnail_url || ""}
+                      avatar=""
+                      viewers={stream.viewer_count || 0}
+                      isLive={stream.is_live || false}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-
-          {/* Load More */}
-          <div className="flex justify-center mt-12">
-            <Button variant="outline" size="lg">
-              Load More Streams
-            </Button>
-          </div>
+            </>
+          ) : (
+            <div className="text-center py-20">
+              <Radio className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Live Streams</h3>
+              <p className="text-muted-foreground mb-6">
+                {activeCategory !== "All" 
+                  ? `No one is streaming in ${activeCategory} right now`
+                  : "No one is streaming right now"
+                }
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Check back later or explore other categories
+              </p>
+            </div>
+          )}
         </div>
       </main>
 
