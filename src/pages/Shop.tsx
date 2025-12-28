@@ -1,125 +1,42 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, ShoppingCart, Star, Filter, Heart } from "lucide-react";
+import { Search, ShoppingCart, Star, Filter, Heart, Loader2 } from "lucide-react";
+import { useProducts, Product } from "@/hooks/useProducts";
+import { useCart } from "@/hooks/useCart";
+import CartSheet from "@/components/CartSheet";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Shop = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [cart, setCart] = useState<number[]>([]);
+  
+  const { data: products, isLoading, error } = useProducts();
+  const { addToCart, totalItems } = useCart();
 
-  const categories = [
-    "All",
-    "Stream Overlays",
-    "Alerts & Sounds",
-    "Emotes",
-    "Panels",
-    "Merch",
-    "Equipment",
-  ];
+  // Extract unique categories from products
+  const categories = useMemo(() => {
+    if (!products) return ["All"];
+    const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
+    return ["All", ...uniqueCategories];
+  }, [products]);
 
-  const products = [
-    {
-      id: 1,
-      name: "Neon Gaming Overlay Pack",
-      category: "Stream Overlays",
-      price: 24.99,
-      originalPrice: 39.99,
-      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&h=300&fit=crop",
-      rating: 4.9,
-      reviews: 234,
-      featured: true,
-    },
-    {
-      id: 2,
-      name: "Animated Alert Bundle",
-      category: "Alerts & Sounds",
-      price: 14.99,
-      originalPrice: null,
-      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-      rating: 4.8,
-      reviews: 156,
-      featured: false,
-    },
-    {
-      id: 3,
-      name: "Cute Emote Pack (20 Emotes)",
-      category: "Emotes",
-      price: 29.99,
-      originalPrice: null,
-      image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=400&h=300&fit=crop",
-      rating: 5.0,
-      reviews: 89,
-      featured: true,
-    },
-    {
-      id: 4,
-      name: "Minimal Panel Set",
-      category: "Panels",
-      price: 9.99,
-      originalPrice: 14.99,
-      image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=300&fit=crop",
-      rating: 4.7,
-      reviews: 312,
-      featured: false,
-    },
-    {
-      id: 5,
-      name: "Ligam Hoodie - Black",
-      category: "Merch",
-      price: 49.99,
-      originalPrice: null,
-      image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop",
-      rating: 4.9,
-      reviews: 67,
-      featured: false,
-    },
-    {
-      id: 6,
-      name: "RGB Ring Light Pro",
-      category: "Equipment",
-      price: 79.99,
-      originalPrice: 99.99,
-      image: "https://images.unsplash.com/photo-1590650516494-0c8e4a4dd67e?w=400&h=300&fit=crop",
-      rating: 4.8,
-      reviews: 445,
-      featured: true,
-    },
-    {
-      id: 7,
-      name: "Cyberpunk Overlay Bundle",
-      category: "Stream Overlays",
-      price: 34.99,
-      originalPrice: null,
-      image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=300&fit=crop",
-      rating: 4.9,
-      reviews: 178,
-      featured: false,
-    },
-    {
-      id: 8,
-      name: "Sound Effect Pack",
-      category: "Alerts & Sounds",
-      price: 19.99,
-      originalPrice: 29.99,
-      image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=300&fit=crop",
-      rating: 4.6,
-      reviews: 92,
-      featured: false,
-    },
-  ];
+  const filteredProducts = useMemo(() => {
+    if (!products) return [];
+    return products.filter((p) => {
+      const matchesCategory = activeCategory === "All" || p.category === activeCategory;
+      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [products, activeCategory, searchQuery]);
 
-  const filteredProducts = products.filter((p) => {
-    const matchesCategory = activeCategory === "All" || p.category === activeCategory;
-    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
-
-  const addToCart = (id: number) => {
-    setCart([...cart, id]);
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toast.success(`${product.name} added to cart`);
   };
 
   return (
@@ -152,15 +69,22 @@ const Shop = () => {
             />
           </div>
 
-          {/* Cart indicator */}
-          {cart.length > 0 && (
-            <div className="mt-6">
-              <Button variant="outline" className="gap-2">
-                <ShoppingCart className="w-4 h-4" />
-                Cart ({cart.length})
-              </Button>
-            </div>
-          )}
+          {/* Cart Button */}
+          <div className="mt-6">
+            <CartSheet
+              trigger={
+                <Button variant="outline" className="relative gap-2">
+                  <ShoppingCart className="w-4 h-4" />
+                  Cart
+                  {totalItems > 0 && (
+                    <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      {totalItems}
+                    </Badge>
+                  )}
+                </Button>
+              }
+            />
+          </div>
         </div>
       </section>
 
@@ -174,7 +98,7 @@ const Shop = () => {
                 key={category}
                 variant={activeCategory === category ? "default" : "outline"}
                 size="sm"
-                onClick={() => setActiveCategory(category)}
+                onClick={() => setActiveCategory(category as string)}
                 className="flex-shrink-0"
               >
                 {category}
@@ -196,76 +120,114 @@ const Shop = () => {
             </span>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div
-                key={product.id}
-                className="rounded-2xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all duration-300 group"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {product.featured && (
-                    <Badge className="absolute top-3 left-3 bg-primary text-primary-foreground">
-                      Featured
-                    </Badge>
-                  )}
-                  {product.originalPrice && (
-                    <Badge className="absolute top-3 right-3 bg-destructive text-destructive-foreground">
-                      Sale
-                    </Badge>
-                  )}
-                  <button className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Heart className="w-5 h-5 text-foreground" />
-                  </button>
-                </div>
+          {error && (
+            <div className="text-center py-20">
+              <h3 className="text-xl font-semibold text-destructive mb-2">
+                Error loading products
+              </h3>
+              <p className="text-muted-foreground">Please try again later</p>
+            </div>
+          )}
 
-                <div className="p-5">
-                  <p className="text-sm text-muted-foreground mb-1">
-                    {product.category}
-                  </p>
-                  <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {product.name}
-                  </h3>
-
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="flex items-center gap-1 text-primary">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-sm font-medium">{product.rating}</span>
+          {isLoading && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="rounded-2xl bg-card border border-border overflow-hidden">
+                  <Skeleton className="aspect-[4/3] w-full" />
+                  <div className="p-5 space-y-3">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-6 w-full" />
+                    <Skeleton className="h-4 w-24" />
+                    <div className="flex justify-between">
+                      <Skeleton className="h-6 w-16" />
+                      <Skeleton className="h-9 w-24" />
                     </div>
-                    <span className="text-sm text-muted-foreground">
-                      ({product.reviews} reviews)
-                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!isLoading && !error && (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => (
+                <div
+                  key={product.id}
+                  className="rounded-2xl bg-card border border-border overflow-hidden hover:border-primary/50 transition-all duration-300 group"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    {product.image_url ? (
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <ShoppingCart className="w-12 h-12 text-muted-foreground" />
+                      </div>
+                    )}
+                    {product.sale_price && (
+                      <Badge className="absolute top-3 right-3 bg-destructive text-destructive-foreground">
+                        Sale
+                      </Badge>
+                    )}
+                    {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
+                      <Badge className="absolute top-3 left-3 bg-warning text-warning-foreground">
+                        Low Stock
+                      </Badge>
+                    )}
+                    {product.stock_quantity === 0 && (
+                      <Badge className="absolute top-3 left-3 bg-muted text-muted-foreground">
+                        Out of Stock
+                      </Badge>
+                    )}
+                    <button className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-background">
+                      <Heart className="w-5 h-5 text-foreground" />
+                    </button>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold text-primary">
-                        ${product.price}
-                      </span>
-                      {product.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through">
-                          ${product.originalPrice}
+                  <div className="p-5">
+                    <p className="text-sm text-muted-foreground mb-1">
+                      {product.category}
+                    </p>
+                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {product.name}
+                    </h3>
+
+                    {product.description && (
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl font-bold text-primary">
+                          ${(product.sale_price ?? product.price).toFixed(2)}
                         </span>
-                      )}
+                        {product.sale_price && (
+                          <span className="text-sm text-muted-foreground line-through">
+                            ${product.price.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => handleAddToCart(product)}
+                        disabled={product.stock_quantity === 0}
+                      >
+                        {product.stock_quantity === 0 ? "Sold Out" : "Add to Cart"}
+                      </Button>
                     </div>
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => addToCart(product.id)}
-                    >
-                      Add to Cart
-                    </Button>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {filteredProducts.length === 0 && (
+          {!isLoading && !error && filteredProducts.length === 0 && (
             <div className="text-center py-20">
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 No products found
@@ -287,7 +249,7 @@ const Shop = () => {
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
             Are you a designer? List your overlays, emotes, and more on the Ligam marketplace.
           </p>
-          <Button variant="default" size="xl" className="glow">
+          <Button variant="default" size="lg" className="glow">
             Become a Seller
           </Button>
         </div>
