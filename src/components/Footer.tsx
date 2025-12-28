@@ -1,7 +1,14 @@
-import { Link } from "react-router-dom";
-import { Video, Twitter, Instagram, Youtube, Github, Linkedin } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Video, Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const scrollToTop = (path: string) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const footerLinks = {
     product: [
       { name: "Browse Streams", path: "/browse" },
@@ -73,12 +80,12 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  <button
+                    onClick={() => scrollToTop(link.path)}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {link.name}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -89,12 +96,12 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.creators.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  <button
+                    onClick={() => scrollToTop(link.path)}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {link.name}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -105,12 +112,12 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  <button
+                    onClick={() => scrollToTop(link.path)}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {link.name}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -121,12 +128,12 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                  <button
+                    onClick={() => scrollToTop(link.path)}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {link.name}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -139,15 +146,15 @@ const Footer = () => {
             © {new Date().getFullYear()} Ligam.tv. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <button onClick={() => scrollToTop("/terms")} className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Terms of Service
-            </Link>
-            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            </button>
+            <button onClick={() => scrollToTop("/privacy")} className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Privacy Policy
-            </Link>
-            <Link to="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            </button>
+            <button onClick={() => scrollToTop("/cookies")} className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Cookies
-            </Link>
+            </button>
           </div>
         </div>
       </div>
