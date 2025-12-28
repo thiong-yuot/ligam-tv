@@ -1,26 +1,40 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Video, Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
 
 const Footer = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const scrollToTop = (path: string) => {
-    navigate(path);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToSection = (sectionId: string) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      // Wait for navigation then scroll
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   const footerLinks = {
     product: [
-      { name: "Browse Streams", path: "/browse" },
-      { name: "Categories", path: "/categories" },
-      { name: "Go Live", path: "/go-live" },
-      { name: "Pricing", path: "/pricing" },
+      { name: "Browse Streams", sectionId: "streams" },
+      { name: "Categories", sectionId: "categories" },
+      { name: "Why Ligam", sectionId: "why-ligam" },
+      { name: "Get Featured", sectionId: "get-featured" },
     ],
     creators: [
-      { name: "Creator Dashboard", path: "/dashboard" },
-      { name: "Monetization", path: "/monetization" },
-      { name: "Analytics", path: "/analytics" },
-      { name: "Get Featured", path: "/premium" },
+      { name: "Start Streaming", sectionId: "hero" },
+      { name: "Monetization", sectionId: "why-ligam" },
+      { name: "Virtual Gifts", sectionId: "virtual-gifts" },
+      { name: "Get Featured", sectionId: "get-featured" },
     ],
     company: [
       { name: "About Us", path: "/about" },
@@ -74,14 +88,14 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Links */}
+          {/* Product Links - scroll to sections */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Product</h4>
             <ul className="space-y-3">
               {footerLinks.product.map((link) => (
                 <li key={link.name}>
                   <button
-                    onClick={() => scrollToTop(link.path)}
+                    onClick={() => scrollToSection(link.sectionId)}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {link.name}
@@ -91,13 +105,14 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Creators Links - scroll to sections */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Creators</h4>
             <ul className="space-y-3">
               {footerLinks.creators.map((link) => (
                 <li key={link.name}>
                   <button
-                    onClick={() => scrollToTop(link.path)}
+                    onClick={() => scrollToSection(link.sectionId)}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
                   >
                     {link.name}
@@ -107,33 +122,35 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Company Links - navigate to pages */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Company</h4>
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <button
-                    onClick={() => scrollToTop(link.path)}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
+                  <Link
+                    to={link.path}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     {link.name}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Support Links - navigate to pages */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <button
-                    onClick={() => scrollToTop(link.path)}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
+                  <Link
+                    to={link.path}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     {link.name}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -146,15 +163,15 @@ const Footer = () => {
             © {new Date().getFullYear()} Ligam.tv. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <button onClick={() => scrollToTop("/terms")} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Terms of Service
-            </button>
-            <button onClick={() => scrollToTop("/privacy")} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Privacy Policy
-            </button>
-            <button onClick={() => scrollToTop("/cookies")} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Cookies
-            </button>
+            </Link>
           </div>
         </div>
       </div>
