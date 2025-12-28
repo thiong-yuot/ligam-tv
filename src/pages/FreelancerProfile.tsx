@@ -16,7 +16,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { useFreelancerById, useFreelancerServices } from "@/hooks/useFreelancerProfile";
-import { toast } from "sonner";
+import ContactFreelancerDialog from "@/components/ContactFreelancerDialog";
 
 const FreelancerProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,10 +44,6 @@ const FreelancerProfile = () => {
       </div>
     );
   }
-
-  const handleContact = () => {
-    toast.info("Contact feature coming soon!");
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -88,10 +84,18 @@ const FreelancerProfile = () => {
                       </h1>
                       <p className="text-xl text-muted-foreground">{freelancer.title}</p>
                     </div>
-                    <Button onClick={handleContact} size="lg">
-                      <MessageCircle className="w-4 h-4 mr-2" />
-                      Contact
-                    </Button>
+                    {freelancer.user_id && (
+                      <ContactFreelancerDialog
+                        freelancerId={freelancer.id}
+                        freelancerUserId={freelancer.user_id}
+                        freelancerName={freelancer.name}
+                      >
+                        <Button size="lg">
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Contact
+                        </Button>
+                      </ContactFreelancerDialog>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-6 mb-4">
@@ -164,8 +168,7 @@ const FreelancerProfile = () => {
                 {services.map((service) => (
                   <Card
                     key={service.id}
-                    className="hover:border-primary/50 transition-colors cursor-pointer"
-                    onClick={handleContact}
+                    className="hover:border-primary/50 transition-colors"
                   >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg">{service.title}</CardTitle>
@@ -191,7 +194,15 @@ const FreelancerProfile = () => {
                           {service.delivery_days} days
                         </div>
                       </div>
-                      <Button className="w-full mt-4">Order Now</Button>
+                      {freelancer.user_id && (
+                        <ContactFreelancerDialog
+                          freelancerId={freelancer.id}
+                          freelancerUserId={freelancer.user_id}
+                          freelancerName={freelancer.name}
+                        >
+                          <Button className="w-full mt-4">Order Now</Button>
+                        </ContactFreelancerDialog>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
