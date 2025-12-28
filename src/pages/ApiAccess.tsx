@@ -67,6 +67,10 @@ interface WebhookDelivery {
   timestamp: string;
   duration: number;
   success: boolean;
+  retryCount: number;
+  maxRetries: number;
+  nextRetryAt?: string;
+  isRetrying?: boolean;
 }
 
 const WEBHOOK_EVENTS = [
@@ -81,7 +85,7 @@ const WEBHOOK_EVENTS = [
 ];
 
 // Mock webhook delivery logs
-const MOCK_DELIVERIES: WebhookDelivery[] = [
+const INITIAL_MOCK_DELIVERIES: WebhookDelivery[] = [
   {
     id: "del_1",
     webhookId: "1",
@@ -91,6 +95,8 @@ const MOCK_DELIVERIES: WebhookDelivery[] = [
     timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
     duration: 245,
     success: true,
+    retryCount: 0,
+    maxRetries: 5,
   },
   {
     id: "del_2",
@@ -101,6 +107,8 @@ const MOCK_DELIVERIES: WebhookDelivery[] = [
     timestamp: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
     duration: 189,
     success: true,
+    retryCount: 0,
+    maxRetries: 5,
   },
   {
     id: "del_3",
@@ -111,6 +119,9 @@ const MOCK_DELIVERIES: WebhookDelivery[] = [
     timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
     duration: 1502,
     success: false,
+    retryCount: 2,
+    maxRetries: 5,
+    nextRetryAt: new Date(Date.now() + 4 * 60 * 1000).toISOString(),
   },
   {
     id: "del_4",
@@ -121,6 +132,8 @@ const MOCK_DELIVERIES: WebhookDelivery[] = [
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     duration: 312,
     success: true,
+    retryCount: 0,
+    maxRetries: 5,
   },
   {
     id: "del_5",
@@ -131,6 +144,8 @@ const MOCK_DELIVERIES: WebhookDelivery[] = [
     timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
     duration: 30000,
     success: false,
+    retryCount: 5,
+    maxRetries: 5,
   },
   {
     id: "del_6",
@@ -141,6 +156,8 @@ const MOCK_DELIVERIES: WebhookDelivery[] = [
     timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
     duration: 156,
     success: true,
+    retryCount: 1,
+    maxRetries: 5,
   },
 ];
 
@@ -162,6 +179,7 @@ const ApiAccess = () => {
   const [newWebhookUrl, setNewWebhookUrl] = useState("");
   const [newWebhookEvents, setNewWebhookEvents] = useState<string[]>([]);
   const [editingWebhook, setEditingWebhook] = useState<WebhookEndpoint | null>(null);
+  const [deliveries, setDeliveries] = useState<WebhookDelivery[]>(INITIAL_MOCK_DELIVERIES);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hasAccess, isLoading: featureLoading } = useFeatureAccess();
@@ -180,6 +198,80 @@ const ApiAccess = () => {
     };
     checkAuth();
   }, [navigate]);
+
+  // Calculate exponential backoff delay
+  const getBackoffDelay = (retryCount: number): number => {
+    // Base delay of 1 second, doubles with each retry, max 5 minutes
+    const baseDelay = 1000;
+    const maxDelay = 5 * 60 * 1000;
+    return Math.min(baseDelay * Math.pow(2, retryCount), maxDelay);
+  };
+
+  const formatBackoffTime = (ms: number): string => {
+    if (ms < 60000) return `${Math.round(ms / 1000)}s`;
+    return `${Math.round(ms / 60000)}m`;
+  };
+
+  const handleRetryDelivery = async (deliveryId: string) => {
+    // Mark as retrying
+    setDeliveries(prev => 
+      prev.map(d => d.id === deliveryId ? { ...d, isRetrying: true } : d)
+    );
+
+    // Simulate retry with exponential backoff
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Simulate random success/failure (70% success rate)
+    const isSuccess = Math.random() > 0.3;
+
+    setDeliveries(prev =>
+      prev.map(d => {
+        if (d.id !== deliveryId) return d;
+        
+        if (isSuccess) {
+          return {
+            ...d,
+            success: true,
+            statusCode: 200,
+            duration: Math.floor(Math.random() * 300) + 100,
+            timestamp: new Date().toISOString(),
+            isRetrying: false,
+            nextRetryAt: undefined,
+          };
+        } else {
+          const newRetryCount = d.retryCount + 1;
+          const nextDelay = getBackoffDelay(newRetryCount);
+          return {
+            ...d,
+            retryCount: newRetryCount,
+            timestamp: new Date().toISOString(),
+            isRetrying: false,
+            nextRetryAt: newRetryCount < d.maxRetries 
+              ? new Date(Date.now() + nextDelay).toISOString() 
+              : undefined,
+          };
+        }
+      })
+    );
+
+    const delivery = deliveries.find(d => d.id === deliveryId);
+    if (isSuccess) {
+      toast({
+        title: "Retry Successful",
+        description: "Webhook delivered successfully",
+      });
+    } else {
+      const newRetryCount = (delivery?.retryCount || 0) + 1;
+      const maxRetries = delivery?.maxRetries || 5;
+      toast({
+        title: "Retry Failed",
+        description: newRetryCount >= maxRetries 
+          ? "Maximum retries reached" 
+          : `Will retry again in ${formatBackoffTime(getBackoffDelay(newRetryCount))}`,
+        variant: "destructive",
+      });
+    }
+  };
 
   const getTimeAgo = (timestamp: string): string => {
     const now = new Date();
@@ -680,10 +772,24 @@ if (signature !== expectedSig) {
               </Button>
             </div>
 
+            {/* Retry Info Banner */}
+            <div className="mb-4 p-3 rounded-lg bg-secondary/30 border border-border flex items-start gap-3">
+              <RefreshCw className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-foreground mb-1">Exponential Backoff Retries</p>
+                <p className="text-muted-foreground">
+                  Failed deliveries are automatically retried with exponential backoff: 1s → 2s → 4s → 8s → 16s (up to 5 min max). 
+                  You can also manually retry at any time.
+                </p>
+              </div>
+            </div>
+
             <div className="space-y-2">
-              {MOCK_DELIVERIES.map((delivery) => {
+              {deliveries.map((delivery) => {
                 const eventLabel = WEBHOOK_EVENTS.find(e => e.id === delivery.event)?.label || delivery.event;
                 const timeAgo = getTimeAgo(delivery.timestamp);
+                const canRetry = !delivery.success && !delivery.isRetrying;
+                const isMaxRetriesReached = delivery.retryCount >= delivery.maxRetries;
                 
                 return (
                   <div
@@ -696,7 +802,9 @@ if (signature !== expectedSig) {
                   >
                     {/* Status Icon */}
                     <div className={`flex-shrink-0 ${delivery.success ? "text-green-500" : "text-red-500"}`}>
-                      {delivery.success ? (
+                      {delivery.isRetrying ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : delivery.success ? (
                         <CheckCircle2 className="w-5 h-5" />
                       ) : (
                         <AlertTriangle className="w-5 h-5" />
@@ -719,6 +827,17 @@ if (signature !== expectedSig) {
                           {timeAgo}
                         </span>
                         <span>{delivery.duration}ms</span>
+                        {!delivery.success && (
+                          <span className="flex items-center gap-1">
+                            <RotateCcw className="w-3 h-3" />
+                            {delivery.retryCount}/{delivery.maxRetries} retries
+                          </span>
+                        )}
+                        {delivery.nextRetryAt && !delivery.success && !isMaxRetriesReached && (
+                          <span className="text-amber-500">
+                            Next: {formatBackoffTime(getBackoffDelay(delivery.retryCount))}
+                          </span>
+                        )}
                       </div>
                     </div>
 
@@ -735,12 +854,27 @@ if (signature !== expectedSig) {
                     >
                       {delivery.statusCode}
                     </Badge>
+
+                    {/* Retry Button */}
+                    {canRetry && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className={`gap-1.5 ${isMaxRetriesReached ? "text-muted-foreground" : "text-primary hover:text-primary"}`}
+                        onClick={() => handleRetryDelivery(delivery.id)}
+                        disabled={isMaxRetriesReached}
+                        title={isMaxRetriesReached ? "Maximum retries reached" : "Retry delivery"}
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                        <span className="hidden sm:inline">Retry</span>
+                      </Button>
+                    )}
                   </div>
                 );
               })}
             </div>
 
-            {MOCK_DELIVERIES.length === 0 && (
+            {deliveries.length === 0 && (
               <div className="text-center py-8 text-muted-foreground">
                 <Activity className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>No delivery attempts yet</p>
@@ -749,7 +883,7 @@ if (signature !== expectedSig) {
             )}
 
             <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-              <span>Showing last {MOCK_DELIVERIES.length} deliveries</span>
+              <span>Showing last {deliveries.length} deliveries</span>
               <button className="text-primary hover:underline">View all logs</button>
             </div>
           </Card>
