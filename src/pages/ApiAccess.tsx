@@ -7,9 +7,21 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { 
   Code, 
   Copy, 
@@ -23,13 +35,54 @@ import {
   Terminal,
   Zap,
   Shield,
-  Key
+  Key,
+  Webhook,
+  Plus,
+  Trash2,
+  Edit2,
+  CheckCircle2,
+  XCircle,
+  Radio
 } from "lucide-react";
+
+interface WebhookEndpoint {
+  id: string;
+  url: string;
+  events: string[];
+  active: boolean;
+  secret: string;
+  createdAt: string;
+}
+
+const WEBHOOK_EVENTS = [
+  { id: "stream.started", label: "Stream Started", description: "When a stream goes live" },
+  { id: "stream.ended", label: "Stream Ended", description: "When a stream ends" },
+  { id: "stream.viewer_milestone", label: "Viewer Milestone", description: "When viewer count hits milestones" },
+  { id: "gift.received", label: "Gift Received", description: "When a virtual gift is received" },
+  { id: "subscription.created", label: "New Subscription", description: "When someone subscribes" },
+  { id: "subscription.cancelled", label: "Subscription Cancelled", description: "When a subscription is cancelled" },
+  { id: "follower.new", label: "New Follower", description: "When someone follows you" },
+  { id: "chat.message", label: "Chat Message", description: "When a chat message is sent" },
+];
 
 const ApiAccess = () => {
   const [checking, setChecking] = useState(true);
   const [showApiKey, setShowApiKey] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [webhooks, setWebhooks] = useState<WebhookEndpoint[]>([
+    {
+      id: "1",
+      url: "https://myapp.com/webhooks/ligam",
+      events: ["stream.started", "stream.ended", "gift.received"],
+      active: true,
+      secret: "whsec_xxxxxxxxxxxxxxxxxxxxxxxx",
+      createdAt: "2024-01-15",
+    },
+  ]);
+  const [isAddingWebhook, setIsAddingWebhook] = useState(false);
+  const [newWebhookUrl, setNewWebhookUrl] = useState("");
+  const [newWebhookEvents, setNewWebhookEvents] = useState<string[]>([]);
+  const [editingWebhook, setEditingWebhook] = useState<WebhookEndpoint | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hasAccess, isLoading: featureLoading } = useFeatureAccess();
@@ -66,6 +119,67 @@ const ApiAccess = () => {
       title: "API Key Regenerated",
       description: "Your new API key is ready. Don't forget to update your applications.",
     });
+  };
+
+  const handleAddWebhook = () => {
+    if (!newWebhookUrl.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a webhook URL",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (newWebhookEvents.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one event",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newWebhook: WebhookEndpoint = {
+      id: Date.now().toString(),
+      url: newWebhookUrl,
+      events: newWebhookEvents,
+      active: true,
+      secret: `whsec_${Math.random().toString(36).substring(2, 26)}`,
+      createdAt: new Date().toISOString().split("T")[0],
+    };
+
+    setWebhooks([...webhooks, newWebhook]);
+    setNewWebhookUrl("");
+    setNewWebhookEvents([]);
+    setIsAddingWebhook(false);
+    toast({
+      title: "Webhook Created",
+      description: "Your webhook endpoint has been registered",
+    });
+  };
+
+  const handleDeleteWebhook = (id: string) => {
+    setWebhooks(webhooks.filter((w) => w.id !== id));
+    toast({
+      title: "Webhook Deleted",
+      description: "The webhook endpoint has been removed",
+    });
+  };
+
+  const handleToggleWebhook = (id: string) => {
+    setWebhooks(
+      webhooks.map((w) =>
+        w.id === id ? { ...w, active: !w.active } : w
+      )
+    );
+  };
+
+  const toggleEventSelection = (eventId: string) => {
+    setNewWebhookEvents((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((e) => e !== eventId)
+        : [...prev, eventId]
+    );
   };
 
   if (checking || featureLoading) {
@@ -286,6 +400,175 @@ print(data)`,
             </Tabs>
           </Card>
 
+          {/* Webhooks Section */}
+          <Card className="p-6 bg-card border-border mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Webhook className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">Webhooks</h2>
+                  <p className="text-sm text-muted-foreground">Receive real-time event notifications</p>
+                </div>
+              </div>
+              <Dialog open={isAddingWebhook} onOpenChange={setIsAddingWebhook}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-2">
+                    <Plus className="w-4 h-4" />
+                    Add Webhook
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-lg">
+                  <DialogHeader>
+                    <DialogTitle>Add Webhook Endpoint</DialogTitle>
+                    <DialogDescription>
+                      Configure a URL to receive event notifications from Ligam.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="webhook-url">Endpoint URL</Label>
+                      <Input
+                        id="webhook-url"
+                        placeholder="https://your-app.com/webhooks/ligam"
+                        value={newWebhookUrl}
+                        onChange={(e) => setNewWebhookUrl(e.target.value)}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Must be a valid HTTPS URL
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      <Label>Events to Listen</Label>
+                      <div className="grid gap-2 max-h-[200px] overflow-y-auto">
+                        {WEBHOOK_EVENTS.map((event) => (
+                          <div
+                            key={event.id}
+                            className="flex items-start gap-3 p-2 rounded-lg hover:bg-secondary/50"
+                          >
+                            <Checkbox
+                              id={event.id}
+                              checked={newWebhookEvents.includes(event.id)}
+                              onCheckedChange={() => toggleEventSelection(event.id)}
+                            />
+                            <div className="flex-1">
+                              <label
+                                htmlFor={event.id}
+                                className="text-sm font-medium cursor-pointer"
+                              >
+                                {event.label}
+                              </label>
+                              <p className="text-xs text-muted-foreground">
+                                {event.description}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsAddingWebhook(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={handleAddWebhook}>Create Webhook</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {webhooks.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Webhook className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>No webhooks configured</p>
+                <p className="text-sm">Add a webhook to receive real-time events</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {webhooks.map((webhook) => (
+                  <div
+                    key={webhook.id}
+                    className={`p-4 rounded-lg border ${
+                      webhook.active ? "border-border bg-secondary/30" : "border-border/50 bg-secondary/10 opacity-60"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          {webhook.active ? (
+                            <CheckCircle2 className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-muted-foreground" />
+                          )}
+                          <code className="text-sm font-mono text-foreground truncate">
+                            {webhook.url}
+                          </code>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 mb-3">
+                          {webhook.events.map((eventId) => {
+                            const event = WEBHOOK_EVENTS.find((e) => e.id === eventId);
+                            return (
+                              <Badge key={eventId} variant="secondary" className="text-xs">
+                                {event?.label || eventId}
+                              </Badge>
+                            );
+                          })}
+                        </div>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>Created: {webhook.createdAt}</span>
+                          <button
+                            onClick={() => copyToClipboard(webhook.secret, "Webhook secret")}
+                            className="flex items-center gap-1 hover:text-foreground transition-colors"
+                          >
+                            <Key className="w-3 h-3" />
+                            Copy Secret
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={webhook.active}
+                          onCheckedChange={() => handleToggleWebhook(webhook.id)}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => handleDeleteWebhook(webhook.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-6 p-4 rounded-lg bg-secondary/30 border border-dashed border-border">
+              <h4 className="font-medium text-foreground mb-2 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-primary" />
+                Webhook Security
+              </h4>
+              <p className="text-sm text-muted-foreground mb-3">
+                Verify webhook signatures to ensure requests are from Ligam. Include the secret in your verification logic.
+              </p>
+              <pre className="bg-background/50 rounded p-3 text-xs font-mono overflow-x-auto">
+{`// Verify webhook signature
+const signature = req.headers['x-ligam-signature'];
+const expectedSig = crypto
+  .createHmac('sha256', webhookSecret)
+  .update(JSON.stringify(req.body))
+  .digest('hex');
+
+if (signature !== expectedSig) {
+  throw new Error('Invalid signature');
+}`}
+              </pre>
+            </div>
+          </Card>
+
           {/* API Endpoints Documentation */}
           <Card className="p-6 bg-card border-border">
             <div className="flex items-center gap-3 mb-6">
@@ -307,7 +590,9 @@ print(data)`,
                 { method: "DELETE", path: "/streams/:id", description: "Delete a stream" },
                 { method: "GET", path: "/analytics", description: "Get analytics data" },
                 { method: "GET", path: "/viewers", description: "Get viewer statistics" },
+                { method: "GET", path: "/webhooks", description: "List webhook endpoints" },
                 { method: "POST", path: "/webhooks", description: "Register a webhook" },
+                { method: "DELETE", path: "/webhooks/:id", description: "Delete a webhook" },
               ].map((endpoint, index) => (
                 <div key={index} className="flex items-center gap-4 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors">
                   <Badge 
