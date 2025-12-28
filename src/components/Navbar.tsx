@@ -59,18 +59,23 @@ const Navbar = () => {
     );
   };
 
-  const navLinks = [
+  const mainLinks = [
     { name: "Home", path: "/" },
     { name: "Browse", path: "/browse" },
     { name: "Categories", path: "/categories" },
     { name: "Freelance", path: "/freelance" },
     { name: "Shop", path: "/shop" },
     { name: "Pricing", path: "/pricing" },
+  ];
+
+  const moreLinks = [
     { name: "About", path: "/about" },
     { name: "Careers", path: "/careers" },
     { name: "Help", path: "/help" },
     { name: "FAQ", path: "/faq" },
   ];
+
+  const allNavLinks = [...mainLinks, ...moreLinks];
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -102,8 +107,8 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
+          <div className="hidden xl:flex items-center gap-1">
+            {mainLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
@@ -116,9 +121,26 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+            
+            {/* More Dropdown for secondary links */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  More
+                  <Menu className="ml-1 h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-popover border border-border shadow-lg z-50">
+                {moreLinks.map((link) => (
+                  <DropdownMenuItem key={link.path} onClick={() => navigate(link.path)}>
+                    {link.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
-            {/* Right Section */}
+          {/* Right Section */}
           <div className="flex items-center gap-3">
             {!loading && (
               <>
@@ -204,8 +226,9 @@ const Navbar = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="xl:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
@@ -214,26 +237,51 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border animate-fadeIn">
+          <div className="xl:hidden py-4 border-t border-border bg-background animate-fadeIn max-h-[calc(100vh-4rem)] overflow-y-auto">
             <div className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`px-3 py-2 text-sm font-medium rounded-md ${
-                    isActive(link.path)
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                  }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {/* Main Navigation Links */}
+              <div className="pb-2 mb-2 border-b border-border">
+                <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Navigation</p>
+                {mainLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`px-3 py-2.5 text-sm font-medium rounded-md flex items-center ${
+                      isActive(link.path)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
 
+              {/* More Links */}
+              <div className="pb-2 mb-2 border-b border-border">
+                <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">More</p>
+                {moreLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`px-3 py-2.5 text-sm font-medium rounded-md flex items-center ${
+                      isActive(link.path)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* User Section */}
               {user ? (
-                <div className="pt-4 mt-2 border-t border-border space-y-2">
-                  <div className="flex items-center justify-between px-3 py-2">
+                <div className="space-y-2">
+                  <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Account</p>
+                  <div className="flex items-center justify-between px-3 py-2 bg-secondary/50 rounded-md">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={profile?.avatar_url || undefined} />
