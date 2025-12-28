@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,14 +14,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Package, Loader2 } from "lucide-react";
+  Package,
+  Loader2,
+  Upload,
+  X,
+  Image as ImageIcon,
+  Gamepad2,
+  Music,
+  Palette,
+  Video,
+  Sparkles,
+  Bell,
+  Layout,
+  Layers,
+  Volume2,
+  MoreHorizontal,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AddProductDialogProps {
   open: boolean;
@@ -29,20 +40,24 @@ interface AddProductDialogProps {
 }
 
 const categories = [
-  "Overlays",
-  "Emotes",
-  "Alerts",
-  "Panels",
-  "Banners",
-  "Transitions",
-  "Sounds",
-  "Other",
+  { id: "overlays", name: "Overlays", icon: Layers, color: "bg-purple-500/20 text-purple-400 border-purple-500/30" },
+  { id: "emotes", name: "Emotes", icon: Sparkles, color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
+  { id: "alerts", name: "Alerts", icon: Bell, color: "bg-red-500/20 text-red-400 border-red-500/30" },
+  { id: "panels", name: "Panels", icon: Layout, color: "bg-blue-500/20 text-blue-400 border-blue-500/30" },
+  { id: "transitions", name: "Transitions", icon: Video, color: "bg-green-500/20 text-green-400 border-green-500/30" },
+  { id: "sounds", name: "Sounds", icon: Volume2, color: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
+  { id: "music", name: "Music", icon: Music, color: "bg-pink-500/20 text-pink-400 border-pink-500/30" },
+  { id: "gaming", name: "Gaming", icon: Gamepad2, color: "bg-indigo-500/20 text-indigo-400 border-indigo-500/30" },
+  { id: "art", name: "Art & Design", icon: Palette, color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30" },
+  { id: "other", name: "Other", icon: MoreHorizontal, color: "bg-gray-500/20 text-gray-400 border-gray-500/30" },
 ];
 
 const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -50,6 +65,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const [salePrice, setSalePrice] = useState("");
   const [category, setCategory] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [stockQuantity, setStockQuantity] = useState("999");
 
   const resetForm = () => {
@@ -59,7 +75,65 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     setSalePrice("");
     setCategory("");
     setImageUrl("");
+    setImagePreview(null);
     setStockQuantity("999");
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be less than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      // Create a preview
+      const reader = new FileReader();
+      reader.onload = (e) => setImagePreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+
+      // Upload to Supabase Storage
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+
+      const { data, error } = await supabase.storage
+        .from("product-images")
+        .upload(fileName, file);
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from("product-images")
+        .getPublicUrl(data.path);
+
+      setImageUrl(urlData.publicUrl);
+      toast.success("Image uploaded successfully");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to upload image");
+      setImagePreview(null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const removeImage = () => {
+    setImageUrl("");
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,6 +149,11 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
       return;
     }
 
+    if (!category) {
+      toast.error("Please select a category");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -83,8 +162,8 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
         description: description.trim() || null,
         price: parseFloat(price),
         sale_price: salePrice ? parseFloat(salePrice) : null,
-        category: category || null,
-        image_url: imageUrl.trim() || null,
+        category: category,
+        image_url: imageUrl || null,
         stock_quantity: parseInt(stockQuantity) || 999,
         seller_id: user.id,
         is_active: true,
@@ -104,9 +183,11 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     }
   };
 
+  const selectedCategory = categories.find((c) => c.id === category);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-xl font-display flex items-center gap-2">
             <Package className="h-5 w-5 text-primary" />
@@ -117,111 +198,182 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Product Name *</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Neon Stream Overlay Pack"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Describe your product..."
-              rows={3}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+        <ScrollArea className="flex-1 pr-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Image Upload - Twitch Style */}
             <div className="space-y-2">
-              <Label htmlFor="price">Price ($) *</Label>
+              <Label>Product Image</Label>
+              <div
+                onClick={() => !isUploading && fileInputRef.current?.click()}
+                className={cn(
+                  "relative border-2 border-dashed rounded-xl transition-all cursor-pointer",
+                  "hover:border-primary hover:bg-primary/5",
+                  imagePreview ? "border-primary bg-primary/5" : "border-border",
+                  isUploading && "opacity-50 cursor-wait"
+                )}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                
+                {imagePreview ? (
+                  <div className="relative aspect-video">
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeImage();
+                      }}
+                      className="absolute top-2 right-2 p-1.5 rounded-full bg-background/80 hover:bg-background transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 px-4">
+                    {isUploading ? (
+                      <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                    ) : (
+                      <>
+                        <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+                          <Upload className="h-6 w-6 text-primary" />
+                        </div>
+                        <p className="text-sm font-medium mb-1">
+                          Click to upload or drag and drop
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          PNG, JPG, GIF up to 5MB
+                        </p>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Category Selection - Twitch Style Grid */}
+            <div className="space-y-2">
+              <Label>Category *</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                {categories.map((cat) => {
+                  const Icon = cat.icon;
+                  const isSelected = category === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setCategory(cat.id)}
+                      className={cn(
+                        "flex items-center gap-2 p-3 rounded-lg border transition-all text-left",
+                        isSelected
+                          ? cn(cat.color, "border-2")
+                          : "border-border hover:border-muted-foreground/50 hover:bg-muted/50"
+                      )}
+                    >
+                      <Icon className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-sm font-medium truncate">{cat.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {selectedCategory && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Selected: <span className="font-medium">{selectedCategory.name}</span>
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="name">Product Name *</Label>
               <Input
-                id="price"
-                type="number"
-                step="0.01"
-                min="0"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="9.99"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Neon Stream Overlay Pack"
                 required
               />
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="salePrice">Sale Price ($)</Label>
-              <Input
-                id="salePrice"
-                type="number"
-                step="0.01"
-                min="0"
-                value={salePrice}
-                onChange={(e) => setSalePrice(e.target.value)}
-                placeholder="Optional"
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe your product..."
+                rows={3}
               />
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="price">Price ($) *</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  placeholder="9.99"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="salePrice">Sale Price ($)</Label>
+                <Input
+                  id="salePrice"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={salePrice}
+                  onChange={(e) => setSalePrice(e.target.value)}
+                  placeholder="Optional"
+                />
+              </div>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="imageUrl">Image URL</Label>
-            <Input
-              id="imageUrl"
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="stockQuantity">Stock Quantity</Label>
+              <Input
+                id="stockQuantity"
+                type="number"
+                min="0"
+                value={stockQuantity}
+                onChange={(e) => setStockQuantity(e.target.value)}
+                placeholder="999"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="stockQuantity">Stock Quantity</Label>
-            <Input
-              id="stockQuantity"
-              type="number"
-              min="0"
-              value={stockQuantity}
-              onChange={(e) => setStockQuantity(e.target.value)}
-              placeholder="999"
-            />
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading} className="flex-1 glow">
-              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Add Product
-            </Button>
-          </div>
-        </form>
+            <div className="flex gap-3 pt-4 pb-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading || isUploading}
+                className="flex-1 glow"
+              >
+                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Add Product
+              </Button>
+            </div>
+          </form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
