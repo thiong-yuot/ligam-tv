@@ -1,4 +1,7 @@
+import { useState } from "react";
 import { useCart } from "@/hooks/useCart";
+import { useCheckout } from "@/hooks/useCheckout";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -8,7 +11,7 @@ import {
   SheetTrigger,
   SheetFooter,
 } from "@/components/ui/sheet";
-import { ShoppingCart, Plus, Minus, Trash2, X } from "lucide-react";
+import { ShoppingCart, Plus, Minus, Trash2, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
@@ -20,10 +23,31 @@ interface CartSheetProps {
 
 const CartSheet = ({ trigger }: CartSheetProps) => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { createCheckoutSession } = useCheckout();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const handleCheckout = () => {
-    toast.info("Checkout functionality coming soon!");
+  const handleCheckout = async () => {
+    if (!user) {
+      toast.info("Please sign in to checkout");
+      navigate("/login");
+      return;
+    }
+
+    setIsCheckingOut(true);
+    try {
+      const checkoutItems = items.map((item) => ({
+        name: item.product.name,
+        price: item.product.sale_price ?? item.product.price,
+        quantity: item.quantity,
+        image: item.product.image_url || undefined,
+      }));
+      
+      await createCheckoutSession(checkoutItems, "payment");
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   return (
@@ -156,8 +180,15 @@ const CartSheet = ({ trigger }: CartSheetProps) => {
                   <Trash2 className="w-4 h-4 mr-2" />
                   Clear
                 </Button>
-                <Button className="flex-1" onClick={handleCheckout}>
-                  Checkout
+                <Button className="flex-1" onClick={handleCheckout} disabled={isCheckingOut}>
+                  {isCheckingOut ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Checkout"
+                  )}
                 </Button>
               </div>
             </div>
