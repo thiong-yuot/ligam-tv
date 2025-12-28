@@ -109,7 +109,7 @@ const Browse = () => {
                       id={stream.id}
                       title={stream.title}
                       streamer={stream.user_id}
-                      category={stream.category?.name || "Uncategorized"}
+                      category={stream.categories?.name || "Uncategorized"}
                       thumbnail={stream.thumbnail_url || ""}
                       avatar=""
                       viewers={stream.viewer_count || 0}

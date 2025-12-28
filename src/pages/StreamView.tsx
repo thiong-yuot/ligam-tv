@@ -19,7 +19,7 @@ import {
   Loader2
 } from "lucide-react";
 import { useStream } from "@/hooks/useStreams";
-import { useChat } from "@/hooks/useChat";
+import { useChatMessages } from "@/hooks/useChat";
 
 const StreamView = () => {
   const { id } = useParams();
@@ -28,7 +28,7 @@ const StreamView = () => {
   const [isPlaying, setIsPlaying] = useState(true);
 
   const { data: stream, isLoading } = useStream(id || "");
-  const { messages } = useChat(id || "");
+  const messages = useChatMessages(id || "");
 
   const formatViewers = (count: number) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;

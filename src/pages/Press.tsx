@@ -11,10 +11,10 @@ import {
   FileText,
   Loader2
 } from "lucide-react";
-import { usePress } from "@/hooks/usePress";
+import { usePressReleases } from "@/hooks/usePress";
 
 const Press = () => {
-  const { data: pressReleases, isLoading } = usePress();
+  const { data: pressReleases, isLoading } = usePressReleases();
 
   const mediaKitItems = [
     { icon: Image, title: "Logo Pack", description: "High-resolution logos in various formats" },
@@ -98,7 +98,7 @@ const Press = () => {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <span className="text-sm text-primary mb-2 block">
-                        {new Date(release.published_at || release.created_at || '').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                        {new Date(release.published_at || '').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                       </span>
                       <h3 className="text-xl font-semibold text-foreground mb-2">
                         {release.title}
