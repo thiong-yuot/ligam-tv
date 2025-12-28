@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,12 +12,48 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import LigamLogo from "./LigamLogo";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, signOut, loading } = useAuth();
+  const { tier, subscribed } = useSubscription();
+
+  const getPlanBadge = () => {
+    if (!user) return null;
+    
+    if (tier === "pro") {
+      return (
+        <Link to="/pricing">
+          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 gap-1 hover:from-amber-600 hover:to-orange-600 cursor-pointer">
+            <Crown className="h-3 w-3" />
+            Pro
+          </Badge>
+        </Link>
+      );
+    }
+    
+    if (tier === "creator") {
+      return (
+        <Link to="/pricing">
+          <Badge className="bg-gradient-to-r from-primary to-purple-500 text-white border-0 gap-1 hover:from-primary/90 hover:to-purple-600 cursor-pointer">
+            <Sparkles className="h-3 w-3" />
+            Creator
+          </Badge>
+        </Link>
+      );
+    }
+    
+    return (
+      <Link to="/pricing">
+        <Badge variant="outline" className="gap-1 hover:bg-secondary cursor-pointer">
+          Free
+        </Badge>
+      </Link>
+    );
+  };
 
   const navLinks = [
     { name: "Home", path: "/" },
@@ -76,10 +113,11 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right Section */}
+            {/* Right Section */}
           <div className="flex items-center gap-3">
             {!loading && (
               <>
+                {user && getPlanBadge()}
                 {user ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -172,17 +210,20 @@ const Navbar = () => {
 
               {user ? (
                 <div className="pt-4 mt-2 border-t border-border space-y-2">
-                  <div className="flex items-center gap-2 px-3 py-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={profile?.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                        {getInitials()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                  <div className="flex items-center justify-between px-3 py-2">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={profile?.avatar_url || undefined} />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          {getInitials()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
+                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                      </div>
                     </div>
+                    {getPlanBadge()}
                   </div>
                   <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="outline" className="w-full justify-start">
