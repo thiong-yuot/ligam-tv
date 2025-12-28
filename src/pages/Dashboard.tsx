@@ -5,6 +5,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
 import { 
   LayoutDashboard, 
   Video, 
@@ -18,12 +20,74 @@ import {
   BarChart3,
   Play,
   Calendar,
-  Loader2
+  Loader2,
+  Crown,
+  Sparkles,
+  Check,
+  X,
+  Zap
 } from "lucide-react";
 
 const Dashboard = () => {
   const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
+  const { tier, subscribed, subscriptionEnd, isLoading: subLoading } = useSubscription();
+
+  const tierFeatures = {
+    free: {
+      name: "Free",
+      icon: Zap,
+      color: "text-muted-foreground",
+      bgColor: "bg-secondary",
+      features: [
+        { name: "720p Streaming", included: true },
+        { name: "Basic Chat", included: true },
+        { name: "Community Access", included: true },
+        { name: "HD Streaming", included: false },
+        { name: "Custom Emotes", included: false },
+        { name: "Priority Support", included: false },
+        { name: "No Ads for Viewers", included: false },
+        { name: "4K Streaming", included: false },
+        { name: "API Access", included: false },
+      ],
+    },
+    creator: {
+      name: "Creator",
+      icon: Sparkles,
+      color: "text-primary",
+      bgColor: "bg-gradient-to-r from-primary/20 to-purple-500/20",
+      features: [
+        { name: "720p Streaming", included: true },
+        { name: "Basic Chat", included: true },
+        { name: "Community Access", included: true },
+        { name: "HD Streaming", included: true },
+        { name: "Custom Emotes", included: true },
+        { name: "Priority Support", included: true },
+        { name: "No Ads for Viewers", included: true },
+        { name: "4K Streaming", included: false },
+        { name: "API Access", included: false },
+      ],
+    },
+    pro: {
+      name: "Pro",
+      icon: Crown,
+      color: "text-amber-500",
+      bgColor: "bg-gradient-to-r from-amber-500/20 to-orange-500/20",
+      features: [
+        { name: "720p Streaming", included: true },
+        { name: "Basic Chat", included: true },
+        { name: "Community Access", included: true },
+        { name: "HD Streaming", included: true },
+        { name: "Custom Emotes", included: true },
+        { name: "Priority Support", included: true },
+        { name: "No Ads for Viewers", included: true },
+        { name: "4K Streaming", included: true },
+        { name: "API Access", included: true },
+      ],
+    },
+  };
+
+  const currentTier = tierFeatures[tier || "free"];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -112,6 +176,47 @@ const Dashboard = () => {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
+            {/* Subscription Benefits */}
+            <Card className={`p-6 border-border ${currentTier.bgColor}`}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-foreground">Your Plan</h2>
+                <Badge className={`gap-1 ${tier === "pro" ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0" : tier === "creator" ? "bg-gradient-to-r from-primary to-purple-500 text-white border-0" : ""}`}>
+                  <currentTier.icon className="h-3 w-3" />
+                  {currentTier.name}
+                </Badge>
+              </div>
+              
+              {subscriptionEnd && (
+                <p className="text-sm text-muted-foreground mb-4">
+                  Renews on {new Date(subscriptionEnd).toLocaleDateString()}
+                </p>
+              )}
+
+              <div className="space-y-2 mb-6">
+                {currentTier.features.map((feature, index) => (
+                  <div key={index} className="flex items-center gap-2 text-sm">
+                    {feature.included ? (
+                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                    ) : (
+                      <X className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" />
+                    )}
+                    <span className={feature.included ? "text-foreground" : "text-muted-foreground/50"}>
+                      {feature.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {tier !== "pro" && (
+                <Link to="/pricing">
+                  <Button variant="default" className="w-full gap-2">
+                    <Crown className="h-4 w-4" />
+                    {tier === "creator" ? "Upgrade to Pro" : "Upgrade Plan"}
+                  </Button>
+                </Link>
+              )}
+            </Card>
+
             {/* Quick Actions */}
             <Card className="p-6 bg-card border-border">
               <h2 className="text-xl font-semibold text-foreground mb-6">Quick Actions</h2>
@@ -131,7 +236,7 @@ const Dashboard = () => {
             </Card>
 
             {/* Recent Streams */}
-            <Card className="p-6 bg-card border-border lg:col-span-2">
+            <Card className="p-6 bg-card border-border">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-foreground">Recent Streams</h2>
                 <Link to="/analytics" className="text-sm text-primary hover:underline">
@@ -144,31 +249,21 @@ const Dashboard = () => {
                     key={index} 
                     className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors"
                   >
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Video className="w-6 h-6 text-primary" />
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Video className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-foreground truncate">
+                      <h3 className="font-medium text-foreground text-sm truncate">
                         {stream.title}
                       </h3>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {stream.date}
-                        </span>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Eye className="w-3 h-3" />
                           {stream.views.toLocaleString()}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {stream.duration}
-                        </span>
+                        <span>{stream.date}</span>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm">
-                      View
-                    </Button>
                   </div>
                 ))}
               </div>
