@@ -386,6 +386,7 @@ export type Database = {
           position: string
           resume_url: string | null
           status: string | null
+          user_id: string | null
         }
         Insert: {
           cover_letter?: string | null
@@ -397,6 +398,7 @@ export type Database = {
           position: string
           resume_url?: string | null
           status?: string | null
+          user_id?: string | null
         }
         Update: {
           cover_letter?: string | null
@@ -408,6 +410,7 @@ export type Database = {
           position?: string
           resume_url?: string | null
           status?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
