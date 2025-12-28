@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles, Search, Bell, Video } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles, Search, Bell, Video, PanelLeftClose, PanelLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useSidebar } from "@/contexts/SidebarContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import LigamLogo from "./LigamLogo";
 
 const Navbar = () => {
@@ -22,7 +24,8 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, signOut, loading } = useAuth();
-  const { tier, subscribed } = useSubscription();
+  const { tier } = useSubscription();
+  const { isCollapsed, toggleSidebar } = useSidebar();
 
   const getPlanBadge = () => {
     if (!user) return null;
@@ -91,8 +94,29 @@ const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border h-14">
       <div className="h-full px-4 flex items-center justify-between gap-4">
-        {/* Left Section - Logo & Menu */}
-        <div className="flex items-center gap-4">
+        {/* Left Section - Menu Toggle & Logo */}
+        <div className="flex items-center gap-1">
+          {/* Desktop Sidebar Toggle */}
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden lg:flex"
+                onClick={toggleSidebar}
+              >
+                {isCollapsed ? (
+                  <PanelLeft className="w-5 h-5" />
+                ) : (
+                  <PanelLeftClose className="w-5 h-5" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            </TooltipContent>
+          </Tooltip>
+
           {/* Mobile Menu Button */}
           <Button
             variant="ghost"
@@ -104,7 +128,7 @@ const Navbar = () => {
           </Button>
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group ml-2">
             <LigamLogo className="w-8 h-8 transition-transform duration-300 group-hover:scale-110" />
             <span className="text-lg font-display font-bold text-foreground hidden sm:block">
               Ligam<span className="text-primary">.tv</span>
@@ -134,7 +158,7 @@ const Navbar = () => {
         </form>
 
         {/* Right Section */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {/* Mobile Search */}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Search className="w-5 h-5" />
