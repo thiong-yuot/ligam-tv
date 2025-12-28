@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles, MessageCircle } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles, MessageCircle, Bell } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useUnreadCount } from "@/hooks/useMessages";
+import { useUnreadNotificationsCount } from "@/hooks/useNotifications";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ const Navbar = () => {
   const { user, profile, signOut, loading } = useAuth();
   const { tier } = useSubscription();
   const { data: unreadCount = 0 } = useUnreadCount();
+  const { data: unreadNotifications = 0 } = useUnreadNotificationsCount();
 
   const getPlanBadge = () => {
     if (!user) return null;
@@ -163,6 +165,15 @@ const Navbar = () => {
                           </Badge>
                         )}
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/notifications")}>
+                        <Bell className="mr-2 h-4 w-4" />
+                        Notifications
+                        {unreadNotifications > 0 && (
+                          <Badge variant="default" className="ml-auto h-5 min-w-5 flex items-center justify-center text-xs">
+                            {unreadNotifications}
+                          </Badge>
+                        )}
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                         <LogOut className="mr-2 h-4 w-4" />
@@ -253,7 +264,18 @@ const Navbar = () => {
                       )}
                     </Button>
                   </Link>
-                  <Button 
+                  <Link to="/notifications" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Bell className="mr-2 h-4 w-4" />
+                      Notifications
+                      {unreadNotifications > 0 && (
+                        <Badge variant="default" className="ml-auto">
+                          {unreadNotifications}
+                        </Badge>
+                      )}
+                    </Button>
+                  </Link>
+                  <Button
                     variant="destructive" 
                     className="w-full"
                     onClick={() => {
