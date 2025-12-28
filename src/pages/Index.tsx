@@ -33,7 +33,7 @@ const Index = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
+      <section id="hero" className="pt-32 pb-20 px-4">
         <div className="container mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-bold text-foreground mb-6 leading-tight">
             Stream, Connect <span className="text-primary">&</span> Monetize
@@ -85,7 +85,7 @@ const Index = () => {
       </section>
 
       {/* Live Streams Section */}
-      <section className="py-12 px-4">
+      <section id="streams" className="py-12 px-4">
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
@@ -140,7 +140,7 @@ const Index = () => {
       </section>
 
       {/* Trending Now */}
-      <section className="py-12 px-4 bg-card/30">
+      <section id="categories" className="py-12 px-4 bg-card/30">
         <div className="container mx-auto">
           <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
             Trending Categories
