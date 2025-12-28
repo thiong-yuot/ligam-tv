@@ -8,38 +8,19 @@ import {
   Mail,
   ExternalLink,
   Image,
-  FileText
+  FileText,
+  Loader2
 } from "lucide-react";
+import { usePress } from "@/hooks/usePress";
 
 const Press = () => {
-  const pressReleases = [
-    {
-      date: "December 2024",
-      title: "Ligam.tv Reaches 1 Million Active Creators",
-      excerpt: "The platform celebrates a major milestone in its mission to democratize live streaming.",
-    },
-    {
-      date: "November 2024",
-      title: "Introducing Virtual Gifts 2.0",
-      excerpt: "New interactive gifting features enhance viewer-creator engagement.",
-    },
-    {
-      date: "October 2024",
-      title: "Ligam.tv Launches Global CDN Expansion",
-      excerpt: "New edge locations in Asia and Europe improve streaming quality worldwide.",
-    },
-    {
-      date: "September 2024",
-      title: "Creator Fund Reaches $10 Million",
-      excerpt: "Ligam commits to supporting emerging creators with expanded funding program.",
-    },
-  ];
+  const { data: pressReleases, isLoading } = usePress();
 
   const mediaKitItems = [
     { icon: Image, title: "Logo Pack", description: "High-resolution logos in various formats" },
     { icon: FileText, title: "Brand Guidelines", description: "Complete brand usage documentation" },
     { icon: Image, title: "Screenshots", description: "Platform screenshots and mockups" },
-    { icon: FileText, title: "Fact Sheet", description: "Company facts and statistics" },
+    { icon: FileText, title: "Fact Sheet", description: "Company facts and information" },
   ];
 
   return (
@@ -102,28 +83,43 @@ const Press = () => {
           <h2 className="text-3xl font-display font-bold text-foreground mb-8">
             Latest News
           </h2>
-          <div className="space-y-4">
-            {pressReleases.map((release, index) => (
-              <Card 
-                key={index} 
-                className="p-6 bg-card border-border hover:border-primary/50 transition-colors"
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div>
-                    <span className="text-sm text-primary mb-2 block">{release.date}</span>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      {release.title}
-                    </h3>
-                    <p className="text-muted-foreground">{release.excerpt}</p>
+          
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : pressReleases && pressReleases.length > 0 ? (
+            <div className="space-y-4">
+              {pressReleases.map((release) => (
+                <Card 
+                  key={release.id} 
+                  className="p-6 bg-card border-border hover:border-primary/50 transition-colors"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <span className="text-sm text-primary mb-2 block">
+                        {new Date(release.published_at || release.created_at || '').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                      </span>
+                      <h3 className="text-xl font-semibold text-foreground mb-2">
+                        {release.title}
+                      </h3>
+                      <p className="text-muted-foreground">{release.summary}</p>
+                    </div>
+                    <Button variant="ghost" className="gap-2 flex-shrink-0">
+                      Read More
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
                   </div>
-                  <Button variant="ghost" className="gap-2 flex-shrink-0">
-                    Read More
-                    <ExternalLink className="w-4 h-4" />
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Newspaper className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No press releases available yet</p>
+              <p className="text-sm text-muted-foreground">Check back soon for the latest news</p>
+            </div>
+          )}
         </div>
       </section>
 

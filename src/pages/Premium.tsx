@@ -58,8 +58,8 @@ const Premium = () => {
   ];
 
   const benefits = [
-    { icon: Eye, title: "10x More Visibility", description: "Get seen by thousands of potential viewers" },
-    { icon: TrendingUp, title: "Grow Faster", description: "Accelerate your follower growth exponentially" },
+    { icon: Eye, title: "More Visibility", description: "Get seen by more potential viewers" },
+    { icon: TrendingUp, title: "Grow Faster", description: "Accelerate your follower growth" },
     { icon: Award, title: "Stand Out", description: "Premium badge shows you're a serious creator" },
     { icon: Clock, title: "Instant Results", description: "Start appearing in featured spots immediately" },
   ];
@@ -80,7 +80,7 @@ const Premium = () => {
             Boost Your <span className="text-primary">Visibility</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Get featured placement on Ligam.tv and reach thousands of new viewers. 
+            Get featured placement on Ligam.tv and reach new viewers. 
             Stand out from the crowd and grow your audience faster.
           </p>
         </div>

@@ -20,37 +20,31 @@ const Technology = () => {
       icon: Zap,
       title: "Ultra-Low Latency",
       description: "Sub-second latency streaming powered by our global edge network. Real-time interaction with your audience.",
-      stats: "<1s latency",
     },
     {
       icon: Globe,
       title: "Global CDN",
-      description: "Content delivered from 200+ edge locations worldwide. Smooth streaming experience regardless of location.",
-      stats: "200+ locations",
+      description: "Content delivered from edge locations worldwide. Smooth streaming experience regardless of location.",
     },
     {
       icon: Shield,
       title: "Enterprise Security",
       description: "Bank-grade encryption for all streams. DDoS protection and secure authentication built-in.",
-      stats: "256-bit encryption",
     },
     {
       icon: Gauge,
       title: "Adaptive Bitrate",
       description: "Automatic quality adjustment based on viewer's connection. Crystal clear streams for everyone.",
-      stats: "Up to 4K 60fps",
     },
     {
       icon: Server,
-      title: "99.99% Uptime",
+      title: "High Availability",
       description: "Redundant infrastructure ensures your stream never goes down. Multi-region failover.",
-      stats: "99.99% SLA",
     },
     {
       icon: Cloud,
       title: "Cloud Recording",
       description: "Automatic VOD creation with instant playback. Store and manage all your content.",
-      stats: "Unlimited storage",
     },
   ];
 
@@ -80,7 +74,7 @@ const Technology = () => {
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
             Cutting-edge streaming infrastructure designed to deliver flawless 
-            live experiences to millions of viewers worldwide.
+            live experiences to viewers worldwide.
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 mb-16">
@@ -120,9 +114,6 @@ const Technology = () => {
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
                     <feature.icon className="w-7 h-7 text-primary" />
                   </div>
-                  <span className="text-primary font-mono text-sm font-medium bg-primary/10 px-3 py-1 rounded-full">
-                    {feature.stats}
-                  </span>
                 </div>
                 <h3 className="text-xl font-semibold text-foreground mb-3">
                   {feature.title}
@@ -181,7 +172,7 @@ const Technology = () => {
               <div className="relative z-10 text-center">
                 <Globe className="w-20 h-20 text-primary mx-auto mb-6" />
                 <h3 className="text-2xl font-bold text-foreground mb-2">
-                  200+ Edge Locations
+                  Global Edge Network
                 </h3>
                 <p className="text-muted-foreground">
                   Content delivered from the nearest point to your viewers
