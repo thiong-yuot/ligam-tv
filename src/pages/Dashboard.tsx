@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { 
   LayoutDashboard, 
   Video, 
@@ -25,13 +26,15 @@ import {
   Sparkles,
   Check,
   X,
-  Zap
+  Zap,
+  Code
 } from "lucide-react";
 
 const Dashboard = () => {
   const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
   const { tier, subscribed, subscriptionEnd, isLoading: subLoading } = useSubscription();
+  const { hasAccess } = useFeatureAccess();
 
   const tierFeatures = {
     free: {
@@ -125,7 +128,7 @@ const Dashboard = () => {
     { label: "Go Live", icon: Play, path: "/go-live", primary: true },
     { label: "Analytics", icon: BarChart3, path: "/analytics" },
     { label: "Monetization", icon: DollarSign, path: "/monetization" },
-    { label: "Settings", icon: Settings, path: "/settings" },
+    { label: "API Access", icon: Code, path: "/api-access", pro: true },
   ];
 
   return (
@@ -225,8 +228,14 @@ const Dashboard = () => {
                   <Link key={index} to={action.path}>
                     <Button 
                       variant={action.primary ? "default" : "outline"} 
-                      className="w-full h-auto py-4 flex-col gap-2"
+                      className={`w-full h-auto py-4 flex-col gap-2 relative ${action.pro && !hasAccess("api_access") ? "border-amber-500/50" : ""}`}
                     >
+                      {action.pro && (
+                        <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-[10px] px-1.5 py-0.5">
+                          <Crown className="w-2.5 h-2.5 mr-0.5" />
+                          Pro
+                        </Badge>
+                      )}
                       <action.icon className="w-5 h-5" />
                       <span className="text-sm">{action.label}</span>
                     </Button>
