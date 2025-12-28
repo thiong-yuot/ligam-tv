@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles, Search, Bell, Video, Sidebar } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles, Search, Video, Sidebar } from "lucide-react";
+import NotificationCenter from "./NotificationCenter";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useSidebar } from "@/contexts/SidebarContext";
@@ -174,17 +175,7 @@ const Navbar = () => {
                   </Link>
 
                   {/* Notifications */}
-                  <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl relative">
-                        <Bell className="w-4 h-4" />
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-primary rounded-full" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" className="bg-card border-border">
-                      Notifications
-                    </TooltipContent>
-                  </Tooltip>
+                  <NotificationCenter />
 
                   {/* Plan Badge */}
                   <div className="hidden sm:block">
