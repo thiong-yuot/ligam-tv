@@ -38,7 +38,7 @@ const VirtualGifts = () => {
               </li>
             </ul>
 
-            <Link to="/support-creators">
+            <Link to="/shop">
               <Button variant="default" size="lg">
                 Buy Gift Packs
               </Button>
