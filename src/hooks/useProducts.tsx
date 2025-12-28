@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 export interface Product {
   id: string;
@@ -11,6 +12,7 @@ export interface Product {
   category: string | null;
   stock_quantity: number;
   is_active: boolean;
+  seller_id?: string | null;
 }
 
 export const useProducts = (category?: string) => {
@@ -30,6 +32,46 @@ export const useProducts = (category?: string) => {
       const { data, error } = await query;
       if (error) throw error;
       return data as Product[];
+    },
+  });
+};
+
+export const useMyProducts = () => {
+  const { user } = useAuth();
+  
+  return useQuery({
+    queryKey: ["my-products", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("seller_id", user.id)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return data as Product[];
+    },
+    enabled: !!user,
+  });
+};
+
+export const useDeleteProduct = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (productId: string) => {
+      const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", productId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: ["my-products"] });
     },
   });
 };

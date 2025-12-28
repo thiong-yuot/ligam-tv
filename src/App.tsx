@@ -38,6 +38,7 @@ import Admin from "./pages/Admin";
 import ApiAccess from "./pages/ApiAccess";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
+import SellerDashboard from "./pages/SellerDashboard";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -83,6 +84,7 @@ const App = () => (
           <Route path="/api-access" element={<ApiAccess />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/seller/dashboard" element={<SellerDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
           </BrowserRouter>

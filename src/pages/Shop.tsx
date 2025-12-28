@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,13 +8,18 @@ import { Badge } from "@/components/ui/badge";
 import { Search, ShoppingCart, Star, Filter, Heart, Loader2 } from "lucide-react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/hooks/useAuth";
 import CartSheet from "@/components/CartSheet";
+import BecomeSellerDialog from "@/components/BecomeSellerDialog";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Shop = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
   
   const { data: products, isLoading, error } = useProducts();
   const { addToCart, totalItems } = useCart();
@@ -249,11 +255,24 @@ const Shop = () => {
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
             Are you a designer? List your overlays, emotes, and more on the Ligam marketplace.
           </p>
-          <Button variant="default" size="lg" className="glow">
+          <Button
+            variant="default"
+            size="lg"
+            className="glow"
+            onClick={() => {
+              if (user) {
+                navigate("/seller/dashboard");
+              } else {
+                setBecomeSellerOpen(true);
+              }
+            }}
+          >
             Become a Seller
           </Button>
         </div>
       </section>
+
+      <BecomeSellerDialog open={becomeSellerOpen} onOpenChange={setBecomeSellerOpen} />
 
       <Footer />
     </div>
