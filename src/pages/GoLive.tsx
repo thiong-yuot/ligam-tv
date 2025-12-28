@@ -8,7 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { FeatureGate, FeatureLockedOverlay } from "@/components/FeatureGate";
 import { 
   Video, 
   Copy, 
@@ -19,7 +23,12 @@ import {
   Radio,
   MonitorPlay,
   Mic,
-  Camera
+  Camera,
+  Lock,
+  Crown,
+  Sparkles,
+  Tv,
+  Palette
 } from "lucide-react";
 
 const GoLive = () => {
@@ -28,8 +37,11 @@ const GoLive = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Gaming");
+  const [streamQuality, setStreamQuality] = useState<"720p" | "1080p" | "4k">("720p");
+  const [enableOverlay, setEnableOverlay] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { hasAccess, tier } = useFeatureAccess();
 
   // Mock stream key
   const streamKey = "live_sk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx";
@@ -133,6 +145,119 @@ const GoLive = () => {
                   </div>
                 </div>
               </div>
+            </Card>
+
+            {/* Stream Quality - Feature Gated */}
+            <Card className="p-6 bg-card border-border lg:col-span-2">
+              <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+                <Tv className="w-5 h-5 text-primary" />
+                Stream Quality
+              </h2>
+
+              <div className="grid sm:grid-cols-3 gap-4">
+                {/* 720p - Always available */}
+                <button
+                  onClick={() => setStreamQuality("720p")}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    streamQuality === "720p" 
+                      ? "border-primary bg-primary/10" 
+                      : "border-border hover:border-primary/50"
+                  }`}
+                >
+                  <p className="font-semibold text-foreground">720p HD</p>
+                  <p className="text-sm text-muted-foreground">Standard quality</p>
+                  <Badge variant="secondary" className="mt-2">Free</Badge>
+                </button>
+
+                {/* 1080p - Creator tier */}
+                <button
+                  onClick={() => hasAccess("hd_streaming") && setStreamQuality("1080p")}
+                  className={`p-4 rounded-xl border-2 transition-all relative ${
+                    streamQuality === "1080p" 
+                      ? "border-primary bg-primary/10" 
+                      : hasAccess("hd_streaming")
+                        ? "border-border hover:border-primary/50"
+                        : "border-border opacity-60 cursor-not-allowed"
+                  }`}
+                >
+                  {!hasAccess("hd_streaming") && (
+                    <Lock className="absolute top-2 right-2 w-4 h-4 text-muted-foreground" />
+                  )}
+                  <p className="font-semibold text-foreground">1080p Full HD</p>
+                  <p className="text-sm text-muted-foreground">High quality</p>
+                  <Badge className="mt-2 bg-gradient-to-r from-primary to-purple-500 text-white border-0">
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    Creator
+                  </Badge>
+                </button>
+
+                {/* 4K - Pro tier */}
+                <button
+                  onClick={() => hasAccess("4k_streaming") && setStreamQuality("4k")}
+                  className={`p-4 rounded-xl border-2 transition-all relative ${
+                    streamQuality === "4k" 
+                      ? "border-amber-500 bg-amber-500/10" 
+                      : hasAccess("4k_streaming")
+                        ? "border-border hover:border-amber-500/50"
+                        : "border-border opacity-60 cursor-not-allowed"
+                  }`}
+                >
+                  {!hasAccess("4k_streaming") && (
+                    <Lock className="absolute top-2 right-2 w-4 h-4 text-muted-foreground" />
+                  )}
+                  <p className="font-semibold text-foreground">4K Ultra HD</p>
+                  <p className="text-sm text-muted-foreground">Maximum quality</p>
+                  <Badge className="mt-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Pro
+                  </Badge>
+                </button>
+              </div>
+
+              {!hasAccess("hd_streaming") && (
+                <FeatureGate feature="hd_streaming" showUpgradePrompt>
+                  <></>
+                </FeatureGate>
+              )}
+            </Card>
+
+            {/* Custom Overlays - Pro Feature */}
+            <Card className="p-6 bg-card border-border lg:col-span-2">
+              <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
+                <Palette className="w-5 h-5 text-primary" />
+                Custom Overlays
+                {!hasAccess("custom_overlays") && (
+                  <Badge className="ml-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Pro
+                  </Badge>
+                )}
+              </h2>
+
+              <FeatureLockedOverlay feature="custom_overlays">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-foreground">Enable Custom Overlay</p>
+                      <p className="text-sm text-muted-foreground">Add your own branding to streams</p>
+                    </div>
+                    <Switch 
+                      checked={enableOverlay} 
+                      onCheckedChange={setEnableOverlay}
+                    />
+                  </div>
+                  {enableOverlay && (
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+                      <Button variant="outline" className="h-20">
+                        Upload Logo
+                      </Button>
+                      <Button variant="outline" className="h-20">
+                        Upload Frame
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </FeatureLockedOverlay>
             </Card>
 
             {/* Stream Key */}
