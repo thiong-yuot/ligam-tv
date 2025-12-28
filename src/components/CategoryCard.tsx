@@ -17,7 +17,7 @@ const CategoryCard = ({ id, name, image, viewers, tags = [] }: CategoryCardProps
   };
 
   return (
-    <Link to={`/category/${id}`} className="group block">
+    <Link to={`/browse?category=${encodeURIComponent(name)}`} className="group block">
       <div className="relative rounded-xl overflow-hidden bg-card card-shadow hover-lift">
         {/* Image */}
         <div className="relative aspect-[3/4] overflow-hidden">

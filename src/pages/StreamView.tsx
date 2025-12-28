@@ -114,7 +114,7 @@ const StreamView = () => {
           <div className="p-4 md:p-6 border-b border-border">
             <div className="flex flex-col md:flex-row gap-4 md:items-start justify-between">
               <div className="flex gap-4">
-                <Link to={`/channel/${stream.streamer.toLowerCase()}`}>
+                <Link to={`/browse?streamer=${encodeURIComponent(stream.streamer)}`}>
                   <img
                     src={stream.avatar}
                     alt={stream.streamer}
@@ -126,7 +126,7 @@ const StreamView = () => {
                     {stream.title}
                   </h1>
                   <Link 
-                    to={`/channel/${stream.streamer.toLowerCase()}`}
+                    to={`/browse?streamer=${encodeURIComponent(stream.streamer)}`}
                     className="text-primary font-semibold hover:underline"
                   >
                     {stream.streamer}
