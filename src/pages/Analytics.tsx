@@ -14,14 +14,24 @@ import {
   Users,
   MessageSquare,
   Heart,
-  Calendar,
-  Loader2
+  Loader2,
+  Video
 } from "lucide-react";
+import { useUserStream } from "@/hooks/useStreams";
+import { useEarningsSummary } from "@/hooks/useEarnings";
+import { useAuth } from "@/hooks/useAuth";
 
 const Analytics = () => {
   const [checking, setChecking] = useState(true);
   const [timeRange, setTimeRange] = useState("7d");
   const navigate = useNavigate();
+  const { user, profile } = useAuth();
+  
+  const { data: stream, isLoading: streamLoading } = useUserStream(user?.id || "");
+  const { totalThisMonth, giftEarnings, subEarnings } = useEarningsSummary();
+  
+  // Get follower count from profile
+  const followerCount = profile?.follower_count || 0;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -34,7 +44,7 @@ const Analytics = () => {
     checkAuth();
   }, [navigate]);
 
-  if (checking) {
+  if (checking || streamLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -43,25 +53,26 @@ const Analytics = () => {
   }
 
   const stats = [
-    { label: "Total Views", value: "12,450", change: 12, icon: Eye },
-    { label: "Avg Watch Time", value: "24m", change: -5, icon: Clock },
-    { label: "New Followers", value: "+234", change: 18, icon: Users },
-    { label: "Chat Messages", value: "3,892", change: 8, icon: MessageSquare },
-  ];
-
-  const topStreams = [
-    { title: "Epic Gaming Night", views: 4250, duration: "4h 30m", engagement: "85%" },
-    { title: "Music Production Live", views: 2890, duration: "3h 15m", engagement: "78%" },
-    { title: "Q&A Session", views: 2100, duration: "2h 00m", engagement: "92%" },
-    { title: "Art Stream", views: 1680, duration: "2h 45m", engagement: "71%" },
-    { title: "Just Chatting", views: 1530, duration: "1h 30m", engagement: "88%" },
-  ];
-
-  const demographics = [
-    { label: "18-24", percentage: 35 },
-    { label: "25-34", percentage: 42 },
-    { label: "35-44", percentage: 15 },
-    { label: "45+", percentage: 8 },
+    { 
+      label: "Total Views", 
+      value: stream?.total_views?.toLocaleString() || "0", 
+      icon: Eye 
+    },
+    { 
+      label: "Peak Viewers", 
+      value: stream?.peak_viewers?.toLocaleString() || "0", 
+      icon: Users 
+    },
+    { 
+      label: "Followers", 
+      value: followerCount.toString(), 
+      icon: Heart 
+    },
+    { 
+      label: "Earnings (This Month)", 
+      value: `$${totalThisMonth.toFixed(2)}`, 
+      icon: BarChart3 
+    },
   ];
 
   return (
@@ -103,10 +114,6 @@ const Analytics = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <stat.icon className="w-6 h-6 text-primary" />
                   </div>
-                  <div className={`flex items-center gap-1 text-sm font-medium ${stat.change >= 0 ? 'text-primary' : 'text-destructive'}`}>
-                    {stat.change >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                    {Math.abs(stat.change)}%
-                  </div>
                 </div>
                 <div className="text-2xl font-bold text-foreground mb-1">
                   {stat.value}
@@ -122,77 +129,78 @@ const Analytics = () => {
             {/* Chart Placeholder */}
             <Card className="p-6 bg-card border-border lg:col-span-2">
               <h2 className="text-xl font-semibold text-foreground mb-6">Views Over Time</h2>
-              <div className="aspect-[2/1] rounded-xl bg-secondary/50 flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <BarChart3 className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                  <p>Chart visualization</p>
+              {stream ? (
+                <div className="aspect-[2/1] rounded-xl bg-secondary/50 flex items-center justify-center">
+                  <div className="text-center text-muted-foreground">
+                    <BarChart3 className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                    <p>Analytics data will populate as you stream</p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="aspect-[2/1] rounded-xl bg-secondary/50 flex items-center justify-center">
+                  <div className="text-center text-muted-foreground">
+                    <Video className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                    <p>Start streaming to see your analytics</p>
+                  </div>
+                </div>
+              )}
             </Card>
 
-            {/* Demographics */}
+            {/* Earnings Breakdown */}
             <Card className="p-6 bg-card border-border">
-              <h2 className="text-xl font-semibold text-foreground mb-6">Audience Age</h2>
+              <h2 className="text-xl font-semibold text-foreground mb-6">Earnings Breakdown</h2>
               <div className="space-y-4">
-                {demographics.map((demo, index) => (
-                  <div key={index}>
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-foreground">{demo.label}</span>
-                      <span className="text-muted-foreground">{demo.percentage}%</span>
-                    </div>
-                    <div className="h-2 bg-secondary rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary rounded-full"
-                        style={{ width: `${demo.percentage}%` }}
-                      />
-                    </div>
+                {[
+                  { label: "Gifts", amount: giftEarnings },
+                  { label: "Subscriptions", amount: subEarnings },
+                  { label: "Total", amount: totalThisMonth },
+                ].map((item, index) => (
+                  <div key={index} className="flex justify-between items-center">
+                    <span className="text-muted-foreground">{item.label}</span>
+                    <span className={`font-semibold ${index === 2 ? 'text-primary' : 'text-foreground'}`}>
+                      ${item.amount.toFixed(2)}
+                    </span>
                   </div>
                 ))}
               </div>
             </Card>
           </div>
 
-          {/* Top Streams */}
-          <Card className="p-6 bg-card border-border mt-8">
-            <h2 className="text-xl font-semibold text-foreground mb-6">Top Performing Streams</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Stream</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Views</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Duration</th>
-                    <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Engagement</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {topStreams.map((stream, index) => (
-                    <tr key={index} className="border-b border-border/50 hover:bg-secondary/30">
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Heart className="w-5 h-5 text-primary" />
-                          </div>
-                          <span className="font-medium text-foreground">{stream.title}</span>
-                        </div>
-                      </td>
-                      <td className="text-right py-4 px-4 text-foreground">
-                        {stream.views.toLocaleString()}
-                      </td>
-                      <td className="text-right py-4 px-4 text-muted-foreground">
-                        {stream.duration}
-                      </td>
-                      <td className="text-right py-4 px-4">
-                        <span className="text-primary bg-primary/10 px-2 py-1 rounded-full text-sm">
-                          {stream.engagement}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
+          {/* Stream Info */}
+          {stream && (
+            <Card className="p-6 bg-card border-border mt-8">
+              <h2 className="text-xl font-semibold text-foreground mb-6">Current Stream</h2>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Title</p>
+                  <p className="font-medium text-foreground">{stream.title}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Status</p>
+                  <p className={`font-medium ${stream.is_live ? 'text-green-500' : 'text-muted-foreground'}`}>
+                    {stream.is_live ? 'Live' : 'Offline'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Current Viewers</p>
+                  <p className="font-medium text-foreground">{stream.viewer_count || 0}</p>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {!stream && (
+            <Card className="p-8 bg-card border-border mt-8 text-center">
+              <Video className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Stream Yet</h3>
+              <p className="text-muted-foreground mb-6">
+                Create your first stream to start tracking your analytics
+              </p>
+              <Button onClick={() => navigate("/go-live")}>
+                Go Live
+              </Button>
+            </Card>
+          )}
         </div>
       </section>
 

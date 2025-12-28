@@ -4,11 +4,14 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Star, Clock, DollarSign, Briefcase, Filter } from "lucide-react";
+import { Search, Star, Clock, DollarSign, Briefcase, Filter, Loader2 } from "lucide-react";
+import { useFreelancers } from "@/hooks/useFreelancers";
 
 const Freelance = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  
+  const { data: freelancers = [], isLoading } = useFreelancers();
 
   const categories = [
     "All",
@@ -21,83 +24,10 @@ const Freelance = () => {
     "Consulting",
   ];
 
-  const freelancers = [
-    {
-      id: 1,
-      name: "Alex Rivera",
-      title: "Professional Video Editor",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop",
-      rating: 4.9,
-      reviews: 127,
-      hourlyRate: 45,
-      category: "Video Editing",
-      skills: ["Premiere Pro", "After Effects", "DaVinci Resolve"],
-      available: true,
-    },
-    {
-      id: 2,
-      name: "Sarah Kim",
-      title: "Motion Graphics Designer",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop",
-      rating: 5.0,
-      reviews: 89,
-      hourlyRate: 60,
-      category: "Animation",
-      skills: ["After Effects", "Cinema 4D", "Blender"],
-      available: true,
-    },
-    {
-      id: 3,
-      name: "Marcus Chen",
-      title: "Music Producer & Sound Designer",
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop",
-      rating: 4.8,
-      reviews: 156,
-      hourlyRate: 55,
-      category: "Music Production",
-      skills: ["FL Studio", "Ableton", "Logic Pro"],
-      available: false,
-    },
-    {
-      id: 4,
-      name: "Emily Watson",
-      title: "Stream Overlay Designer",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop",
-      rating: 4.9,
-      reviews: 203,
-      hourlyRate: 35,
-      category: "Graphic Design",
-      skills: ["Photoshop", "Illustrator", "Figma"],
-      available: true,
-    },
-    {
-      id: 5,
-      name: "David Park",
-      title: "3D Artist & Animator",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop",
-      rating: 4.7,
-      reviews: 78,
-      hourlyRate: 70,
-      category: "3D Modeling",
-      skills: ["Blender", "Maya", "ZBrush"],
-      available: true,
-    },
-    {
-      id: 6,
-      name: "Lisa Johnson",
-      title: "Professional Voice Artist",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop",
-      rating: 4.9,
-      reviews: 142,
-      hourlyRate: 40,
-      category: "Voice Over",
-      skills: ["Narration", "Character Voices", "Commercial"],
-      available: true,
-    },
-  ];
-
   const filteredFreelancers = freelancers.filter((f) => {
-    const matchesCategory = activeCategory === "All" || f.category === activeCategory;
+    const matchesCategory = activeCategory === "All" || (f.skills && f.skills.some(skill => 
+      skill.toLowerCase().includes(activeCategory.toLowerCase())
+    ));
     const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       f.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -167,72 +97,84 @@ const Freelance = () => {
             </span>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredFreelancers.map((freelancer) => (
-              <div
-                key={freelancer.id}
-                className="p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 group"
-              >
-                <div className="flex items-start gap-4 mb-4">
-                  <div className="relative">
-                    <img
-                      src={freelancer.avatar}
-                      alt={freelancer.name}
-                      className="w-16 h-16 rounded-xl object-cover"
-                    />
-                    {freelancer.available && (
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-card" />
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : filteredFreelancers.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredFreelancers.map((freelancer) => (
+                <div
+                  key={freelancer.id}
+                  className="p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300 group"
+                >
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="relative">
+                      <img
+                        src={freelancer.avatar_url || "/placeholder.svg"}
+                        alt={freelancer.name}
+                        className="w-16 h-16 rounded-xl object-cover"
+                      />
+                      {freelancer.is_available && (
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-card" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {freelancer.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {freelancer.title}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 mb-4 text-sm">
+                    <div className="flex items-center gap-1 text-primary">
+                      <Star className="w-4 h-4 fill-current" />
+                      <span className="font-medium">{freelancer.rating?.toFixed(1) || "N/A"}</span>
+                      <span className="text-muted-foreground">({freelancer.total_jobs || 0})</span>
+                    </div>
+                    {freelancer.hourly_rate && (
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <DollarSign className="w-4 h-4" />
+                        <span>${freelancer.hourly_rate}/hr</span>
+                      </div>
                     )}
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {freelancer.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {freelancer.title}
-                    </p>
+
+                  {freelancer.skills && freelancer.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {freelancer.skills.slice(0, 3).map((skill) => (
+                        <Badge key={skill} variant="secondary" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    <Button variant="default" className="flex-1">
+                      Contact
+                    </Button>
+                    <Button variant="outline" className="flex-1">
+                      View Profile
+                    </Button>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-4 mb-4 text-sm">
-                  <div className="flex items-center gap-1 text-primary">
-                    <Star className="w-4 h-4 fill-current" />
-                    <span className="font-medium">{freelancer.rating}</span>
-                    <span className="text-muted-foreground">({freelancer.reviews})</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <DollarSign className="w-4 h-4" />
-                    <span>${freelancer.hourlyRate}/hr</span>
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {freelancer.skills.map((skill) => (
-                    <Badge key={skill} variant="secondary" className="text-xs">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button variant="default" className="flex-1">
-                    Contact
-                  </Button>
-                  <Button variant="outline" className="flex-1">
-                    View Profile
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {filteredFreelancers.length === 0 && (
+              ))}
+            </div>
+          ) : (
             <div className="text-center py-20">
+              <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
               <h3 className="text-xl font-semibold text-foreground mb-2">
                 No freelancers found
               </h3>
               <p className="text-muted-foreground">
-                Try adjusting your search or category filter
+                {freelancers.length === 0 
+                  ? "Be the first to join our freelance marketplace!"
+                  : "Try adjusting your search or category filter"
+                }
               </p>
             </div>
           )}

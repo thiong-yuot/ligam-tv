@@ -9,86 +9,24 @@ import VirtualGifts from "@/components/VirtualGifts";
 import WhyChooseLigam from "@/components/WhyChooseLigam";
 import GetFeatured from "@/components/GetFeatured";
 import { Button } from "@/components/ui/button";
-import { Shield, ArrowRight } from "lucide-react";
-
-import streamThumb1 from "@/assets/stream-thumb-1.jpg";
-import streamThumb2 from "@/assets/stream-thumb-2.jpg";
-import streamThumb3 from "@/assets/stream-thumb-3.jpg";
+import { Shield, ArrowRight, Loader2 } from "lucide-react";
+import { useStreams } from "@/hooks/useStreams";
+import { useCategories } from "@/hooks/useCategories";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState("All");
+  
+  const { data: streams = [], isLoading: streamsLoading } = useStreams(undefined, true);
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories();
 
-  const categories = [
-    "All", "Gaming", "Music", "Creative", "Talk Shows", 
-    "Coding", "Fitness", "Lifestyle", "Entertainment", "Education"
-  ];
-
-  const liveStreams = [
-    {
-      id: "1",
-      title: "Epic Gaming Marathon - Day 3!",
-      streamer: "NightOwl",
-      category: "Gaming",
-      thumbnail: streamThumb1,
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
-      viewers: 15420,
-      isLive: true,
-    },
-    {
-      id: "2",
-      title: "Live DJ Set - House Music Vibes",
-      streamer: "BeatMaster",
-      category: "Music",
-      thumbnail: streamThumb2,
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-      viewers: 8930,
-      isLive: true,
-    },
-    {
-      id: "3",
-      title: "Digital Art Creation - Fantasy Theme",
-      streamer: "ArtistPro",
-      category: "Creative",
-      thumbnail: streamThumb3,
-      avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop",
-      viewers: 4250,
-      isLive: true,
-    },
-    {
-      id: "4",
-      title: "Competitive Ranked Gameplay",
-      streamer: "ProGamer99",
-      category: "Gaming",
-      thumbnail: streamThumb1,
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-      viewers: 12800,
-      isLive: true,
-    },
-    {
-      id: "5",
-      title: "Late Night Talk Show",
-      streamer: "StreamQueen",
-      category: "Talk Shows",
-      thumbnail: streamThumb2,
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-      viewers: 6540,
-      isLive: true,
-    },
-    {
-      id: "6",
-      title: "Music Production Session",
-      streamer: "SoundWave",
-      category: "Music",
-      thumbnail: streamThumb3,
-      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
-      viewers: 3200,
-      isLive: true,
-    },
-  ];
+  const categoryNames = ["All", ...categories.map(c => c.name)];
 
   const filteredStreams = activeCategory === "All" 
-    ? liveStreams 
-    : liveStreams.filter(s => s.category === activeCategory);
+    ? streams 
+    : streams.filter(s => s.categories?.name === activeCategory);
+
+  const liveStreamCount = streams.filter(s => s.is_live).length;
+  const categoryCount = categories.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -101,7 +39,7 @@ const Index = () => {
             Stream, Connect <span className="text-primary">&</span> Monetize
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Join thousands of creators building their communities on Ligam. Stream live, engage with viewers, and earn from your passion.
+            Join creators building their communities on Ligam. Stream live, engage with viewers, and earn from your passion.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
@@ -128,7 +66,10 @@ const Index = () => {
       {/* Stats Bar */}
       <section className="py-12 px-4 border-y border-border bg-card/30">
         <div className="container mx-auto">
-          <StatsBar liveStreams={0} categories={0} creators="10K+" />
+          <StatsBar 
+            liveStreams={liveStreamCount} 
+            categories={categoryCount} 
+          />
         </div>
       </section>
 
@@ -136,7 +77,7 @@ const Index = () => {
       <section className="py-8 px-4">
         <div className="container mx-auto">
           <CategoryFilter 
-            categories={categories}
+            categories={categoryNames}
             activeCategory={activeCategory}
             onCategoryChange={setActiveCategory}
           />
@@ -148,14 +89,18 @@ const Index = () => {
         <div className="container mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-              All Live Streams
+              {activeCategory === "All" ? "All Live Streams" : `${activeCategory} Streams`}
             </h2>
             <span className="text-muted-foreground">
-              {filteredStreams.length} streams live
+              {filteredStreams.length} {filteredStreams.length === 1 ? "stream" : "streams"} live
             </span>
           </div>
 
-          {filteredStreams.length > 0 ? (
+          {streamsLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : filteredStreams.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredStreams.map((stream, index) => (
                 <div
@@ -163,18 +108,32 @@ const Index = () => {
                   className="animate-fadeIn"
                   style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  <StreamCard {...stream} />
+                  <StreamCard 
+                    id={stream.id}
+                    title={stream.title}
+                    streamer={stream.profiles?.display_name || stream.profiles?.username || "Unknown"}
+                    category={stream.categories?.name || "Uncategorized"}
+                    thumbnail={stream.thumbnail_url || "/placeholder.svg"}
+                    avatar={stream.profiles?.avatar_url || "/placeholder.svg"}
+                    viewers={stream.viewer_count || 0}
+                    isLive={stream.is_live || false}
+                  />
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-20">
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                No live streams in this category
+                No live streams right now
               </h3>
-              <p className="text-muted-foreground">
-                Check back soon or explore other categories
+              <p className="text-muted-foreground mb-6">
+                Be the first to go live and start streaming!
               </p>
+              <Link to="/go-live">
+                <Button variant="default">
+                  Start Streaming
+                </Button>
+              </Link>
             </div>
           )}
         </div>
@@ -184,13 +143,36 @@ const Index = () => {
       <section className="py-12 px-4 bg-card/30">
         <div className="container mx-auto">
           <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
-            Trending Now
+            Trending Categories
           </h2>
-          <p className="text-muted-foreground mb-8">Most watched categories</p>
+          <p className="text-muted-foreground mb-8">Popular categories to explore</p>
           
-          <div className="text-center py-12 text-muted-foreground">
-            No trending data available yet
-          </div>
+          {categoriesLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : categories.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {categories.slice(0, 6).map((category) => (
+                <Link 
+                  key={category.id} 
+                  to={`/browse?category=${encodeURIComponent(category.name)}`}
+                  className="p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-all text-center group"
+                >
+                  <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
+                    {category.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {category.viewer_count || 0} viewers
+                  </p>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              No categories available yet
+            </div>
+          )}
         </div>
       </section>
 
@@ -210,7 +192,7 @@ const Index = () => {
             Ready to Start Streaming?
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-            Join thousands of creators building their communities on Ligam. Start streaming today and reach your audience.
+            Join creators building their communities on Ligam. Start streaming today and reach your audience.
           </p>
           <Link to="/create-profile">
             <Button variant="default" size="xl" className="glow">
@@ -223,7 +205,10 @@ const Index = () => {
       {/* Bottom Stats */}
       <section className="py-12 px-4 border-t border-border">
         <div className="container mx-auto">
-          <StatsBar liveStreams={0} categories={0} creators="10K+" />
+          <StatsBar 
+            liveStreams={liveStreamCount} 
+            categories={categoryCount} 
+          />
         </div>
       </section>
 

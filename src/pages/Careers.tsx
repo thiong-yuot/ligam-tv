@@ -11,54 +11,13 @@ import {
   Heart,
   Zap,
   Globe,
-  Users
+  Users,
+  Loader2
 } from "lucide-react";
+import { useJobs } from "@/hooks/useJobs";
 
 const Careers = () => {
-  const jobs = [
-    {
-      title: "Senior Frontend Engineer",
-      department: "Engineering",
-      location: "Remote",
-      type: "Full-time",
-      description: "Build the next generation of our streaming platform using React and TypeScript.",
-    },
-    {
-      title: "Backend Engineer",
-      department: "Engineering",
-      location: "Remote",
-      type: "Full-time",
-      description: "Design and scale our video infrastructure to handle millions of concurrent viewers.",
-    },
-    {
-      title: "Product Designer",
-      department: "Design",
-      location: "Remote",
-      type: "Full-time",
-      description: "Create beautiful, intuitive experiences for creators and viewers.",
-    },
-    {
-      title: "Community Manager",
-      department: "Operations",
-      location: "Remote",
-      type: "Full-time",
-      description: "Build and nurture our global creator community.",
-    },
-    {
-      title: "DevOps Engineer",
-      department: "Engineering",
-      location: "Remote",
-      type: "Full-time",
-      description: "Maintain and improve our cloud infrastructure for optimal performance.",
-    },
-    {
-      title: "Content Marketing Manager",
-      department: "Marketing",
-      location: "Remote",
-      type: "Full-time",
-      description: "Create compelling content that tells the Ligam story.",
-    },
-  ];
+  const { data: jobs = [], isLoading } = useJobs();
 
   const benefits = [
     { icon: Globe, title: "Remote First", description: "Work from anywhere in the world" },
@@ -118,40 +77,57 @@ const Careers = () => {
           <h2 className="text-3xl font-display font-bold text-foreground mb-8">
             Open Positions
           </h2>
-          <div className="space-y-4">
-            {jobs.map((job, index) => (
-              <Card 
-                key={index} 
-                className="p-6 bg-card border-border hover:border-primary/50 transition-colors"
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-semibold text-foreground">
-                        {job.title}
-                      </h3>
-                      <Badge variant="secondary">{job.department}</Badge>
+          
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : jobs.length > 0 ? (
+            <div className="space-y-4">
+              {jobs.map((job) => (
+                <Card 
+                  key={job.id} 
+                  className="p-6 bg-card border-border hover:border-primary/50 transition-colors"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-xl font-semibold text-foreground">
+                          {job.title}
+                        </h3>
+                        <Badge variant="secondary">{job.department}</Badge>
+                      </div>
+                      <p className="text-muted-foreground mb-3">{job.description}</p>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {job.location}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {job.type}
+                        </span>
+                      </div>
                     </div>
-                    <p className="text-muted-foreground mb-3">{job.description}</p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {job.location}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {job.type}
-                      </span>
-                    </div>
+                    <Button variant="default" className="gap-2 flex-shrink-0">
+                      Apply Now
+                      <ArrowRight className="w-4 h-4" />
+                    </Button>
                   </div>
-                  <Button variant="default" className="gap-2 flex-shrink-0">
-                    Apply Now
-                    <ArrowRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">
+                No open positions right now
+              </h3>
+              <p className="text-muted-foreground">
+                Check back soon or send us a general application below
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
