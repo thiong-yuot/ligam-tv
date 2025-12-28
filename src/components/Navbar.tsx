@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, Crown, Sparkles, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
+import { useUnreadCount } from "@/hooks/useMessages";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,7 +20,8 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, signOut, loading } = useAuth();
-  const { tier, subscribed } = useSubscription();
+  const { tier } = useSubscription();
+  const { data: unreadCount = 0 } = useUnreadCount();
 
   const getPlanBadge = () => {
     if (!user) return null;
@@ -152,6 +154,15 @@ const Navbar = () => {
                         <User className="mr-2 h-4 w-4" />
                         Edit Profile
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/messages")}>
+                        <MessageCircle className="mr-2 h-4 w-4" />
+                        Messages
+                        {unreadCount > 0 && (
+                          <Badge variant="default" className="ml-auto h-5 min-w-5 flex items-center justify-center text-xs">
+                            {unreadCount}
+                          </Badge>
+                        )}
+                      </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                         <LogOut className="mr-2 h-4 w-4" />
@@ -229,6 +240,17 @@ const Navbar = () => {
                     <Button variant="outline" className="w-full justify-start">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Dashboard
+                    </Button>
+                  </Link>
+                  <Link to="/messages" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full justify-start">
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Messages
+                      {unreadCount > 0 && (
+                        <Badge variant="default" className="ml-auto">
+                          {unreadCount}
+                        </Badge>
+                      )}
                     </Button>
                   </Link>
                   <Button 
