@@ -6,35 +6,42 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { useEarningsSummary } from "@/hooks/useEarnings";
+import { useStreams } from "@/hooks/useStreams";
 import { 
   LayoutDashboard, 
   Video, 
   Users, 
   DollarSign, 
-  TrendingUp,
   Eye,
   Clock,
   Gift,
-  Settings,
-  BarChart3,
   Play,
-  Calendar,
   Loader2,
   Crown,
   Sparkles,
   Check,
   X,
   Zap,
-  Code
+  Code,
+  BarChart3,
+  TrendingUp
 } from "lucide-react";
 
 const Dashboard = () => {
   const [checking, setChecking] = useState(true);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
-  const { tier, subscribed, subscriptionEnd, isLoading: subLoading } = useSubscription();
+  const { tier, subscriptionEnd } = useSubscription();
   const { hasAccess } = useFeatureAccess();
+  const { totalThisMonth, giftEarnings, subEarnings, adEarnings } = useEarningsSummary();
+  const { data: allStreams = [] } = useStreams();
+
+  // Get user's streams
+  const userStreams = allStreams.filter(s => s.user_id === userId);
 
   const tierFeatures = {
     free: {
@@ -96,8 +103,19 @@ const Dashboard = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate("/login");
+        navigate("/auth");
+        return;
       }
+      setUserId(session.user.id);
+
+      // Fetch profile
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+      
+      setProfile(profileData);
       setChecking(false);
     };
     checkAuth();
@@ -111,17 +129,17 @@ const Dashboard = () => {
     );
   }
 
-  const stats = [
-    { label: "Total Views", value: "12,450", change: "+12%", icon: Eye },
-    { label: "Followers", value: "1,234", change: "+8%", icon: Users },
-    { label: "Watch Time", value: "48h", change: "+15%", icon: Clock },
-    { label: "Earnings", value: "$245.00", change: "+23%", icon: DollarSign },
-  ];
+  // Calculate real stats
+  const totalViews = userStreams.reduce((sum, s) => sum + (s.total_views || 0), 0);
+  const totalWatchTime = userStreams.reduce((sum, s) => sum + (s.duration_seconds || 0), 0);
+  const watchTimeHours = Math.floor(totalWatchTime / 3600);
+  const followerCount = profile?.follower_count || 0;
 
-  const recentStreams = [
-    { title: "Gaming Night - Episode 23", date: "2 days ago", views: 1250, duration: "3h 45m" },
-    { title: "Music Production Live", date: "5 days ago", views: 890, duration: "2h 30m" },
-    { title: "Q&A with Viewers", date: "1 week ago", views: 2100, duration: "1h 15m" },
+  const stats = [
+    { label: "Total Views", value: totalViews.toLocaleString(), icon: Eye },
+    { label: "Followers", value: followerCount.toLocaleString(), icon: Users },
+    { label: "Watch Time", value: `${watchTimeHours}h`, icon: Clock },
+    { label: "Earnings", value: `$${totalThisMonth.toFixed(2)}`, icon: DollarSign },
   ];
 
   const quickActions = [
@@ -145,7 +163,7 @@ const Dashboard = () => {
                 Creator Dashboard
               </div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                Welcome back, <span className="text-primary">Creator</span>
+                Welcome back, <span className="text-primary">{profile?.display_name || "Creator"}</span>
               </h1>
             </div>
             <Link to="/go-live">
@@ -164,9 +182,6 @@ const Dashboard = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                     <stat.icon className="w-6 h-6 text-primary" />
                   </div>
-                  <span className="text-sm font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-                    {stat.change}
-                  </span>
                 </div>
                 <div className="text-2xl font-bold text-foreground mb-1">
                   {stat.value}
@@ -253,28 +268,40 @@ const Dashboard = () => {
                 </Link>
               </div>
               <div className="space-y-4">
-                {recentStreams.map((stream, index) => (
-                  <div 
-                    key={index} 
-                    className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Video className="w-5 h-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-foreground text-sm truncate">
-                        {stream.title}
-                      </h3>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          {stream.views.toLocaleString()}
-                        </span>
-                        <span>{stream.date}</span>
+                {userStreams.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Video className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
+                    <p className="text-muted-foreground text-sm">No streams yet</p>
+                    <Link to="/go-live">
+                      <Button variant="outline" size="sm" className="mt-3">
+                        Start Your First Stream
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  userStreams.slice(0, 3).map((stream) => (
+                    <div 
+                      key={stream.id} 
+                      className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Video className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-foreground text-sm truncate">
+                          {stream.title}
+                        </h3>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Eye className="w-3 h-3" />
+                            {(stream.total_views || 0).toLocaleString()}
+                          </span>
+                          <span>{stream.created_at ? new Date(stream.created_at).toLocaleDateString() : ""}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </Card>
           </div>
@@ -290,22 +317,22 @@ const Dashboard = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center p-4 rounded-xl bg-secondary/50">
                 <Gift className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">$180.50</div>
+                <div className="text-2xl font-bold text-foreground">${giftEarnings.toFixed(2)}</div>
                 <div className="text-sm text-muted-foreground">Virtual Gifts</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/50">
                 <Users className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">$45.00</div>
+                <div className="text-2xl font-bold text-foreground">${subEarnings.toFixed(2)}</div>
                 <div className="text-sm text-muted-foreground">Subscriptions</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/50">
                 <TrendingUp className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">$19.50</div>
+                <div className="text-2xl font-bold text-foreground">${adEarnings.toFixed(2)}</div>
                 <div className="text-sm text-muted-foreground">Ad Revenue</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-primary/10">
                 <DollarSign className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-primary">$245.00</div>
+                <div className="text-2xl font-bold text-primary">${totalThisMonth.toFixed(2)}</div>
                 <div className="text-sm text-muted-foreground">Total This Month</div>
               </div>
             </div>

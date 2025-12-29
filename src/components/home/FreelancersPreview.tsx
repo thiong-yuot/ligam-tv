@@ -32,7 +32,7 @@ const FreelancersPreview = () => {
                 featuredFreelancers.map((freelancer, index) => (
                   <Link
                     key={freelancer.id}
-                    to={`/freelancer/${freelancer.id}`}
+                    to={`/freelance/${freelancer.id}`}
                     className="group bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-all hover:-translate-y-1 animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
@@ -119,7 +119,7 @@ const FreelancersPreview = () => {
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/freelancer-dashboard">
+              <Link to="/freelance/dashboard">
                 <Button variant="outline" size="lg">
                   Become a Freelancer
                 </Button>

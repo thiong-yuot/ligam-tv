@@ -1,52 +1,23 @@
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Video, Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
 
 const Footer = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const scrollToSection = (sectionId: string) => {
-    if (location.pathname !== "/") {
-      navigate("/");
-      // Wait for navigation then scroll
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 100);
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  };
-
   const footerLinks = {
-    product: [
-      { name: "Browse Streams", sectionId: "streams" },
-      { name: "Categories", sectionId: "categories" },
-      { name: "Why Ligam", sectionId: "why-ligam" },
-      { name: "Get Featured", sectionId: "get-featured" },
-    ],
-    creators: [
-      { name: "Start Streaming", sectionId: "hero" },
-      { name: "Monetization", sectionId: "why-ligam" },
-      { name: "Virtual Gifts", sectionId: "virtual-gifts" },
-      { name: "Get Featured", sectionId: "get-featured" },
+    platform: [
+      { name: "Browse Streams", path: "/browse" },
+      { name: "Marketplace", path: "/shop" },
+      { name: "Freelancers", path: "/freelance" },
+      { name: "Pricing", path: "/pricing" },
     ],
     company: [
       { name: "About Us", path: "/about" },
       { name: "Careers", path: "/careers" },
-      { name: "Press", path: "/press" },
       { name: "Contact", path: "/contact" },
     ],
     support: [
       { name: "Help Center", path: "/help" },
-      { name: "Safety", path: "/safety" },
-      { name: "Community Guidelines", path: "/guidelines" },
       { name: "FAQ", path: "/faq" },
+      { name: "Community Guidelines", path: "/guidelines" },
     ],
   };
 
@@ -59,8 +30,8 @@ const Footer = () => {
 
   return (
     <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12">
+      <div className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
@@ -88,41 +59,24 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Product Links - scroll to sections */}
+          {/* Platform Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Product</h4>
+            <h4 className="font-semibold text-foreground mb-4">Platform</h4>
             <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
+              {footerLinks.platform.map((link) => (
                 <li key={link.name}>
-                  <button
-                    onClick={() => scrollToSection(link.sectionId)}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
+                  <Link
+                    to={link.path}
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
                     {link.name}
-                  </button>
+                  </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Creators Links - scroll to sections */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Creators</h4>
-            <ul className="space-y-3">
-              {footerLinks.creators.map((link) => (
-                <li key={link.name}>
-                  <button
-                    onClick={() => scrollToSection(link.sectionId)}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors text-left"
-                  >
-                    {link.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Links - navigate to pages */}
+          {/* Company Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Company</h4>
             <ul className="space-y-3">
@@ -139,7 +93,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Support Links - navigate to pages */}
+          {/* Support Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-3">
@@ -158,16 +112,16 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mt-10 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Ligam.tv. All rights reserved.
           </p>
           <div className="flex gap-6">
             <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Terms of Service
+              Terms
             </Link>
             <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Privacy Policy
+              Privacy
             </Link>
             <Link to="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
               Cookies
