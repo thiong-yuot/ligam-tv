@@ -3,6 +3,7 @@ import { useAuth } from "./useAuth";
 import { useToast } from "./use-toast";
 
 interface CartItem {
+  id: string;
   name: string;
   price: number;
   quantity: number;
