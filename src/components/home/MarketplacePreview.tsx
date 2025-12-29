@@ -32,7 +32,7 @@ const MarketplacePreview = () => {
                 <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                   <Package className="w-4 h-4 text-green-500" />
                 </div>
-                <span>Thousands of unique products</span>
+                <span>Unique products from sellers</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
                 <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
@@ -55,7 +55,7 @@ const MarketplacePreview = () => {
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/seller-dashboard">
+              <Link to="/seller/dashboard">
                 <Button variant="outline" size="lg">
                   Become a Seller
                 </Button>

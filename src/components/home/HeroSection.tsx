@@ -36,7 +36,7 @@ const HeroSection = () => {
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              Join thousands of creators streaming, selling, and freelancing on Ligam. 
+              Join creators streaming, selling, and freelancing on Ligam. 
               Your all-in-one platform for building a thriving online presence.
             </p>
 
@@ -54,22 +54,6 @@ const HeroSection = () => {
                   Start Creating
                 </Button>
               </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="flex flex-wrap gap-8 pt-4">
-              <div className="space-y-1">
-                <p className="text-3xl font-bold text-foreground">10K+</p>
-                <p className="text-sm text-muted-foreground">Active Creators</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-3xl font-bold text-foreground">50K+</p>
-                <p className="text-sm text-muted-foreground">Daily Viewers</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-3xl font-bold text-foreground">$1M+</p>
-                <p className="text-sm text-muted-foreground">Creator Earnings</p>
-              </div>
             </div>
           </div>
 

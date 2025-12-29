@@ -9,7 +9,7 @@ import FeaturedFreelancers from "@/components/freelance/FeaturedFreelancers";
 import FreelanceHeader from "@/components/freelance/FreelanceHeader";
 import MobileFreelanceFilters from "@/components/freelance/MobileFreelanceFilters";
 import { Button } from "@/components/ui/button";
-import { Briefcase, Loader2, LayoutDashboard, Sparkles, Users, Award, Zap } from "lucide-react";
+import { Briefcase, Loader2, LayoutDashboard, Sparkles, Users, Award } from "lucide-react";
 import { useFreelancers } from "@/hooks/useFreelancers";
 import { useMyFreelancerProfile } from "@/hooks/useFreelancerProfile";
 import { useAuth } from "@/hooks/useAuth";
@@ -121,21 +121,24 @@ const Freelance = () => {
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            {[
-              { icon: Users, label: "Active Freelancers", value: freelancers.length.toString() },
-              { icon: Award, label: "Avg Rating", value: "4.8" },
-              { icon: Briefcase, label: "Jobs Completed", value: "1.2K+" },
-              { icon: Zap, label: "Avg Response", value: "< 2hrs" },
-            ].map((stat) => (
-              <div key={stat.label} className="bg-card/50 rounded-xl p-4 border border-border">
-                <stat.icon className="w-5 h-5 text-primary mb-2" />
-                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
-          </div>
+          {/* Quick Stats - Real Data */}
+          {freelancers.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+              {[
+                { icon: Users, label: "Active Freelancers", value: freelancers.length.toString() },
+                { icon: Award, label: "Avg Rating", value: freelancers.length > 0 
+                  ? (freelancers.reduce((sum, f) => sum + (f.rating || 0), 0) / freelancers.length).toFixed(1)
+                  : "0" },
+                { icon: Briefcase, label: "Total Jobs", value: freelancers.reduce((sum, f) => sum + (f.total_jobs || 0), 0).toString() },
+              ].map((stat) => (
+                <div key={stat.label} className="bg-card/50 rounded-xl p-4 border border-border">
+                  <stat.icon className="w-5 h-5 text-primary mb-2" />
+                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -221,7 +224,7 @@ const Freelance = () => {
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" />
-              Join 500+ Creators
+              Join Our Community
             </div>
             <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
               Ready to Offer Your Services?

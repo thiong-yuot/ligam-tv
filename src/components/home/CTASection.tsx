@@ -23,7 +23,7 @@ const CTASection = () => {
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Whether you want to stream, sell, or freelance, Ligam has everything you need to succeed. 
-            Join thousands of creators already thriving on our platform.
+            Join creators already thriving on our platform.
           </p>
 
           {/* CTA Buttons */}
@@ -51,14 +51,14 @@ const CTASection = () => {
               <span>Start Streaming</span>
             </Link>
             <Link 
-              to="/seller-dashboard" 
+              to="/seller/dashboard" 
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Sell Products</span>
             </Link>
             <Link 
-              to="/freelancer-dashboard" 
+              to="/freelance/dashboard" 
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <Users className="w-4 h-4" />
