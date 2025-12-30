@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { 
@@ -12,23 +13,41 @@ import {
   Send,
   Smile,
   Gift,
-  Volume2,
-  Maximize,
-  Play,
-  Pause,
   Loader2
 } from "lucide-react";
 import { useStream } from "@/hooks/useStreams";
 import { useChatMessages } from "@/hooks/useChat";
+import { supabase } from "@/integrations/supabase/client";
 
 const StreamView = () => {
   const { id } = useParams();
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
-  const [isPlaying, setIsPlaying] = useState(true);
 
   const { data: stream, isLoading } = useStream(id || "");
   const messages = useChatMessages(id || "");
+
+  // Construct the HLS stream URL - this would come from your RTMP server's HLS output
+  // Common pattern: rtmp://server/live/stream_key -> https://server/hls/stream_key.m3u8
+  const hlsUrl = stream?.stream_key 
+    ? `https://your-hls-server.com/hls/${stream.stream_key}.m3u8`
+    : null;
+
+  const handleViewerJoin = useCallback(async () => {
+    if (stream?.id) {
+      await supabase.functions.invoke("rtmp-webhook", {
+        body: { action: "on_play", stream_key: stream.stream_key },
+      });
+    }
+  }, [stream?.id, stream?.stream_key]);
+
+  const handleViewerLeave = useCallback(async () => {
+    if (stream?.id) {
+      await supabase.functions.invoke("rtmp-webhook", {
+        body: { action: "on_play_done", stream_key: stream.stream_key },
+      });
+    }
+  }, [stream?.id, stream?.stream_key]);
 
   const formatViewers = (count: number) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
@@ -67,59 +86,31 @@ const StreamView = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Video Player */}
-          <div className="relative aspect-video bg-ligam-dark group">
-            {stream.thumbnail_url ? (
-              <img
-                src={stream.thumbnail_url}
-                alt={stream.title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-secondary flex items-center justify-center">
-                <Play className="w-16 h-16 text-muted-foreground" />
-              </div>
-            )}
-            
-            {/* Player Controls Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-background/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div className="absolute top-4 left-4 flex items-center gap-2">
-                {stream.is_live && (
-                  <span className="px-2 py-1 bg-destructive text-destructive-foreground text-xs font-bold rounded flex items-center gap-1">
-                    <span className="w-2 h-2 bg-destructive-foreground rounded-full animate-pulse-live" />
-                    LIVE
-                  </span>
-                )}
-                <span className="px-2 py-1 bg-background/80 text-foreground text-xs font-medium rounded flex items-center gap-1">
-                  <Users className="w-3 h-3" />
-                  {formatViewers(stream.viewer_count || 0)}
-                </span>
-              </div>
-
-              <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="text-foreground hover:bg-foreground/20"
-                  >
-                    {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-                  </Button>
-                  <Button variant="ghost" size="icon" className="text-foreground hover:bg-foreground/20">
-                    <Volume2 className="w-5 h-5" />
-                  </Button>
+          {stream.is_live && hlsUrl ? (
+            <HLSVideoPlayer
+              src={hlsUrl}
+              poster={stream.thumbnail_url || undefined}
+              isLive={stream.is_live}
+              onViewerJoin={handleViewerJoin}
+              onViewerLeave={handleViewerLeave}
+            />
+          ) : (
+            <div className="relative aspect-video bg-secondary flex items-center justify-center">
+              {stream.thumbnail_url ? (
+                <img
+                  src={stream.thumbnail_url}
+                  alt={stream.title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center">
+                  <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-lg font-medium text-foreground">Stream Offline</p>
+                  <p className="text-sm text-muted-foreground">Check back later when the streamer is live</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="text-foreground hover:bg-foreground/20">
-                    <Settings className="w-5 h-5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="text-foreground hover:bg-foreground/20">
-                    <Maximize className="w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Stream Info */}
           <div className="p-4 md:p-6 border-b border-border">
