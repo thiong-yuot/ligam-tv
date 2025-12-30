@@ -48,7 +48,9 @@ const GoLive = () => {
 
   const { data: userStream, isLoading: streamLoading } = useUserStream(userId || "");
 
-  const rtmpUrl = "rtmp://ingest.ligam.tv/live";
+  // Configure your RTMP server to use this webhook for stream authentication
+  const rtmpUrl = "rtmp://your-rtmp-server.com/live";
+  const webhookUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rtmp-webhook`;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -329,6 +331,27 @@ const GoLive = () => {
                   )}
                   <p className="text-xs text-muted-foreground">
                     Never share your stream key with anyone
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Webhook URL (for RTMP server)</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={webhookUrl}
+                      readOnly
+                      className="font-mono text-xs"
+                    />
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => copyToClipboard(webhookUrl, "Webhook URL")}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Configure your RTMP server to call this webhook on publish/unpublish events
                   </p>
                 </div>
 
