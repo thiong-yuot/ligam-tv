@@ -12,6 +12,14 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Briefcase,
   Plus,
   Star,
@@ -22,6 +30,13 @@ import {
   Loader2,
   X,
   ExternalLink,
+  Package,
+  ShoppingBag,
+  RefreshCw,
+  Check,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -30,6 +45,13 @@ import {
   useUpdateFreelancerProfile,
   useDeleteService,
 } from "@/hooks/useFreelancerProfile";
+import {
+  useFreelancerPackages,
+  useCreatePackage,
+  useDeletePackage,
+  useFreelancerIncomingOrders,
+  useUpdateFreelancerOrder,
+} from "@/hooks/useFreelancerPackages";
 import { toast } from "sonner";
 
 const FreelancerDashboard = () => {
@@ -40,7 +62,14 @@ const FreelancerDashboard = () => {
   const updateProfile = useUpdateFreelancerProfile();
   const deleteService = useDeleteService();
 
+  const { data: packages = [], isLoading: packagesLoading } = useFreelancerPackages(profile?.id || "");
+  const { data: orders = [], isLoading: ordersLoading } = useFreelancerIncomingOrders(profile?.id || "");
+  const createPackage = useCreatePackage();
+  const deletePackage = useDeletePackage();
+  const updateOrder = useUpdateFreelancerOrder();
+
   const [addServiceOpen, setAddServiceOpen] = useState(false);
+  const [addPackageOpen, setAddPackageOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -51,6 +80,17 @@ const FreelancerDashboard = () => {
     skills: [] as string[],
   });
   const [skillInput, setSkillInput] = useState("");
+  
+  const [packageForm, setPackageForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    delivery_days: "7",
+    revisions: "1",
+    features: [] as string[],
+    is_popular: false,
+  });
+  const [featureInput, setFeatureInput] = useState("");
 
   if (authLoading || profileLoading) {
     return (
@@ -129,31 +169,526 @@ const FreelancerDashboard = () => {
     }
   };
 
+  const addFeature = () => {
+    if (featureInput.trim() && !packageForm.features.includes(featureInput.trim())) {
+      setPackageForm({ ...packageForm, features: [...packageForm.features, featureInput.trim()] });
+      setFeatureInput("");
+    }
+  };
+
+  const removeFeature = (feature: string) => {
+    setPackageForm({ ...packageForm, features: packageForm.features.filter((f) => f !== feature) });
+  };
+
+  const handleCreatePackage = async () => {
+    if (!packageForm.name || !packageForm.price) {
+      toast.error("Name and price are required");
+      return;
+    }
+    
+    try {
+      await createPackage.mutateAsync({
+        freelancer_id: profile.id,
+        name: packageForm.name,
+        description: packageForm.description || null,
+        price: parseFloat(packageForm.price),
+        delivery_days: parseInt(packageForm.delivery_days),
+        revisions: parseInt(packageForm.revisions),
+        features: packageForm.features,
+        is_popular: packageForm.is_popular,
+      });
+      toast.success("Package created!");
+      setAddPackageOpen(false);
+      setPackageForm({
+        name: "",
+        description: "",
+        price: "",
+        delivery_days: "7",
+        revisions: "1",
+        features: [],
+        is_popular: false,
+      });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create package");
+    }
+  };
+
+  const handleDeletePackage = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this package?")) return;
+    try {
+      await deletePackage.mutateAsync(id);
+      toast.success("Package deleted");
+    } catch (error: any) {
+      toast.error("Failed to delete package");
+    }
+  };
+
+  const handleOrderStatusChange = async (orderId: string, newStatus: string) => {
+    try {
+      const updateData: { status: string; completed_at?: string } = { status: newStatus };
+      if (newStatus === "completed") {
+        updateData.completed_at = new Date().toISOString();
+      }
+      await updateOrder.mutateAsync({ id: orderId, ...updateData });
+      toast.success(`Order marked as ${newStatus}`);
+    } catch (error: any) {
+      toast.error("Failed to update order");
+    }
+  };
+
+  const getOrderStatusBadge = (status: string) => {
+    switch (status) {
+      case "pending":
+        return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />Pending</Badge>;
+      case "in_progress":
+        return <Badge className="bg-blue-500"><RefreshCw className="w-3 h-3 mr-1" />In Progress</Badge>;
+      case "completed":
+        return <Badge className="bg-green-500"><CheckCircle2 className="w-3 h-3 mr-1" />Completed</Badge>;
+      case "cancelled":
+        return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Cancelled</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
+  };
+
+  const pendingOrders = orders.filter(o => o.status === "pending");
+  const activeOrders = orders.filter(o => o.status === "in_progress");
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
       <main className="pt-24 pb-12 px-4">
-        <div className="container mx-auto max-w-5xl">
+        <div className="container mx-auto max-w-6xl">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-display font-bold text-foreground">
                 Freelancer Dashboard
               </h1>
-              <p className="text-muted-foreground">Manage your profile and services</p>
+              <p className="text-muted-foreground">Manage your profile, packages, and orders</p>
             </div>
-            <Button onClick={() => navigate("/freelance")} variant="outline">
-              <ExternalLink className="w-4 h-4 mr-2" />
-              View Marketplace
-            </Button>
+            <div className="flex gap-3">
+              {pendingOrders.length > 0 && (
+                <Badge variant="destructive" className="animate-pulse">
+                  {pendingOrders.length} new order{pendingOrders.length > 1 ? "s" : ""}
+                </Badge>
+              )}
+              <Button onClick={() => navigate("/freelance")} variant="outline">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View Marketplace
+              </Button>
+            </div>
           </div>
 
-          <Tabs defaultValue="profile" className="space-y-6">
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Star className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{profile.rating?.toFixed(1) || "0.0"}</p>
+                  <p className="text-xs text-muted-foreground">Rating</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Briefcase className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{profile.total_jobs || 0}</p>
+                  <p className="text-xs text-muted-foreground">Jobs Done</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Package className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{packages.length}</p>
+                  <p className="text-xs text-muted-foreground">Packages</p>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <ShoppingBag className="w-5 h-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">{activeOrders.length}</p>
+                  <p className="text-xs text-muted-foreground">Active Orders</p>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <Tabs defaultValue="orders" className="space-y-6">
             <TabsList>
-              <TabsTrigger value="profile">Profile</TabsTrigger>
+              <TabsTrigger value="orders" className="relative">
+                Orders
+                {pendingOrders.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-destructive-foreground text-[10px] rounded-full flex items-center justify-center">
+                    {pendingOrders.length}
+                  </span>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="packages">Packages ({packages.length})</TabsTrigger>
               <TabsTrigger value="services">Services ({services.length})</TabsTrigger>
+              <TabsTrigger value="profile">Profile</TabsTrigger>
             </TabsList>
 
+            {/* Orders Tab */}
+            <TabsContent value="orders">
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Incoming Orders</h2>
+                
+                {ordersLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                ) : orders.length === 0 ? (
+                  <Card>
+                    <CardContent className="text-center py-12">
+                      <ShoppingBag className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                      <h3 className="font-semibold mb-2">No orders yet</h3>
+                      <p className="text-muted-foreground">
+                        Orders will appear here when clients purchase your packages
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-4">
+                    {orders.map((order) => (
+                      <Card key={order.id}>
+                        <CardContent className="p-6">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                {getOrderStatusBadge(order.status)}
+                                <span className="text-sm text-muted-foreground">
+                                  {new Date(order.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <h3 className="font-semibold text-lg mb-1">
+                                {order.package?.name || "Custom Order"}
+                              </h3>
+                              <p className="text-2xl font-bold text-primary mb-2">
+                                ${order.total_amount}
+                              </p>
+                              {order.requirements && (
+                                <div className="bg-secondary/50 rounded-lg p-3 mt-3">
+                                  <p className="text-sm text-muted-foreground font-medium mb-1">Requirements:</p>
+                                  <p className="text-sm">{order.requirements}</p>
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              {order.status === "pending" && (
+                                <>
+                                  <Button 
+                                    size="sm" 
+                                    onClick={() => handleOrderStatusChange(order.id, "in_progress")}
+                                  >
+                                    <Check className="w-4 h-4 mr-1" />
+                                    Accept
+                                  </Button>
+                                  <Button 
+                                    size="sm" 
+                                    variant="outline"
+                                    onClick={() => handleOrderStatusChange(order.id, "cancelled")}
+                                  >
+                                    Decline
+                                  </Button>
+                                </>
+                              )}
+                              {order.status === "in_progress" && (
+                                <Button 
+                                  size="sm"
+                                  onClick={() => handleOrderStatusChange(order.id, "completed")}
+                                >
+                                  <CheckCircle2 className="w-4 h-4 mr-1" />
+                                  Mark Complete
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            {/* Packages Tab */}
+            <TabsContent value="packages">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold">Your Packages</h2>
+                  <Dialog open={addPackageOpen} onOpenChange={setAddPackageOpen}>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Package
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Create Package</DialogTitle>
+                        <DialogDescription>
+                          Add a new service package for clients to purchase
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label>Package Name</Label>
+                          <Input
+                            placeholder="e.g., Basic, Standard, Premium"
+                            value={packageForm.name}
+                            onChange={(e) => setPackageForm({ ...packageForm, name: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Description</Label>
+                          <Textarea
+                            placeholder="What's included in this package?"
+                            value={packageForm.description}
+                            onChange={(e) => setPackageForm({ ...packageForm, description: e.target.value })}
+                            rows={2}
+                          />
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div className="space-y-2">
+                            <Label>Price ($)</Label>
+                            <Input
+                              type="number"
+                              value={packageForm.price}
+                              onChange={(e) => setPackageForm({ ...packageForm, price: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Days</Label>
+                            <Input
+                              type="number"
+                              value={packageForm.delivery_days}
+                              onChange={(e) => setPackageForm({ ...packageForm, delivery_days: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Revisions</Label>
+                            <Input
+                              type="number"
+                              value={packageForm.revisions}
+                              onChange={(e) => setPackageForm({ ...packageForm, revisions: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Features</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              placeholder="Add a feature"
+                              value={featureInput}
+                              onChange={(e) => setFeatureInput(e.target.value)}
+                              onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())}
+                            />
+                            <Button type="button" variant="outline" size="icon" onClick={addFeature}>
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          {packageForm.features.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mt-2">
+                              {packageForm.features.map((feature) => (
+                                <Badge key={feature} variant="secondary" className="pr-1">
+                                  {feature}
+                                  <button onClick={() => removeFeature(feature)} className="ml-1 hover:text-destructive">
+                                    <X className="h-3 w-3" />
+                                  </button>
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={packageForm.is_popular}
+                            onCheckedChange={(checked) => setPackageForm({ ...packageForm, is_popular: checked })}
+                          />
+                          <Label>Mark as Most Popular</Label>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <Button variant="outline" className="flex-1" onClick={() => setAddPackageOpen(false)}>
+                          Cancel
+                        </Button>
+                        <Button className="flex-1" onClick={handleCreatePackage} disabled={createPackage.isPending}>
+                          {createPackage.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Package"}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {packagesLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                ) : packages.length === 0 ? (
+                  <Card>
+                    <CardContent className="text-center py-12">
+                      <Package className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                      <h3 className="font-semibold mb-2">No packages yet</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Create packages with tiered pricing to attract more clients
+                      </p>
+                      <Button onClick={() => setAddPackageOpen(true)}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create Your First Package
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {packages.map((pkg) => (
+                      <Card key={pkg.id} className={pkg.is_popular ? "border-primary" : ""}>
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <CardTitle className="text-lg flex items-center gap-2">
+                                {pkg.name}
+                                {pkg.is_popular && <Badge>Popular</Badge>}
+                              </CardTitle>
+                              <p className="text-2xl font-bold text-primary mt-1">${pkg.price}</p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-muted-foreground hover:text-destructive"
+                              onClick={() => handleDeletePackage(pkg.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          {pkg.description && (
+                            <p className="text-sm text-muted-foreground mb-3">{pkg.description}</p>
+                          )}
+                          <div className="flex items-center gap-4 text-sm mb-3">
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <Clock className="w-4 h-4" />
+                              {pkg.delivery_days} days
+                            </div>
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <RefreshCw className="w-4 h-4" />
+                              {pkg.revisions} revisions
+                            </div>
+                          </div>
+                          {pkg.features && pkg.features.length > 0 && (
+                            <ul className="space-y-1">
+                              {pkg.features.slice(0, 3).map((feature, i) => (
+                                <li key={i} className="flex items-center gap-2 text-sm">
+                                  <Check className="w-3 h-3 text-primary" />
+                                  {feature}
+                                </li>
+                              ))}
+                              {pkg.features.length > 3 && (
+                                <li className="text-sm text-muted-foreground">
+                                  +{pkg.features.length - 3} more
+                                </li>
+                              )}
+                            </ul>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            {/* Services Tab */}
+            <TabsContent value="services">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h2 className="text-xl font-semibold">Your Services</h2>
+                  <Button onClick={() => setAddServiceOpen(true)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Service
+                  </Button>
+                </div>
+
+                {servicesLoading ? (
+                  <div className="flex justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                ) : services.length === 0 ? (
+                  <Card>
+                    <CardContent className="text-center py-12">
+                      <Briefcase className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                      <h3 className="font-semibold mb-2">No services yet</h3>
+                      <p className="text-muted-foreground mb-4">
+                        Add your first service to start receiving orders
+                      </p>
+                      <Button onClick={() => setAddServiceOpen(true)}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Your First Service
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {services.map((service) => (
+                      <Card key={service.id}>
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <CardTitle className="text-lg">{service.title}</CardTitle>
+                              {service.category && (
+                                <Badge variant="outline" className="mt-1">
+                                  {service.category}
+                                </Badge>
+                              )}
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-muted-foreground hover:text-destructive"
+                              onClick={() => handleDeleteService(service.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          {service.description && (
+                            <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
+                          )}
+                          <div className="flex items-center gap-4 text-sm">
+                            <div className="flex items-center gap-1 font-semibold text-primary">
+                              <DollarSign className="w-4 h-4" />
+                              {service.price}
+                            </div>
+                            <div className="flex items-center gap-1 text-muted-foreground">
+                              <Clock className="w-4 h-4" />
+                              {service.delivery_days} days
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            {/* Profile Tab */}
             <TabsContent value="profile">
               <Card>
                 <CardHeader className="flex flex-row items-start justify-between">
@@ -312,80 +847,6 @@ const FreelancerDashboard = () => {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
-
-            <TabsContent value="services">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold">Your Services</h2>
-                  <Button onClick={() => setAddServiceOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Service
-                  </Button>
-                </div>
-
-                {servicesLoading ? (
-                  <div className="flex justify-center py-12">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  </div>
-                ) : services.length === 0 ? (
-                  <Card>
-                    <CardContent className="text-center py-12">
-                      <Briefcase className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                      <h3 className="font-semibold mb-2">No services yet</h3>
-                      <p className="text-muted-foreground mb-4">
-                        Add your first service to start receiving orders
-                      </p>
-                      <Button onClick={() => setAddServiceOpen(true)}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Your First Service
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {services.map((service) => (
-                      <Card key={service.id}>
-                        <CardHeader className="pb-2">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <CardTitle className="text-lg">{service.title}</CardTitle>
-                              {service.category && (
-                                <Badge variant="outline" className="mt-1">
-                                  {service.category}
-                                </Badge>
-                              )}
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-muted-foreground hover:text-destructive"
-                              onClick={() => handleDeleteService(service.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          {service.description && (
-                            <p className="text-sm text-muted-foreground mb-3">{service.description}</p>
-                          )}
-                          <div className="flex items-center gap-4 text-sm">
-                            <div className="flex items-center gap-1 font-semibold text-primary">
-                              <DollarSign className="w-4 h-4" />
-                              {service.price}
-                            </div>
-                            <div className="flex items-center gap-1 text-muted-foreground">
-                              <Clock className="w-4 h-4" />
-                              {service.delivery_days} days
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-              </div>
             </TabsContent>
           </Tabs>
         </div>

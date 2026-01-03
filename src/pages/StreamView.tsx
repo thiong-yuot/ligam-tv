@@ -27,11 +27,10 @@ const StreamView = () => {
   const { data: stream, isLoading } = useStream(id || "");
   const messages = useChatMessages(id || "");
 
-  // Construct the HLS stream URL - this would come from your RTMP server's HLS output
-  // Common pattern: rtmp://server/live/stream_key -> https://server/hls/stream_key.m3u8
-  const hlsUrl = stream?.stream_key 
-    ? `https://your-hls-server.com/hls/${stream.stream_key}.m3u8`
-    : null;
+  // Use Mux HLS URL from stream data or construct from playback ID
+  const hlsUrl = stream?.hls_url || (stream?.mux_playback_id 
+    ? `https://stream.mux.com/${stream.mux_playback_id}.m3u8`
+    : null);
 
   const handleViewerJoin = useCallback(async () => {
     if (stream?.id) {

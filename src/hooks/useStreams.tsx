@@ -20,6 +20,9 @@ export interface Stream {
   started_at: string | null;
   ended_at: string | null;
   created_at: string;
+  mux_stream_id?: string | null;
+  mux_playback_id?: string | null;
+  hls_url?: string | null;
   profiles?: {
     display_name: string | null;
     username: string | null;
@@ -84,6 +87,51 @@ export const useUserStream = (userId: string) => {
       return data as Stream | null;
     },
     enabled: !!userId,
+  });
+};
+
+export const useCreateMuxStream = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (data: { title: string; description?: string; category_id?: string; tags?: string[] }) => {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) throw new Error("Not authenticated");
+      
+      const { data: result, error } = await supabase.functions.invoke("create-mux-stream", {
+        body: data,
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
+      });
+      
+      if (error) throw error;
+      return result;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["streams"] });
+      queryClient.invalidateQueries({ queryKey: ["userStream"] });
+    },
+  });
+};
+
+export const useStreamStatus = () => {
+  return useQuery({
+    queryKey: ["streamStatus"],
+    queryFn: async () => {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) return null;
+      
+      const { data, error } = await supabase.functions.invoke("get-stream-status", {
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
+      });
+      
+      if (error) throw error;
+      return data;
+    },
+    refetchInterval: 5000,
   });
 };
 
