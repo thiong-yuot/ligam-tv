@@ -276,6 +276,119 @@ export type Database = {
           },
         ]
       }
+      freelancer_orders: {
+        Row: {
+          client_id: string
+          completed_at: string | null
+          created_at: string
+          deliverables: string[] | null
+          due_date: string | null
+          freelancer_id: string | null
+          id: string
+          package_id: string | null
+          requirements: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          completed_at?: string | null
+          created_at?: string
+          deliverables?: string[] | null
+          due_date?: string | null
+          freelancer_id?: string | null
+          id?: string
+          package_id?: string | null
+          requirements?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          total_amount: number
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          completed_at?: string | null
+          created_at?: string
+          deliverables?: string[] | null
+          due_date?: string | null
+          freelancer_id?: string | null
+          id?: string
+          package_id?: string | null
+          requirements?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "freelancer_orders_freelancer_id_fkey"
+            columns: ["freelancer_id"]
+            isOneToOne: false
+            referencedRelation: "freelancers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "freelancer_orders_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "freelancer_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      freelancer_packages: {
+        Row: {
+          created_at: string
+          delivery_days: number
+          description: string | null
+          features: string[] | null
+          freelancer_id: string | null
+          id: string
+          is_popular: boolean | null
+          name: string
+          price: number
+          revisions: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          features?: string[] | null
+          freelancer_id?: string | null
+          id?: string
+          is_popular?: boolean | null
+          name: string
+          price: number
+          revisions?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          delivery_days?: number
+          description?: string | null
+          features?: string[] | null
+          freelancer_id?: string | null
+          id?: string
+          is_popular?: boolean | null
+          name?: string
+          price?: number
+          revisions?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "freelancer_packages_freelancer_id_fkey"
+            columns: ["freelancer_id"]
+            isOneToOne: false
+            referencedRelation: "freelancers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       freelancers: {
         Row: {
           avatar_url: string | null
@@ -570,28 +683,51 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          product_id: string | null
+          quantity: number | null
           shipping_address: Json | null
           status: string | null
+          stripe_payment_intent_id: string | null
           total_amount: number
+          tracking_number: string | null
+          updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
+          product_id?: string | null
+          quantity?: number | null
           shipping_address?: Json | null
           status?: string | null
+          stripe_payment_intent_id?: string | null
           total_amount: number
+          tracking_number?: string | null
+          updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string | null
           id?: string
+          product_id?: string | null
+          quantity?: number | null
           shipping_address?: Json | null
           status?: string | null
+          stripe_payment_intent_id?: string | null
           total_amount?: number
+          tracking_number?: string | null
+          updated_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "orders_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       press_releases: {
         Row: {
@@ -759,9 +895,12 @@ export type Database = {
           description: string | null
           duration_seconds: number | null
           ended_at: string | null
+          hls_url: string | null
           id: string
           is_featured: boolean | null
           is_live: boolean | null
+          mux_playback_id: string | null
+          mux_stream_id: string | null
           peak_viewers: number | null
           rtmp_url: string | null
           started_at: string | null
@@ -780,9 +919,12 @@ export type Database = {
           description?: string | null
           duration_seconds?: number | null
           ended_at?: string | null
+          hls_url?: string | null
           id?: string
           is_featured?: boolean | null
           is_live?: boolean | null
+          mux_playback_id?: string | null
+          mux_stream_id?: string | null
           peak_viewers?: number | null
           rtmp_url?: string | null
           started_at?: string | null
@@ -801,9 +943,12 @@ export type Database = {
           description?: string | null
           duration_seconds?: number | null
           ended_at?: string | null
+          hls_url?: string | null
           id?: string
           is_featured?: boolean | null
           is_live?: boolean | null
+          mux_playback_id?: string | null
+          mux_stream_id?: string | null
           peak_viewers?: number | null
           rtmp_url?: string | null
           started_at?: string | null
