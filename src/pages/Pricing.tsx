@@ -19,6 +19,8 @@ const pricingPlans = [
       "Basic chat features",
       "Standard video quality",
       "Community support",
+      "Post gigs",
+      "1 store product",
     ],
     cta: "Get Started",
     popular: false,
@@ -27,7 +29,7 @@ const pricingPlans = [
   },
   {
     name: "Creator",
-    price: "$5.99",
+    price: "$9.99",
     period: "/month",
     description: "For growing creators",
     features: [
@@ -37,6 +39,8 @@ const pricingPlans = [
       "Priority support",
       "Stream analytics",
       "No ads for viewers",
+      "Max 3 store products",
+      "Full gig access (post & fulfill)",
     ],
     cta: "Subscribe Now",
     popular: true,
@@ -45,7 +49,7 @@ const pricingPlans = [
   },
   {
     name: "Pro",
-    price: "$15.99",
+    price: "$19.99",
     period: "/month",
     description: "For professional streamers",
     features: [
@@ -56,6 +60,8 @@ const pricingPlans = [
       "Dedicated support",
       "Revenue boost (+10%)",
       "Featured placement",
+      "Unlimited store products",
+      "Full gig features",
     ],
     cta: "Subscribe Now",
     popular: false,

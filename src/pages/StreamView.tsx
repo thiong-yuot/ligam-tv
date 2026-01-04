@@ -1,9 +1,15 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
+import TipDialog from "@/components/TipDialog";
+import HighlightedTip from "@/components/HighlightedTip";
+import FeaturedProductsWidget from "@/components/channel/FeaturedProductsWidget";
+import FeaturedGigsWidget from "@/components/channel/FeaturedGigsWidget";
+import SubscribeWidget from "@/components/channel/SubscribeWidget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Heart, 
   Share2, 
@@ -13,19 +19,70 @@ import {
   Send,
   Smile,
   Gift,
-  Loader2
+  Loader2,
+  Crown,
+  ShoppingBag,
+  Briefcase
 } from "lucide-react";
 import { useStream } from "@/hooks/useStreams";
 import { useChatMessages } from "@/hooks/useChat";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
+import { useProducts } from "@/hooks/useProducts";
+import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
+import { useQuery } from "@tanstack/react-query";
 
 const StreamView = () => {
   const { id } = useParams();
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
+  const [highlightedTips, setHighlightedTips] = useState<Array<{
+    id: string;
+    senderName: string;
+    giftName: string;
+    giftIcon: string;
+    amount: number;
+    message?: string;
+  }>>([]);
 
+  const { user } = useAuth();
+  const { tier, createSubscriptionCheckout } = useSubscription();
   const { data: stream, isLoading } = useStream(id || "");
   const messages = useChatMessages(id || "");
+  const { data: allProducts = [] } = useProducts();
+
+  // Fetch streamer's freelancer profile and packages
+  const { data: streamerFreelancer } = useQuery({
+    queryKey: ["freelancer-by-user", stream?.user_id],
+    queryFn: async () => {
+      if (!stream?.user_id) return null;
+      const { data } = await supabase
+        .from("freelancers")
+        .select("*")
+        .eq("user_id", stream.user_id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!stream?.user_id,
+  });
+
+  const { data: streamerPackages = [] } = useQuery({
+    queryKey: ["freelancer-packages", streamerFreelancer?.id],
+    queryFn: async () => {
+      if (!streamerFreelancer?.id) return [];
+      const { data } = await supabase
+        .from("freelancer_packages")
+        .select("*")
+        .eq("freelancer_id", streamerFreelancer.id)
+        .order("price");
+      return data || [];
+    },
+    enabled: !!streamerFreelancer?.id,
+  });
+
+  // Filter products by streamer
+  const streamerProducts = allProducts.filter(p => p.seller_id === stream?.user_id);
 
   // Use Mux HLS URL from stream data or construct from playback ID
   const hlsUrl = stream?.hls_url || (stream?.mux_playback_id 
@@ -169,61 +226,153 @@ const StreamView = () => {
           </div>
         </div>
 
-        {/* Chat Sidebar */}
-        <div className="w-full lg:w-80 border-l border-border flex flex-col bg-card">
-          <div className="p-4 border-b border-border flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold text-foreground">Stream Chat</h3>
-            </div>
-            <Button variant="ghost" size="icon">
-              <Settings className="w-4 h-4" />
-            </Button>
-          </div>
+        {/* Sidebar with Tabs */}
+        <div className="w-full lg:w-96 border-l border-border flex flex-col bg-card">
+          <Tabs defaultValue="chat" className="flex flex-col h-full">
+            <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0">
+              <TabsTrigger 
+                value="chat" 
+                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Chat
+              </TabsTrigger>
+              <TabsTrigger 
+                value="shop" 
+                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                Shop
+              </TabsTrigger>
+              <TabsTrigger 
+                value="gigs" 
+                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+              >
+                <Briefcase className="w-4 h-4" />
+                Gigs
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] lg:min-h-0">
-            {messages.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">
-                <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No messages yet</p>
-                <p className="text-xs">Be the first to say something!</p>
+            {/* Chat Tab */}
+            <TabsContent value="chat" className="flex-1 flex flex-col m-0 overflow-hidden">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] lg:min-h-0">
+                {/* Highlighted Tips */}
+                {highlightedTips.map((tip) => (
+                  <HighlightedTip
+                    key={tip.id}
+                    senderName={tip.senderName}
+                    giftName={tip.giftName}
+                    giftIcon={tip.giftIcon}
+                    amount={tip.amount}
+                    message={tip.message}
+                  />
+                ))}
+                
+                {messages.length === 0 && highlightedTips.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No messages yet</p>
+                    <p className="text-xs">Be the first to say something!</p>
+                  </div>
+                ) : (
+                  messages.map((msg) => (
+                    <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
+                      {tier && (
+                        <Crown className={`w-4 h-4 flex-shrink-0 ${
+                          tier === 'pro' ? 'text-amber-500' : 'text-primary'
+                        }`} />
+                      )}
+                      <span className="font-semibold text-primary">
+                        User:
+                      </span>
+                      <span className="text-foreground">{msg.message}</span>
+                    </div>
+                  ))
+                )}
               </div>
-            ) : (
-              messages.map((msg) => (
-                <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
-                  <span className="font-semibold text-primary">
-                    User:
-                  </span>
-                  <span className="text-foreground">{msg.message}</span>
-                </div>
-              ))
-            )}
-          </div>
 
-          <div className="p-4 border-t border-border">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Input
-                  type="text"
-                  placeholder="Send a message"
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  className="pr-16 bg-secondary"
+              <div className="p-4 border-t border-border">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      placeholder="Send a message"
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                      className="pr-16 bg-secondary"
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                      <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Smile className="w-4 h-4" />
+                      </Button>
+                      {stream?.user_id && (
+                        <TipDialog
+                          streamId={stream.id}
+                          recipientId={stream.user_id}
+                          onTipSent={(tip) => {
+                            setHighlightedTips(prev => [...prev, {
+                              id: crypto.randomUUID(),
+                              senderName: user?.email?.split('@')[0] || 'Anonymous',
+                              giftName: tip.giftName,
+                              giftIcon: tip.giftName.toLowerCase(),
+                              amount: tip.amount,
+                              message: tip.message,
+                            }]);
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <Button variant="default" size="icon">
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Shop Tab */}
+            <TabsContent value="shop" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
+              <SubscribeWidget
+                creatorName="Streamer"
+                currentTier={tier}
+                onSubscribe={(tierKey) => {
+                  const priceId = SUBSCRIPTION_TIERS[tierKey].price_id;
+                  createSubscriptionCheckout(priceId);
+                }}
+              />
+              
+              {streamerProducts.length > 0 && (
+                <FeaturedProductsWidget
+                  products={streamerProducts}
+                  maxItems={4}
                 />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
-                  <Button variant="ghost" size="icon" className="h-7 w-7">
-                    <Smile className="w-4 h-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-7 w-7">
-                    <Gift className="w-4 h-4" />
-                  </Button>
+              )}
+              
+              {streamerProducts.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <ShoppingBag className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No products available</p>
                 </div>
-              </div>
-              <Button variant="default" size="icon">
-                <Send className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
+              )}
+            </TabsContent>
+
+            {/* Gigs Tab */}
+            <TabsContent value="gigs" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
+              {streamerFreelancer && streamerPackages.length > 0 ? (
+                <FeaturedGigsWidget
+                  freelancer={streamerFreelancer}
+                  packages={streamerPackages}
+                  maxItems={4}
+                />
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No gigs available</p>
+                  <p className="text-xs">This streamer hasn't set up any services yet</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>

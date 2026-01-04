@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProducts, useDeleteProduct } from "@/hooks/useProducts";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AddProductDialog from "@/components/AddProductDialog";
@@ -9,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +29,8 @@ import {
   Trash2,
   Edit,
   Store,
+  Crown,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -35,10 +39,16 @@ const SellerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const { data: products, isLoading } = useMyProducts();
   const deleteProduct = useDeleteProduct();
+  const { getMaxProducts, canAddProduct, tier } = useFeatureAccess();
   
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
+
+  const maxProducts = getMaxProducts();
+  const currentProductCount = products?.length || 0;
+  const canAdd = canAddProduct(currentProductCount);
+  const productLimitPercent = maxProducts === Infinity ? 0 : (currentProductCount / maxProducts) * 100;
 
   if (authLoading) {
     return (
@@ -97,11 +107,54 @@ const SellerDashboard = () => {
               Manage your products and track sales
             </p>
           </div>
-          <Button onClick={() => setAddProductOpen(true)} className="glow">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
-          </Button>
+          {canAdd ? (
+            <Button onClick={() => setAddProductOpen(true)} className="glow">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Product
+            </Button>
+          ) : (
+            <Link to="/pricing">
+              <Button variant="outline" className="gap-2">
+                <Crown className="h-4 w-4 text-amber-500" />
+                Upgrade to Add More
+              </Button>
+            </Link>
+          )}
         </div>
+
+        {/* Product Limit Banner */}
+        {maxProducts !== Infinity && (
+          <Card className={`mb-8 ${!canAdd ? 'border-amber-500 bg-amber-500/5' : ''}`}>
+            <CardContent className="py-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-muted-foreground" />
+                  <span className="font-medium">Product Limit</span>
+                  {!canAdd && (
+                    <Badge variant="outline" className="border-amber-500 text-amber-500">
+                      <AlertTriangle className="w-3 h-3 mr-1" />
+                      Limit Reached
+                    </Badge>
+                  )}
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  {currentProductCount} / {maxProducts} products
+                </span>
+              </div>
+              <Progress value={productLimitPercent} className="h-2" />
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs text-muted-foreground">
+                  {tier === null ? 'Free: 1 product' : tier === 'creator' ? 'Creator: 3 products' : 'Pro: Unlimited'}
+                </p>
+                {tier !== 'pro' && (
+                  <Link to="/pricing" className="text-xs text-primary hover:underline">
+                    Upgrade for more →
+                  </Link>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -114,6 +167,9 @@ const SellerDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalProducts}</div>
+              {maxProducts !== Infinity && (
+                <p className="text-xs text-muted-foreground">{maxProducts - currentProductCount} slots remaining</p>
+              )}
             </CardContent>
           </Card>
           
@@ -138,7 +194,7 @@ const SellerDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">Coming soon</p>
+              <p className="text-xs text-muted-foreground">8% platform fee</p>
             </CardContent>
           </Card>
         </div>
