@@ -27,7 +27,9 @@ import {
   Zap,
   Code,
   BarChart3,
-  TrendingUp
+  TrendingUp,
+  ShoppingBag,
+  Briefcase
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -37,7 +39,15 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { tier, subscriptionEnd } = useSubscription();
   const { hasAccess } = useFeatureAccess();
-  const { totalThisMonth, giftEarnings, subEarnings, adEarnings } = useEarningsSummary();
+  const { 
+    totalThisMonth, 
+    giftEarnings, 
+    subEarnings, 
+    adEarnings, 
+    storeEarnings, 
+    gigEarnings,
+    platformFees 
+  } = useEarningsSummary();
   const { data: allStreams = [] } = useStreams();
 
   // Get user's streams
@@ -314,27 +324,50 @@ const Dashboard = () => {
                 View details
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Gift className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">${giftEarnings.toFixed(2)}</div>
-                <div className="text-sm text-muted-foreground">Virtual Gifts</div>
-              </div>
-              <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Users className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">${subEarnings.toFixed(2)}</div>
-                <div className="text-sm text-muted-foreground">Subscriptions</div>
+                <Gift className="w-6 h-6 text-pink-500 mx-auto mb-2" />
+                <div className="text-xl font-bold text-foreground">${giftEarnings.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Tips/Gifts</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <TrendingUp className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-foreground">${adEarnings.toFixed(2)}</div>
-                <div className="text-sm text-muted-foreground">Ad Revenue</div>
+                <Users className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                <div className="text-xl font-bold text-foreground">${subEarnings.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Subscriptions</div>
               </div>
-              <div className="text-center p-4 rounded-xl bg-primary/10">
-                <DollarSign className="w-8 h-8 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold text-primary">${totalThisMonth.toFixed(2)}</div>
-                <div className="text-sm text-muted-foreground">Total This Month</div>
+              <div className="text-center p-4 rounded-xl bg-secondary/50">
+                <TrendingUp className="w-6 h-6 text-blue-500 mx-auto mb-2" />
+                <div className="text-xl font-bold text-foreground">${adEarnings.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Ad Revenue</div>
               </div>
+              <div className="text-center p-4 rounded-xl bg-secondary/50 relative">
+                <ShoppingBag className="w-6 h-6 text-green-500 mx-auto mb-2" />
+                <div className="text-xl font-bold text-foreground">${storeEarnings.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Store Sales</div>
+                <span className="absolute top-2 right-2 text-[10px] text-muted-foreground">
+                  -{platformFees.store}%
+                </span>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-secondary/50 relative">
+                <Briefcase className="w-6 h-6 text-amber-500 mx-auto mb-2" />
+                <div className="text-xl font-bold text-foreground">${gigEarnings.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Gig Commissions</div>
+                <span className="absolute top-2 right-2 text-[10px] text-muted-foreground">
+                  -{platformFees.gigs}%
+                </span>
+              </div>
+              <div className="text-center p-4 rounded-xl bg-gradient-to-r from-primary/20 to-purple-500/20">
+                <DollarSign className="w-6 h-6 text-primary mx-auto mb-2" />
+                <div className="text-xl font-bold text-primary">${totalThisMonth.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Total Net</div>
+              </div>
+            </div>
+            
+            {/* Platform Fee Info */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <p className="text-xs text-muted-foreground text-center">
+                Platform fees: {platformFees.store}% on store sales • {platformFees.gigs}% on gig commissions • No fees on tips
+              </p>
             </div>
           </Card>
         </div>

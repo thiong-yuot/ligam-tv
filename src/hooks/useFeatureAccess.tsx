@@ -1,4 +1,4 @@
-import { useSubscription, SubscriptionTier } from "./useSubscription";
+import { useSubscription, SubscriptionTier, SUBSCRIPTION_TIERS } from "./useSubscription";
 
 export type Feature = 
   | "hd_streaming"
@@ -9,7 +9,12 @@ export type Feature =
   | "api_access"
   | "custom_overlays"
   | "featured_placement"
-  | "dedicated_support";
+  | "dedicated_support"
+  | "stream_analytics"
+  | "unlimited_products"
+  | "limited_products"
+  | "full_gig_access"
+  | "revenue_boost";
 
 type FeatureAccess = {
   [key in Feature]: SubscriptionTier[];
@@ -26,10 +31,15 @@ const featureAccess: FeatureAccess = {
   custom_overlays: ["pro"],
   featured_placement: ["pro"],
   dedicated_support: ["pro"],
+  stream_analytics: ["creator", "pro"],
+  unlimited_products: ["pro"],
+  limited_products: ["creator", "pro"],
+  full_gig_access: ["creator", "pro"],
+  revenue_boost: ["pro"],
 };
 
 const featureLabels: Record<Feature, string> = {
-  hd_streaming: "HD Streaming",
+  hd_streaming: "HD Streaming (1080p)",
   "4k_streaming": "4K Streaming",
   custom_emotes: "Custom Emotes",
   priority_support: "Priority Support",
@@ -38,6 +48,11 @@ const featureLabels: Record<Feature, string> = {
   custom_overlays: "Custom Overlays",
   featured_placement: "Featured Placement",
   dedicated_support: "Dedicated Support",
+  stream_analytics: "Stream Analytics",
+  unlimited_products: "Unlimited Store Products",
+  limited_products: "Store Access",
+  full_gig_access: "Full Gig Access",
+  revenue_boost: "Revenue Boost (+10%)",
 };
 
 const featureRequiredTier: Record<Feature, string> = {
@@ -50,6 +65,11 @@ const featureRequiredTier: Record<Feature, string> = {
   custom_overlays: "Pro",
   featured_placement: "Pro",
   dedicated_support: "Pro",
+  stream_analytics: "Creator",
+  unlimited_products: "Pro",
+  limited_products: "Creator",
+  full_gig_access: "Creator",
+  revenue_boost: "Pro",
 };
 
 export const useFeatureAccess = () => {
@@ -75,11 +95,26 @@ export const useFeatureAccess = () => {
     }, {} as Record<Feature, boolean>);
   };
 
+  // Get maximum products allowed based on tier
+  const getMaxProducts = (): number => {
+    if (!tier) return 1; // Free tier: 1 product
+    if (tier === "creator") return SUBSCRIPTION_TIERS.creator.maxProducts;
+    if (tier === "pro") return SUBSCRIPTION_TIERS.pro.maxProducts;
+    return 1;
+  };
+
+  // Check if user can add more products
+  const canAddProduct = (currentProductCount: number): boolean => {
+    return currentProductCount < getMaxProducts();
+  };
+
   return {
     hasAccess,
     getRequiredTier,
     getFeatureLabel,
     checkMultipleFeatures,
+    getMaxProducts,
+    canAddProduct,
     tier,
     subscribed,
     isLoading,

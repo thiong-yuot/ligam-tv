@@ -2,20 +2,57 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
-// Stripe product and price IDs
+// Stripe product and price IDs - Updated pricing structure
 export const SUBSCRIPTION_TIERS = {
   creator: {
     name: "Creator",
     price_id: "price_1SjOC22NM66Z7c4cJe49qZCZ",
     product_id: "prod_Tgljtg9UNMpI1v",
-    price: 5.99,
+    price: 9.99,
+    maxProducts: 3,
+    features: [
+      "HD streaming (1080p)",
+      "Custom emotes",
+      "Priority support",
+      "Stream analytics",
+      "No ads for viewers",
+      "Limited store (max 3 products)",
+      "Full gig access (post & fulfill)",
+    ],
   },
   pro: {
     name: "Pro",
     price_id: "price_1SjOCX2NM66Z7c4cy98jF1Rc",
     product_id: "prod_TglkgouLdYOpMr",
-    price: 15.99,
+    price: 19.99,
+    maxProducts: Infinity,
+    features: [
+      "4K streaming",
+      "Custom overlays",
+      "API access",
+      "Dedicated support",
+      "Revenue boost (+10%)",
+      "Featured placement",
+      "Unlimited store products",
+      "Full gig access",
+    ],
   },
+} as const;
+
+// Free tier features (no subscription required)
+export const FREE_TIER_FEATURES = [
+  "Unlimited streaming",
+  "Basic chat features",
+  "Standard video quality",
+  "Community support",
+  "Post gigs",
+  "1 store product",
+];
+
+// Platform commission rates
+export const PLATFORM_FEES = {
+  store: 0.08, // 8% on store sales
+  gigs: 0.15,  // 15% on gig commissions
 } as const;
 
 export type SubscriptionTier = keyof typeof SUBSCRIPTION_TIERS | null;
