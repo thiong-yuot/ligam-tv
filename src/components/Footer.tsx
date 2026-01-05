@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
+import { Twitter, Instagram, Youtube, Linkedin, Video, ArrowRight } from "lucide-react";
 import ligamLogo from "@/assets/ligam-logo.png";
 
 const Footer = () => {
@@ -21,7 +21,6 @@ const Footer = () => {
       { name: "Help Center", path: "/help" },
       { name: "FAQ", path: "/faq" },
       { name: "Community Guidelines", path: "/guidelines" },
-      { name: "Stream Setup Guide", path: "/stream-setup" },
     ],
   };
 
@@ -110,6 +109,25 @@ const Footer = () => {
                 </li>
               ))}
             </ul>
+            
+            {/* Stream Setup Promo Card */}
+            <Link 
+              to="/stream-setup"
+              className="mt-6 block p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 hover:border-primary/40 transition-all group"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                  <Video className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <span className="text-sm font-semibold text-foreground">Start Streaming</span>
+              </div>
+              <p className="text-xs text-muted-foreground mb-2">
+                Learn how to set up OBS, get your stream key, and go live in minutes.
+              </p>
+              <span className="inline-flex items-center text-xs text-primary group-hover:gap-2 transition-all">
+                Read the guide <ArrowRight className="w-3 h-3 ml-1" />
+              </span>
+            </Link>
           </div>
         </div>
 

@@ -24,8 +24,8 @@
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
 
-    --accent: 280 85% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 105 100% 50%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -40,17 +40,21 @@
     --ligam-purple: 270 70% 60%;
     --ligam-purple-glow: 280 85% 70%;
     --ligam-violet: 280 85% 65%;
+    --ligam-green: 105 100% 50%;
+    --ligam-green-glow: 105 100% 60%;
     --ligam-dark: 0 0% 0%;
     --ligam-card: 0 0% 5%;
     --ligam-surface: 0 0% 8%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--ligam-purple)), hsl(var(--ligam-violet)));
-    --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-purple)), hsl(var(--ligam-purple-glow)));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--ligam-purple)), hsl(var(--ligam-green)));
+    --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-purple)), hsl(var(--ligam-green-glow)));
+    --gradient-purple: linear-gradient(135deg, hsl(var(--ligam-purple)), hsl(var(--ligam-violet)));
 
     /* Shadows */
     --shadow-glow: 0 0 30px hsl(var(--ligam-purple) / 0.4);
     --shadow-glow-lg: 0 0 60px hsl(var(--ligam-purple) / 0.3);
+    --shadow-glow-green: 0 0 30px hsl(var(--ligam-green) / 0.4);
     --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.5);
 
     --sidebar-background: 0 0% 3%;
@@ -76,8 +80,8 @@
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
-    --accent: 280 85% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 105 100% 50%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 15%;

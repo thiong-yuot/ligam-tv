@@ -56,6 +56,9 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         ligam: {
+          purple: "hsl(var(--ligam-purple))",
+          "purple-glow": "hsl(var(--ligam-purple-glow))",
+          violet: "hsl(var(--ligam-violet))",
           green: "hsl(var(--ligam-green))",
           "green-glow": "hsl(var(--ligam-green-glow))",
           dark: "hsl(var(--ligam-dark))",
