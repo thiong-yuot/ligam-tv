@@ -64,10 +64,6 @@ const ShopHeader = ({
 
         {/* Controls */}
         <div className="flex items-center gap-3">
-          {/* Results Count */}
-          <span className="text-sm text-muted-foreground hidden sm:block">
-            {productCount} products
-          </span>
 
           {/* Mobile Filter Button */}
           <Button
