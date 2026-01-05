@@ -59,7 +59,7 @@ const Contact = () => {
   const contactInfo = [
     { icon: Mail, title: "Email", value: "support@ligam.tv", description: "General inquiries" },
     { icon: Headphones, title: "Live Support", value: "24/7 Available", description: "For urgent issues" },
-    { icon: Building, title: "Headquarters", value: "San Francisco, CA", description: "USA" },
+    { icon: Building, title: "Headquarters", value: "Gothenburg", description: "Sweden" },
     { icon: Clock, title: "Response Time", value: "Within 24 hours", description: "Business days" },
   ];
 
