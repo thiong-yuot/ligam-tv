@@ -1,8 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Play, ShoppingBag, Users, ArrowRight, Sparkles, GraduationCap } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const HeroSection = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleStartCreating = () => {
+    if (!user) {
+      navigate("/signup");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Animated Background */}
@@ -49,11 +61,9 @@ const HeroSection = () => {
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/create-profile">
-                <Button variant="outline" size="xl">
-                  Start Creating
-                </Button>
-              </Link>
+              <Button variant="outline" size="xl" onClick={handleStartCreating}>
+                Start Creating
+              </Button>
             </div>
           </div>
 

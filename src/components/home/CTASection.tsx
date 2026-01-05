@@ -1,8 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, ShoppingBag, Users, Sparkles, GraduationCap } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const CTASection = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleAuthLink = (path: string) => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <section className="py-20 px-4 relative overflow-hidden">
       {/* Background */}
@@ -28,7 +40,7 @@ const CTASection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-wrap justify-center gap-4 pt-4">
-            <Link to="/create-profile">
+            <Link to="/signup">
               <Button size="xl" className="glow group">
                 Get Started Free
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -43,34 +55,34 @@ const CTASection = () => {
 
           {/* Quick Links */}
           <div className="flex flex-wrap justify-center gap-6 pt-8">
-            <Link 
-              to="/go-live" 
+            <button 
+              onClick={() => handleAuthLink("/go-live")}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <Play className="w-4 h-4" />
               <span>Start Streaming</span>
-            </Link>
-            <Link 
-              to="/seller/dashboard" 
+            </button>
+            <button 
+              onClick={() => handleAuthLink("/seller/dashboard")}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Sell Products</span>
-            </Link>
-            <Link 
-              to="/freelance" 
+            </button>
+            <button 
+              onClick={() => handleAuthLink("/freelance/dashboard")}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <Users className="w-4 h-4" />
               <span>Offer Services</span>
-            </Link>
-            <Link 
-              to="/courses" 
+            </button>
+            <button 
+              onClick={() => handleAuthLink("/creator/courses")}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <GraduationCap className="w-4 h-4" />
-              <span>Learn Skills</span>
-            </Link>
+              <span>Teach Skills</span>
+            </button>
           </div>
         </div>
       </div>

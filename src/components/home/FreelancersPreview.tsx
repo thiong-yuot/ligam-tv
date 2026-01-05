@@ -1,12 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, Star, ArrowRight, Briefcase, CheckCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFreelancers } from "@/hooks/useFreelancers";
+import { useAuth } from "@/hooks/useAuth";
 
 const FreelancersPreview = () => {
   const { data: freelancers = [], isLoading } = useFreelancers();
   const featuredFreelancers = freelancers.slice(0, 4);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBecomeFreelancer = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate("/freelance/dashboard");
+    }
+  };
 
   return (
     <section className="py-20 px-4 bg-card/30">
@@ -69,7 +80,10 @@ const FreelancersPreview = () => {
               ) : (
                 <div className="col-span-2 text-center py-12 bg-card border border-border rounded-xl">
                   <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground">No freelancers available yet</p>
+                  <p className="text-muted-foreground mb-4">No freelancers available yet</p>
+                  <Button variant="outline" size="sm" onClick={handleBecomeFreelancer}>
+                    Become the First Freelancer
+                  </Button>
                 </div>
               )}
             </div>
@@ -119,11 +133,9 @@ const FreelancersPreview = () => {
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/freelance/dashboard">
-                <Button variant="outline" size="lg">
-                  Become a Freelancer
-                </Button>
-              </Link>
+              <Button variant="outline" size="lg" onClick={handleBecomeFreelancer}>
+                Become a Freelancer
+              </Button>
             </div>
           </div>
         </div>

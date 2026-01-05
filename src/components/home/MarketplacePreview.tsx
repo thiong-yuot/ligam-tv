@@ -1,11 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Star, ArrowRight, Package } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
+import { useAuth } from "@/hooks/useAuth";
 
 const MarketplacePreview = () => {
   const { data: products = [], isLoading } = useProducts();
   const featuredProducts = products.slice(0, 4);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleBecomeSeller = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate("/seller/dashboard");
+    }
+  };
 
   return (
     <section className="py-20 px-4">
@@ -55,11 +66,9 @@ const MarketplacePreview = () => {
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/seller/dashboard">
-                <Button variant="outline" size="lg">
-                  Become a Seller
-                </Button>
-              </Link>
+              <Button variant="outline" size="lg" onClick={handleBecomeSeller}>
+                Become a Seller
+              </Button>
             </div>
           </div>
 
@@ -112,7 +121,10 @@ const MarketplacePreview = () => {
             ) : (
               <div className="col-span-2 text-center py-12 bg-card border border-border rounded-xl">
                 <Package className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">No products available yet</p>
+                <p className="text-muted-foreground mb-4">No products available yet</p>
+                <Button variant="outline" size="sm" onClick={handleBecomeSeller}>
+                  Add the First Product
+                </Button>
               </div>
             )}
           </div>
