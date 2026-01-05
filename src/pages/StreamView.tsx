@@ -92,18 +92,18 @@ const StreamView = () => {
   const handleViewerJoin = useCallback(async () => {
     if (stream?.id) {
       await supabase.functions.invoke("rtmp-webhook", {
-        body: { action: "on_play", stream_key: stream.stream_key },
+        body: { action: "on_play", stream_id: stream.id },
       });
     }
-  }, [stream?.id, stream?.stream_key]);
+  }, [stream?.id]);
 
   const handleViewerLeave = useCallback(async () => {
     if (stream?.id) {
       await supabase.functions.invoke("rtmp-webhook", {
-        body: { action: "on_play_done", stream_key: stream.stream_key },
+        body: { action: "on_play_done", stream_id: stream.id },
       });
     }
-  }, [stream?.id, stream?.stream_key]);
+  }, [stream?.id]);
 
   const formatViewers = (count: number) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;

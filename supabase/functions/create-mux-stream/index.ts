@@ -102,8 +102,6 @@ serve(async (req) => {
           description,
           category_id,
           tags: tags || [],
-          stream_key: streamKey,
-          rtmp_url: rtmpUrl,
           mux_stream_id: liveStream.id,
           mux_playback_id: playbackId,
           hls_url: hlsUrl,
@@ -115,6 +113,19 @@ serve(async (req) => {
       if (error) throw error;
       stream = data;
       logStep("Stream updated", { streamId: stream.id });
+
+      // Update or create stream credentials
+      const { error: credError } = await supabaseAdmin
+        .from("stream_credentials")
+        .upsert({
+          stream_id: stream.id,
+          stream_key: streamKey,
+          rtmp_url: rtmpUrl,
+        }, { onConflict: 'stream_id' });
+
+      if (credError) {
+        logStep("Error updating credentials", { error: credError });
+      }
     } else {
       // Create new stream
       const { data, error } = await supabaseAdmin
@@ -125,8 +136,6 @@ serve(async (req) => {
           description,
           category_id,
           tags: tags || [],
-          stream_key: streamKey,
-          rtmp_url: rtmpUrl,
           mux_stream_id: liveStream.id,
           mux_playback_id: playbackId,
           hls_url: hlsUrl,
@@ -137,6 +146,19 @@ serve(async (req) => {
       if (error) throw error;
       stream = data;
       logStep("Stream created", { streamId: stream.id });
+
+      // Create stream credentials
+      const { error: credError } = await supabaseAdmin
+        .from("stream_credentials")
+        .insert({
+          stream_id: stream.id,
+          stream_key: streamKey,
+          rtmp_url: rtmpUrl,
+        });
+
+      if (credError) {
+        logStep("Error creating credentials", { error: credError });
+      }
     }
 
     return new Response(JSON.stringify({

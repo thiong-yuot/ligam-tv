@@ -16,34 +16,70 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { action, stream_key, app, name } = await req.json();
+    const { action, stream_key, stream_id, app, name } = await req.json();
     
-    console.log(`RTMP Webhook received: action=${action}, stream_key=${stream_key || name}, app=${app}`);
+    console.log(`RTMP Webhook received: action=${action}, stream_key=${stream_key || name}, stream_id=${stream_id}, app=${app}`);
 
-    // The stream_key can come as 'stream_key' or 'name' depending on the RTMP server
-    const key = stream_key || name;
+    // Support both stream_key lookup and direct stream_id lookup
+    let stream;
+    
+    if (stream_id) {
+      // Direct stream ID lookup (preferred for viewer tracking)
+      const { data, error } = await supabase
+        .from("streams")
+        .select("id, user_id, title, is_live")
+        .eq("id", stream_id)
+        .single();
+      
+      if (error || !data) {
+        console.error("Stream not found for id:", stream_id, error);
+        return new Response(
+          JSON.stringify({ error: "Invalid stream id" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      stream = data;
+    } else {
+      // Legacy stream_key lookup via stream_credentials table
+      const key = stream_key || name;
 
-    if (!key) {
-      console.error("No stream key provided");
-      return new Response(
-        JSON.stringify({ error: "Stream key is required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+      if (!key) {
+        console.error("No stream key or stream id provided");
+        return new Response(
+          JSON.stringify({ error: "Stream key or stream id is required" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
 
-    // Find the stream by stream_key
-    const { data: stream, error: streamError } = await supabase
-      .from("streams")
-      .select("id, user_id, title, is_live")
-      .eq("stream_key", key)
-      .single();
+      // Find the stream by stream_key in stream_credentials table
+      const { data: credentials, error: credError } = await supabase
+        .from("stream_credentials")
+        .select("stream_id")
+        .eq("stream_key", key)
+        .single();
 
-    if (streamError || !stream) {
-      console.error("Stream not found for key:", key, streamError);
-      return new Response(
-        JSON.stringify({ error: "Invalid stream key" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      if (credError || !credentials) {
+        console.error("Stream credentials not found for key:", key, credError);
+        return new Response(
+          JSON.stringify({ error: "Invalid stream key" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const { data, error: streamError } = await supabase
+        .from("streams")
+        .select("id, user_id, title, is_live")
+        .eq("id", credentials.stream_id)
+        .single();
+
+      if (streamError || !data) {
+        console.error("Stream not found for id:", credentials.stream_id, streamError);
+        return new Response(
+          JSON.stringify({ error: "Invalid stream key" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      stream = data;
     }
 
     console.log(`Found stream: id=${stream.id}, user_id=${stream.user_id}, title=${stream.title}`);
@@ -100,8 +136,6 @@ Deno.serve(async (req) => {
       case "unpublish":
       case "stop":
         // Stream is ending - set to offline
-        const startedAt = stream.is_live ? new Date() : null;
-        
         const { error: stopError } = await supabase
           .from("streams")
           .update({
