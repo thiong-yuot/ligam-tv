@@ -44,6 +44,7 @@ import CourseDetail from "./pages/CourseDetail";
 import LearnCourse from "./pages/LearnCourse";
 import CreatorCourses from "./pages/CreatorCourses";
 import MyLearning from "./pages/MyLearning";
+import StreamSetup from "./pages/StreamSetup";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -95,6 +96,7 @@ const App = () => (
           <Route path="/learn/:courseId" element={<LearnCourse />} />
           <Route path="/creator/courses" element={<CreatorCourses />} />
           <Route path="/my-learning" element={<MyLearning />} />
+          <Route path="/stream-setup" element={<StreamSetup />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
           </BrowserRouter>
