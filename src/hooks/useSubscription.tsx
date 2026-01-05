@@ -25,8 +25,8 @@ export const SUBSCRIPTION_TIERS = {
   },
   creator: {
     name: "Creator",
-    price_id: "price_1SjOC22NM66Z7c4cJe49qZCZ",
-    product_id: "prod_Tgljtg9UNMpI1v",
+    price_id: "price_1SmNW62NM66Z7c4cnBpoYoSP",
+    product_id: "prod_TjrEloM1vLq5gW",
     price: 15.99,
     maxProducts: 3,
     maxCourses: 3,
@@ -46,8 +46,8 @@ export const SUBSCRIPTION_TIERS = {
   },
   pro: {
     name: "Pro",
-    price_id: "price_1SjOCX2NM66Z7c4cy98jF1Rc",
-    product_id: "prod_TglkgouLdYOpMr",
+    price_id: "price_1SmNWH2NM66Z7c4cIfmspU1q",
+    product_id: "prod_TjrEUKyofAQv1p",
     price: 24.99,
     maxProducts: Infinity,
     maxCourses: Infinity,
