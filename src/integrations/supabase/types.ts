@@ -994,31 +994,43 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachments: Json | null
           content: string
           created_at: string
           freelancer_id: string | null
           id: string
           is_read: boolean | null
+          is_system_message: boolean | null
+          message_type: string | null
+          order_id: string | null
           recipient_id: string
           sender_id: string
           subject: string | null
         }
         Insert: {
+          attachments?: Json | null
           content: string
           created_at?: string
           freelancer_id?: string | null
           id?: string
           is_read?: boolean | null
+          is_system_message?: boolean | null
+          message_type?: string | null
+          order_id?: string | null
           recipient_id: string
           sender_id: string
           subject?: string | null
         }
         Update: {
+          attachments?: Json | null
           content?: string
           created_at?: string
           freelancer_id?: string | null
           id?: string
           is_read?: boolean | null
+          is_system_message?: boolean | null
+          message_type?: string | null
+          order_id?: string | null
           recipient_id?: string
           sender_id?: string
           subject?: string | null
@@ -1029,6 +1041,13 @@ export type Database = {
             columns: ["freelancer_id"]
             isOneToOne: false
             referencedRelation: "freelancers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "freelancer_orders"
             referencedColumns: ["id"]
           },
         ]

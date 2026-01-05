@@ -128,8 +128,8 @@ const Shop = () => {
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             {[
-              { icon: Store, label: "Products", value: products?.length.toString() || "0" },
-              { icon: Users, label: "Active Sellers", value: "500+" },
+              { icon: Store, label: "Active Sellers", value: "500+" },
+              { icon: Users, label: "Happy Customers", value: "10K+" },
               { icon: TrendingUp, label: "Monthly Sales", value: "$50K+" },
             ].map((stat, index) => (
               <div key={index} className="bg-card/50 rounded-xl p-4 border border-border">

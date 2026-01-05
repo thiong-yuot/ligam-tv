@@ -105,10 +105,10 @@ const Courses = () => {
   const hasActiveFilters = Boolean(searchQuery || (selectedCategory && selectedCategory !== "all") || (selectedLevel && selectedLevel !== "all") || showFreeOnly || priceRange[0] > 0 || priceRange[1] < 500 || minRating > 0);
 
   const stats = [
-    { icon: BookOpen, label: "Courses", value: courses.length > 0 ? courses.length.toString() : "100+" },
     { icon: Users, label: "Students", value: "14K+" },
     { icon: Star, label: "Avg Rating", value: "4.8" },
     { icon: Award, label: "Expert Instructors", value: "50+" },
+    { icon: TrendingUp, label: "Completion Rate", value: "94%" },
   ];
 
   const MobileFilterContent = () => (
