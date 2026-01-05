@@ -23,7 +23,7 @@ const pricingPlans = [
       "1 store product",
       "1 course",
     ],
-    cta: "Get Started",
+    cta: "Current Plan",
     popular: false,
     tier: null,
     priceId: null,

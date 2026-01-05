@@ -39,15 +39,15 @@ const SellerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const { data: products, isLoading } = useMyProducts();
   const deleteProduct = useDeleteProduct();
-  const { getMaxProducts, canAddProduct, tier } = useFeatureAccess();
+  const { getMaxProducts, canAddProduct, getCurrentProductCount, tier } = useFeatureAccess();
   
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
 
   const maxProducts = getMaxProducts();
-  const currentProductCount = products?.length || 0;
-  const canAdd = canAddProduct(currentProductCount);
+  const currentProductCount = getCurrentProductCount();
+  const canAdd = canAddProduct();
   const productLimitPercent = maxProducts === Infinity ? 0 : (currentProductCount / maxProducts) * 100;
 
   if (authLoading) {

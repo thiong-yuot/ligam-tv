@@ -2,22 +2,46 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
-// Stripe product and price IDs - Updated pricing structure
+// Stripe product and price IDs - Updated pricing structure with all tier limits
 export const SUBSCRIPTION_TIERS = {
+  free: {
+    name: "Free",
+    price_id: null,
+    product_id: null,
+    price: 0,
+    maxProducts: 1,
+    maxCourses: 1,
+    maxGigs: 3, // Limited gig posting
+    canFulfillGigs: false,
+    features: [
+      "Unlimited streaming",
+      "Basic chat features",
+      "Standard video quality",
+      "Community support",
+      "Post gigs (limited)",
+      "1 store product",
+      "1 course",
+    ],
+  },
   creator: {
     name: "Creator",
     price_id: "price_1SjOC22NM66Z7c4cJe49qZCZ",
     product_id: "prod_Tgljtg9UNMpI1v",
     price: 9.99,
     maxProducts: 3,
+    maxCourses: 3,
+    maxGigs: Infinity,
+    canFulfillGigs: true,
     features: [
+      "Everything in Free",
       "HD streaming (1080p)",
       "Custom emotes",
       "Priority support",
       "Stream analytics",
       "No ads for viewers",
-      "Limited store (max 3 products)",
+      "Max 3 store products",
       "Full gig access (post & fulfill)",
+      "Max 3 courses",
     ],
   },
   pro: {
@@ -26,7 +50,11 @@ export const SUBSCRIPTION_TIERS = {
     product_id: "prod_TglkgouLdYOpMr",
     price: 19.99,
     maxProducts: Infinity,
+    maxCourses: Infinity,
+    maxGigs: Infinity,
+    canFulfillGigs: true,
     features: [
+      "Everything in Creator",
       "4K streaming",
       "Custom overlays",
       "API access",
@@ -34,26 +62,23 @@ export const SUBSCRIPTION_TIERS = {
       "Revenue boost (+10%)",
       "Featured placement",
       "Unlimited store products",
-      "Full gig access",
+      "Full gig features",
+      "Unlimited courses",
     ],
   },
 } as const;
-
-// Free tier features (no subscription required)
-export const FREE_TIER_FEATURES = [
-  "Unlimited streaming",
-  "Basic chat features",
-  "Standard video quality",
-  "Community support",
-  "Post gigs",
-  "1 store product",
-];
 
 // Platform commission rates
 export const PLATFORM_FEES = {
   store: 0.08, // 8% on store sales
   gigs: 0.15,  // 15% on gig commissions
 } as const;
+
+// Helper to get tier limits
+export const getTierLimits = (tier: SubscriptionTier) => {
+  if (!tier) return SUBSCRIPTION_TIERS.free;
+  return SUBSCRIPTION_TIERS[tier];
+};
 
 export type SubscriptionTier = keyof typeof SUBSCRIPTION_TIERS | null;
 
