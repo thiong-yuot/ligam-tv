@@ -6,14 +6,14 @@ import {
   Globe, 
   Headphones,
   TrendingUp,
-  Award
+  GraduationCap
 } from "lucide-react";
 
 const features = [
   {
     icon: Zap,
     title: "Lightning Fast",
-    description: "Ultra-low latency streaming with global CDN delivery",
+    description: "Ultra-low latency streaming with WebRTC and global CDN",
     gradient: "from-yellow-500/20 to-orange-500/10",
     iconColor: "text-yellow-500",
   },
@@ -27,14 +27,14 @@ const features = [
   {
     icon: DollarSign,
     title: "Multiple Revenue",
-    description: "Subscriptions, tips, merchandise, and freelance services",
+    description: "Subscriptions, tips, merchandise, gigs, and course sales",
     gradient: "from-green-500/20 to-emerald-500/10",
     iconColor: "text-green-500",
   },
   {
     icon: Shield,
-    title: "Secure Platform",
-    description: "Enterprise-grade security for creators and viewers",
+    title: "Low Platform Fees",
+    description: "Only 8-15% commission - keep more of your earnings",
     gradient: "from-purple-500/20 to-pink-500/10",
     iconColor: "text-purple-500",
   },
@@ -55,14 +55,14 @@ const features = [
   {
     icon: TrendingUp,
     title: "Analytics Dashboard",
-    description: "Deep insights into your audience and performance",
+    description: "Deep insights into your audience and earnings",
     gradient: "from-cyan-500/20 to-teal-500/10",
     iconColor: "text-cyan-500",
   },
   {
-    icon: Award,
-    title: "Creator Rewards",
-    description: "Earn badges, perks, and exclusive opportunities",
+    icon: GraduationCap,
+    title: "Skills Sharing",
+    description: "Create courses, book tutoring sessions, share knowledge",
     gradient: "from-amber-500/20 to-yellow-500/10",
     iconColor: "text-amber-500",
   },

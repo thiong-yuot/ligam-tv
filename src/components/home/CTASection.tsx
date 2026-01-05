@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, ShoppingBag, Users, Sparkles } from "lucide-react";
+import { ArrowRight, Play, ShoppingBag, Users, Sparkles, GraduationCap } from "lucide-react";
 
 const CTASection = () => {
   return (
@@ -58,11 +58,18 @@ const CTASection = () => {
               <span>Sell Products</span>
             </Link>
             <Link 
-              to="/freelance/dashboard" 
+              to="/freelance" 
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <Users className="w-4 h-4" />
               <span>Offer Services</span>
+            </Link>
+            <Link 
+              to="/courses" 
+              className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            >
+              <GraduationCap className="w-4 h-4" />
+              <span>Learn Skills</span>
             </Link>
           </div>
         </div>

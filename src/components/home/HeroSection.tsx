@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Play, ShoppingBag, Users, ArrowRight, Sparkles } from "lucide-react";
+import { Play, ShoppingBag, Users, ArrowRight, Sparkles, GraduationCap } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -96,16 +96,16 @@ const HeroSection = () => {
                 <p className="text-muted-foreground text-sm">Hire talented professionals</p>
               </Link>
 
-              {/* Premium Card */}
+              {/* Courses Card */}
               <Link 
-                to="/premium" 
-                className="group p-6 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm border border-primary/30 rounded-2xl hover:border-primary transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 mt-8"
+                to="/courses" 
+                className="group p-6 bg-gradient-to-br from-purple-500/20 to-purple-500/5 backdrop-blur-sm border border-purple-500/30 rounded-2xl hover:border-purple-500 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10 mt-8"
               >
-                <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Sparkles className="w-7 h-7 text-primary" />
+                <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <GraduationCap className="w-7 h-7 text-purple-500" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Go Premium</h3>
-                <p className="text-muted-foreground text-sm">Unlock exclusive features</p>
+                <h3 className="text-xl font-bold text-foreground mb-2">Learn Skills</h3>
+                <p className="text-muted-foreground text-sm">Courses from expert creators</p>
               </Link>
             </div>
           </div>
