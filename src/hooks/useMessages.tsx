@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import { messageSchema, validateOrThrow } from "@/lib/validation";
 
 export interface Message {
   id: string;
@@ -126,14 +127,22 @@ export const useSendMessage = () => {
     }) => {
       if (!user) throw new Error("Must be logged in to send messages");
 
+      // Validate input
+      const validated = validateOrThrow(messageSchema, {
+        recipient_id,
+        freelancer_id: freelancer_id || null,
+        subject: subject || null,
+        content,
+      });
+
       const { data, error } = await supabase
         .from("messages")
         .insert({
           sender_id: user.id,
-          recipient_id,
-          freelancer_id,
-          subject,
-          content,
+          recipient_id: validated.recipient_id,
+          freelancer_id: validated.freelancer_id,
+          subject: validated.subject,
+          content: validated.content,
         })
         .select()
         .single();

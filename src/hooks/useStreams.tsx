@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { streamSchema, validateOrThrow } from "@/lib/validation";
 
 export interface Stream {
   id: string;
@@ -119,11 +120,14 @@ export const useCreateMuxStream = () => {
   
   return useMutation({
     mutationFn: async (data: { title: string; description?: string; category_id?: string; tags?: string[] }) => {
+      // Validate input
+      const validated = validateOrThrow(streamSchema, data);
+
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
       
       const { data: result, error } = await supabase.functions.invoke("create-mux-stream", {
-        body: data,
+        body: validated,
         headers: {
           Authorization: `Bearer ${session.session.access_token}`,
         },
@@ -165,6 +169,9 @@ export const useCreateStream = () => {
   
   return useMutation({
     mutationFn: async (data: { title: string; description?: string; category_id?: string; tags?: string[] }) => {
+      // Validate input
+      const validated = validateOrThrow(streamSchema, data);
+
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
       
@@ -172,10 +179,10 @@ export const useCreateStream = () => {
         .from("streams")
         .insert({
           user_id: session.session.user.id,
-          title: data.title,
-          description: data.description,
-          category_id: data.category_id,
-          tags: data.tags || [],
+          title: validated.title,
+          description: validated.description,
+          category_id: validated.category_id,
+          tags: validated.tags || [],
         })
         .select()
         .single();

@@ -5,6 +5,7 @@ import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { productSchema, validateOrThrow } from "@/lib/validation";
 import {
   Dialog,
   DialogContent,
@@ -123,12 +124,14 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
 
       if (error) throw error;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
+      // Get signed URL (bucket is now private)
+      const { data: urlData, error: signedUrlError } = await supabase.storage
         .from("product-images")
-        .getPublicUrl(data.path);
+        .createSignedUrl(data.path, 60 * 60 * 24 * 365); // 1 year expiry
 
-      setImageUrl(urlData.publicUrl);
+      if (signedUrlError) throw signedUrlError;
+
+      setImageUrl(urlData.signedUrl);
       toast.success("Image uploaded successfully");
     } catch (error: any) {
       toast.error(error.message || "Failed to upload image");
@@ -173,14 +176,25 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.from("products").insert({
+      // Validate all input
+      const validated = validateOrThrow(productSchema, {
         name: name.trim(),
         description: description.trim() || null,
         price: parseFloat(price),
         sale_price: salePrice ? parseFloat(salePrice) : null,
-        category: category,
+        category,
         image_url: imageUrl || null,
         stock_quantity: parseInt(stockQuantity) || 999,
+      });
+
+      const { error } = await supabase.from("products").insert({
+        name: validated.name,
+        description: validated.description,
+        price: validated.price,
+        sale_price: validated.sale_price,
+        category: validated.category,
+        image_url: validated.image_url,
+        stock_quantity: validated.stock_quantity,
         seller_id: user.id,
         is_active: true,
       });
