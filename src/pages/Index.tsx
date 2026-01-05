@@ -6,6 +6,7 @@ import TrendingCategories from "@/components/home/TrendingCategories";
 import FeaturesGrid from "@/components/home/FeaturesGrid";
 import MarketplacePreview from "@/components/home/MarketplacePreview";
 import FreelancersPreview from "@/components/home/FreelancersPreview";
+import CoursesPreview from "@/components/courses/CoursesPreview";
 import CTASection from "@/components/home/CTASection";
 import { useStreams } from "@/hooks/useStreams";
 import { useCategories } from "@/hooks/useCategories";
@@ -17,28 +18,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
-      {/* Hero Section */}
       <HeroSection />
-
-      {/* Live Streams */}
       <LiveStreamsSection streams={streams} isLoading={streamsLoading} />
-
-      {/* Trending Categories */}
       <TrendingCategories categories={categories} isLoading={categoriesLoading} />
-
-      {/* Features Grid */}
       <FeaturesGrid />
-
-      {/* Marketplace Preview */}
       <MarketplacePreview />
-
-      {/* Freelancers Preview */}
       <FreelancersPreview />
-
-      {/* Final CTA */}
+      <CoursesPreview />
       <CTASection />
-
       <Footer />
     </div>
   );

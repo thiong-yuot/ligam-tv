@@ -39,6 +39,11 @@ import ApiAccess from "./pages/ApiAccess";
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import SellerDashboard from "./pages/SellerDashboard";
+import Courses from "./pages/Courses";
+import CourseDetail from "./pages/CourseDetail";
+import LearnCourse from "./pages/LearnCourse";
+import CreatorCourses from "./pages/CreatorCourses";
+import MyLearning from "./pages/MyLearning";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -85,6 +90,11 @@ const App = () => (
           <Route path="/messages" element={<Messages />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/courses/:courseId" element={<CourseDetail />} />
+          <Route path="/learn/:courseId" element={<LearnCourse />} />
+          <Route path="/creator/courses" element={<CreatorCourses />} />
+          <Route path="/my-learning" element={<MyLearning />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
           </BrowserRouter>
