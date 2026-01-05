@@ -274,8 +274,8 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
           </Alert>
         )}
 
-        <ScrollArea className="flex-1 pr-4">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <ScrollArea className="flex-1 pr-4 -mr-4">
+          <form id="add-product-form" onSubmit={handleSubmit} className="space-y-5 pr-4">
             {/* Image Upload - Twitch Style */}
             <div className="space-y-2">
               <Label>Product Image</Label>
@@ -437,27 +437,29 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                 disabled={!canAdd}
               />
             </div>
-
-            <div className="flex gap-3 pt-4 pb-2 sticky bottom-0 bg-background border-t border-border -mx-4 px-4 py-3 mt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isLoading || isUploading || !canAdd}
-                className="flex-1 glow"
-              >
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {canAdd ? "Add Product" : "Limit Reached"}
-              </Button>
-            </div>
           </form>
         </ScrollArea>
+
+        {/* Submit buttons - outside ScrollArea so always visible */}
+        <div className="flex gap-3 pt-4 border-t border-border mt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="flex-1"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            form="add-product-form"
+            disabled={isLoading || isUploading || !canAdd}
+            className="flex-1 glow"
+          >
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {canAdd ? "Add Product" : "Limit Reached"}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
