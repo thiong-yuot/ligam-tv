@@ -1,12 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Star, ArrowRight, GraduationCap, Award, Users } from "lucide-react";
 import { useFeaturedCourses } from "@/hooks/useCourses";
+import { useAuth } from "@/hooks/useAuth";
 
 const CoursesPreview = () => {
   const { data: courses = [], isLoading } = useFeaturedCourses();
   const featuredCourses = courses.slice(0, 4);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
+  const handleCreateCourse = () => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate("/creator/courses");
+    }
+  };
   return (
     <section className="py-20 px-4 bg-card/30">
       <div className="container mx-auto">
@@ -55,11 +65,9 @@ const CoursesPreview = () => {
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Link to="/creator/courses">
-                <Button variant="outline" size="lg">
-                  Create a Course
-                </Button>
-              </Link>
+              <Button variant="outline" size="lg" onClick={handleCreateCourse}>
+                Create a Course
+              </Button>
             </div>
           </div>
 
@@ -114,11 +122,9 @@ const CoursesPreview = () => {
               <div className="col-span-2 text-center py-12 bg-card border border-border rounded-xl">
                 <GraduationCap className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                 <p className="text-muted-foreground mb-4">No courses available yet</p>
-                <Link to="/creator/courses">
-                  <Button variant="outline" size="sm">
-                    Create the First Course
-                  </Button>
-                </Link>
+                <Button variant="outline" size="sm" onClick={handleCreateCourse}>
+                  Create the First Course
+                </Button>
               </div>
             )}
           </div>
