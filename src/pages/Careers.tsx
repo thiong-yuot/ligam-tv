@@ -140,9 +140,11 @@ const Careers = () => {
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
             We're always looking for talented people. Send us your resume and we'll keep you in mind.
           </p>
-          <Button variant="outline" size="lg">
-            Send General Application
-          </Button>
+          <a href="mailto:careers@ligam.tv?subject=General Application">
+            <Button variant="outline" size="lg">
+              Send General Application
+            </Button>
+          </a>
         </div>
       </section>
 

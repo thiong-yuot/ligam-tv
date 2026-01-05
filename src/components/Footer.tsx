@@ -7,6 +7,7 @@ const Footer = () => {
       { name: "Browse Streams", path: "/browse" },
       { name: "Marketplace", path: "/shop" },
       { name: "Freelancers", path: "/freelance" },
+      { name: "Learn", path: "/courses" },
       { name: "Pricing", path: "/pricing" },
     ],
     company: [

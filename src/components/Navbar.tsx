@@ -66,8 +66,17 @@ const Navbar = () => {
     { name: "Learn", path: "/courses" },
     { name: "Freelance", path: "/freelance" },
     { name: "Shop", path: "/shop" },
+    { name: "My Learning", path: "/my-learning", requiresAuth: true },
     { name: "Pricing", path: "/pricing" },
   ];
+
+  const handleNavClick = (link: { path: string; requiresAuth?: boolean }) => {
+    if (link.requiresAuth && !user) {
+      navigate("/login");
+      return;
+    }
+    navigate(link.path);
+  };
 
   const moreLinks = [
     { name: "About", path: "/about" },
@@ -110,9 +119,9 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden xl:flex items-center gap-1">
             {mainLinks.map((link) => (
-              <Link
+              <button
                 key={link.path}
-                to={link.path}
+                onClick={() => handleNavClick(link)}
                 className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                   isActive(link.path)
                     ? "text-primary bg-primary/10"
@@ -120,7 +129,7 @@ const Navbar = () => {
                 }`}
               >
                 {link.name}
-              </Link>
+              </button>
             ))}
             
             {/* More Dropdown for secondary links */}
@@ -244,18 +253,20 @@ const Navbar = () => {
               <div className="pb-2 mb-2 border-b border-border">
                 <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Navigation</p>
                 {mainLinks.map((link) => (
-                  <Link
+                  <button
                     key={link.path}
-                    to={link.path}
-                    className={`px-3 py-2.5 text-sm font-medium rounded-md flex items-center ${
+                    onClick={() => {
+                      handleNavClick(link);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`px-3 py-2.5 text-sm font-medium rounded-md flex items-center w-full text-left ${
                       isActive(link.path)
                         ? "text-primary bg-primary/10"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                     }`}
-                    onClick={() => setIsMenuOpen(false)}
                   >
                     {link.name}
-                  </Link>
+                  </button>
                 ))}
               </div>
 
