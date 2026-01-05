@@ -1,8 +1,10 @@
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -15,12 +17,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Package,
   Loader2,
   Upload,
   X,
-  Image as ImageIcon,
   Gamepad2,
   Music,
   Palette,
@@ -31,6 +33,8 @@ import {
   Layers,
   Volume2,
   MoreHorizontal,
+  Crown,
+  AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +58,7 @@ const categories = [
 
 const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const { user } = useAuth();
+  const { canAddProduct, getMaxProducts, getCurrentProductCount, getRemainingProducts, tier, getUpgradeMessage } = useFeatureAccess();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,6 +72,11 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const [imageUrl, setImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [stockQuantity, setStockQuantity] = useState("999");
+
+  const maxProducts = getMaxProducts();
+  const currentCount = getCurrentProductCount();
+  const remainingSlots = getRemainingProducts();
+  const canAdd = canAddProduct();
 
   const resetForm = () => {
     setName("");
@@ -144,6 +154,12 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
       return;
     }
 
+    // Check tier limit
+    if (!canAdd) {
+      toast.error(`You've reached the maximum of ${maxProducts} products for your plan. Upgrade to add more!`);
+      return;
+    }
+
     if (!name.trim() || !price) {
       toast.error("Name and price are required");
       return;
@@ -198,16 +214,55 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
+        {/* Show tier limit info */}
+        {maxProducts !== Infinity && (
+          <div className="flex items-center justify-between text-sm bg-muted/50 rounded-lg p-3 border">
+            <div className="flex items-center gap-2">
+              <Crown className="h-4 w-4 text-primary" />
+              <span>
+                {currentCount} / {maxProducts} products used
+              </span>
+            </div>
+            {remainingSlots > 0 ? (
+              <span className="text-muted-foreground">
+                {remainingSlots} slot{remainingSlots !== 1 ? "s" : ""} remaining
+              </span>
+            ) : (
+              <Link to="/pricing">
+                <Button size="sm" variant="outline" className="h-7 text-xs">
+                  Upgrade
+                </Button>
+              </Link>
+            )}
+          </div>
+        )}
+
+        {/* Show upgrade warning if at limit */}
+        {!canAdd && (
+          <Alert variant="destructive" className="border-yellow-500/50 bg-yellow-500/10">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Product Limit Reached</AlertTitle>
+            <AlertDescription>
+              {getUpgradeMessage("product")}
+              <Link to="/pricing" className="block mt-2">
+                <Button size="sm" variant="outline">
+                  View Plans
+                </Button>
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <ScrollArea className="flex-1 pr-4">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Image Upload - Twitch Style */}
             <div className="space-y-2">
               <Label>Product Image</Label>
               <div
-                onClick={() => !isUploading && fileInputRef.current?.click()}
+                onClick={() => !isUploading && canAdd && fileInputRef.current?.click()}
                 className={cn(
-                  "relative border-2 border-dashed rounded-xl transition-all cursor-pointer",
-                  "hover:border-primary hover:bg-primary/5",
+                  "relative border-2 border-dashed rounded-xl transition-all",
+                  canAdd ? "cursor-pointer hover:border-primary hover:bg-primary/5" : "opacity-50 cursor-not-allowed",
                   imagePreview ? "border-primary bg-primary/5" : "border-border",
                   isUploading && "opacity-50 cursor-wait"
                 )}
@@ -218,6 +273,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                   accept="image/*"
                   onChange={handleImageUpload}
                   className="hidden"
+                  disabled={!canAdd}
                 />
                 
                 {imagePreview ? (
@@ -271,9 +327,11 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                     <button
                       key={cat.id}
                       type="button"
-                      onClick={() => setCategory(cat.id)}
+                      onClick={() => canAdd && setCategory(cat.id)}
+                      disabled={!canAdd}
                       className={cn(
                         "flex items-center gap-2 p-3 rounded-lg border transition-all text-left",
+                        !canAdd && "opacity-50 cursor-not-allowed",
                         isSelected
                           ? cn(cat.color, "border-2")
                           : "border-border hover:border-muted-foreground/50 hover:bg-muted/50"
@@ -300,6 +358,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Neon Stream Overlay Pack"
                 required
+                disabled={!canAdd}
               />
             </div>
 
@@ -311,6 +370,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Describe your product..."
                 rows={3}
+                disabled={!canAdd}
               />
             </div>
 
@@ -326,6 +386,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                   onChange={(e) => setPrice(e.target.value)}
                   placeholder="9.99"
                   required
+                  disabled={!canAdd}
                 />
               </div>
               <div className="space-y-2">
@@ -338,6 +399,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                   value={salePrice}
                   onChange={(e) => setSalePrice(e.target.value)}
                   placeholder="Optional"
+                  disabled={!canAdd}
                 />
               </div>
             </div>
@@ -351,6 +413,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                 value={stockQuantity}
                 onChange={(e) => setStockQuantity(e.target.value)}
                 placeholder="999"
+                disabled={!canAdd}
               />
             </div>
 
@@ -365,7 +428,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
               </Button>
               <Button
                 type="submit"
-                disabled={isLoading || isUploading}
+                disabled={isLoading || isUploading || !canAdd}
                 className="flex-1 glow"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

@@ -1,4 +1,6 @@
-import { useSubscription, SubscriptionTier, SUBSCRIPTION_TIERS } from "./useSubscription";
+import { useSubscription, SubscriptionTier, SUBSCRIPTION_TIERS, getTierLimits } from "./useSubscription";
+import { useMyProducts } from "./useProducts";
+import { useCreatorCourses } from "./useCourses";
 
 export type Feature = 
   | "hd_streaming"
@@ -14,7 +16,8 @@ export type Feature =
   | "unlimited_products"
   | "limited_products"
   | "full_gig_access"
-  | "revenue_boost";
+  | "revenue_boost"
+  | "unlimited_courses";
 
 type FeatureAccess = {
   [key in Feature]: SubscriptionTier[];
@@ -36,6 +39,7 @@ const featureAccess: FeatureAccess = {
   limited_products: ["creator", "pro"],
   full_gig_access: ["creator", "pro"],
   revenue_boost: ["pro"],
+  unlimited_courses: ["pro"],
 };
 
 const featureLabels: Record<Feature, string> = {
@@ -53,6 +57,7 @@ const featureLabels: Record<Feature, string> = {
   limited_products: "Store Access",
   full_gig_access: "Full Gig Access",
   revenue_boost: "Revenue Boost (+10%)",
+  unlimited_courses: "Unlimited Courses",
 };
 
 const featureRequiredTier: Record<Feature, string> = {
@@ -70,10 +75,13 @@ const featureRequiredTier: Record<Feature, string> = {
   limited_products: "Creator",
   full_gig_access: "Creator",
   revenue_boost: "Pro",
+  unlimited_courses: "Pro",
 };
 
 export const useFeatureAccess = () => {
   const { tier, subscribed, isLoading } = useSubscription();
+  const { data: myProducts = [], isLoading: productsLoading } = useMyProducts();
+  const { data: myCourses = [], isLoading: coursesLoading } = useCreatorCourses();
 
   const hasAccess = (feature: Feature): boolean => {
     if (!tier) return false;
@@ -95,17 +103,94 @@ export const useFeatureAccess = () => {
     }, {} as Record<Feature, boolean>);
   };
 
+  // Get tier limits based on current subscription
+  const getTierInfo = () => {
+    return getTierLimits(tier);
+  };
+
   // Get maximum products allowed based on tier
   const getMaxProducts = (): number => {
-    if (!tier) return 1; // Free tier: 1 product
-    if (tier === "creator") return SUBSCRIPTION_TIERS.creator.maxProducts;
-    if (tier === "pro") return SUBSCRIPTION_TIERS.pro.maxProducts;
-    return 1;
+    const limits = getTierLimits(tier);
+    return limits.maxProducts;
+  };
+
+  // Get maximum courses allowed based on tier
+  const getMaxCourses = (): number => {
+    const limits = getTierLimits(tier);
+    return limits.maxCourses;
+  };
+
+  // Get maximum gigs allowed based on tier
+  const getMaxGigs = (): number => {
+    const limits = getTierLimits(tier);
+    return limits.maxGigs;
+  };
+
+  // Check if user can fulfill gigs (accept and complete jobs)
+  const canFulfillGigs = (): boolean => {
+    const limits = getTierLimits(tier);
+    return limits.canFulfillGigs;
   };
 
   // Check if user can add more products
-  const canAddProduct = (currentProductCount: number): boolean => {
-    return currentProductCount < getMaxProducts();
+  const canAddProduct = (): boolean => {
+    const maxProducts = getMaxProducts();
+    return myProducts.length < maxProducts;
+  };
+
+  // Check if user can add more courses
+  const canAddCourse = (): boolean => {
+    const maxCourses = getMaxCourses();
+    return myCourses.length < maxCourses;
+  };
+
+  // Get remaining product slots
+  const getRemainingProducts = (): number => {
+    const maxProducts = getMaxProducts();
+    if (maxProducts === Infinity) return Infinity;
+    return Math.max(0, maxProducts - myProducts.length);
+  };
+
+  // Get remaining course slots
+  const getRemainingCourses = (): number => {
+    const maxCourses = getMaxCourses();
+    if (maxCourses === Infinity) return Infinity;
+    return Math.max(0, maxCourses - myCourses.length);
+  };
+
+  // Get current counts
+  const getCurrentProductCount = (): number => myProducts.length;
+  const getCurrentCourseCount = (): number => myCourses.length;
+
+  // Get upgrade message based on what the user is trying to do
+  const getUpgradeMessage = (action: "product" | "course" | "gig"): string => {
+    const tierInfo = getTierInfo();
+    
+    if (action === "product") {
+      if (tier === null) {
+        return "Upgrade to Creator to add up to 3 products, or Pro for unlimited products.";
+      }
+      if (tier === "creator") {
+        return "Upgrade to Pro for unlimited store products.";
+      }
+    }
+    
+    if (action === "course") {
+      if (tier === null) {
+        return "Upgrade to Creator to add up to 3 courses, or Pro for unlimited courses.";
+      }
+      if (tier === "creator") {
+        return "Upgrade to Pro for unlimited courses.";
+      }
+    }
+    
+    if (action === "gig") {
+      if (tier === null) {
+        return "Upgrade to Creator for full gig access including the ability to fulfill client orders.";
+      }
+    }
+    
+    return "";
   };
 
   return {
@@ -113,10 +198,20 @@ export const useFeatureAccess = () => {
     getRequiredTier,
     getFeatureLabel,
     checkMultipleFeatures,
+    getTierInfo,
     getMaxProducts,
+    getMaxCourses,
+    getMaxGigs,
+    canFulfillGigs,
     canAddProduct,
+    canAddCourse,
+    getRemainingProducts,
+    getRemainingCourses,
+    getCurrentProductCount,
+    getCurrentCourseCount,
+    getUpgradeMessage,
     tier,
     subscribed,
-    isLoading,
+    isLoading: isLoading || productsLoading || coursesLoading,
   };
 };
