@@ -6,13 +6,16 @@ const Footer = () => {
   const footerLinks = {
     platform: [
       { name: "Browse Streams", path: "/browse" },
+      { name: "Categories", path: "/categories" },
       { name: "Marketplace", path: "/shop" },
       { name: "Freelancers", path: "/freelance" },
-      { name: "Learn", path: "/my-learning" },
+      { name: "Learn", path: "/courses" },
       { name: "Pricing", path: "/pricing" },
+      { name: "Get Featured", path: "/premium" },
     ],
     company: [
       { name: "About Us", path: "/about" },
+      { name: "Technology", path: "/technology" },
       { name: "Careers", path: "/careers" },
       { name: "Press", path: "/press" },
       { name: "Contact", path: "/contact" },
@@ -20,6 +23,7 @@ const Footer = () => {
     support: [
       { name: "Help Center", path: "/help" },
       { name: "FAQ", path: "/faq" },
+      { name: "Safety", path: "/safety" },
       { name: "Community Guidelines", path: "/guidelines" },
     ],
   };

@@ -1,48 +1,30 @@
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
-const faqs = [
-  {
-    question: "How do I start streaming on Ligam.tv?",
-    answer: "Getting started is easy! Create a free account, download our streaming software or use your preferred broadcasting tool (OBS, Streamlabs, etc.), and connect it to your Ligam channel using your unique stream key found in your dashboard."
-  },
-  {
-    question: "What are the requirements to monetize my stream?",
-    answer: "To start earning on Ligam, you need to: be at least 18 years old, have at least 100 followers, stream for at least 10 hours in the last 30 days, and complete our creator verification process."
-  },
-  {
-    question: "How do virtual gifts work?",
-    answer: "Viewers can purchase virtual gifts (Hearts, Sparkles, Crowns, Rockets) and send them during your stream. As a creator, you earn a percentage of each gift's value. Gifts are converted to your local currency and paid out monthly."
-  },
-  {
-    question: "What video quality is supported?",
-    answer: "Free accounts support up to 720p streaming. Creator plans support 1080p HD, and Pro plans support up to 4K streaming. The actual quality depends on your internet upload speed and encoding settings."
-  },
-  {
-    question: "Can I stream to multiple platforms?",
-    answer: "Yes! With our Pro plan, you can simulcast to multiple platforms including YouTube, Twitch, and Facebook Gaming while streaming on Ligam.tv."
-  },
-  {
-    question: "How does the Get Featured promotion work?",
-    answer: "Our Get Featured program gives your stream premium placement on the homepage carousel and category pages for increased visibility. You can purchase promotion packages based on duration and placement tier."
-  },
-  {
-    question: "What payment methods are accepted?",
-    answer: "We accept all major credit cards, PayPal, and cryptocurrency payments. For creator payouts, we support bank transfers, PayPal, and various regional payment methods."
-  },
-  {
-    question: "Is there a mobile app?",
-    answer: "Yes! Our mobile apps for iOS and Android allow you to watch streams, chat, send gifts, and even go live directly from your phone."
-  },
-];
+import { useFAQs } from "@/hooks/useFAQs";
+import { HelpCircle, MessageSquare } from "lucide-react";
 
 const FAQ = () => {
+  const { data: faqs, isLoading } = useFAQs();
+
+  // Group FAQs by category
+  const groupedFaqs = faqs?.reduce((acc, faq) => {
+    const category = faq.category || "General";
+    if (!acc[category]) {
+      acc[category] = [];
+    }
+    acc[category].push(faq);
+    return acc;
+  }, {} as Record<string, typeof faqs>);
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -51,6 +33,10 @@ const FAQ = () => {
         <div className="container mx-auto max-w-3xl">
           {/* Header */}
           <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+              <HelpCircle className="w-4 h-4" />
+              FAQ
+            </div>
             <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
               Frequently Asked Questions
             </h1>
@@ -60,37 +46,64 @@ const FAQ = () => {
           </div>
 
           {/* FAQ Accordion */}
-          <Accordion type="single" collapsible className="space-y-4">
-            {faqs.map((faq, index) => (
-              <AccordionItem 
-                key={index} 
-                value={`item-${index}`}
-                className="bg-card border border-border rounded-xl px-6 data-[state=open]:border-primary/50"
-              >
-                <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary py-6">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground pb-6">
-                  {faq.answer}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          {isLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="h-16 w-full rounded-xl" />
+              ))}
+            </div>
+          ) : groupedFaqs && Object.keys(groupedFaqs).length > 0 ? (
+            <div className="space-y-8">
+              {Object.entries(groupedFaqs).map(([category, categoryFaqs]) => (
+                <div key={category}>
+                  <h2 className="text-lg font-semibold text-foreground mb-4 px-2">
+                    {category}
+                  </h2>
+                  <Accordion type="single" collapsible className="space-y-3">
+                    {categoryFaqs?.map((faq) => (
+                      <AccordionItem 
+                        key={faq.id} 
+                        value={faq.id}
+                        className="bg-card border border-border rounded-xl px-6 data-[state=open]:border-primary/50"
+                      >
+                        <AccordionTrigger className="text-left font-semibold text-foreground hover:text-primary py-5">
+                          {faq.question}
+                        </AccordionTrigger>
+                        <AccordionContent className="text-muted-foreground pb-5">
+                          {faq.answer}
+                        </AccordionContent>
+                      </AccordionItem>
+                    ))}
+                  </Accordion>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No FAQs available at the moment.</p>
+            </div>
+          )}
 
           {/* Contact CTA */}
           <div className="text-center mt-12 p-8 bg-card border border-border rounded-xl">
+            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <MessageSquare className="w-7 h-7 text-primary" />
+            </div>
             <h3 className="text-xl font-display font-bold text-foreground mb-2">
               Still have questions?
             </h3>
             <p className="text-muted-foreground mb-4">
               Our support team is here to help
             </p>
-            <a 
-              href="mailto:support@ligam.tv" 
-              className="text-primary font-semibold hover:underline"
-            >
-              support@ligam.tv
-            </a>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link to="/contact">
+                <Button variant="outline">Contact Us</Button>
+              </Link>
+              <Link to="/help">
+                <Button className="glow">Visit Help Center</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </main>
