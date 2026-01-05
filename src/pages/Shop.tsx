@@ -97,8 +97,53 @@ const Shop = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
+      {/* Hero Banner - Matching Courses Style */}
+      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-purple-500/5 to-background border-b border-border">
+        <div className="container mx-auto">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
+                <Store className="w-4 h-4" />
+                Creator Marketplace
+              </div>
+              <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+                Shop <span className="text-purple-400">Exclusive Products</span>
+              </h1>
+              <p className="text-muted-foreground max-w-lg">
+                Discover unique products from talented creators around the world.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => user ? navigate("/seller/dashboard") : setBecomeSellerOpen(true)}
+              >
+                <Store className="w-4 h-4 mr-2" />
+                {user ? "Seller Dashboard" : "Become a Seller"}
+              </Button>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+            {[
+              { icon: Store, label: "Products", value: products?.length.toString() || "0" },
+              { icon: Users, label: "Active Sellers", value: "500+" },
+              { icon: TrendingUp, label: "Monthly Sales", value: "$50K+" },
+            ].map((stat, index) => (
+              <div key={index} className="bg-card/50 rounded-xl p-4 border border-border">
+                <stat.icon className="w-5 h-5 text-purple-400 mb-2" />
+                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Main Content */}
-      <main className="pt-24 pb-12">
+      <main className="py-8 pb-12">
         <div className="container mx-auto px-4">
           {/* Header with Search and Controls */}
           <ShopHeader
@@ -214,69 +259,52 @@ const Shop = () => {
       </main>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-card/50 border-t border-border">
+      <section className="py-16 px-4 bg-gradient-to-t from-purple-500/5 to-background border-t border-border">
         <div className="container mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                <Store className="w-4 h-4" />
-                Start Selling
-              </div>
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-                Sell Your Creations on Ligam
-              </h2>
-              <p className="text-muted-foreground text-lg mb-8">
-                Join our growing community of sellers. List your products, reach millions of customers, and grow your business with zero hassle.
-              </p>
-              <div className="flex flex-wrap gap-6 mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Users className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">500+</p>
-                    <p className="text-sm text-muted-foreground">Active Sellers</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">$50K+</p>
-                    <p className="text-sm text-muted-foreground">Monthly Sales</p>
-                  </div>
-                </div>
-              </div>
-              <Button
-                size="lg"
-                className="glow"
-                onClick={() => {
-                  if (user) {
-                    navigate("/seller/dashboard");
-                  } else {
-                    setBecomeSellerOpen(true);
-                  }
-                }}
-              >
-                Become a Seller
-              </Button>
+          <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
+              <Store className="w-4 h-4" />
+              Start Selling
             </div>
-            <div className="hidden md:block">
-              <div className="relative">
-                <div className="absolute inset-0 bg-primary/20 rounded-3xl blur-3xl" />
-                <div className="relative grid grid-cols-2 gap-4">
-                  <div className="space-y-4">
-                    <div className="h-32 rounded-2xl bg-card border border-border" />
-                    <div className="h-48 rounded-2xl bg-card border border-primary/20" />
-                  </div>
-                  <div className="space-y-4 pt-8">
-                    <div className="h-48 rounded-2xl bg-card border border-primary/20" />
-                    <div className="h-32 rounded-2xl bg-card border border-border" />
-                  </div>
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
+              Sell Your Creations on Ligam
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto mb-8">
+              Join our growing community of sellers. List your products, reach millions of customers, and grow your business.
+            </p>
+            <div className="flex flex-wrap justify-center gap-6 mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-purple-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-2xl font-bold text-foreground">500+</p>
+                  <p className="text-sm text-muted-foreground">Active Sellers</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-purple-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-2xl font-bold text-foreground">$50K+</p>
+                  <p className="text-sm text-muted-foreground">Monthly Sales</p>
                 </div>
               </div>
             </div>
+            <Button
+              size="lg"
+              className="glow bg-purple-600 hover:bg-purple-700"
+              onClick={() => {
+                if (user) {
+                  navigate("/seller/dashboard");
+                } else {
+                  setBecomeSellerOpen(true);
+                }
+              }}
+            >
+              Become a Seller
+            </Button>
           </div>
         </div>
       </section>
