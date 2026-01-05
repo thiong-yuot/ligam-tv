@@ -10,9 +10,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Star, Clock, Users, BookOpen, PlayCircle, CheckCircle, 
-  Lock, Video, FileText, Loader2, ArrowLeft, Calendar 
+  Lock, Video, FileText, Loader2, ArrowLeft, Calendar,
+  Globe, Award, Shield, Smartphone, Download
 } from "lucide-react";
 
 const CourseDetail = () => {
@@ -55,7 +57,7 @@ const CourseDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="container mx-auto px-4 py-20 text-center">
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-20 text-center">
           <BookOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
           <h1 className="text-2xl font-bold text-foreground mb-2">Course Not Found</h1>
           <p className="text-muted-foreground mb-4">This course doesn't exist or has been removed.</p>
@@ -73,272 +75,342 @@ const CourseDetail = () => {
     0
   ) || 0;
 
+  const benefits = [
+    { icon: Globe, text: "Full lifetime access" },
+    { icon: Smartphone, text: "Access on mobile and desktop" },
+    { icon: Download, text: "Downloadable resources" },
+    { icon: Award, text: "Certificate of completion" },
+    { icon: Shield, text: "30-day money-back guarantee" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 via-background to-background py-12">
-        <div className="container mx-auto px-4">
-          <Link to="/courses" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Courses
-          </Link>
+      <section className="relative pt-20 pb-12 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
+        
+        <div className="relative w-full px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <Link to="/courses" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Courses
+            </Link>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Course Info */}
-            <div className="lg:col-span-2 space-y-6">
-              <div className="flex flex-wrap gap-2">
-                {course.category && (
-                  <Badge variant="secondary">{course.category}</Badge>
-                )}
-                <Badge variant="outline" className="capitalize">{course.level}</Badge>
-                {course.is_featured && (
-                  <Badge className="bg-primary text-primary-foreground">Featured</Badge>
-                )}
-              </div>
-
-              <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                {course.title}
-              </h1>
-
-              {course.short_description && (
-                <p className="text-lg text-muted-foreground">
-                  {course.short_description}
-                </p>
-              )}
-
-              <div className="flex flex-wrap items-center gap-4 text-sm">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  <span className="font-medium">{course.average_rating.toFixed(1)}</span>
-                  <span className="text-muted-foreground">({course.total_reviews} reviews)</span>
-                </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Users className="w-4 h-4" />
-                  <span>{course.total_enrollments} students</span>
-                </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <Clock className="w-4 h-4" />
-                  <span>{totalDuration} min total</span>
-                </div>
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <PlayCircle className="w-4 h-4" />
-                  <span>{totalLessons} lessons</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Enrollment Card */}
-            <div className="lg:col-span-1">
-              <Card className="sticky top-24 bg-card border-border">
-                {course.thumbnail_url && (
-                  <div className="aspect-video overflow-hidden rounded-t-lg">
-                    <img 
-                      src={course.thumbnail_url} 
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <CardContent className="p-6 space-y-4">
-                  <div className="text-3xl font-bold text-foreground">
-                    {course.price === 0 ? "Free" : `$${course.price.toFixed(2)}`}
-                  </div>
-
-                  {enrollment ? (
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-primary">
-                        <CheckCircle className="w-5 h-5" />
-                        <span className="font-medium">Enrolled</span>
-                      </div>
-                      <Progress value={enrollment.progress_percentage} className="h-2" />
-                      <p className="text-sm text-muted-foreground">
-                        {enrollment.progress_percentage}% complete
-                      </p>
-                      <Link to={`/learn/${course.id}`}>
-                        <Button className="w-full bg-primary hover:bg-primary/90">
-                          Continue Learning
-                        </Button>
-                      </Link>
-                    </div>
-                  ) : (
-                    <Button 
-                      className="w-full bg-primary hover:bg-primary/90"
-                      onClick={handleEnroll}
-                      disabled={enrollMutation.isPending}
-                    >
-                      {enrollMutation.isPending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Enrolling...
-                        </>
-                      ) : course.price === 0 ? (
-                        "Enroll for Free"
-                      ) : (
-                        `Enroll Now - $${course.price}`
-                      )}
-                    </Button>
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Course Info */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className="flex flex-wrap gap-2">
+                  {course.category && (
+                    <Badge variant="secondary" className="bg-primary/10 text-primary">
+                      {course.category}
+                    </Badge>
                   )}
+                  <Badge variant="outline" className="capitalize">{course.level}</Badge>
+                  {course.is_featured && (
+                    <Badge className="bg-primary text-primary-foreground">Featured</Badge>
+                  )}
+                </div>
 
-                  <div className="text-sm text-muted-foreground space-y-2 pt-4 border-t">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-primary" />
-                      <span>Full lifetime access</span>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
+                  {course.title}
+                </h1>
+
+                {course.short_description && (
+                  <p className="text-lg md:text-xl text-muted-foreground">
+                    {course.short_description}
+                  </p>
+                )}
+
+                <div className="flex flex-wrap items-center gap-6 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          className={`w-4 h-4 ${i < Math.floor(course.average_rating) ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`} 
+                        />
+                      ))}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-primary" />
-                      <span>Access on mobile and desktop</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-primary" />
-                      <span>Certificate of completion</span>
-                    </div>
+                    <span className="font-semibold">{course.average_rating.toFixed(1)}</span>
+                    <span className="text-muted-foreground">({course.total_reviews} reviews)</span>
                   </div>
-                </CardContent>
-              </Card>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Users className="w-4 h-4" />
+                    <span>{course.total_enrollments} students enrolled</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    <span>{Math.floor(totalDuration / 60)}h {totalDuration % 60}m total</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <PlayCircle className="w-4 h-4" />
+                    <span>{totalLessons} lessons</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-4 h-4" />
+                    <span>{course.sections?.length || 0} sections</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Enrollment Card */}
+              <div className="lg:col-span-1">
+                <Card className="sticky top-24 bg-card border-border overflow-hidden">
+                  {course.thumbnail_url && (
+                    <div className="aspect-video overflow-hidden relative">
+                      <img 
+                        src={course.thumbnail_url} 
+                        alt={course.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                        <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center">
+                          <PlayCircle className="w-8 h-8 text-primary-foreground" />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <CardContent className="p-6 space-y-6">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-foreground">
+                        {course.price === 0 ? "Free" : `$${course.price.toFixed(2)}`}
+                      </span>
+                      {course.price > 0 && (
+                        <span className="text-lg text-muted-foreground line-through">
+                          ${(course.price * 1.5).toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+
+                    {enrollment ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 text-primary">
+                          <CheckCircle className="w-5 h-5" />
+                          <span className="font-medium">You're enrolled!</span>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">Progress</span>
+                            <span className="font-medium">{enrollment.progress_percentage}%</span>
+                          </div>
+                          <Progress value={enrollment.progress_percentage} className="h-2" />
+                        </div>
+                        <Link to={`/learn/${course.id}`} className="block">
+                          <Button className="w-full bg-primary hover:bg-primary/90" size="lg">
+                            <PlayCircle className="w-5 h-5 mr-2" />
+                            Continue Learning
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : (
+                      <Button 
+                        className="w-full bg-primary hover:bg-primary/90"
+                        size="lg"
+                        onClick={handleEnroll}
+                        disabled={enrollMutation.isPending}
+                      >
+                        {enrollMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            Enrolling...
+                          </>
+                        ) : course.price === 0 ? (
+                          "Enroll for Free"
+                        ) : (
+                          `Enroll Now - $${course.price}`
+                        )}
+                      </Button>
+                    )}
+
+                    <div className="space-y-3 pt-4 border-t border-border">
+                      <p className="font-medium text-foreground">This course includes:</p>
+                      {benefits.map((benefit, index) => (
+                        <div key={index} className="flex items-center gap-3 text-sm text-muted-foreground">
+                          <benefit.icon className="w-4 h-4 text-primary flex-shrink-0" />
+                          <span>{benefit.text}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Course Content */}
-      <section className="container mx-auto px-4 py-12">
-        <Tabs defaultValue="curriculum" className="space-y-8">
-          <TabsList>
-            <TabsTrigger value="curriculum">Curriculum</TabsTrigger>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
-          </TabsList>
+      <section className="py-12">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+              <div className="lg:col-span-2">
+                <Tabs defaultValue="curriculum" className="space-y-8">
+                  <TabsList className="bg-muted/50 p-1">
+                    <TabsTrigger value="curriculum" className="data-[state=active]:bg-background">
+                      Curriculum
+                    </TabsTrigger>
+                    <TabsTrigger value="overview" className="data-[state=active]:bg-background">
+                      Overview
+                    </TabsTrigger>
+                    <TabsTrigger value="reviews" className="data-[state=active]:bg-background">
+                      Reviews ({reviews.length})
+                    </TabsTrigger>
+                  </TabsList>
 
-          <TabsContent value="curriculum" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-primary" />
-                  Course Content
-                </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  {course.sections?.length || 0} sections • {totalLessons} lessons • {totalDuration} min total
-                </p>
-              </CardHeader>
-              <CardContent>
-                {course.sections && course.sections.length > 0 ? (
-                  <Accordion type="multiple" className="w-full">
-                    {course.sections.map((section, index) => (
-                      <AccordionItem key={section.id} value={section.id}>
-                        <AccordionTrigger className="hover:no-underline">
-                          <div className="flex items-center gap-3 text-left">
-                            <span className="text-muted-foreground text-sm">
-                              Section {index + 1}
-                            </span>
-                            <span className="font-medium">{section.title}</span>
-                            <Badge variant="outline" className="ml-auto mr-4">
-                              {section.lessons?.length || 0} lessons
-                            </Badge>
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
-                          <div className="space-y-2 pt-2">
-                            {section.lessons?.map((lesson) => (
-                              <div
-                                key={lesson.id}
-                                className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                              >
-                                {lesson.is_preview || enrollment ? (
-                                  <PlayCircle className="w-4 h-4 text-primary" />
-                                ) : (
-                                  <Lock className="w-4 h-4 text-muted-foreground" />
-                                )}
-                                <span className="flex-1">{lesson.title}</span>
-                                {lesson.is_preview && !enrollment && (
-                                  <Badge variant="secondary" className="text-xs">Preview</Badge>
-                                )}
-                                <span className="text-sm text-muted-foreground">
-                                  {lesson.duration_minutes} min
-                                </span>
-                              </div>
+                  <TabsContent value="curriculum" className="space-y-4">
+                    <Card className="bg-card border-border">
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <BookOpen className="w-5 h-5 text-primary" />
+                          Course Content
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          {course.sections?.length || 0} sections • {totalLessons} lessons • {Math.floor(totalDuration / 60)}h {totalDuration % 60}m total
+                        </p>
+                      </CardHeader>
+                      <CardContent>
+                        {course.sections && course.sections.length > 0 ? (
+                          <Accordion type="multiple" className="w-full">
+                            {course.sections.map((section, index) => (
+                              <AccordionItem key={section.id} value={section.id} className="border-border">
+                                <AccordionTrigger className="hover:no-underline py-4">
+                                  <div className="flex items-center gap-3 text-left flex-1">
+                                    <span className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-medium">
+                                      {index + 1}
+                                    </span>
+                                    <div className="flex-1">
+                                      <span className="font-medium block">{section.title}</span>
+                                      <span className="text-sm text-muted-foreground">
+                                        {section.lessons?.length || 0} lessons
+                                      </span>
+                                    </div>
+                                  </div>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  <div className="space-y-1 pl-11">
+                                    {section.lessons?.map((lesson) => (
+                                      <div
+                                        key={lesson.id}
+                                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                                      >
+                                        {lesson.is_preview || enrollment ? (
+                                          <PlayCircle className="w-4 h-4 text-primary flex-shrink-0" />
+                                        ) : (
+                                          <Lock className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                        )}
+                                        <span className="flex-1 text-sm">{lesson.title}</span>
+                                        {lesson.is_preview && !enrollment && (
+                                          <Badge variant="secondary" className="text-xs">Preview</Badge>
+                                        )}
+                                        <span className="text-xs text-muted-foreground">
+                                          {lesson.duration_minutes} min
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </AccordionContent>
+                              </AccordionItem>
                             ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                ) : (
-                  <p className="text-muted-foreground text-center py-8">
-                    No content added yet
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                          </Accordion>
+                        ) : (
+                          <p className="text-muted-foreground text-center py-8">
+                            No content added yet
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
 
-          <TabsContent value="overview" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>About this course</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="prose prose-sm max-w-none text-muted-foreground">
-                  {course.description || "No description provided."}
-                </div>
-              </CardContent>
-            </Card>
+                  <TabsContent value="overview" className="space-y-6">
+                    <Card className="bg-card border-border">
+                      <CardHeader>
+                        <CardTitle>About this course</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="prose prose-sm max-w-none text-muted-foreground">
+                          {course.description || "No description provided."}
+                        </div>
+                      </CardContent>
+                    </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>What you'll learn</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-3">
-                  {["Master the fundamentals", "Build real projects", "Get hands-on experience", "Learn best practices"].map((item, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{item}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                    <Card className="bg-card border-border">
+                      <CardHeader>
+                        <CardTitle>What you'll learn</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {["Master the fundamentals", "Build real projects", "Get hands-on experience", "Learn best practices", "Industry-ready skills", "Expert guidance"].map((item, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                              <CheckCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                              <span className="text-muted-foreground">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
 
-          <TabsContent value="reviews" className="space-y-4">
-            {reviews.length === 0 ? (
-              <Card>
-                <CardContent className="py-12 text-center">
-                  <Star className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="font-semibold text-foreground mb-2">No reviews yet</h3>
-                  <p className="text-muted-foreground">
-                    Be the first to review this course after enrolling!
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              reviews.map((review) => (
-                <Card key={review.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-4 h-4 ${
-                            i < review.rating
-                              ? "text-yellow-500 fill-yellow-500"
-                              : "text-muted-foreground"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <p className="text-muted-foreground">{review.review_text}</p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {new Date(review.created_at).toLocaleDateString()}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </TabsContent>
-        </Tabs>
+                  <TabsContent value="reviews" className="space-y-4">
+                    {reviews.length === 0 ? (
+                      <Card className="bg-card border-border">
+                        <CardContent className="py-12 text-center">
+                          <Star className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                          <h3 className="font-semibold text-foreground mb-2">No reviews yet</h3>
+                          <p className="text-muted-foreground">
+                            Be the first to review this course after enrolling!
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      reviews.map((review) => (
+                        <Card key={review.id} className="bg-card border-border">
+                          <CardContent className="p-6">
+                            <div className="flex items-start gap-4">
+                              <Avatar className="w-10 h-10">
+                                <AvatarFallback className="bg-primary/10 text-primary">
+                                  U
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-2">
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star
+                                      key={i}
+                                      className={`w-4 h-4 ${
+                                        i < review.rating
+                                          ? "text-yellow-500 fill-yellow-500"
+                                          : "text-muted-foreground"
+                                      }`}
+                                    />
+                                  ))}
+                                  <span className="text-sm text-muted-foreground ml-2">
+                                    {new Date(review.created_at).toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <p className="text-foreground">{review.review_text}</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </TabsContent>
+                </Tabs>
+              </div>
+
+              {/* Sidebar - Hidden on mobile, visible on desktop */}
+              <div className="hidden lg:block">
+                {/* Additional sidebar content could go here */}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <Footer />
