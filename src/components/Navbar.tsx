@@ -63,7 +63,7 @@ const Navbar = () => {
     { name: "Home", path: "/" },
     { name: "Browse", path: "/browse" },
     { name: "Categories", path: "/categories" },
-    { name: "Learn", path: "/my-learning", requiresAuth: true },
+    { name: "Learn", path: "/courses" },
     { name: "Freelance", path: "/freelance" },
     { name: "Shop", path: "/shop" },
     { name: "Pricing", path: "/pricing" },
