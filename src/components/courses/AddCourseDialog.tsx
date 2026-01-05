@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Plus, Loader2, Crown, AlertTriangle } from "lucide-react";
+import { Plus, Loader2, Crown, AlertTriangle, Upload, Image, Video } from "lucide-react";
 import { useCreateCourse, COURSE_CATEGORIES, COURSE_LEVELS } from "@/hooks/useCourses";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+import { useFileUpload } from "@/hooks/useFileUpload";
+import { useAuth } from "@/hooks/useAuth";
 
 interface AddCourseDialogProps {
   disabled?: boolean;
@@ -17,6 +19,11 @@ interface AddCourseDialogProps {
 }
 
 const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
+  const { user } = useAuth();
+  const { uploadFile, uploading } = useFileUpload();
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [shortDescription, setShortDescription] = useState("");
@@ -25,6 +32,7 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
   const [category, setCategory] = useState("");
   const [level, setLevel] = useState("beginner");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [previewVideoUrl, setPreviewVideoUrl] = useState("");
 
   const createCourse = useCreateCourse();
   const { canAddCourse, getMaxCourses, getCurrentCourseCount, getRemainingCourses, tier, getUpgradeMessage } = useFeatureAccess();
@@ -33,6 +41,20 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
   const currentCount = getCurrentCourseCount();
   const remainingSlots = getRemainingCourses();
   const canAdd = canAddCourse();
+
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    const url = await uploadFile(file, "course-content", user.id);
+    if (url) setThumbnailUrl(url);
+  };
+
+  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    const url = await uploadFile(file, "course-content", user.id);
+    if (url) setPreviewVideoUrl(url);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +71,7 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
       category,
       level,
       thumbnail_url: thumbnailUrl || null,
+      preview_video_url: previewVideoUrl || null,
     });
 
     setOpen(false);
@@ -63,6 +86,7 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
     setCategory("");
     setLevel("beginner");
     setThumbnailUrl("");
+    setPreviewVideoUrl("");
   };
 
   return (
@@ -204,16 +228,34 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
             </Select>
           </div>
 
+          {/* Thumbnail Upload */}
           <div className="space-y-2">
-            <Label htmlFor="thumbnail">Thumbnail URL</Label>
-            <Input
-              id="thumbnail"
-              type="url"
-              value={thumbnailUrl}
-              onChange={(e) => setThumbnailUrl(e.target.value)}
-              placeholder="https://example.com/thumbnail.jpg"
-              disabled={!canAdd}
-            />
+            <Label>Course Thumbnail</Label>
+            <div className="flex items-center gap-4">
+              {thumbnailUrl && (
+                <img src={thumbnailUrl} alt="Thumbnail" className="h-20 w-32 object-cover rounded-lg" />
+              )}
+              <input ref={thumbnailInputRef} type="file" accept="image/*" className="hidden" onChange={handleThumbnailUpload} />
+              <Button type="button" variant="outline" onClick={() => thumbnailInputRef.current?.click()} disabled={!canAdd || uploading}>
+                <Image className="h-4 w-4 mr-2" />
+                {uploading ? "Uploading..." : thumbnailUrl ? "Change" : "Upload Thumbnail"}
+              </Button>
+            </div>
+          </div>
+
+          {/* Preview Video Upload */}
+          <div className="space-y-2">
+            <Label>Preview Video (Optional)</Label>
+            <div className="flex items-center gap-4">
+              {previewVideoUrl && (
+                <video src={previewVideoUrl} className="h-20 w-32 object-cover rounded-lg" controls />
+              )}
+              <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} />
+              <Button type="button" variant="outline" onClick={() => videoInputRef.current?.click()} disabled={!canAdd || uploading}>
+                <Video className="h-4 w-4 mr-2" />
+                {uploading ? "Uploading..." : previewVideoUrl ? "Change" : "Upload Video"}
+              </Button>
+            </div>
           </div>
 
           <div className="flex justify-end gap-2 pt-4">

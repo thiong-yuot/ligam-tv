@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -37,6 +38,8 @@ import {
   CheckCircle2,
   XCircle,
   AlertCircle,
+  Upload,
+  Image,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -52,6 +55,7 @@ import {
   useFreelancerIncomingOrders,
   useUpdateFreelancerOrder,
 } from "@/hooks/useFreelancerPackages";
+import { useFileUpload } from "@/hooks/useFileUpload";
 import { toast } from "sonner";
 
 const FreelancerDashboard = () => {
@@ -67,6 +71,11 @@ const FreelancerDashboard = () => {
   const createPackage = useCreatePackage();
   const deletePackage = useDeletePackage();
   const updateOrder = useUpdateFreelancerOrder();
+  const { uploadFile, uploadMultipleFiles, uploading } = useFileUpload();
+  
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const portfolioInputRef = useRef<HTMLInputElement>(null);
 
   const [addServiceOpen, setAddServiceOpen] = useState(false);
   const [addPackageOpen, setAddPackageOpen] = useState(false);
@@ -78,6 +87,9 @@ const FreelancerDashboard = () => {
     hourly_rate: "",
     portfolio_url: "",
     skills: [] as string[],
+    avatar_url: "",
+    thumbnail_url: "",
+    portfolio_images: [] as string[],
   });
   const [skillInput, setSkillInput] = useState("");
   
@@ -118,8 +130,42 @@ const FreelancerDashboard = () => {
       hourly_rate: profile.hourly_rate?.toString() || "",
       portfolio_url: profile.portfolio_url || "",
       skills: profile.skills || [],
+      avatar_url: profile.avatar_url || "",
+      thumbnail_url: profile.thumbnail_url || "",
+      portfolio_images: profile.portfolio_images || [],
     });
     setIsEditing(true);
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    const url = await uploadFile(file, "freelancer-portfolios", user.id);
+    if (url) setEditForm((prev) => ({ ...prev, avatar_url: url }));
+  };
+
+  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    const url = await uploadFile(file, "freelancer-portfolios", user.id);
+    if (url) setEditForm((prev) => ({ ...prev, thumbnail_url: url }));
+  };
+
+  const handlePortfolioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !user) return;
+    const urls = await uploadMultipleFiles(Array.from(files), "freelancer-portfolios", user.id);
+    setEditForm((prev) => ({
+      ...prev,
+      portfolio_images: [...prev.portfolio_images, ...urls],
+    }));
+  };
+
+  const removePortfolioImage = (index: number) => {
+    setEditForm((prev) => ({
+      ...prev,
+      portfolio_images: prev.portfolio_images.filter((_, i) => i !== index),
+    }));
   };
 
   const addSkill = () => {
@@ -142,6 +188,9 @@ const FreelancerDashboard = () => {
         hourly_rate: editForm.hourly_rate ? parseFloat(editForm.hourly_rate) : null,
         portfolio_url: editForm.portfolio_url || null,
         skills: editForm.skills.length > 0 ? editForm.skills : null,
+        avatar_url: editForm.avatar_url || null,
+        thumbnail_url: editForm.thumbnail_url || null,
+        portfolio_images: editForm.portfolio_images.length > 0 ? editForm.portfolio_images : null,
       });
       toast.success("Profile updated!");
       setIsEditing(false);
@@ -719,7 +768,34 @@ const FreelancerDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   {isEditing ? (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
+                      {/* Avatar Upload */}
+                      <div className="flex items-center gap-4">
+                        <Avatar className="h-20 w-20">
+                          <AvatarImage src={editForm.avatar_url} />
+                          <AvatarFallback>{editForm.name.charAt(0) || "?"}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <input
+                            ref={avatarInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleAvatarUpload}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => avatarInputRef.current?.click()}
+                            disabled={uploading}
+                          >
+                            <Upload className="h-4 w-4 mr-2" />
+                            {uploading ? "Uploading..." : "Change Avatar"}
+                          </Button>
+                        </div>
+                      </div>
+
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label>Name</Label>
@@ -748,11 +824,12 @@ const FreelancerDashboard = () => {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>Hourly Rate ($)</Label>
+                          <Label>Hourly Rate ($) - Optional</Label>
                           <Input
                             type="number"
                             value={editForm.hourly_rate}
                             onChange={(e) => setEditForm({ ...editForm, hourly_rate: e.target.value })}
+                            placeholder="Leave empty for package pricing only"
                           />
                         </div>
                         <div className="space-y-2">
@@ -790,6 +867,78 @@ const FreelancerDashboard = () => {
                             ))}
                           </div>
                         )}
+                      </div>
+
+                      {/* Thumbnail Upload */}
+                      <div className="space-y-2">
+                        <Label>Profile Thumbnail</Label>
+                        <div className="flex items-center gap-4">
+                          {editForm.thumbnail_url && (
+                            <img
+                              src={editForm.thumbnail_url}
+                              alt="Thumbnail"
+                              className="h-24 w-40 object-cover rounded-lg"
+                            />
+                          )}
+                          <input
+                            ref={thumbnailInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleThumbnailUpload}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => thumbnailInputRef.current?.click()}
+                            disabled={uploading}
+                          >
+                            <Image className="h-4 w-4 mr-2" />
+                            {editForm.thumbnail_url ? "Change Thumbnail" : "Upload Thumbnail"}
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Portfolio Images */}
+                      <div className="space-y-2">
+                        <Label>Portfolio Images</Label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                          {editForm.portfolio_images.map((url, index) => (
+                            <div key={index} className="relative group">
+                              <img
+                                src={url}
+                                alt={`Portfolio ${index + 1}`}
+                                className="h-32 w-full object-cover rounded-lg"
+                              />
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => removePortfolioImage(index)}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ))}
+                          <input
+                            ref={portfolioInputRef}
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                            onChange={handlePortfolioUpload}
+                          />
+                          <button
+                            type="button"
+                            className="h-32 border-2 border-dashed rounded-lg flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                            onClick={() => portfolioInputRef.current?.click()}
+                            disabled={uploading}
+                          >
+                            <Upload className="h-6 w-6" />
+                            <span className="text-sm">Add Images</span>
+                          </button>
+                        </div>
                       </div>
 
                       <div className="flex gap-2 pt-4">

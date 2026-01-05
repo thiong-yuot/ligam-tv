@@ -8,6 +8,8 @@ export interface FreelancerProfile {
   name: string;
   title: string;
   avatar_url: string | null;
+  thumbnail_url: string | null;
+  portfolio_images: string[] | null;
   skills: string[] | null;
   hourly_rate: number | null;
   rating: number | null;
