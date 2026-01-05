@@ -13,6 +13,7 @@ const Footer = () => {
     company: [
       { name: "About Us", path: "/about" },
       { name: "Careers", path: "/careers" },
+      { name: "Press", path: "/press" },
       { name: "Contact", path: "/contact" },
     ],
     support: [
