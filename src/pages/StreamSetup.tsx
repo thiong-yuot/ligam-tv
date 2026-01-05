@@ -13,10 +13,11 @@ import {
   CheckCircle,
   ArrowRight,
   Download,
-  ExternalLink
+  ExternalLink,
+  ArrowLeft
 } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import ligamLogo from "@/assets/ligam-logo.png";
 const StreamSetup = () => {
   const steps = [
     {
@@ -124,6 +125,22 @@ const StreamSetup = () => {
 
   return (
     <Layout showNavbar={false} showSidebar={false}>
+      {/* Back to Home Header */}
+      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <img src={ligamLogo} alt="Ligam" className="h-8 w-auto" />
+            <span className="text-lg font-display font-bold text-foreground">
+              Ligam<span className="text-purple-400">.tv</span>
+            </span>
+          </Link>
+          <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Home
+          </Link>
+        </div>
+      </header>
+
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-background to-violet-900/10" />
