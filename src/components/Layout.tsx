@@ -7,13 +7,14 @@ interface LayoutProps {
   children: ReactNode;
   showSidebar?: boolean;
   showFooter?: boolean;
+  showNavbar?: boolean;
 }
 
-const Layout = ({ children, showSidebar = true, showFooter = true }: LayoutProps) => {
+const Layout = ({ children, showSidebar = true, showFooter = true, showNavbar = true }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      <div className="pt-16">
+      {showNavbar && <Navbar />}
+      <div className={showNavbar ? "pt-16" : ""}>
         {showSidebar && <Sidebar />}
         <main className={`${showSidebar ? "lg:pl-60" : ""}`}>
           {children}
