@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { FeatureGate, FeatureLockedOverlay } from "@/components/FeatureGate";
-import { useUserStream, useCreateMuxStream, useStreamStatus } from "@/hooks/useStreams";
+import { useUserStream, useCreateMuxStream, useStreamStatus, useStreamCredentials } from "@/hooks/useStreams";
 import { 
   Video, 
   Copy, 
@@ -50,6 +50,7 @@ const GoLive = () => {
   const { hasAccess } = useFeatureAccess();
 
   const { data: userStream, isLoading: streamLoading, refetch: refetchStream } = useUserStream(userId || "");
+  const { data: streamCredentials, isLoading: credentialsLoading } = useStreamCredentials(userStream?.id || "");
   const { data: streamStatus, isLoading: statusLoading } = useStreamStatus();
   const createMuxStream = useCreateMuxStream();
 
@@ -122,7 +123,7 @@ const GoLive = () => {
     "Fitness", "Lifestyle", "Entertainment", "Education"
   ];
 
-  const streamKey = userStream?.stream_key || null;
+  const streamKey = streamCredentials?.stream_key || null;
   const hlsUrl = userStream?.hls_url || null;
   const isLive = userStream?.is_live || false;
   const muxStatus = streamStatus?.muxStatus?.status;
@@ -287,7 +288,12 @@ const GoLive = () => {
 
                 <div className="space-y-2">
                   <Label>Stream Key</Label>
-                  {streamKey ? (
+                  {credentialsLoading ? (
+                    <div className="text-center py-6 bg-secondary/30 rounded-lg">
+                      <Loader2 className="w-8 h-8 text-muted-foreground mx-auto mb-2 animate-spin" />
+                      <p className="text-sm text-muted-foreground">Loading credentials...</p>
+                    </div>
+                  ) : streamKey ? (
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
@@ -460,34 +466,18 @@ const GoLive = () => {
                     />
                   </div>
                   {enableOverlay && (
-                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
-                      <Button variant="outline" className="h-20">
-                        Upload Logo
-                      </Button>
-                      <Button variant="outline" className="h-20">
-                        Upload Frame
-                      </Button>
+                    <div className="space-y-3">
+                      <div className="p-4 rounded-lg border border-dashed border-border text-center cursor-pointer hover:border-primary/50 transition-colors">
+                        <Video className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">Click to upload overlay image</p>
+                        <p className="text-xs text-muted-foreground">PNG with transparency recommended</p>
+                      </div>
                     </div>
                   )}
                 </div>
               </FeatureLockedOverlay>
             </Card>
           </div>
-
-          {/* Start Stream Info */}
-          {streamKey && (
-            <div className="mt-8 text-center">
-              <div className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-primary/10 border border-primary/20">
-                <Video className="w-6 h-6 text-primary" />
-                <div className="text-left">
-                  <p className="font-medium text-foreground">Ready to stream!</p>
-                  <p className="text-sm text-muted-foreground">
-                    Connect OBS or your streaming software using the credentials above
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </section>
 

@@ -1225,6 +1225,38 @@ export type Database = {
         }
         Relationships: []
       }
+      stream_credentials: {
+        Row: {
+          created_at: string | null
+          id: string
+          rtmp_url: string
+          stream_id: string
+          stream_key: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rtmp_url?: string
+          stream_id: string
+          stream_key?: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rtmp_url?: string
+          stream_id?: string
+          stream_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stream_credentials_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: true
+            referencedRelation: "streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       streams: {
         Row: {
           category_id: string | null
@@ -1239,9 +1271,7 @@ export type Database = {
           mux_playback_id: string | null
           mux_stream_id: string | null
           peak_viewers: number | null
-          rtmp_url: string | null
           started_at: string | null
-          stream_key: string | null
           tags: string[] | null
           thumbnail_url: string | null
           title: string
@@ -1263,9 +1293,7 @@ export type Database = {
           mux_playback_id?: string | null
           mux_stream_id?: string | null
           peak_viewers?: number | null
-          rtmp_url?: string | null
           started_at?: string | null
-          stream_key?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
           title: string
@@ -1287,9 +1315,7 @@ export type Database = {
           mux_playback_id?: string | null
           mux_stream_id?: string | null
           peak_viewers?: number | null
-          rtmp_url?: string | null
           started_at?: string | null
-          stream_key?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
           title?: string

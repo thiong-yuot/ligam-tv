@@ -8,8 +8,6 @@ export interface Stream {
   description: string | null;
   category_id: string | null;
   thumbnail_url: string | null;
-  stream_key: string;
-  rtmp_url: string;
   is_live: boolean;
   viewer_count: number;
   peak_viewers: number;
@@ -34,6 +32,14 @@ export interface Stream {
     name: string;
     slug: string;
   };
+}
+
+export interface StreamCredentials {
+  id: string;
+  stream_id: string;
+  stream_key: string;
+  rtmp_url: string;
+  created_at: string;
 }
 
 export const useStreams = (categorySlug?: string, isLive?: boolean) => {
@@ -84,9 +90,27 @@ export const useUserStream = (userId: string) => {
         .maybeSingle();
       
       if (error && error.code !== "PGRST116") throw error;
-      return data as Stream | null;
+      return data as unknown as Stream | null;
     },
     enabled: !!userId,
+  });
+};
+
+// New hook to fetch stream credentials (only for stream owner)
+export const useStreamCredentials = (streamId: string) => {
+  return useQuery({
+    queryKey: ["streamCredentials", streamId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("stream_credentials")
+        .select("*")
+        .eq("stream_id", streamId)
+        .maybeSingle();
+      
+      if (error && error.code !== "PGRST116") throw error;
+      return data as StreamCredentials | null;
+    },
+    enabled: !!streamId,
   });
 };
 
@@ -111,6 +135,7 @@ export const useCreateMuxStream = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["streams"] });
       queryClient.invalidateQueries({ queryKey: ["userStream"] });
+      queryClient.invalidateQueries({ queryKey: ["streamCredentials"] });
     },
   });
 };
