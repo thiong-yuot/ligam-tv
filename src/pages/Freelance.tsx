@@ -90,16 +90,16 @@ const Freelance = () => {
       <Navbar />
 
       {/* Hero Banner */}
-      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-primary/5 to-background border-b border-border">
+      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-purple-500/5 to-background border-b border-border">
         <div className="container mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
                 <Sparkles className="w-4 h-4" />
                 Creator Marketplace
               </div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-                Find Talented <span className="text-primary">Freelancers</span>
+                Find Talented <span className="text-purple-400">Freelancers</span>
               </h1>
               <p className="text-muted-foreground max-w-lg">
                 Connect with skilled creators for overlays, music, editing, and more.
@@ -113,7 +113,7 @@ const Freelance = () => {
                   Your Dashboard
                 </Button>
               ) : (
-                <Button onClick={handleBecomeFreelancer} className="glow">
+                <Button onClick={handleBecomeFreelancer} className="glow bg-purple-600 hover:bg-purple-700">
                   <Briefcase className="w-4 h-4 mr-2" />
                   Become a Freelancer
                 </Button>
@@ -132,7 +132,7 @@ const Freelance = () => {
                 { icon: Briefcase, label: "Total Jobs", value: freelancers.reduce((sum, f) => sum + (f.total_jobs || 0), 0).toString() },
               ].map((stat) => (
                 <div key={stat.label} className="bg-card/50 rounded-xl p-4 border border-border">
-                  <stat.icon className="w-5 h-5 text-primary mb-2" />
+                  <stat.icon className="w-5 h-5 text-purple-400 mb-2" />
                   <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                   <p className="text-sm text-muted-foreground">{stat.label}</p>
                 </div>
@@ -178,7 +178,7 @@ const Freelance = () => {
               {/* Freelancers Grid/List */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-20">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
                 </div>
               ) : filteredFreelancers.length > 0 ? (
                 <div className={
@@ -219,10 +219,10 @@ const Freelance = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-t from-primary/5 to-background border-t border-border">
+      <section className="py-16 px-4 bg-gradient-to-t from-purple-500/5 to-background border-t border-border">
         <div className="container mx-auto">
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
               <Sparkles className="w-4 h-4" />
               Join Our Community
             </div>
@@ -232,7 +232,7 @@ const Freelance = () => {
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
               Create your freelancer profile, set your rates, and start connecting with streamers who need your skills.
             </p>
-            <Button size="lg" className="glow" onClick={handleBecomeFreelancer}>
+            <Button size="lg" className="glow bg-purple-600 hover:bg-purple-700" onClick={handleBecomeFreelancer}>
               {myProfile ? (
                 <>
                   <LayoutDashboard className="w-4 h-4 mr-2" />
