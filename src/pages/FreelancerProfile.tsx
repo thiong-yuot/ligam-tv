@@ -33,7 +33,8 @@ import {
   Zap,
 } from "lucide-react";
 import { useFreelancerById, useFreelancerServices } from "@/hooks/useFreelancerProfile";
-import { useFreelancerPackages, useCreateFreelancerOrder } from "@/hooks/useFreelancerPackages";
+import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
+import { useFreelancerCheckout } from "@/hooks/useStripeCheckout";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import ContactFreelancerDialog from "@/components/ContactFreelancerDialog";
@@ -50,9 +51,9 @@ const FreelancerProfile = () => {
   const { data: freelancer, isLoading: freelancerLoading } = useFreelancerById(id || "");
   const { data: services = [], isLoading: servicesLoading } = useFreelancerServices(id || "");
   const { data: packages = [], isLoading: packagesLoading } = useFreelancerPackages(id || "");
-  const createOrder = useCreateFreelancerOrder();
+  const { checkout, loading: checkoutLoading } = useFreelancerCheckout();
 
-  const handleOrderPackage = async (packageId: string, price: number) => {
+  const handleOrderPackage = async (packageId: string) => {
     if (!user) {
       toast({
         title: "Sign in required",
@@ -63,27 +64,9 @@ const FreelancerProfile = () => {
       return;
     }
 
-    try {
-      await createOrder.mutateAsync({
-        freelancer_id: id!,
-        package_id: packageId,
-        total_amount: price,
-        requirements,
-      });
-      
-      toast({
-        title: "Order placed!",
-        description: "The freelancer will be notified of your order.",
-      });
-      setOrderDialogOpen(false);
-      setRequirements("");
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to place order. Please try again.",
-        variant: "destructive",
-      });
-    }
+    await checkout(packageId, requirements);
+    setOrderDialogOpen(false);
+    setRequirements("");
   };
 
   if (freelancerLoading) {
@@ -397,13 +380,13 @@ const FreelancerProfile = () => {
                                 </Button>
                                 <Button 
                                   className="flex-1" 
-                                  onClick={() => handleOrderPackage(pkg.id, pkg.price)}
-                                  disabled={createOrder.isPending}
+                                  onClick={() => handleOrderPackage(pkg.id)}
+                                  disabled={checkoutLoading}
                                 >
-                                  {createOrder.isPending ? (
+                                  {checkoutLoading ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                   ) : (
-                                    `Confirm Order • $${pkg.price}`
+                                    `Pay with Stripe • $${pkg.price}`
                                   )}
                                 </Button>
                               </div>

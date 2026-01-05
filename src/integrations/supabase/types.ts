@@ -736,9 +736,11 @@ export type Database = {
           is_available: boolean | null
           is_verified: boolean | null
           name: string
+          portfolio_images: string[] | null
           portfolio_url: string | null
           rating: number | null
           skills: string[] | null
+          thumbnail_url: string | null
           title: string
           total_jobs: number | null
           user_id: string | null
@@ -752,9 +754,11 @@ export type Database = {
           is_available?: boolean | null
           is_verified?: boolean | null
           name: string
+          portfolio_images?: string[] | null
           portfolio_url?: string | null
           rating?: number | null
           skills?: string[] | null
+          thumbnail_url?: string | null
           title: string
           total_jobs?: number | null
           user_id?: string | null
@@ -768,9 +772,11 @@ export type Database = {
           is_available?: boolean | null
           is_verified?: boolean | null
           name?: string
+          portfolio_images?: string[] | null
           portfolio_url?: string | null
           rating?: number | null
           skills?: string[] | null
+          thumbnail_url?: string | null
           title?: string
           total_jobs?: number | null
           user_id?: string | null

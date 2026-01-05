@@ -61,18 +61,60 @@ serve(async (req) => {
           } else {
             console.log("Subscription record created successfully");
           }
-        } else if (session.mode === "payment" && userId) {
-          // Handle one-time payment (order)
-          const { data: order, error: orderError } = await supabaseAdmin.from("orders").insert({
-            user_id: userId,
-            total_amount: session.amount_total ? session.amount_total / 100 : 0,
-            status: "paid",
-          }).select().single();
+        } else if (session.mode === "payment") {
+          const metadata = session.metadata || {};
+          const paymentType = metadata.type;
 
-          if (orderError) {
-            console.error("Error creating order:", orderError);
-          } else {
-            console.log("Order created:", order.id);
+          if (paymentType === "freelancer_order" && metadata.package_id) {
+            // Handle freelancer package order
+            const { error: orderError } = await supabaseAdmin
+              .from("freelancer_orders")
+              .update({ 
+                status: "pending",
+                stripe_payment_intent_id: session.payment_intent as string 
+              })
+              .eq("package_id", metadata.package_id)
+              .eq("client_id", metadata.client_id)
+              .eq("status", "pending_payment");
+
+            if (orderError) {
+              console.error("Error updating freelancer order:", orderError);
+            } else {
+              console.log("Freelancer order payment completed");
+            }
+          } else if (paymentType === "course_enrollment" && metadata.course_id) {
+            // Handle course enrollment
+            const { error: enrollError } = await supabaseAdmin
+              .from("enrollments")
+              .insert({
+                course_id: metadata.course_id,
+                user_id: metadata.user_id,
+                amount_paid: session.amount_total ? session.amount_total / 100 : 0,
+                stripe_payment_intent_id: session.payment_intent as string,
+              });
+
+            if (enrollError) {
+              console.error("Error creating enrollment:", enrollError);
+            } else {
+              // Update course enrollment count
+              await supabaseAdmin.rpc("increment_course_enrollments", { 
+                course_id_param: metadata.course_id 
+              });
+              console.log("Course enrollment created");
+            }
+          } else if (userId) {
+            // Generic order
+            const { data: order, error: orderError } = await supabaseAdmin.from("orders").insert({
+              user_id: userId,
+              total_amount: session.amount_total ? session.amount_total / 100 : 0,
+              status: "paid",
+            }).select().single();
+
+            if (orderError) {
+              console.error("Error creating order:", orderError);
+            } else {
+              console.log("Order created:", order.id);
+            }
           }
         }
         break;
