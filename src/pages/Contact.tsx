@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -7,14 +8,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useSubmitContact } from "@/hooks/useContact";
 import { 
   Mail, 
   MessageSquare, 
-  MapPin, 
   Clock,
   Send,
   Headphones,
-  Building
+  Building,
+  HelpCircle
 } from "lucide-react";
 
 const Contact = () => {
@@ -22,26 +24,36 @@ const Contact = () => {
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const submitContact = useSubmitContact();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    
-    setName("");
-    setEmail("");
-    setSubject("");
-    setMessage("");
-    setLoading(false);
+    try {
+      await submitContact.mutateAsync({
+        name,
+        email,
+        subject,
+        message,
+      });
+      
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
+      
+      setName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const contactInfo = [
@@ -150,13 +162,33 @@ const Contact = () => {
                 type="submit" 
                 className="w-full glow gap-2" 
                 size="lg"
-                disabled={loading}
+                disabled={submitContact.isPending}
               >
                 <Send className="w-4 h-4" />
-                {loading ? "Sending..." : "Send Message"}
+                {submitContact.isPending ? "Sending..." : "Send Message"}
               </Button>
             </form>
           </Card>
+
+          {/* Quick Links */}
+          <div className="mt-8 text-center">
+            <p className="text-muted-foreground mb-4">
+              Looking for quick answers?
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link to="/faq">
+                <Button variant="outline" size="sm">
+                  <HelpCircle className="w-4 h-4 mr-2" />
+                  FAQ
+                </Button>
+              </Link>
+              <Link to="/help">
+                <Button variant="outline" size="sm">
+                  Help Center
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

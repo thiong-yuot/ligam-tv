@@ -1,0 +1,17 @@
+-- Insert default FAQs if not exists
+INSERT INTO public.faqs (question, answer, category, is_active, sort_order)
+SELECT * FROM (VALUES
+  ('How do I start streaming on Ligam.tv?', 'Getting started is easy! Create a free account, download our streaming software or use your preferred broadcasting tool (OBS, Streamlabs, etc.), and connect it to your Ligam channel using your unique stream key found in your dashboard.', 'Getting Started', true, 1),
+  ('What are the requirements to monetize my stream?', 'To start earning on Ligam, you need to: be at least 18 years old, have at least 100 followers, stream for at least 10 hours in the last 30 days, and complete our creator verification process.', 'Monetization', true, 2),
+  ('How do virtual gifts work?', 'Viewers can purchase virtual gifts (Hearts, Sparkles, Crowns, Rockets) and send them during your stream. As a creator, you earn a percentage of each gift''s value. Gifts are converted to your local currency and paid out monthly.', 'Monetization', true, 3),
+  ('What video quality is supported?', 'Free accounts support up to 720p streaming. Creator plans support 1080p HD, and Pro plans support up to 4K streaming. The actual quality depends on your internet upload speed and encoding settings.', 'Streaming', true, 4),
+  ('Can I stream to multiple platforms?', 'Yes! With our Pro plan, you can simulcast to multiple platforms including YouTube, Twitch, and Facebook Gaming while streaming on Ligam.tv.', 'Streaming', true, 5),
+  ('How does the Get Featured promotion work?', 'Our Get Featured program gives your stream premium placement on the homepage carousel and category pages for increased visibility. You can purchase promotion packages based on duration and placement tier.', 'Promotion', true, 6),
+  ('What payment methods are accepted?', 'We accept all major credit cards, PayPal, and cryptocurrency payments. For creator payouts, we support bank transfers, PayPal, and various regional payment methods.', 'Payments', true, 7),
+  ('Is there a mobile app?', 'Yes! Our mobile apps for iOS and Android allow you to watch streams, chat, send gifts, and even go live directly from your phone.', 'Platform', true, 8),
+  ('How do I sell products on the marketplace?', 'Navigate to your Seller Dashboard, click "Add Product", fill in the details including images, pricing, and description. Once approved, your products will be visible in the marketplace.', 'Marketplace', true, 9),
+  ('How do I become a freelancer on Ligam?', 'Go to the Freelancers section and click "Become a Freelancer". Complete your profile with your skills, portfolio, and service packages. After review, you can start offering your services.', 'Freelance', true, 10),
+  ('How do I create a course?', 'Visit your Creator Dashboard and select "Create Course". Add your course details, upload video lessons, set pricing, and publish. You earn revenue every time someone enrolls.', 'Courses', true, 11),
+  ('How do payouts work?', 'Earnings from streams, marketplace sales, freelance work, and courses are consolidated in your wallet. Request payouts anytime - we process them within 3-5 business days.', 'Payments', true, 12)
+) AS v(question, answer, category, is_active, sort_order)
+WHERE NOT EXISTS (SELECT 1 FROM public.faqs LIMIT 1);
