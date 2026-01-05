@@ -30,7 +30,7 @@ const pricingPlans = [
   },
   {
     name: "Creator",
-    price: "$9.99",
+    price: "$15.99",
     period: "/month",
     description: "For growing creators",
     features: [
@@ -51,7 +51,7 @@ const pricingPlans = [
   },
   {
     name: "Pro",
-    price: "$19.99",
+    price: "$24.99",
     period: "/month",
     description: "For professional streamers",
     features: [
