@@ -28,6 +28,8 @@ import Careers from "./pages/Careers";
 import Press from "./pages/Press";
 import Contact from "./pages/Contact";
 import Help from "./pages/Help";
+import HelpCategory from "./pages/HelpCategory";
+import HelpArticle from "./pages/HelpArticle";
 import Safety from "./pages/Safety";
 import Guidelines from "./pages/Guidelines";
 import Terms from "./pages/Terms";
@@ -81,6 +83,8 @@ const App = () => (
           <Route path="/press" element={<Press />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/help/:slug" element={<HelpCategory />} />
+          <Route path="/help/article/:id" element={<HelpArticle />} />
           <Route path="/safety" element={<Safety />} />
           <Route path="/guidelines" element={<Guidelines />} />
           <Route path="/terms" element={<Terms />} />
