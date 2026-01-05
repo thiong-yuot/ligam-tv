@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   HelpCircle, 
   Search,
@@ -14,64 +15,45 @@ import {
   Settings,
   Users,
   MessageSquare,
-  ArrowRight
+  ArrowRight,
+  LucideIcon
 } from "lucide-react";
+import { useHelpCategories, usePopularArticles } from "@/hooks/useHelp";
+
+// Map icon names to actual icons
+const iconMap: Record<string, LucideIcon> = {
+  Video,
+  DollarSign,
+  Shield,
+  Settings,
+  Users,
+  MessageSquare,
+  HelpCircle,
+};
 
 const Help = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { data: categories, isLoading: categoriesLoading } = useHelpCategories();
+  const { data: popularArticles, isLoading: articlesLoading } = usePopularArticles();
 
-  const categories = [
-    {
-      icon: Video,
-      title: "Getting Started",
-      description: "Learn the basics of streaming on Ligam",
-      articles: 12,
-      path: "/help/getting-started",
-    },
-    {
-      icon: DollarSign,
-      title: "Monetization",
-      description: "Earning money from your streams",
-      articles: 8,
-      path: "/help/monetization",
-    },
-    {
-      icon: Shield,
-      title: "Account & Security",
-      description: "Manage your account settings",
-      articles: 15,
-      path: "/help/account",
-    },
-    {
-      icon: Settings,
-      title: "Technical Support",
-      description: "Troubleshooting and setup guides",
-      articles: 20,
-      path: "/help/technical",
-    },
-    {
-      icon: Users,
-      title: "Community",
-      description: "Building and managing your audience",
-      articles: 10,
-      path: "/help/community",
-    },
-    {
-      icon: MessageSquare,
-      title: "Chat & Moderation",
-      description: "Managing your stream chat",
-      articles: 7,
-      path: "/help/moderation",
-    },
-  ];
+  // Filter categories and articles based on search
+  const filteredCategories = useMemo(() => {
+    if (!categories || !searchQuery) return categories;
+    const query = searchQuery.toLowerCase();
+    return categories.filter(
+      cat => cat.name.toLowerCase().includes(query) || 
+             cat.description?.toLowerCase().includes(query)
+    );
+  }, [categories, searchQuery]);
 
-  const popularArticles = [
-    "How to set up your first stream",
-    "Connecting OBS to Ligam.tv",
-    "Understanding your analytics",
-    "Setting up channel subscriptions",
-    "Enabling two-factor authentication",
-  ];
+  const filteredArticles = useMemo(() => {
+    if (!popularArticles || !searchQuery) return popularArticles;
+    const query = searchQuery.toLowerCase();
+    return popularArticles.filter(
+      article => article.title.toLowerCase().includes(query) ||
+                 article.summary?.toLowerCase().includes(query)
+    );
+  }, [popularArticles, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,21 +94,38 @@ const Help = () => {
             Browse by Category
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, index) => (
-              <Card 
-                key={index}
-                className="p-6 bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <category.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {category.title}
-                </h3>
-                <p className="text-muted-foreground mb-4">{category.description}</p>
-                <span className="text-sm text-primary">{category.articles} articles</span>
-              </Card>
-            ))}
+            {categoriesLoading ? (
+              Array.from({ length: 6 }).map((_, index) => (
+                <Card key={index} className="p-6 bg-card border-border">
+                  <Skeleton className="w-12 h-12 rounded-xl mb-4" />
+                  <Skeleton className="h-6 w-32 mb-2" />
+                  <Skeleton className="h-4 w-full mb-4" />
+                  <Skeleton className="h-4 w-20" />
+                </Card>
+              ))
+            ) : filteredCategories?.length === 0 ? (
+              <p className="text-muted-foreground col-span-full text-center py-8">
+                No categories found matching "{searchQuery}"
+              </p>
+            ) : (
+              filteredCategories?.map((category) => {
+                const IconComponent = iconMap[category.icon] || HelpCircle;
+                return (
+                  <Link key={category.id} to={`/help/${category.slug}`}>
+                    <Card className="p-6 bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group h-full">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                        <IconComponent className="w-6 h-6 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                        {category.name}
+                      </h3>
+                      <p className="text-muted-foreground mb-4">{category.description}</p>
+                      <span className="text-sm text-primary">{category.article_count} articles</span>
+                    </Card>
+                  </Link>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
@@ -138,17 +137,31 @@ const Help = () => {
             Popular Articles
           </h2>
           <div className="grid md:grid-cols-2 gap-4">
-            {popularArticles.map((article, index) => (
-              <div 
-                key={index}
-                className="flex items-center justify-between p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-colors cursor-pointer group"
-              >
-                <span className="text-foreground group-hover:text-primary transition-colors">
-                  {article}
-                </span>
-                <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-              </div>
-            ))}
+            {articlesLoading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <div key={index} className="flex items-center justify-between p-4 rounded-xl bg-card border border-border">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-5 w-5" />
+                </div>
+              ))
+            ) : filteredArticles?.length === 0 ? (
+              <p className="text-muted-foreground col-span-full text-center py-8">
+                No articles found matching "{searchQuery}"
+              </p>
+            ) : (
+              filteredArticles?.map((article) => (
+                <Link 
+                  key={article.id}
+                  to={`/help/article/${article.id}`}
+                  className="flex items-center justify-between p-4 rounded-xl bg-card border border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                >
+                  <span className="text-foreground group-hover:text-primary transition-colors">
+                    {article.title}
+                  </span>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
