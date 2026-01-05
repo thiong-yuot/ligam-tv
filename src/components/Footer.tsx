@@ -21,6 +21,7 @@ const Footer = () => {
       { name: "Help Center", path: "/help" },
       { name: "FAQ", path: "/faq" },
       { name: "Community Guidelines", path: "/guidelines" },
+      { name: "Stream Setup Guide", path: "/stream-setup" },
     ],
   };
 

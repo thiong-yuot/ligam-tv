@@ -15,8 +15,8 @@
     --popover: 0 0% 5%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 105 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 270 70% 60%;
+    --primary-foreground: 0 0% 100%;
 
     --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 100%;
@@ -24,42 +24,43 @@
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
 
-    --accent: 105 100% 50%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 280 85% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 0 0% 15%;
     --input: 0 0% 15%;
-    --ring: 105 100% 50%;
+    --ring: 270 70% 60%;
 
     --radius: 0.5rem;
 
     /* Custom Ligam colors */
-    --ligam-green: 105 100% 50%;
-    --ligam-green-glow: 105 100% 60%;
+    --ligam-purple: 270 70% 60%;
+    --ligam-purple-glow: 280 85% 70%;
+    --ligam-violet: 280 85% 65%;
     --ligam-dark: 0 0% 0%;
     --ligam-card: 0 0% 5%;
     --ligam-surface: 0 0% 8%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--ligam-green)), hsl(105 100% 40%));
-    --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-green)), hsl(var(--ligam-green-glow)));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--ligam-purple)), hsl(var(--ligam-violet)));
+    --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-purple)), hsl(var(--ligam-purple-glow)));
 
     /* Shadows */
-    --shadow-glow: 0 0 30px hsl(var(--ligam-green) / 0.4);
-    --shadow-glow-lg: 0 0 60px hsl(var(--ligam-green) / 0.3);
+    --shadow-glow: 0 0 30px hsl(var(--ligam-purple) / 0.4);
+    --shadow-glow-lg: 0 0 60px hsl(var(--ligam-purple) / 0.3);
     --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.5);
 
     --sidebar-background: 0 0% 3%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 105 100% 50%;
-    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-primary: 270 70% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 105 100% 50%;
+    --sidebar-ring: 270 70% 60%;
   }
 
   .dark {
@@ -69,19 +70,19 @@
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 5%;
     --popover-foreground: 0 0% 100%;
-    --primary: 105 100% 50%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 270 70% 60%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 12%;
     --muted-foreground: 0 0% 60%;
-    --accent: 105 100% 50%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 280 85% 65%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 15%;
     --input: 0 0% 15%;
-    --ring: 105 100% 50%;
+    --ring: 270 70% 60%;
   }
 }
 
@@ -119,7 +120,7 @@
   }
 
   .glow-sm {
-    box-shadow: 0 0 20px hsl(var(--ligam-green) / 0.3);
+    box-shadow: 0 0 20px hsl(var(--ligam-purple) / 0.3);
   }
 
   .card-shadow {
@@ -127,7 +128,7 @@
   }
 
   .border-glow {
-    border-color: hsl(var(--ligam-green) / 0.3);
+    border-color: hsl(var(--ligam-purple) / 0.3);
   }
 }
 
@@ -167,10 +168,10 @@
 /* Glow pulse animation */
 @keyframes glow-pulse {
   0%, 100% {
-    box-shadow: 0 0 20px hsl(var(--ligam-green) / 0.4);
+    box-shadow: 0 0 20px hsl(var(--ligam-purple) / 0.4);
   }
   50% {
-    box-shadow: 0 0 40px hsl(var(--ligam-green) / 0.6);
+    box-shadow: 0 0 40px hsl(var(--ligam-purple) / 0.6);
   }
 }
 
