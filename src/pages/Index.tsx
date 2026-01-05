@@ -7,6 +7,7 @@ import FeaturesGrid from "@/components/home/FeaturesGrid";
 import MarketplacePreview from "@/components/home/MarketplacePreview";
 import FreelancersPreview from "@/components/home/FreelancersPreview";
 import CoursesPreview from "@/components/courses/CoursesPreview";
+import GetFeatured from "@/components/GetFeatured";
 import CTASection from "@/components/home/CTASection";
 import { useStreams } from "@/hooks/useStreams";
 import { useCategories } from "@/hooks/useCategories";
@@ -25,6 +26,7 @@ const Index = () => {
       <MarketplacePreview />
       <FreelancersPreview />
       <CoursesPreview />
+      <GetFeatured />
       <CTASection />
       <Footer />
     </div>
