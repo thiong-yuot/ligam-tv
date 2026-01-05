@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { productSchema, validateOrThrow } from "@/lib/validation";
 import {
   Dialog,
@@ -59,7 +59,8 @@ const categories = [
 
 const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const { user } = useAuth();
-  const { canAddProduct, getMaxProducts, getCurrentProductCount, getRemainingProducts, tier, getUpgradeMessage } = useFeatureAccess();
+  const navigate = useNavigate();
+  const { canAddProduct, getMaxProducts, getCurrentProductCount, getRemainingProducts, tier, getUpgradeMessage, isLoading: featureLoading } = useFeatureAccess();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -77,7 +78,8 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const maxProducts = getMaxProducts();
   const currentCount = getCurrentProductCount();
   const remainingSlots = getRemainingProducts();
-  const canAdd = canAddProduct();
+  // Allow adding if feature access is still loading (assume can add) or if canAddProduct returns true
+  const canAdd = featureLoading ? true : canAddProduct();
 
   const resetForm = () => {
     setName("");
@@ -201,7 +203,12 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
 
       if (error) throw error;
 
-      toast.success("Product added successfully!");
+      toast.success("Product added successfully!", {
+        action: {
+          label: "View Dashboard",
+          onClick: () => navigate("/seller/dashboard"),
+        },
+      });
       queryClient.invalidateQueries({ queryKey: ["products"] });
       queryClient.invalidateQueries({ queryKey: ["my-products"] });
       onOpenChange(false);
@@ -431,7 +438,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
               />
             </div>
 
-            <div className="flex gap-3 pt-4 pb-2">
+            <div className="flex gap-3 pt-4 pb-2 sticky bottom-0 bg-background border-t border-border -mx-4 px-4 py-3 mt-4">
               <Button
                 type="button"
                 variant="outline"
@@ -446,7 +453,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                 className="flex-1 glow"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Add Product
+                {canAdd ? "Add Product" : "Limit Reached"}
               </Button>
             </div>
           </form>
