@@ -10,7 +10,15 @@ import {
   Award,
   Clock,
   Check,
-  Sparkles
+  Sparkles,
+  Video,
+  ShoppingBag,
+  Users,
+  GraduationCap,
+  Phone,
+  Calendar,
+  Camera,
+  Headphones
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -160,6 +168,90 @@ const Premium = () => {
                 </Button>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Services Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-primary/5 to-transparent border-t border-border">
+        <div className="container mx-auto">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+              <Headphones className="w-4 h-4" />
+              Premium Support
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+              Full Setup & Guidance
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              We don't just feature you — we help you succeed. Get personalized guidance, 
+              professional setup, and content creation support.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+            {[
+              { 
+                icon: Video, 
+                title: "Live Streaming Setup", 
+                description: "Complete OBS/streaming software configuration, overlays, and optimization for professional broadcasts"
+              },
+              { 
+                icon: ShoppingBag, 
+                title: "Shop & Store Setup", 
+                description: "Full e-commerce setup including product listings, pricing strategy, and storefront design"
+              },
+              { 
+                icon: Users, 
+                title: "Gigs Configuration", 
+                description: "Set up your freelance services with compelling packages, pricing tiers, and portfolio showcase"
+              },
+              { 
+                icon: GraduationCap, 
+                title: "Skills Share Setup", 
+                description: "Create and structure your courses with engaging content, modules, and learning paths"
+              },
+              { 
+                icon: Phone, 
+                title: "1-on-1 Strategy Call", 
+                description: "Personal consultation to discuss your goals, brand positioning, and growth strategy"
+              },
+              { 
+                icon: Camera, 
+                title: "Content Filming", 
+                description: "Professional video production for promotional content, intros, and course materials"
+              },
+            ].map((service, index) => (
+              <Card key={index} className="p-6 bg-card border-border hover:border-primary/50 transition-colors group">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <service.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {service.description}
+                </p>
+              </Card>
+            ))}
+          </div>
+
+          {/* CTA for Premium Services */}
+          <div className="text-center">
+            <Card className="inline-flex flex-col sm:flex-row items-center gap-6 p-8 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
+                  <Calendar className="w-7 h-7 text-primary" />
+                </div>
+                <div className="text-left">
+                  <h3 className="text-lg font-semibold text-foreground">Book a Meeting</h3>
+                  <p className="text-sm text-muted-foreground">Schedule a call to discuss your needs</p>
+                </div>
+              </div>
+              <Button size="lg" className="glow">
+                Schedule Consultation
+              </Button>
+            </Card>
           </div>
         </div>
       </section>
