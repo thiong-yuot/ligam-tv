@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { chatMessageSchema, validateOrThrow } from "@/lib/validation";
 
 export interface ChatMessage {
   id: string;
@@ -87,6 +88,9 @@ export const useChatMessages = (streamId: string) => {
 export const useSendMessage = () => {
   return useMutation({
     mutationFn: async ({ streamId, message }: { streamId: string; message: string }) => {
+      // Validate input
+      const validated = validateOrThrow(chatMessageSchema, { message });
+
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
@@ -95,7 +99,7 @@ export const useSendMessage = () => {
         .insert({
           stream_id: streamId,
           user_id: session.session.user.id,
-          message,
+          message: validated.message,
         });
 
       if (error) throw error;

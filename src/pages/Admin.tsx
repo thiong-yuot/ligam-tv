@@ -16,18 +16,27 @@ const Admin = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
 
-  // Check if user is admin
+  // Check if user is admin via server-side validation
   const { data: isAdmin, isLoading: checkingAdmin } = useQuery({
     queryKey: ["admin-check", user?.id],
     queryFn: async () => {
       if (!user) return false;
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      return !!data && !error;
+      
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) return false;
+
+      const { data, error } = await supabase.functions.invoke("check-admin", {
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
+      });
+
+      if (error) {
+        console.error("Admin check failed:", error);
+        return false;
+      }
+
+      return data?.isAdmin === true;
     },
     enabled: !!user,
   });
