@@ -18,33 +18,33 @@ const Technology = () => {
   const features = [
     {
       icon: Zap,
-      title: "Ultra-Low Latency",
-      description: "Sub-second latency streaming powered by our global edge network. Real-time interaction with your audience.",
+      title: "Sub-Second Latency",
+      description: "Chat with viewers in real time. No awkward three-second delays ruining the conversation.",
     },
     {
       icon: Globe,
-      title: "Global CDN",
-      description: "Content delivered from edge locations worldwide. Smooth streaming experience regardless of location.",
+      title: "Edge Servers Everywhere",
+      description: "Whether your audience is in São Paulo or Seoul, they get the same fast, buffer-free playback.",
     },
     {
       icon: Shield,
-      title: "Enterprise Security",
-      description: "Bank-grade encryption for all streams. DDoS protection and secure authentication built-in.",
+      title: "Bank-Level Security",
+      description: "TLS encryption, DDoS protection, and secure token auth keep your streams safe from bad actors.",
     },
     {
       icon: Gauge,
-      title: "Adaptive Bitrate",
-      description: "Automatic quality adjustment based on viewer's connection. Crystal clear streams for everyone.",
+      title: "Auto-Adjusting Quality",
+      description: "Viewers on slow connections still watch without buffering. No manual quality toggles needed.",
     },
     {
       icon: Server,
-      title: "High Availability",
-      description: "Redundant infrastructure ensures your stream never goes down. Multi-region failover.",
+      title: "Zero Downtime",
+      description: "Redundant infrastructure and multi-region failover mean your stream stays online, period.",
     },
     {
       icon: Cloud,
-      title: "Cloud Recording",
-      description: "Automatic VOD creation with instant playback. Store and manage all your content.",
+      title: "Instant VODs",
+      description: "Streams are automatically recorded. Clips and replays are ready to share minutes after you go offline.",
     },
   ];
 
@@ -70,11 +70,11 @@ const Technology = () => {
             Our Technology
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-foreground mb-6">
-            Built for <span className="text-primary">Performance</span>
+            Streaming Infrastructure <span className="text-primary">That Just Works</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10">
-            Cutting-edge streaming infrastructure designed to deliver flawless 
-            live experiences to viewers worldwide.
+            Sub-second latency, global CDN, and adaptive bitrate — 
+            so your viewers get a smooth experience wherever they are.
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 mb-16">
@@ -97,10 +97,10 @@ const Technology = () => {
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-              Enterprise-Grade Infrastructure
+              Built to Scale
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Every component optimized for the best streaming experience
+              Every piece of the stack is battle-tested and optimized for live video
             </p>
           </div>
 
@@ -193,13 +193,13 @@ const Technology = () => {
       <section className="py-20 px-4 bg-card/30 border-t border-border">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-            Ready to Experience the Difference?
+            See It for Yourself
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-            Start streaming with enterprise-grade infrastructure today.
+            Create an account and go live in under five minutes. No credit card required.
           </p>
           <Button variant="default" size="xl" className="glow">
-            Start Streaming Free
+            Get Started Free
           </Button>
         </div>
       </section>

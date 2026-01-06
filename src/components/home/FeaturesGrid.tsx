@@ -12,57 +12,57 @@ import {
 const features = [
   {
     icon: Zap,
-    title: "Lightning Fast",
-    description: "Ultra-low latency streaming with WebRTC and global CDN",
+    title: "Sub-Second Latency",
+    description: "Real-time interaction with your audience — no awkward delays",
     gradient: "from-yellow-500/20 to-orange-500/10",
     iconColor: "text-yellow-500",
   },
   {
     icon: Users,
-    title: "Community First",
-    description: "Build engaged audiences with interactive chat features",
+    title: "Built for Community",
+    description: "Live chat, virtual gifts, and subscriber-only content",
     gradient: "from-blue-500/20 to-cyan-500/10",
     iconColor: "text-blue-500",
   },
   {
     icon: DollarSign,
-    title: "Multiple Revenue",
-    description: "Subscriptions, tips, merchandise, gigs, and course sales",
+    title: "Five Income Streams",
+    description: "Subs, tips, shop sales, course fees, and freelance gigs",
     gradient: "from-green-500/20 to-emerald-500/10",
     iconColor: "text-green-500",
   },
   {
     icon: Shield,
-    title: "Low Platform Fees",
-    description: "Only 8-15% commission - keep more of your earnings",
+    title: "Transparent Pricing",
+    description: "8–15% on transactions. No hidden fees, no surprises",
     gradient: "from-purple-500/20 to-pink-500/10",
     iconColor: "text-purple-500",
   },
   {
     icon: Globe,
-    title: "Global Reach",
-    description: "Stream to audiences worldwide with auto-translation",
+    title: "Worldwide Delivery",
+    description: "Edge servers on every continent for smooth playback",
     gradient: "from-indigo-500/20 to-blue-500/10",
     iconColor: "text-indigo-500",
   },
   {
     icon: Headphones,
-    title: "24/7 Support",
-    description: "Dedicated creator support team available anytime",
+    title: "Human Support",
+    description: "Talk to real people — not chatbots — when you need help",
     gradient: "from-pink-500/20 to-rose-500/10",
     iconColor: "text-pink-500",
   },
   {
     icon: TrendingUp,
-    title: "Analytics Dashboard",
-    description: "Deep insights into your audience and earnings",
+    title: "Actionable Analytics",
+    description: "See what works, what doesn't, and where to double down",
     gradient: "from-cyan-500/20 to-teal-500/10",
     iconColor: "text-cyan-500",
   },
   {
     icon: GraduationCap,
-    title: "Skills Sharing",
-    description: "Create courses, book tutoring sessions, share knowledge",
+    title: "Teach What You Know",
+    description: "Sell courses or book 1-on-1 sessions with your followers",
     gradient: "from-amber-500/20 to-yellow-500/10",
     iconColor: "text-amber-500",
   },
@@ -75,10 +75,10 @@ const FeaturesGrid = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            Everything You Need to Succeed
+            One Place to Do It All
           </h2>
           <p className="text-lg text-muted-foreground">
-            Powerful tools and features designed to help creators build, grow, and monetize their passion
+            Stream, sell, teach, and freelance — without juggling a dozen different tools
           </p>
         </div>
 

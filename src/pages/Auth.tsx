@@ -152,12 +152,12 @@ const Auth = ({ mode }: AuthProps) => {
         {/* Form Card */}
         <div className="p-8 rounded-2xl bg-card border border-border">
           <h1 className="text-2xl font-display font-bold text-foreground mb-2">
-            {mode === "login" ? "Welcome back" : "Create your account"}
+            {mode === "login" ? "Welcome back" : "Get started"}
           </h1>
           <p className="text-muted-foreground mb-8">
             {mode === "login" 
-              ? "Log in to continue streaming" 
-              : "Start streaming to your audience today"}
+              ? "Sign in to pick up where you left off" 
+              : "Create a free account and start building your audience"}
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
