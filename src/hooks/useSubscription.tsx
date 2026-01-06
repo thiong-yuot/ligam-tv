@@ -11,16 +11,17 @@ export const SUBSCRIPTION_TIERS = {
     price: 0,
     maxProducts: 1,
     maxCourses: 1,
-    maxGigs: 3, // Limited gig posting
-    canFulfillGigs: false,
+    maxGigs: Infinity, // Full freelance access for all tiers
+    canFulfillGigs: true, // All tiers can fulfill gigs
     features: [
       "Unlimited streaming",
       "Basic chat features",
       "Standard video quality",
       "Community support",
-      "Post gigs (limited)",
+      "Full freelance access (20% commission)",
       "1 store product",
       "1 course",
+      "Buy unlimited products & courses",
     ],
   },
   creator: {
@@ -40,7 +41,7 @@ export const SUBSCRIPTION_TIERS = {
       "Stream analytics",
       "No ads for viewers",
       "Max 3 store products",
-      "Full gig access (post & fulfill)",
+      "Full freelance access (20% commission)",
       "Max 3 courses",
     ],
   },
@@ -62,7 +63,7 @@ export const SUBSCRIPTION_TIERS = {
       "Revenue boost (+10%)",
       "Featured placement",
       "Unlimited store products",
-      "Full gig features",
+      "Full freelance access (20% commission)",
       "Unlimited courses",
     ],
   },
@@ -71,7 +72,7 @@ export const SUBSCRIPTION_TIERS = {
 // Platform commission rates
 export const PLATFORM_FEES = {
   store: 0.08, // 8% on store sales
-  gigs: 0.15,  // 15% on gig commissions
+  gigs: 0.20,  // 20% on freelance commissions (no service fees)
 } as const;
 
 // Helper to get tier limits
