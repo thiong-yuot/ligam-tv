@@ -35,7 +35,7 @@ const HeroSection = () => {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">The Ultimate Creator Platform</span>
+              <span className="text-sm font-medium">Where Creators Earn</span>
             </div>
 
             {/* Headline */}
@@ -44,12 +44,12 @@ const HeroSection = () => {
               <br />
               <span className="text-primary">Stream.</span>
               <br />
-              <span className="text-foreground">Thrive.</span>
+              <span className="text-foreground">Earn.</span>
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              Join creators streaming, selling, and freelancing on Ligam. 
-              Your all-in-one platform for building a thriving online presence.
+              Stream live, sell products, teach courses, or offer freelance services — 
+              all from one place. Keep more of what you make.
             </p>
 
             {/* CTA Buttons */}

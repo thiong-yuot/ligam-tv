@@ -15,10 +15,10 @@ const GetFeatured = () => {
                 <span className="text-primary font-semibold">Premium Feature</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-                Get Featured
+                Get Seen First
               </h2>
               <p className="text-muted-foreground text-lg mb-6">
-                Boost your visibility with premium placement on our homepage and category pages. Reach more viewers and grow your community faster.
+                Premium placement puts your stream front-and-center on the homepage and category pages — more eyes, more followers, faster growth.
               </p>
               
               <ul className="space-y-3 mb-8">

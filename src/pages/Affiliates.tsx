@@ -58,18 +58,18 @@ const Affiliates = () => {
   const steps = [
     {
       number: "1",
-      title: "Join the program",
-      description: "Apply to become a Ligam affiliate. It's free and takes just a minute."
+      title: "Sign up",
+      description: "Create an account (or log in) and click Apply. Takes about 30 seconds."
     },
     {
       number: "2", 
-      title: "Promote Ligam to your audience",
-      description: "Talk about Ligam on your blog, in your newsletter, or on your social channels."
+      title: "Share your link",
+      description: "Drop it in your bio, newsletter, or videos — wherever your audience hangs out."
     },
     {
       number: "3",
-      title: "Earn Money",
-      description: "Get 25% of our earnings for the first two months, then 15% recurring on all purchases."
+      title: "Get paid",
+      description: "Earn 25% for the first two months, then 15% on every purchase going forward."
     }
   ];
 
@@ -84,28 +84,24 @@ const Affiliates = () => {
 
   const faqs = [
     {
-      question: "What is the Ligam Affiliate Program and how can I apply?",
-      answer: "The affiliate program is a way for bloggers, writers, creators, influencers, and others to spread the word about Ligam and earn financial rewards. Simply click the 'Join Program' button to get started!"
+      question: "Who can join?",
+      answer: "Anyone with an audience — bloggers, YouTubers, newsletter writers, community leaders, or creators of any kind. There's no follower minimum."
     },
     {
-      question: "How do I earn commission?",
-      answer: "You earn 25% of our platform earnings (after we take our commissions) for any purchase made through your affiliate link — including courses, products, freelance services, and subscription tiers. This applies for the first two months after a user signs up, then becomes 15% for all future purchases."
+      question: "How does the commission work?",
+      answer: "When someone signs up through your link and makes a purchase (course, product, freelance gig, or subscription), you earn 25% of what Ligam makes on that transaction for the first two months, then 15% after that — including recurring payments."
     },
     {
-      question: "What purchases qualify for commission?",
-      answer: "All purchases qualify! Whether your referral buys a course, a product from the shop, hires a freelancer, or upgrades to a paid subscription tier — you earn commission on our platform earnings from that transaction."
+      question: "What qualifies for commission?",
+      answer: "Everything. Course sales, shop purchases, freelance orders, and subscription upgrades all count. If Ligam earns revenue from your referral, so do you."
     },
     {
-      question: "How can I create, track, and promote my affiliate link?",
-      answer: "You can create and track multiple links directly from your affiliate dashboard once you join the program. Once you receive your personalized link, share it where your audience is most active — whether that's your blog, newsletter, YouTube channel, or social platforms."
-    },
-    {
-      question: "What are the commission rates?",
-      answer: "You earn 25% of our platform earnings for the first two months of a referral's activity, then 15% for all purchases and recurring payments thereafter. There's no limit to how much you can earn!"
+      question: "How do I track performance?",
+      answer: "Your affiliate dashboard shows clicks, signups, purchases, and earnings in real time. You can also create multiple links to track different channels separately."
     },
     {
       question: "When do I get paid?",
-      answer: "Affiliate earnings are paid out monthly, along with your other Ligam earnings. You must have a verified identity and at least $50 in your balance to request a withdrawal."
+      answer: "Affiliate earnings are included in your regular Ligam payouts. Complete identity verification and reach a $50 balance to request a withdrawal."
     }
   ];
 
@@ -126,15 +122,15 @@ const Affiliates = () => {
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-6">
-              <span className="text-primary">Refer Ligam</span> to your audience and followers.
+              Share Ligam.<br /><span className="text-primary">Earn Every Time.</span>
             </h1>
             
             <p className="text-xl md:text-2xl text-foreground mb-2">
-              <span className="text-primary font-semibold">Earn up to 25%</span> of our earnings on every purchase.
+              <span className="text-primary font-semibold">25% commission</span> for the first 2 months. 15% after.
             </p>
             
             <p className="text-lg text-muted-foreground mb-8">
-              Courses, products, freelance, subscriptions — <span className="text-primary font-medium">no limit</span> to how much you can earn.
+              Courses, products, freelance orders, subscriptions — every sale counts. No cap on earnings.
             </p>
 
             {user && affiliate ? (
@@ -317,10 +313,10 @@ const Affiliates = () => {
       <section className="py-16 px-4 bg-gradient-to-br from-primary/20 to-primary/5">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            Ready to become a Ligam affiliate?
+            Ready to start earning?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join our affiliate program today and start earning recurring commissions for every creator you refer.
+            Sign up now and get your unique referral link. No approval wait — start sharing immediately.
           </p>
           
           {!user ? (

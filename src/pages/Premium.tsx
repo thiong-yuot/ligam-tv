@@ -181,11 +181,11 @@ const Premium = () => {
               Premium Support
             </div>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-              Full Setup & Guidance
+              Hands-On Setup Assistance
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              We don't just feature you — we help you succeed. Get personalized guidance, 
-              professional setup, and content creation support.
+              Our team walks you through OBS configuration, store setup, and content strategy — 
+              so you launch with confidence, not guesswork.
             </p>
           </div>
 

@@ -192,10 +192,10 @@ const Courses = () => {
                 Skills Academy
               </div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-                Learn <span className="text-purple-400">New Skills</span>
+                Level Up <span className="text-purple-400">Your Skills</span>
               </h1>
               <p className="text-muted-foreground max-w-lg">
-                Access expert-led courses in development, marketing, design, and more.
+                Courses taught by working professionals in dev, design, marketing, and beyond.
               </p>
             </div>
 

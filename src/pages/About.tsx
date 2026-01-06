@@ -18,30 +18,30 @@ const About = () => {
     {
       icon: Users,
       title: "Community First",
-      description: "We believe in putting creators and viewers at the heart of everything we do. Our platform is built to foster genuine connections.",
+      description: "Creators and viewers shape everything we build. The platform exists to serve you — not the other way around.",
     },
     {
       icon: Shield,
-      title: "Trust & Safety",
-      description: "Your safety is our priority. We maintain strict community guidelines and provide tools to ensure a positive experience for everyone.",
+      title: "Safety Without Compromise",
+      description: "Strict moderation tools, real-time reporting, and proactive enforcement keep the community welcoming.",
     },
     {
       icon: Zap,
-      title: "Innovation",
-      description: "We're constantly pushing boundaries to deliver cutting-edge streaming technology and features that empower creators.",
+      title: "Relentless Improvement",
+      description: "We ship updates weekly. If something slows you down, it goes on the roadmap.",
     },
     {
       icon: Heart,
-      title: "Passion",
-      description: "We're passionate about live content and helping creators turn their passions into thriving communities and careers.",
+      title: "Creators Win, We Win",
+      description: "Low fees, honest payouts, and features that help you earn more — because your success funds ours.",
     },
   ];
 
   const timeline = [
-    { year: "2024", title: "Platform Launch", description: "Ligam.tv launches with core streaming features" },
-    { year: "2024", title: "Monetization", description: "Virtual gifts and subscriptions go live" },
-    { year: "2024", title: "Freelance Marketplace", description: "Connect with talented creators for collaborations" },
-    { year: "Future", title: "Global Expansion", description: "Bringing Ligam to creators worldwide" },
+    { year: "2024", title: "Public Launch", description: "Streaming, shop, and freelance marketplace go live" },
+    { year: "2024", title: "Monetization Suite", description: "Virtual gifts, subscriptions, and affiliate program roll out" },
+    { year: "2024", title: "Skills Academy", description: "Courses and 1-on-1 bookings open to all creators" },
+    { year: "2025", title: "Global Expansion", description: "Multi-language support and regional payment methods" },
   ];
 
   return (
@@ -56,11 +56,11 @@ const About = () => {
             About Ligam
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-foreground mb-6">
-            Building the Future of <span className="text-primary">Live Streaming</span>
+            One Home for <span className="text-primary">Everything You Create</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Ligam.tv is a next-generation live streaming platform designed to help creators 
-            build meaningful communities, monetize their content, and connect with audiences worldwide.
+            Ligam brings live streaming, ecommerce, courses, and freelance services under one roof — 
+            so you can focus on making things, not managing tools.
           </p>
         </div>
       </section>
@@ -75,16 +75,15 @@ const About = () => {
                 Our Mission
               </div>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-                Empowering Creators to <span className="text-primary">Thrive</span>
+                Built <span className="text-primary">By Creators, For Creators</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-6">
-                We're on a mission to democratize live streaming by providing creators with 
-                powerful tools, fair monetization, and a supportive community platform.
+                We started Ligam because we were tired of platforms that nickel-and-dime creators 
+                or bury great content behind confusing algorithms.
               </p>
               <p className="text-muted-foreground">
-                Whether you're a gamer, musician, artist, or educator, Ligam gives you 
-                everything you need to share your passion with the world and build a 
-                sustainable creative career.
+                Whether you stream gaming sessions, sell handmade goods, teach design, or offer freelance editing — 
+                Ligam gives you tools that actually work and fees that leave more money in your pocket.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -114,10 +113,10 @@ const About = () => {
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-              Our Core Values
+              What We Stand For
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              These principles guide everything we do at Ligam
+              The principles behind every feature, policy, and support ticket
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -181,11 +180,10 @@ const About = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-            Join the Ligam Community
+            See What's Happening
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-            Whether you're a creator looking to grow your audience or a viewer seeking 
-            amazing content, Ligam is the place for you.
+            Ready to explore? Start streaming in minutes or browse what other creators are building.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/create-profile">
