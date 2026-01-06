@@ -69,7 +69,7 @@ const Affiliates = () => {
     {
       number: "3",
       title: "Earn Money",
-      description: "Get 30% commission for your referrals' first two months, then 15% recurring each month after."
+      description: "Get 25% of our earnings for the first two months, then 15% recurring on all purchases."
     }
   ];
 
@@ -89,7 +89,11 @@ const Affiliates = () => {
     },
     {
       question: "How do I earn commission?",
-      answer: "To earn commission, a referred user must: (i) click your affiliate link and sign up within 30 days, then (ii) upgrade to a paid plan within 30 days of signing up. We use a last-click attribution model, so your link must be the final touch before the user signs up. You earn commission when the user becomes a paying customer."
+      answer: "You earn 25% of our platform earnings (after we take our commissions) for any purchase made through your affiliate link — including courses, products, freelance services, and subscription tiers. This applies for the first two months after a user signs up, then becomes 15% for all future purchases."
+    },
+    {
+      question: "What purchases qualify for commission?",
+      answer: "All purchases qualify! Whether your referral buys a course, a product from the shop, hires a freelancer, or upgrades to a paid subscription tier — you earn commission on our platform earnings from that transaction."
     },
     {
       question: "How can I create, track, and promote my affiliate link?",
@@ -97,7 +101,7 @@ const Affiliates = () => {
     },
     {
       question: "What are the commission rates?",
-      answer: "You earn 30% commission for the first two months of any referred subscription, then 15% recurring commission for every month thereafter. There's no limit to how much you can earn!"
+      answer: "You earn 25% of our platform earnings for the first two months of a referral's activity, then 15% for all purchases and recurring payments thereafter. There's no limit to how much you can earn!"
     },
     {
       question: "When do I get paid?",
@@ -126,11 +130,11 @@ const Affiliates = () => {
             </h1>
             
             <p className="text-xl md:text-2xl text-foreground mb-2">
-              <span className="text-primary font-semibold">Earn up to 30%</span> recurring commission on new subscriptions.
+              <span className="text-primary font-semibold">Earn up to 25%</span> of our earnings on every purchase.
             </p>
             
             <p className="text-lg text-muted-foreground mb-8">
-              There's <span className="text-primary font-medium">no limit</span> to how much you can earn.
+              Courses, products, freelance, subscriptions — <span className="text-primary font-medium">no limit</span> to how much you can earn.
             </p>
 
             {user && affiliate ? (
@@ -202,12 +206,12 @@ const Affiliates = () => {
                     <Gift className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="text-3xl font-bold text-primary">30%</p>
+                    <p className="text-3xl font-bold text-primary">25%</p>
                     <p className="text-muted-foreground">First 2 months</p>
                   </div>
                 </div>
                 <p className="text-foreground">
-                  Get a higher commission rate during the critical first two months of each referral's subscription.
+                  Earn 25% of our platform earnings on every purchase your referral makes during their first two months.
                 </p>
               </Card>
               
@@ -222,7 +226,7 @@ const Affiliates = () => {
                   </div>
                 </div>
                 <p className="text-foreground">
-                  Continue earning 15% every month for as long as your referral stays subscribed. No time limit!
+                  Continue earning 15% of our earnings on every purchase or recurring payment. No time limit!
                 </p>
               </Card>
             </div>

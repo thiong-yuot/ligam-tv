@@ -11,6 +11,93 @@ const supabaseAdmin = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
+// Platform commission rates
+const FREELANCE_COMMISSION = 0.20; // 20% on freelance
+// Affiliate rates (percentage of platform earnings)
+const AFFILIATE_RATE_INITIAL = 0.25; // 25% for first 2 months
+const AFFILIATE_RATE_RECURRING = 0.15; // 15% after 2 months
+
+// Helper to calculate affiliate commission from platform earnings
+const calculateAffiliateCommission = (platformEarnings: number, monthsActive: number): { rate: number; amount: number } => {
+  const rate = monthsActive <= 2 ? AFFILIATE_RATE_INITIAL : AFFILIATE_RATE_RECURRING;
+  return { rate, amount: platformEarnings * rate };
+};
+
+// Helper to process affiliate commission for any purchase
+const processAffiliateCommission = async (
+  userId: string, 
+  platformEarnings: number,
+  purchaseType: string
+) => {
+  // Check if this user was referred
+  const { data: referral } = await supabaseAdmin
+    .from("referrals")
+    .select("*, affiliates(*)")
+    .eq("referred_user_id", userId)
+    .in("status", ["pending", "converted"])
+    .maybeSingle();
+
+  if (!referral) {
+    console.log("No referral found for user:", userId);
+    return null;
+  }
+
+  const monthsActive = referral.months_active || 1;
+  const { rate, amount: commissionAmount } = calculateAffiliateCommission(platformEarnings, monthsActive);
+
+  console.log(`Processing affiliate commission for ${purchaseType}:`, {
+    userId,
+    platformEarnings,
+    monthsActive,
+    commissionRate: rate,
+    commissionAmount
+  });
+
+  // Update referral status if pending
+  if (referral.status === "pending") {
+    await supabaseAdmin
+      .from("referrals")
+      .update({ 
+        status: "converted",
+        converted_at: new Date().toISOString(),
+        months_active: 1,
+        total_commission_earned: commissionAmount,
+      })
+      .eq("id", referral.id);
+  } else {
+    await supabaseAdmin
+      .from("referrals")
+      .update({ 
+        total_commission_earned: (referral.total_commission_earned || 0) + commissionAmount,
+      })
+      .eq("id", referral.id);
+  }
+
+  // Create affiliate earning record
+  await supabaseAdmin
+    .from("affiliate_earnings")
+    .insert({
+      affiliate_id: referral.affiliate_id,
+      referral_id: referral.id,
+      amount: commissionAmount,
+      commission_rate: rate,
+      subscription_month: monthsActive,
+      status: "pending",
+    });
+
+  // Update affiliate pending earnings
+  await supabaseAdmin
+    .from("affiliates")
+    .update({ 
+      pending_earnings: (referral.affiliates?.pending_earnings || 0) + commissionAmount,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", referral.affiliate_id);
+
+  console.log(`Affiliate commission created: $${commissionAmount} (${rate * 100}%) for ${purchaseType}`);
+  return { commissionAmount, rate };
+};
+
 serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
   const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
@@ -62,60 +149,18 @@ serve(async (req) => {
           } else {
             console.log("Subscription record created successfully");
             
-            // Check if user was referred by an affiliate
-            const { data: referral } = await supabaseAdmin
-              .from("referrals")
-              .select("*, affiliates(*)")
-              .eq("referred_user_id", userId)
-              .eq("status", "pending")
-              .maybeSingle();
-            
-            if (referral) {
-              // Mark referral as converted
-              await supabaseAdmin
-                .from("referrals")
-                .update({ 
-                  status: "converted",
-                  subscription_id: newSub.id,
-                  converted_at: new Date().toISOString(),
-                  months_active: 1,
-                })
-                .eq("id", referral.id);
-              
-              // Calculate commission (30% for first 2 months)
-              const commissionRate = 0.30;
-              const commissionAmount = subscriptionAmount * commissionRate;
-              
-              // Create affiliate earning record
-              await supabaseAdmin
-                .from("affiliate_earnings")
-                .insert({
-                  affiliate_id: referral.affiliate_id,
-                  referral_id: referral.id,
-                  amount: commissionAmount,
-                  commission_rate: commissionRate,
-                  subscription_month: 1,
-                  status: "pending",
-                });
-              
-              // Update affiliate pending earnings
-              await supabaseAdmin
-                .from("affiliates")
-                .update({ 
-                  pending_earnings: (referral.affiliates?.pending_earnings || 0) + commissionAmount,
-                  updated_at: new Date().toISOString(),
-                })
-                .eq("id", referral.affiliate_id);
-              
-              console.log("Affiliate commission created:", commissionAmount);
-            }
+            // Platform gets 100% of subscription, affiliate gets % of that
+            await processAffiliateCommission(userId, subscriptionAmount, "subscription");
           }
         } else if (session.mode === "payment") {
           const metadata = session.metadata || {};
           const paymentType = metadata.type;
+          const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
 
           if (paymentType === "freelancer_order" && metadata.package_id) {
-            // Handle freelancer package order
+            // Handle freelancer package order - platform takes 20%
+            const platformEarnings = totalAmount * FREELANCE_COMMISSION;
+            
             const { error: orderError } = await supabaseAdmin
               .from("freelancer_orders")
               .update({ 
@@ -130,15 +175,20 @@ serve(async (req) => {
               console.error("Error updating freelancer order:", orderError);
             } else {
               console.log("Freelancer order payment completed");
+              
+              // Process affiliate commission on platform's 20% earnings
+              if (metadata.client_id) {
+                await processAffiliateCommission(metadata.client_id, platformEarnings, "freelancer_order");
+              }
             }
           } else if (paymentType === "course_enrollment" && metadata.course_id) {
-            // Handle course enrollment
+            // Handle course enrollment - platform gets full amount as earnings
             const { error: enrollError } = await supabaseAdmin
               .from("enrollments")
               .insert({
                 course_id: metadata.course_id,
                 user_id: metadata.user_id,
-                amount_paid: session.amount_total ? session.amount_total / 100 : 0,
+                amount_paid: totalAmount,
                 stripe_payment_intent_id: session.payment_intent as string,
               });
 
@@ -150,12 +200,35 @@ serve(async (req) => {
                 course_id_param: metadata.course_id 
               });
               console.log("Course enrollment created");
+              
+              // Process affiliate commission on course earnings (platform share)
+              // Assuming platform takes some commission from course sales
+              if (metadata.user_id) {
+                await processAffiliateCommission(metadata.user_id, totalAmount, "course_enrollment");
+              }
+            }
+          } else if (paymentType === "product_order" && userId) {
+            // Handle product order
+            const { data: order, error: orderError } = await supabaseAdmin.from("orders").insert({
+              user_id: userId,
+              total_amount: totalAmount,
+              status: "paid",
+              stripe_payment_intent_id: session.payment_intent as string,
+            }).select().single();
+
+            if (orderError) {
+              console.error("Error creating order:", orderError);
+            } else {
+              console.log("Product order created:", order.id);
+              
+              // Process affiliate commission on product sale (platform earnings)
+              await processAffiliateCommission(userId, totalAmount, "product_order");
             }
           } else if (userId) {
             // Generic order
             const { data: order, error: orderError } = await supabaseAdmin.from("orders").insert({
               user_id: userId,
-              total_amount: session.amount_total ? session.amount_total / 100 : 0,
+              total_amount: totalAmount,
               status: "paid",
             }).select().single();
 
@@ -163,6 +236,9 @@ serve(async (req) => {
               console.error("Error creating order:", orderError);
             } else {
               console.log("Order created:", order.id);
+              
+              // Process affiliate commission
+              await processAffiliateCommission(userId, totalAmount, "generic_order");
             }
           }
         }
@@ -204,7 +280,7 @@ serve(async (req) => {
         const invoice = event.data.object as Stripe.Invoice;
         console.log("Invoice paid:", invoice.id, "Amount:", invoice.amount_paid);
         
-        // Handle recurring affiliate commissions
+        // Handle recurring subscription payments for affiliate commissions
         if (invoice.subscription && invoice.customer) {
           const customerId = invoice.customer as string;
           const customer = await stripe.customers.retrieve(customerId);
@@ -225,15 +301,19 @@ serve(async (req) => {
                 const newMonthsActive = (referral.months_active || 0) + 1;
                 const invoiceAmount = (invoice.amount_paid || 0) / 100;
                 
-                // 30% for first 2 months, 15% after
-                const commissionRate = newMonthsActive <= 2 ? 0.30 : 0.15;
-                const commissionAmount = invoiceAmount * commissionRate;
+                // Update months active first
+                await supabaseAdmin
+                  .from("referrals")
+                  .update({ months_active: newMonthsActive })
+                  .eq("id", referral.id);
                 
-                // Update referral months active
+                // 25% for first 2 months, 15% after (of platform earnings = full subscription amount)
+                const { rate, amount: commissionAmount } = calculateAffiliateCommission(invoiceAmount, newMonthsActive);
+                
+                // Update referral total commission
                 await supabaseAdmin
                   .from("referrals")
                   .update({ 
-                    months_active: newMonthsActive,
                     total_commission_earned: (referral.total_commission_earned || 0) + commissionAmount,
                   })
                   .eq("id", referral.id);
@@ -245,7 +325,7 @@ serve(async (req) => {
                     affiliate_id: referral.affiliate_id,
                     referral_id: referral.id,
                     amount: commissionAmount,
-                    commission_rate: commissionRate,
+                    commission_rate: rate,
                     subscription_month: newMonthsActive,
                     status: "pending",
                   });
@@ -259,7 +339,7 @@ serve(async (req) => {
                   })
                   .eq("id", referral.affiliate_id);
                 
-                console.log(`Recurring affiliate commission: $${commissionAmount} (${commissionRate * 100}%) for month ${newMonthsActive}`);
+                console.log(`Recurring affiliate commission: $${commissionAmount} (${rate * 100}%) for month ${newMonthsActive}`);
               }
             }
           }
