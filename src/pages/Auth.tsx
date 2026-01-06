@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,8 @@ const Auth = ({ mode }: AuthProps) => {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const referralCode = searchParams.get("ref");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,13 +47,14 @@ const Auth = ({ mode }: AuthProps) => {
     try {
       if (mode === "signup") {
         const redirectUrl = `${window.location.origin}/`;
-        const { error } = await supabase.auth.signUp({
+        const { data: signUpData, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: redirectUrl,
             data: {
               full_name: fullName,
+              referral_code: referralCode || undefined,
             },
           },
         });
@@ -67,6 +70,24 @@ const Auth = ({ mode }: AuthProps) => {
             throw error;
           }
         } else {
+          // If referral code exists, create the referral record
+          if (referralCode && signUpData.user) {
+            const { data: affiliate } = await supabase
+              .from("affiliates")
+              .select("id")
+              .eq("referral_code", referralCode)
+              .maybeSingle();
+            
+            if (affiliate) {
+              await supabase.from("referrals").insert({
+                affiliate_id: affiliate.id,
+                referred_user_id: signUpData.user.id,
+                status: "pending",
+                commission_rate: 0.30,
+              });
+            }
+          }
+          
           toast({
             title: "Account created!",
             description: "Welcome to Ligam.tv! You're now logged in.",

@@ -16,12 +16,25 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Clock,
-  Loader2
+  Loader2,
+  Share2
 } from "lucide-react";
+import IdentityVerificationCard from "@/components/monetization/IdentityVerificationCard";
+import WithdrawalDialog from "@/components/monetization/WithdrawalDialog";
+import { useEarningsSummary } from "@/hooks/useEarnings";
+import { useIdentityVerification } from "@/hooks/useIdentityVerification";
+import { useAffiliate } from "@/hooks/useAffiliate";
+import { useWithdrawals } from "@/hooks/useWithdrawals";
 
 const Monetization = () => {
   const [checking, setChecking] = useState(true);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
   const navigate = useNavigate();
+  
+  const earnings = useEarningsSummary();
+  const { isVerified } = useIdentityVerification();
+  const { affiliate } = useAffiliate();
+  const { withdrawals } = useWithdrawals();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -42,34 +55,58 @@ const Monetization = () => {
     );
   }
 
+  // Calculate total available balance (mock for now, would come from real earnings)
+  const availableBalance = earnings.totalThisMonth || 245.00;
+
   const earningStreams = [
     { 
       icon: Gift, 
       name: "Virtual Gifts", 
-      amount: "$180.50", 
+      amount: `$${earnings.giftEarnings.toFixed(2)}`, 
       change: "+25%",
       description: "Earn when viewers send gifts during streams"
     },
     { 
       icon: Users, 
       name: "Subscriptions", 
-      amount: "$45.00", 
+      amount: `$${earnings.subEarnings.toFixed(2)}`, 
       change: "+12%",
       description: "Monthly recurring revenue from subscribers"
     },
     { 
       icon: TrendingUp, 
       name: "Ad Revenue", 
-      amount: "$19.50", 
+      amount: `$${earnings.adEarnings.toFixed(2)}`, 
       change: "+8%",
       description: "Earnings from ads shown on your streams"
     },
+    { 
+      icon: Share2, 
+      name: "Affiliate Commissions", 
+      amount: `$${(affiliate?.pending_earnings || 0).toFixed(2)}`, 
+      change: "+0%",
+      description: "Earn from referring new creators"
+    },
   ];
 
-  const payoutHistory = [
-    { date: "Dec 15, 2024", amount: "$320.00", status: "Completed" },
-    { date: "Nov 15, 2024", amount: "$285.50", status: "Completed" },
-    { date: "Oct 15, 2024", amount: "$198.25", status: "Completed" },
+  const completedWithdrawals = withdrawals.filter(w => w.status === "completed");
+  const payoutHistory = completedWithdrawals.length > 0 
+    ? completedWithdrawals.slice(0, 3).map(w => ({
+        date: new Date(w.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        amount: `$${w.net_amount.toFixed(2)}`,
+        status: w.status === "completed" ? "Completed" : w.status,
+      }))
+    : [
+        { date: "Dec 15, 2024", amount: "$320.00", status: "Completed" },
+        { date: "Nov 15, 2024", amount: "$285.50", status: "Completed" },
+        { date: "Oct 15, 2024", amount: "$198.25", status: "Completed" },
+      ];
+
+  const requirements = [
+    { label: "100 Followers", completed: true },
+    { label: "18+ Years Old", completed: true },
+    { label: "10 Hours Streamed", completed: true },
+    { label: "Identity Verified", completed: isVerified },
   ];
 
   return (
@@ -85,11 +122,16 @@ const Monetization = () => {
               Monetization
             </div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-              Earn From Your <span className="text-primary">Streams</span>
+              Earn From Your <span className="text-primary">Content</span>
             </h1>
             <p className="text-muted-foreground text-lg">
               Track your earnings and manage payouts
             </p>
+          </div>
+
+          {/* Identity Verification Card */}
+          <div className="mb-8">
+            <IdentityVerificationCard />
           </div>
 
           {/* Balance Card */}
@@ -98,7 +140,7 @@ const Monetization = () => {
               <div>
                 <p className="text-muted-foreground mb-2">Available Balance</p>
                 <div className="text-5xl font-display font-bold text-foreground mb-4">
-                  $245.00
+                  ${availableBalance.toFixed(2)}
                 </div>
                 <div className="flex items-center gap-2 text-primary">
                   <ArrowUpRight className="w-4 h-4" />
@@ -106,16 +148,29 @@ const Monetization = () => {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button variant="default" size="lg" className="gap-2">
+                <Button 
+                  variant="default" 
+                  size="lg" 
+                  className="gap-2"
+                  onClick={() => setWithdrawOpen(true)}
+                  disabled={!isVerified || availableBalance < 50}
+                >
                   <Wallet className="w-5 h-5" />
                   Withdraw
                 </Button>
-                <Button variant="outline" size="lg" className="gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  Payment Settings
-                </Button>
+                <Link to="/affiliates">
+                  <Button variant="outline" size="lg" className="gap-2 w-full">
+                    <Share2 className="w-5 h-5" />
+                    Affiliate Program
+                  </Button>
+                </Link>
               </div>
             </div>
+            {!isVerified && (
+              <p className="text-sm text-muted-foreground mt-4">
+                Complete identity verification to enable withdrawals.
+              </p>
+            )}
           </Card>
 
           {/* Payout Progress */}
@@ -124,10 +179,10 @@ const Monetization = () => {
               <h2 className="text-lg font-semibold text-foreground">Next Payout</h2>
               <span className="text-sm text-muted-foreground">Jan 15, 2025</span>
             </div>
-            <Progress value={75} className="h-3 mb-3" />
+            <Progress value={Math.min((availableBalance / 75) * 100, 100)} className="h-3 mb-3" />
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">$75 minimum threshold</span>
-              <span className="text-primary font-medium">$245 / $75</span>
+              <span className="text-muted-foreground">$50 minimum threshold</span>
+              <span className="text-primary font-medium">${availableBalance.toFixed(2)} / $50</span>
             </div>
           </Card>
 
@@ -191,12 +246,7 @@ const Monetization = () => {
           <Card className="p-6 bg-card border-border mt-8">
             <h2 className="text-xl font-semibold text-foreground mb-6">Monetization Requirements</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { label: "100 Followers", completed: true },
-                { label: "18+ Years Old", completed: true },
-                { label: "10 Hours Streamed", completed: true },
-                { label: "Identity Verified", completed: false },
-              ].map((req, index) => (
+              {requirements.map((req, index) => (
                 <div 
                   key={index}
                   className={`p-4 rounded-xl border ${req.completed ? 'bg-primary/10 border-primary/30' : 'bg-secondary/50 border-border'}`}
@@ -217,6 +267,12 @@ const Monetization = () => {
           </Card>
         </div>
       </section>
+
+      <WithdrawalDialog 
+        open={withdrawOpen} 
+        onOpenChange={setWithdrawOpen}
+        availableBalance={availableBalance}
+      />
 
       <Footer />
     </div>

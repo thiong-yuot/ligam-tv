@@ -14,6 +14,90 @@ export type Database = {
   }
   public: {
     Tables: {
+      affiliate_earnings: {
+        Row: {
+          affiliate_id: string
+          amount: number
+          commission_rate: number
+          created_at: string
+          id: string
+          referral_id: string
+          status: string
+          subscription_month: number
+        }
+        Insert: {
+          affiliate_id: string
+          amount: number
+          commission_rate: number
+          created_at?: string
+          id?: string
+          referral_id: string
+          status?: string
+          subscription_month: number
+        }
+        Update: {
+          affiliate_id?: string
+          amount?: number
+          commission_rate?: number
+          created_at?: string
+          id?: string
+          referral_id?: string
+          status?: string
+          subscription_month?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_earnings_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_earnings_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      affiliates: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          pending_earnings: number | null
+          referral_code: string
+          total_earnings: number | null
+          total_referrals: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          pending_earnings?: number | null
+          referral_code: string
+          total_earnings?: number | null
+          total_referrals?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          pending_earnings?: number | null
+          referral_code?: string
+          total_earnings?: number | null
+          total_referrals?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           course_id: string | null
@@ -917,6 +1001,63 @@ export type Database = {
         }
         Relationships: []
       }
+      identity_verifications: {
+        Row: {
+          address: string | null
+          country: string
+          created_at: string
+          date_of_birth: string
+          full_name: string
+          id: string
+          id_document_url: string | null
+          id_type: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          selfie_url: string | null
+          status: Database["public"]["Enums"]["verification_status"]
+          submitted_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          country: string
+          created_at?: string
+          date_of_birth: string
+          full_name: string
+          id?: string
+          id_document_url?: string | null
+          id_type: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_url?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          submitted_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          country?: string
+          created_at?: string
+          date_of_birth?: string
+          full_name?: string
+          id?: string
+          id_document_url?: string | null
+          id_type?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          selfie_url?: string | null
+          status?: Database["public"]["Enums"]["verification_status"]
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       job_applications: {
         Row: {
           cover_letter: string | null
@@ -1336,6 +1477,60 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          affiliate_id: string
+          commission_rate: number
+          converted_at: string | null
+          created_at: string
+          id: string
+          months_active: number | null
+          referred_user_id: string
+          status: string
+          subscription_id: string | null
+          total_commission_earned: number | null
+        }
+        Insert: {
+          affiliate_id: string
+          commission_rate?: number
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          months_active?: number | null
+          referred_user_id: string
+          status?: string
+          subscription_id?: string | null
+          total_commission_earned?: number | null
+        }
+        Update: {
+          affiliate_id?: string
+          commission_rate?: number
+          converted_at?: string | null
+          created_at?: string
+          id?: string
+          months_active?: number | null
+          referred_user_id?: string
+          status?: string
+          subscription_id?: string | null
+          total_commission_earned?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_affiliate_id_fkey"
+            columns: ["affiliate_id"]
+            isOneToOne: false
+            referencedRelation: "affiliates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "referrals_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stream_credentials: {
         Row: {
           created_at: string | null
@@ -1532,6 +1727,95 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawal_methods: {
+        Row: {
+          created_at: string
+          details: Json
+          id: string
+          is_default: boolean | null
+          is_verified: boolean | null
+          method_type: string
+          nickname: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          details: Json
+          id?: string
+          is_default?: boolean | null
+          is_verified?: boolean | null
+          method_type: string
+          nickname?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          id?: string
+          is_default?: boolean | null
+          is_verified?: boolean | null
+          method_type?: string
+          nickname?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          amount: number
+          created_at: string
+          fee: number | null
+          id: string
+          net_amount: number
+          notes: string | null
+          processed_at: string | null
+          processed_by: string | null
+          status: Database["public"]["Enums"]["withdrawal_status"]
+          transaction_id: string | null
+          user_id: string
+          withdrawal_method_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          fee?: number | null
+          id?: string
+          net_amount: number
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          transaction_id?: string | null
+          user_id: string
+          withdrawal_method_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          fee?: number | null
+          id?: string
+          net_amount?: number
+          notes?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          transaction_id?: string | null
+          user_id?: string
+          withdrawal_method_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawals_withdrawal_method_id_fkey"
+            columns: ["withdrawal_method_id"]
+            isOneToOne: false
+            referencedRelation: "withdrawal_methods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -1541,6 +1825,7 @@ export type Database = {
         Args: { stream_id: string }
         Returns: undefined
       }
+      generate_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1552,9 +1837,15 @@ export type Database = {
         Args: { stream_id: string }
         Returns: undefined
       }
+      is_verified_for_withdrawal: {
+        Args: { user_uuid: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "creator"
+      verification_status: "pending" | "submitted" | "approved" | "rejected"
+      withdrawal_status: "pending" | "processing" | "completed" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1683,6 +1974,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user", "creator"],
+      verification_status: ["pending", "submitted", "approved", "rejected"],
+      withdrawal_status: ["pending", "processing", "completed", "rejected"],
     },
   },
 } as const
