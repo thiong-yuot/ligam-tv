@@ -92,7 +92,7 @@ interface SubscriptionState {
 }
 
 export const useSubscription = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [state, setState] = useState<SubscriptionState>({
     subscribed: false,
     productId: null,
@@ -102,6 +102,12 @@ export const useSubscription = () => {
   });
 
   const checkSubscription = useCallback(async () => {
+    // Wait for auth to initialize before making any decisions
+    if (authLoading) {
+      return;
+    }
+
+    // If no user after auth is done loading, set default state
     if (!user) {
       setState({
         subscribed: false,
@@ -115,7 +121,7 @@ export const useSubscription = () => {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      if (!session?.access_token) {
         setState(prev => ({ ...prev, isLoading: false }));
         return;
       }
@@ -147,7 +153,7 @@ export const useSubscription = () => {
       console.error("Error checking subscription:", error);
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   const createSubscriptionCheckout = async (priceId: string) => {
     try {
@@ -205,11 +211,13 @@ export const useSubscription = () => {
     checkSubscription();
   }, [checkSubscription]);
 
-  // Auto-refresh every minute
+  // Auto-refresh every minute, but only if user is logged in
   useEffect(() => {
+    if (!user || authLoading) return;
+    
     const interval = setInterval(checkSubscription, 60000);
     return () => clearInterval(interval);
-  }, [checkSubscription]);
+  }, [checkSubscription, user, authLoading]);
 
   return {
     ...state,
