@@ -24,6 +24,7 @@ type FeatureAccess = {
 };
 
 // Define which tiers have access to each feature
+// Note: full_gig_access is available to ALL tiers (including free)
 const featureAccess: FeatureAccess = {
   hd_streaming: ["creator", "pro"],
   "4k_streaming": ["pro"],
@@ -37,7 +38,7 @@ const featureAccess: FeatureAccess = {
   stream_analytics: ["creator", "pro"],
   unlimited_products: ["pro"],
   limited_products: ["creator", "pro"],
-  full_gig_access: ["creator", "pro"],
+  full_gig_access: [], // All tiers have this - handled separately
   revenue_boost: ["pro"],
   unlimited_courses: ["pro"],
 };
@@ -127,9 +128,9 @@ export const useFeatureAccess = () => {
   };
 
   // Check if user can fulfill gigs (accept and complete jobs)
+  // All tiers have full freelance access
   const canFulfillGigs = (): boolean => {
-    const limits = getTierLimits(tier);
-    return limits.canFulfillGigs;
+    return true; // All tiers can post and fulfill gigs
   };
 
   // Check if user can add more products
@@ -164,11 +165,9 @@ export const useFeatureAccess = () => {
 
   // Get upgrade message based on what the user is trying to do
   const getUpgradeMessage = (action: "product" | "course" | "gig"): string => {
-    const tierInfo = getTierInfo();
-    
     if (action === "product") {
       if (tier === null) {
-        return "Upgrade to Creator to add up to 3 products, or Pro for unlimited products.";
+        return "You can only add 1 product on the Free tier. Upgrade to Creator for up to 3 products, or Pro for unlimited.";
       }
       if (tier === "creator") {
         return "Upgrade to Pro for unlimited store products.";
@@ -177,17 +176,16 @@ export const useFeatureAccess = () => {
     
     if (action === "course") {
       if (tier === null) {
-        return "Upgrade to Creator to add up to 3 courses, or Pro for unlimited courses.";
+        return "You can only add 1 course on the Free tier. Upgrade to Creator for up to 3 courses, or Pro for unlimited.";
       }
       if (tier === "creator") {
         return "Upgrade to Pro for unlimited courses.";
       }
     }
     
+    // Freelance is available to all tiers - no upgrade needed
     if (action === "gig") {
-      if (tier === null) {
-        return "Upgrade to Creator for full gig access including the ability to fulfill client orders.";
-      }
+      return ""; // All tiers have full freelance access
     }
     
     return "";
