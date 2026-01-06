@@ -45,21 +45,70 @@ serve(async (req) => {
         if (session.mode === "subscription" && userId) {
           // Handle subscription
           const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+          const subscriptionAmount = subscription.items.data[0]?.price.unit_amount ? subscription.items.data[0].price.unit_amount / 100 : 0;
           
-          const { error: subError } = await supabaseAdmin.from("subscriptions").insert({
+          const { data: newSub, error: subError } = await supabaseAdmin.from("subscriptions").insert({
             subscriber_id: userId,
             creator_id: userId, // Self-subscription for premium
             tier: "premium",
-            amount: subscription.items.data[0]?.price.unit_amount ? subscription.items.data[0].price.unit_amount / 100 : 0,
+            amount: subscriptionAmount,
             is_active: true,
             started_at: new Date().toISOString(),
             expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
-          });
+          }).select().single();
 
           if (subError) {
             console.error("Error creating subscription record:", subError);
           } else {
             console.log("Subscription record created successfully");
+            
+            // Check if user was referred by an affiliate
+            const { data: referral } = await supabaseAdmin
+              .from("referrals")
+              .select("*, affiliates(*)")
+              .eq("referred_user_id", userId)
+              .eq("status", "pending")
+              .maybeSingle();
+            
+            if (referral) {
+              // Mark referral as converted
+              await supabaseAdmin
+                .from("referrals")
+                .update({ 
+                  status: "converted",
+                  subscription_id: newSub.id,
+                  converted_at: new Date().toISOString(),
+                  months_active: 1,
+                })
+                .eq("id", referral.id);
+              
+              // Calculate commission (30% for first 2 months)
+              const commissionRate = 0.30;
+              const commissionAmount = subscriptionAmount * commissionRate;
+              
+              // Create affiliate earning record
+              await supabaseAdmin
+                .from("affiliate_earnings")
+                .insert({
+                  affiliate_id: referral.affiliate_id,
+                  referral_id: referral.id,
+                  amount: commissionAmount,
+                  commission_rate: commissionRate,
+                  subscription_month: 1,
+                  status: "pending",
+                });
+              
+              // Update affiliate pending earnings
+              await supabaseAdmin
+                .from("affiliates")
+                .update({ 
+                  pending_earnings: (referral.affiliates?.pending_earnings || 0) + commissionAmount,
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("id", referral.affiliate_id);
+              
+              console.log("Affiliate commission created:", commissionAmount);
+            }
           }
         } else if (session.mode === "payment") {
           const metadata = session.metadata || {};
@@ -154,6 +203,67 @@ serve(async (req) => {
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
         console.log("Invoice paid:", invoice.id, "Amount:", invoice.amount_paid);
+        
+        // Handle recurring affiliate commissions
+        if (invoice.subscription && invoice.customer) {
+          const customerId = invoice.customer as string;
+          const customer = await stripe.customers.retrieve(customerId);
+          
+          if (!customer.deleted) {
+            const userId = (customer as Stripe.Customer).metadata?.supabase_user_id;
+            
+            if (userId) {
+              // Check if this user was referred
+              const { data: referral } = await supabaseAdmin
+                .from("referrals")
+                .select("*, affiliates(*)")
+                .eq("referred_user_id", userId)
+                .eq("status", "converted")
+                .maybeSingle();
+              
+              if (referral) {
+                const newMonthsActive = (referral.months_active || 0) + 1;
+                const invoiceAmount = (invoice.amount_paid || 0) / 100;
+                
+                // 30% for first 2 months, 15% after
+                const commissionRate = newMonthsActive <= 2 ? 0.30 : 0.15;
+                const commissionAmount = invoiceAmount * commissionRate;
+                
+                // Update referral months active
+                await supabaseAdmin
+                  .from("referrals")
+                  .update({ 
+                    months_active: newMonthsActive,
+                    total_commission_earned: (referral.total_commission_earned || 0) + commissionAmount,
+                  })
+                  .eq("id", referral.id);
+                
+                // Create affiliate earning record
+                await supabaseAdmin
+                  .from("affiliate_earnings")
+                  .insert({
+                    affiliate_id: referral.affiliate_id,
+                    referral_id: referral.id,
+                    amount: commissionAmount,
+                    commission_rate: commissionRate,
+                    subscription_month: newMonthsActive,
+                    status: "pending",
+                  });
+                
+                // Update affiliate pending earnings
+                await supabaseAdmin
+                  .from("affiliates")
+                  .update({ 
+                    pending_earnings: (referral.affiliates?.pending_earnings || 0) + commissionAmount,
+                    updated_at: new Date().toISOString(),
+                  })
+                  .eq("id", referral.affiliate_id);
+                
+                console.log(`Recurring affiliate commission: $${commissionAmount} (${commissionRate * 100}%) for month ${newMonthsActive}`);
+              }
+            }
+          }
+        }
         break;
       }
 
