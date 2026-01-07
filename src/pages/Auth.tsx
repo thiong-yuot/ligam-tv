@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Video, Mail, Lock, User, ArrowLeft, Loader2 } from "lucide-react";
+import { Mail, Lock, User, ArrowLeft, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import LigamLogo from "@/components/LigamLogo";
 
 interface AuthProps {
   mode: "login" | "signup";
@@ -140,10 +141,8 @@ const Auth = ({ mode }: AuthProps) => {
         </Link>
 
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-            <Video className="w-5 h-5 text-primary-foreground" />
-          </div>
+        <div className="flex items-center gap-3 mb-8">
+          <LigamLogo className="w-10 h-10" />
           <span className="text-2xl font-display font-bold text-foreground">
             Ligam<span className="text-primary">.tv</span>
           </span>
