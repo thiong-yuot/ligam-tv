@@ -97,12 +97,11 @@ const FreelancersPreview = () => {
             </div>
             
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-              Hire Talented Professionals
+              Monetize Your Skills
             </h2>
             
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Connect with skilled freelancers for any project. From design to development, 
-              find the perfect match for your needs.
+              Offer video editing, design, coaching, or consulting. Set your rates, accept projects, and get paid — all in one place.
             </p>
 
             <ul className="space-y-4">
@@ -110,19 +109,19 @@ const FreelancersPreview = () => {
                 <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
                   <Briefcase className="w-4 h-4 text-blue-500" />
                 </div>
-                <span>Verified professionals in every field</span>
+                <span>Create packages with fixed pricing</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
                 <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
                   <Star className="w-4 h-4 text-blue-500" />
                 </div>
-                <span>Transparent ratings and reviews</span>
+                <span>Build reputation with client reviews</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
                 <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
                   <CheckCircle className="w-4 h-4 text-blue-500" />
                 </div>
-                <span>Secure payments and contracts</span>
+                <span>Funds held in escrow until delivery</span>
               </li>
             </ul>
 

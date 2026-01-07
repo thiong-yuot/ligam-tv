@@ -30,12 +30,11 @@ const MarketplacePreview = () => {
             </div>
             
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-              Shop Exclusive Products
+              Sell Direct to Fans
             </h2>
             
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Discover unique products from creators and sellers. From digital goods to merchandise, 
-              find everything in one place.
+              Skip the middleman. List physical products, digital downloads, or presets — and keep 92% of every sale.
             </p>
 
             <ul className="space-y-4">
@@ -43,19 +42,19 @@ const MarketplacePreview = () => {
                 <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                   <Package className="w-4 h-4 text-green-500" />
                 </div>
-                <span>Unique products from sellers</span>
+                <span>Physical goods, digital files, or both</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
                 <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                   <Star className="w-4 h-4 text-green-500" />
                 </div>
-                <span>Verified sellers and reviews</span>
+                <span>Built-in reviews and seller ratings</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
                 <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                   <ShoppingBag className="w-4 h-4 text-green-500" />
                 </div>
-                <span>Secure checkout with Stripe</span>
+                <span>Instant payouts via Stripe</span>
               </li>
             </ul>
 

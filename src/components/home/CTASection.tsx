@@ -29,13 +29,13 @@ const CTASection = () => {
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground leading-tight">
-            Turn Your Audience Into
-            <span className="text-primary"> Income</span>
+            Stop Paying Platforms
+            <span className="text-primary"> Before You Earn</span>
           </h2>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Thousands of creators already use Ligam to go live, sell merch, launch courses, 
-            and land freelance work. No subscriptions. Pay only when you earn.
+            Zero monthly fees. We only take a cut when you make money — 
+            and it's one of the lowest in the industry.
           </p>
 
           {/* CTA Buttons */}
