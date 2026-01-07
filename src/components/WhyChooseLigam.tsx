@@ -1,25 +1,25 @@
-import { Zap, Users, DollarSign, Sparkles } from "lucide-react";
+import { Zap, Users, DollarSign, Clock } from "lucide-react";
 
 const features = [
   {
     icon: Zap,
-    title: "Easy Setup",
-    description: "Start streaming in seconds with our simple setup process",
+    title: "Go Live in Minutes",
+    description: "No complicated setup. Connect OBS, hit start, and you're broadcasting",
   },
   {
     icon: Users,
-    title: "Community",
-    description: "Build loyal followers and engage with your audience",
+    title: "Own Your Audience",
+    description: "Direct relationship with fans. No algorithm hiding your content",
   },
   {
     icon: DollarSign,
-    title: "Monetization",
-    description: "Multiple ways to earn from your streams",
+    title: "Get Paid Weekly",
+    description: "Automatic payouts every Friday. Keep 85-92% of what you earn",
   },
   {
-    icon: Sparkles,
-    title: "AI Tools",
-    description: "Smart growth features to boost your channel",
+    icon: Clock,
+    title: "24/7 Uptime",
+    description: "Enterprise infrastructure that scales with your audience size",
   },
 ];
 
@@ -29,10 +29,10 @@ const WhyChooseLigam = () => {
       <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            Why Choose Ligam?
+            Built for Serious Creators
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Everything you need to build and grow your streaming community
+            The tools you actually need — nothing more, nothing less
           </p>
         </div>
 
