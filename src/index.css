@@ -6,87 +6,111 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    --background: 220 20% 97%;
+    --foreground: 220 20% 10%;
 
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 10%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 220 20% 10%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 220 15% 92%;
+    --secondary-foreground: 220 20% 10%;
 
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
+    --muted: 220 15% 90%;
+    --muted-foreground: 220 10% 40%;
 
-    --accent: 105 100% 50%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 220 20% 10%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 217 91% 60%;
+    --border: 220 15% 85%;
+    --input: 220 15% 85%;
+    --ring: 45 100% 50%;
 
     --radius: 0.5rem;
 
-    /* Custom Ligam colors */
-    --ligam-blue: 217 91% 60%;
-    --ligam-blue-glow: 217 91% 70%;
-    --ligam-sky: 199 89% 48%;
-    --ligam-green: 105 100% 50%;
-    --ligam-green-glow: 105 100% 60%;
-    --ligam-dark: 0 0% 0%;
-    --ligam-card: 0 0% 5%;
-    --ligam-surface: 0 0% 8%;
+    /* Custom Ligam colors - Golden Yellow Theme */
+    --ligam-gold: 45 100% 50%;
+    --ligam-gold-glow: 45 100% 60%;
+    --ligam-amber: 38 92% 50%;
+    --ligam-yellow: 50 100% 55%;
+    --ligam-yellow-glow: 50 100% 65%;
+    --ligam-dark: 220 20% 10%;
+    --ligam-card: 0 0% 100%;
+    --ligam-surface: 220 15% 95%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--ligam-blue)), hsl(var(--ligam-green)));
-    --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-blue)), hsl(var(--ligam-green-glow)));
-    --gradient-blue: linear-gradient(135deg, hsl(var(--ligam-blue)), hsl(var(--ligam-sky)));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-amber)));
+    --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-yellow-glow)));
+    --gradient-gold: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-yellow)));
 
     /* Shadows */
-    --shadow-glow: 0 0 30px hsl(var(--ligam-blue) / 0.4);
-    --shadow-glow-lg: 0 0 60px hsl(var(--ligam-blue) / 0.3);
-    --shadow-glow-green: 0 0 30px hsl(var(--ligam-green) / 0.4);
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 30px hsl(var(--ligam-gold) / 0.4);
+    --shadow-glow-lg: 0 0 60px hsl(var(--ligam-gold) / 0.3);
+    --shadow-glow-yellow: 0 0 30px hsl(var(--ligam-yellow) / 0.4);
+    --shadow-card: 0 4px 24px hsl(220 20% 10% / 0.08);
 
-    --sidebar-background: 0 0% 3%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-background: 220 15% 95%;
+    --sidebar-foreground: 220 20% 10%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 220 15% 90%;
+    --sidebar-accent-foreground: 220 20% 10%;
+    --sidebar-border: 220 15% 85%;
+    --sidebar-ring: 45 100% 50%;
   }
 
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 105 100% 50%;
-    --accent-foreground: 0 0% 0%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 220 20% 8%;
+    --foreground: 0 0% 98%;
+    
+    --card: 220 20% 12%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 220 20% 12%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 45 100% 50%;
+    --primary-foreground: 220 20% 10%;
+    
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 220 15% 20%;
+    --muted-foreground: 220 10% 60%;
+    
+    --accent: 45 100% 50%;
+    --accent-foreground: 220 20% 10%;
+    
+    --destructive: 0 62.8% 45%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 217 91% 60%;
+    
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 45 100% 50%;
+
+    /* Dark mode custom colors */
+    --ligam-card: 220 20% 12%;
+    --ligam-surface: 220 20% 15%;
+    --ligam-dark: 220 20% 8%;
+
+    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.5);
+
+    --sidebar-background: 220 20% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 220 20% 10%;
+    --sidebar-accent: 220 15% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 45 100% 50%;
   }
 }
 
@@ -124,7 +148,7 @@
   }
 
   .glow-sm {
-    box-shadow: 0 0 20px hsl(var(--ligam-blue) / 0.3);
+    box-shadow: 0 0 20px hsl(var(--ligam-gold) / 0.3);
   }
 
   .card-shadow {
@@ -132,7 +156,7 @@
   }
 
   .border-glow {
-    border-color: hsl(var(--ligam-blue) / 0.3);
+    border-color: hsl(var(--ligam-gold) / 0.3);
   }
 }
 
@@ -172,10 +196,10 @@
 /* Glow pulse animation */
 @keyframes glow-pulse {
   0%, 100% {
-    box-shadow: 0 0 20px hsl(var(--ligam-blue) / 0.4);
+    box-shadow: 0 0 20px hsl(var(--ligam-gold) / 0.4);
   }
   50% {
-    box-shadow: 0 0 40px hsl(var(--ligam-blue) / 0.6);
+    box-shadow: 0 0 40px hsl(var(--ligam-gold) / 0.6);
   }
 }
 

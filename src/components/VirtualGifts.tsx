@@ -6,7 +6,7 @@ const gifts = [
   { icon: Heart, name: "Heart", price: "$1", color: "text-pink-500" },
   { icon: Sparkles, name: "Sparkle", price: "$5", color: "text-yellow-500" },
   { icon: Crown, name: "Crown", price: "$10", color: "text-amber-500" },
-  { icon: Rocket, name: "Rocket", price: "$20", color: "text-blue-500" },
+  { icon: Rocket, name: "Rocket", price: "$20", color: "text-primary" },
 ];
 
 const VirtualGifts = () => {

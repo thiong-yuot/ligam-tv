@@ -75,7 +75,7 @@ const Dashboard = () => {
       name: "Creator",
       icon: Sparkles,
       color: "text-primary",
-      bgColor: "bg-gradient-to-r from-primary/20 to-blue-500/20",
+      bgColor: "bg-gradient-to-r from-primary/20 to-amber-500/20",
       features: [
         { name: "720p Streaming", included: true },
         { name: "Basic Chat", included: true },
@@ -208,7 +208,7 @@ const Dashboard = () => {
             <Card className={`p-6 border-border ${currentTier.bgColor}`}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-foreground">Your Plan</h2>
-                <Badge className={`gap-1 ${tier === "pro" ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0" : tier === "creator" ? "bg-gradient-to-r from-primary to-blue-500 text-white border-0" : ""}`}>
+                <Badge className={`gap-1 ${tier === "pro" ? "bg-gradient-to-r from-amber-500 to-orange-500 text-primary-foreground border-0" : tier === "creator" ? "bg-gradient-to-r from-primary to-amber-400 text-primary-foreground border-0" : ""}`}>
                   <currentTier.icon className="h-3 w-3" />
                   {currentTier.name}
                 </Badge>

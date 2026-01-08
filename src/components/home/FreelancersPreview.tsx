@@ -91,7 +91,7 @@ const FreelancersPreview = () => {
 
           {/* Right Content */}
           <div className="order-1 lg:order-2 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-500">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
               <Users className="w-4 h-4" />
               <span className="text-sm font-medium">Freelance Hub</span>
             </div>
@@ -106,20 +106,20 @@ const FreelancersPreview = () => {
 
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-foreground">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Briefcase className="w-4 h-4 text-blue-500" />
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Briefcase className="w-4 h-4 text-primary" />
                 </div>
                 <span>Create packages with fixed pricing</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <Star className="w-4 h-4 text-blue-500" />
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Star className="w-4 h-4 text-primary" />
                 </div>
                 <span>Build reputation with client reviews</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center">
-                  <CheckCircle className="w-4 h-4 text-blue-500" />
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 text-primary" />
                 </div>
                 <span>Funds held in escrow until delivery</span>
               </li>

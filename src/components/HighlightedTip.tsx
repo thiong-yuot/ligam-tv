@@ -19,7 +19,7 @@ const giftColors: Record<string, string> = {
   heart: "from-pink-500/20 to-pink-600/20 border-pink-500/50",
   sparkle: "from-yellow-500/20 to-amber-500/20 border-yellow-500/50",
   crown: "from-amber-500/20 to-orange-500/20 border-amber-500/50",
-  rocket: "from-blue-500/20 to-indigo-500/20 border-blue-500/50",
+  rocket: "from-primary/20 to-amber-500/20 border-primary/50",
 };
 
 const HighlightedTip = ({ senderName, giftName, giftIcon, amount, message }: HighlightedTipProps) => {

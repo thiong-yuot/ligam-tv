@@ -16,6 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import LigamLogo from "./LigamLogo";
+import ThemeToggle from "./ThemeToggle";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -42,7 +43,7 @@ const Navbar = () => {
     if (tier === "creator") {
       return (
         <Link to="/pricing">
-          <Badge className="bg-gradient-to-r from-primary to-sky-500 text-white border-0 gap-1 hover:from-primary/90 hover:to-sky-600 cursor-pointer">
+          <Badge className="bg-gradient-to-r from-primary to-amber-400 text-primary-foreground border-0 gap-1 hover:from-primary/90 hover:to-amber-500 cursor-pointer">
             <Sparkles className="h-3 w-3" />
             Creator
           </Badge>
@@ -150,7 +151,9 @@ const Navbar = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            
             {!loading && (
               <>
                 {user && getPlanBadge()}

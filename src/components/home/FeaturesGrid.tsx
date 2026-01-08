@@ -1,12 +1,12 @@
 import { 
   Zap, 
   Users, 
-  DollarSign, 
-  Shield, 
-  Globe, 
-  Headphones,
-  TrendingUp,
-  GraduationCap
+  Wallet, 
+  ShieldCheck, 
+  Globe2, 
+  HeadphonesIcon,
+  BarChart3,
+  BookOpen
 } from "lucide-react";
 
 const features = [
@@ -14,63 +14,47 @@ const features = [
     icon: Zap,
     title: "Sub-Second Latency",
     description: "Chat feels live because it is. Under 500ms delay worldwide",
-    gradient: "from-yellow-500/20 to-orange-500/10",
-    iconColor: "text-yellow-500",
   },
   {
     icon: Users,
     title: "Real Chat, Real Tips",
     description: "Live chat with emotes, virtual gifts, and highlighted messages",
-    gradient: "from-blue-500/20 to-cyan-500/10",
-    iconColor: "text-blue-500",
   },
   {
-    icon: DollarSign,
+    icon: Wallet,
     title: "Five Revenue Streams",
     description: "Subscriptions, tips, shop, courses, and freelance — pick your mix",
-    gradient: "from-green-500/20 to-emerald-500/10",
-    iconColor: "text-green-500",
   },
   {
-    icon: Shield,
+    icon: ShieldCheck,
     title: "Fair Creator Split",
     description: "8–15% platform fee. You keep the rest. No hidden charges",
-    gradient: "from-primary/20 to-sky-500/10",
-    iconColor: "text-primary",
   },
   {
-    icon: Globe,
+    icon: Globe2,
     title: "Global CDN",
     description: "Edge nodes on 6 continents for buffer-free streaming",
-    gradient: "from-indigo-500/20 to-blue-500/10",
-    iconColor: "text-indigo-500",
   },
   {
-    icon: Headphones,
+    icon: HeadphonesIcon,
     title: "Creator Support",
     description: "Email us and a human replies — usually within a few hours",
-    gradient: "from-pink-500/20 to-rose-500/10",
-    iconColor: "text-pink-500",
   },
   {
-    icon: TrendingUp,
+    icon: BarChart3,
     title: "Clear Analytics",
     description: "Revenue, watch time, and growth stats without the clutter",
-    gradient: "from-cyan-500/20 to-teal-500/10",
-    iconColor: "text-cyan-500",
   },
   {
-    icon: GraduationCap,
+    icon: BookOpen,
     title: "Sell Courses",
     description: "Upload lessons, set a price, and earn on autopilot",
-    gradient: "from-amber-500/20 to-yellow-500/10",
-    iconColor: "text-amber-500",
   },
 ];
 
 const FeaturesGrid = () => {
   return (
-    <section className="py-20 px-4 bg-card/30">
+    <section className="py-20 px-4 bg-muted/30">
       <div className="container mx-auto">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -91,11 +75,11 @@ const FeaturesGrid = () => {
               style={{ animationDelay: `${index * 50}ms` }}
             >
               {/* Gradient Background */}
-              <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
               
               <div className="relative">
-                <div className={`w-12 h-12 rounded-xl bg-secondary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${feature.iconColor}`}>
-                  <feature.icon className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-display font-bold text-foreground text-lg mb-2">
                   {feature.title}
