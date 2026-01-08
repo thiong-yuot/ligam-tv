@@ -35,8 +35,8 @@ const features = [
     icon: Shield,
     title: "Fair Creator Split",
     description: "8–15% platform fee. You keep the rest. No hidden charges",
-    gradient: "from-purple-500/20 to-pink-500/10",
-    iconColor: "text-purple-500",
+    gradient: "from-primary/20 to-sky-500/10",
+    iconColor: "text-primary",
   },
   {
     icon: Globe,

@@ -23,7 +23,7 @@ const CoursesPreview = () => {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-500">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
               <GraduationCap className="w-4 h-4" />
               <span className="text-sm font-medium">Skills Academy</span>
             </div>
@@ -39,20 +39,20 @@ const CoursesPreview = () => {
 
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-foreground">
-                <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
-                  <BookOpen className="w-4 h-4 text-purple-500" />
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <BookOpen className="w-4 h-4 text-primary" />
                 </div>
                 <span>Expert-led video courses</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
-                <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
-                  <Award className="w-4 h-4 text-purple-500" />
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Award className="w-4 h-4 text-primary" />
                 </div>
                 <span>Certificates upon completion</span>
               </li>
               <li className="flex items-center gap-3 text-foreground">
-                <div className="w-8 h-8 rounded-full bg-purple-500/10 flex items-center justify-center">
-                  <Users className="w-4 h-4 text-purple-500" />
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Users className="w-4 h-4 text-primary" />
                 </div>
                 <span>1-on-1 tutoring sessions available</span>
               </li>
@@ -97,7 +97,7 @@ const CoursesPreview = () => {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-500/20 to-primary/20">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-sky-500/20">
                         <BookOpen className="w-8 h-8 text-muted-foreground" />
                       </div>
                     )}

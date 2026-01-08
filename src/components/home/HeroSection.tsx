@@ -35,21 +35,21 @@ const HeroSection = () => {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Where Creators Earn</span>
+              <span className="text-sm font-medium">Built for Independence</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold leading-tight">
-              <span className="text-foreground">Create.</span>
+              <span className="text-foreground">Broadcast.</span>
               <br />
-              <span className="text-primary">Stream.</span>
+              <span className="text-primary">Build.</span>
               <br />
               <span className="text-foreground">Earn.</span>
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              Stream live, sell products, teach courses, or offer freelance services — 
-              all from one place. Keep more of what you make.
+              Stream to millions, sell your work, teach your craft, or offer services — 
+              all from one place. Fair fees. Weekly payouts. Your audience, your rules.
             </p>
 
             {/* CTA Buttons */}
@@ -109,10 +109,10 @@ const HeroSection = () => {
               {/* Courses Card */}
               <Link 
                 to="/courses" 
-                className="group p-6 bg-gradient-to-br from-purple-500/20 to-purple-500/5 backdrop-blur-sm border border-purple-500/30 rounded-2xl hover:border-purple-500 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-500/10 mt-8"
+                className="group p-6 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm border border-primary/30 rounded-2xl hover:border-primary transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 mt-8"
               >
-                <div className="w-14 h-14 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <GraduationCap className="w-7 h-7 text-purple-500" />
+                <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <GraduationCap className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Learn Skills</h3>
                 <p className="text-muted-foreground text-sm">Courses from expert creators</p>
