@@ -83,7 +83,7 @@ const About = () => {
                 audience, extracting value while limiting what you can build.
               </p>
               <p className="text-muted-foreground">
-                Ligam is different by design. Stream to millions, sell directly to fans, teach what you know, 
+                Ligam is different by design. Stream live, sell directly to fans, teach what you know, 
                 or offer your expertise as a service. One account, one dashboard, one place to build your livelihood.
               </p>
             </div>

@@ -45,7 +45,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img src={ligamLogo} alt="Ligam" className="h-10 w-auto" />
               <span className="text-xl font-display font-bold text-foreground">
-                Ligam<span className="text-purple-400">.tv</span>
+                Ligam<span className="text-primary">.tv</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground mb-6">

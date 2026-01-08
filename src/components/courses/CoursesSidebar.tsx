@@ -43,7 +43,7 @@ const CoursesSidebar = ({
           <button
             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
               !selectedCategory || selectedCategory === "all"
-                ? "bg-purple-500/10 text-purple-400"
+                ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:bg-muted"
             }`}
             onClick={() => onCategoryChange("all")}
@@ -55,7 +55,7 @@ const CoursesSidebar = ({
               key={cat}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
                 selectedCategory === cat
-                  ? "bg-purple-500/10 text-purple-400"
+                  ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:bg-muted"
               }`}
               onClick={() => onCategoryChange(cat)}
@@ -73,7 +73,7 @@ const CoursesSidebar = ({
           <button
             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
               !selectedLevel || selectedLevel === "all"
-                ? "bg-purple-500/10 text-purple-400"
+                ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:bg-muted"
             }`}
             onClick={() => onLevelChange("all")}
@@ -85,7 +85,7 @@ const CoursesSidebar = ({
               key={level}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm capitalize transition-colors ${
                 selectedLevel === level
-                  ? "bg-purple-500/10 text-purple-400"
+                  ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:bg-muted"
               }`}
               onClick={() => onLevelChange(level)}
@@ -130,7 +130,7 @@ const CoursesSidebar = ({
               key={rating}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${
                 minRating === rating
-                  ? "bg-purple-500/10 text-purple-400"
+                  ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:bg-muted"
               }`}
               onClick={() => onMinRatingChange(rating)}
