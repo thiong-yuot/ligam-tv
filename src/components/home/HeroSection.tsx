@@ -75,8 +75,8 @@ const HeroSection = () => {
                 to="/browse" 
                 className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5"
               >
-                <div className="w-14 h-14 rounded-xl bg-destructive/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Play className="w-7 h-7 text-destructive" />
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Play className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Live Streams</h3>
                 <p className="text-muted-foreground text-sm">Watch live content from creators worldwide</p>
@@ -87,8 +87,8 @@ const HeroSection = () => {
                 to="/shop" 
                 className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 mt-8"
               >
-                <div className="w-14 h-14 rounded-xl bg-green-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <ShoppingBag className="w-7 h-7 text-green-500" />
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <ShoppingBag className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Marketplace</h3>
                 <p className="text-muted-foreground text-sm">Shop exclusive products from sellers</p>
@@ -99,8 +99,8 @@ const HeroSection = () => {
                 to="/freelance" 
                 className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5"
               >
-                <div className="w-14 h-14 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Users className="w-7 h-7 text-blue-500" />
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Users className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-2">Freelancers</h3>
                 <p className="text-muted-foreground text-sm">Hire talented professionals</p>

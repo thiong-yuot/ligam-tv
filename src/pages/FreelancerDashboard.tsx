@@ -290,7 +290,7 @@ const FreelancerDashboard = () => {
       case "pending":
         return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />Pending</Badge>;
       case "in_progress":
-        return <Badge className="bg-blue-500"><RefreshCw className="w-3 h-3 mr-1" />In Progress</Badge>;
+        return <Badge className="bg-primary text-primary-foreground"><RefreshCw className="w-3 h-3 mr-1" />In Progress</Badge>;
       case "completed":
         return <Badge className="bg-green-500"><CheckCircle2 className="w-3 h-3 mr-1" />Completed</Badge>;
       case "cancelled":

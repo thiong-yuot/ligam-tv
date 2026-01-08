@@ -290,7 +290,7 @@ const Courses = () => {
               {featuredCourses.length > 0 && !searchQuery && (!selectedCategory || selectedCategory === "all") && (
                 <div className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
-                    <TrendingUp className="w-5 h-5 text-purple-400" />
+                    <TrendingUp className="w-5 h-5 text-primary" />
                     <h2 className="text-lg font-semibold text-foreground">Featured Courses</h2>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -359,7 +359,7 @@ const Courses = () => {
               {/* Course Grid */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-20">
-                  <Loader2 className="w-8 h-8 animate-spin text-purple-400" />
+                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
                 </div>
               ) : sortedCourses.length === 0 ? (
                 <div className="text-center py-20 bg-card/50 rounded-xl border border-border">
