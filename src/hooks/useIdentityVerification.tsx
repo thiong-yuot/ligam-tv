@@ -104,7 +104,7 @@ export const useIdentityVerification = () => {
         description: "We'll review your documents within 1-3 business days.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Submission failed",
         description: error.message || "Please try again later.",

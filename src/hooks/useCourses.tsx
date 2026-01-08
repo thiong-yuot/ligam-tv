@@ -45,7 +45,11 @@ export interface CourseLesson {
   is_preview: boolean;
   sort_order: number;
   content_type: string;
-  resources: any[];
+  resources: Array<{
+    title: string;
+    url: string;
+    type: string;
+  }>;
   created_at: string;
 }
 

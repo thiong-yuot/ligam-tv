@@ -120,7 +120,7 @@ export const useAffiliate = () => {
         description: "Your affiliate link is ready. Start sharing and earning!",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Failed to join program",
         description: error.message || "Please try again later.",

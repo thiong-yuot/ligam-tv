@@ -24,10 +24,11 @@ export const useFileUpload = () => {
 
       const { data } = supabase.storage.from(bucket).getPublicUrl(fileName);
       return data.publicUrl;
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Upload failed";
       toast({
         title: "Upload failed",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
       return null;

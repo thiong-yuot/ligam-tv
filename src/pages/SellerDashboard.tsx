@@ -79,8 +79,9 @@ const SellerDashboard = () => {
     try {
       await deleteProduct.mutateAsync(productToDelete);
       toast.success("Product deleted successfully");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete product");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to delete product";
+      toast.error(errorMessage);
     } finally {
       setDeleteDialogOpen(false);
       setProductToDelete(null);

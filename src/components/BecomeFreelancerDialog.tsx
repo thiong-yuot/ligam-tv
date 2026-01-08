@@ -73,8 +73,9 @@ const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogPr
       toast.success("Welcome to the freelance marketplace!");
       onOpenChange(false);
       navigate("/freelance/dashboard");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create profile");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create profile";
+      toast.error(errorMessage);
     }
   };
 

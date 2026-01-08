@@ -123,7 +123,7 @@ export const useWithdrawals = () => {
         description: "Your withdrawal method has been saved.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Failed to add method",
         description: error.message || "Please try again.",
@@ -164,7 +164,7 @@ export const useWithdrawals = () => {
         description: "Your withdrawal request is being processed.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Withdrawal failed",
         description: error.message || "Please try again.",

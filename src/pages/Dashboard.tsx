@@ -35,7 +35,11 @@ import {
 const Dashboard = () => {
   const [checking, setChecking] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<{
+    username?: string;
+    avatar_url?: string;
+    display_name?: string;
+  } | null>(null);
   const navigate = useNavigate();
   const { tier, subscriptionEnd } = useSubscription();
   const { hasAccess } = useFeatureAccess();

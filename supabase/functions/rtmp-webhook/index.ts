@@ -1,5 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+interface StreamData {
+  id: string;
+  user_id: string;
+  title: string;
+  is_live: boolean;
+  viewer_count?: number;
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -21,13 +29,13 @@ Deno.serve(async (req) => {
     console.log(`RTMP Webhook received: action=${action}, stream_key=${stream_key || name}, stream_id=${stream_id}, app=${app}`);
 
     // Support both stream_key lookup and direct stream_id lookup
-    let stream;
+    let stream: StreamData;
     
     if (stream_id) {
       // Direct stream ID lookup (preferred for viewer tracking)
       const { data, error } = await supabase
         .from("streams")
-        .select("id, user_id, title, is_live")
+        .select("id, user_id, title, is_live, viewer_count")
         .eq("id", stream_id)
         .single();
       
@@ -68,7 +76,7 @@ Deno.serve(async (req) => {
 
       const { data, error: streamError } = await supabase
         .from("streams")
-        .select("id, user_id, title, is_live")
+        .select("id, user_id, title, is_live, viewer_count")
         .eq("id", credentials.stream_id)
         .single();
 
@@ -87,7 +95,7 @@ Deno.serve(async (req) => {
     switch (action) {
       case "on_publish":
       case "publish":
-      case "start":
+      case "start": {
         // Stream is starting - set to live
         const { error: publishError } = await supabase
           .from("streams")
@@ -131,10 +139,11 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: true, message: "Stream started", stream_id: stream.id }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "on_publish_done":
       case "unpublish":
-      case "stop":
+      case "stop": {
         // Stream is ending - set to offline
         const { error: stopError } = await supabase
           .from("streams")
@@ -158,9 +167,10 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: true, message: "Stream stopped", stream_id: stream.id }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "on_play":
-      case "play":
+      case "play": {
         // Viewer joined - increment count
         const { error: playError } = await supabase.rpc("increment_viewer_count", {
           stream_id: stream.id,
@@ -170,7 +180,7 @@ Deno.serve(async (req) => {
         if (playError) {
           await supabase
             .from("streams")
-            .update({ viewer_count: (stream as any).viewer_count + 1 })
+            .update({ viewer_count: (stream.viewer_count || 0) + 1 })
             .eq("id", stream.id);
         }
 
@@ -180,16 +190,17 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: true, message: "Viewer joined" }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "on_play_done":
-      case "play_done":
+      case "play_done": {
         // Viewer left - decrement count
         const { error: playDoneError } = await supabase.rpc("decrement_viewer_count", {
           stream_id: stream.id,
         });
 
         if (playDoneError) {
-          const currentCount = Math.max(0, ((stream as any).viewer_count || 1) - 1);
+          const currentCount = Math.max(0, (stream.viewer_count || 1) - 1);
           await supabase
             .from("streams")
             .update({ viewer_count: currentCount })
@@ -202,15 +213,17 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: true, message: "Viewer left" }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "validate":
-      case "auth":
+      case "auth": {
         // Just validate the stream key exists
         console.log(`Stream key validated for stream ${stream.id}`);
         return new Response(
           JSON.stringify({ success: true, message: "Stream key valid", stream_id: stream.id }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       default:
         console.log(`Unknown action: ${action}`);

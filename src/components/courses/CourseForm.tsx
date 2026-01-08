@@ -24,7 +24,16 @@ interface CourseFormProps {
     preview_video_url: string;
     is_published: boolean;
   };
-  onSubmit: (data: any) => void;
+  onSubmit: (data: {
+    title: string;
+    description: string;
+    price: number;
+    level: string;
+    category: string;
+    thumbnail_url: string;
+    preview_video_url: string;
+    is_published: boolean;
+  }) => void;
   onCancel?: () => void;
   isLoading?: boolean;
 }
