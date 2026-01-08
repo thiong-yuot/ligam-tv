@@ -17,31 +17,31 @@ const About = () => {
   const values = [
     {
       icon: Users,
-      title: "Community First",
-      description: "Creators and viewers shape everything we build. The platform exists to serve you — not the other way around.",
+      title: "Access Over Gatekeeping",
+      description: "Knowledge and opportunity should reach everyone. We build tools that remove barriers, not create them.",
     },
     {
       icon: Shield,
-      title: "Safety Without Compromise",
-      description: "Strict moderation tools, real-time reporting, and proactive enforcement keep the community welcoming.",
+      title: "Honest Infrastructure",
+      description: "Clear pricing, real uptime stats, and fees that make sense. No hidden terms, no surprise cuts.",
     },
     {
       icon: Zap,
-      title: "Relentless Improvement",
-      description: "We ship updates weekly. If something slows you down, it goes on the roadmap.",
+      title: "Speed to Independence",
+      description: "Every feature we ship is designed to help you earn faster and depend on platforms less.",
     },
     {
       icon: Heart,
-      title: "Creators Win, We Win",
-      description: "Low fees, honest payouts, and features that help you earn more — because your success funds ours.",
+      title: "Creator Ownership",
+      description: "Your audience, your content, your earnings. We handle the pipes — you own the rest.",
     },
   ];
 
   const timeline = [
-    { year: "2024", title: "Public Launch", description: "Streaming, shop, and freelance marketplace go live" },
-    { year: "2024", title: "Monetization Suite", description: "Virtual gifts, subscriptions, and affiliate program roll out" },
-    { year: "2024", title: "Skills Academy", description: "Courses and 1-on-1 bookings open to all creators" },
-    { year: "2025", title: "Global Expansion", description: "Multi-language support and regional payment methods" },
+    { year: "2024", title: "Foundation", description: "Streaming, marketplace, and services launch as one integrated platform" },
+    { year: "2024", title: "Monetization Layer", description: "Tips, subscriptions, and affiliate tools go live for creators" },
+    { year: "2025", title: "Education Hub", description: "Courses and 1-on-1 bookings open new paths to income" },
+    { year: "2026", title: "Global Reach", description: "Multi-currency payouts and localized experiences expand worldwide" },
   ];
 
   return (
@@ -53,14 +53,15 @@ const About = () => {
         <div className="container mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <Globe className="w-4 h-4" />
-            About Ligam
+            Why Ligam Exists
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-foreground mb-6">
-            One Home for <span className="text-primary">Everything You Create</span>
+            Built to Solve <span className="text-primary">Real Problems</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Ligam brings live streaming, ecommerce, courses, and freelance services under one roof — 
-            so you can focus on making things, not managing tools.
+            The world has talent everywhere but opportunity is still concentrated in a few places. 
+            Ligam connects creators, professionals, and learners globally — giving anyone with skills 
+            a direct path to income and impact.
           </p>
         </div>
       </section>
@@ -75,15 +76,15 @@ const About = () => {
                 Our Mission
               </div>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-                Built <span className="text-primary">By Creators, For Creators</span>
+                Decentralize <span className="text-primary">Professional Opportunity</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-6">
-                We started Ligam because we were tired of platforms that nickel-and-dime creators 
-                or bury great content behind confusing algorithms.
+                Traditional platforms take too much and give too little. They sit between you and your 
+                audience, extracting value while limiting what you can build.
               </p>
               <p className="text-muted-foreground">
-                Whether you stream gaming sessions, sell handmade goods, teach design, or offer freelance editing — 
-                Ligam gives you tools that actually work and fees that leave more money in your pocket.
+                Ligam is different by design. Stream to millions, sell directly to fans, teach what you know, 
+                or offer your expertise as a service. One account, one dashboard, one place to build your livelihood.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -113,10 +114,10 @@ const About = () => {
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-              What We Stand For
+              Principles That Guide Us
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              The principles behind every feature, policy, and support ticket
+              These shape every product decision, pricing choice, and support conversation
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -145,10 +146,10 @@ const About = () => {
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-              Our Journey
+              Building in Public
             </h2>
             <p className="text-muted-foreground text-lg">
-              The milestones that define Ligam
+              Key milestones on the path to a more open creator economy
             </p>
           </div>
           <div className="max-w-3xl mx-auto">
@@ -180,20 +181,21 @@ const About = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-            See What's Happening
+            Join the Movement
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-            Ready to explore? Start streaming in minutes or browse what other creators are building.
+            Whether you are ready to go live, launch a course, or find your next gig — 
+            start building on Ligam today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/create-profile">
               <Button variant="default" size="lg" className="glow">
-                Start Streaming
+                Create Your Profile
               </Button>
             </Link>
             <Link to="/browse">
               <Button variant="outline" size="lg">
-                Explore Content
+                See What's Live
               </Button>
             </Link>
           </div>

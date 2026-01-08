@@ -42,7 +42,7 @@ const Navbar = () => {
     if (tier === "creator") {
       return (
         <Link to="/pricing">
-          <Badge className="bg-gradient-to-r from-primary to-purple-500 text-white border-0 gap-1 hover:from-primary/90 hover:to-purple-600 cursor-pointer">
+          <Badge className="bg-gradient-to-r from-primary to-sky-500 text-white border-0 gap-1 hover:from-primary/90 hover:to-sky-600 cursor-pointer">
             <Sparkles className="h-3 w-3" />
             Creator
           </Badge>

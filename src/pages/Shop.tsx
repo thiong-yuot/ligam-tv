@@ -98,16 +98,16 @@ const Shop = () => {
       <Navbar />
 
       {/* Hero Banner - Matching Courses Style */}
-      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-purple-500/5 to-background border-b border-border">
+      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-primary/5 to-background border-b border-border">
         <div className="container mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                 <Store className="w-4 h-4" />
                 Creator Marketplace
               </div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-                Shop <span className="text-purple-400">Exclusive Products</span>
+                Shop <span className="text-primary">Exclusive Products</span>
               </h1>
               <p className="text-muted-foreground max-w-lg">
                 Discover unique products from talented creators around the world.
@@ -133,7 +133,7 @@ const Shop = () => {
               { icon: TrendingUp, label: "Monthly Sales", value: "$50K+" },
             ].map((stat, index) => (
               <div key={index} className="bg-card/50 rounded-xl p-4 border border-border">
-                <stat.icon className="w-5 h-5 text-purple-400 mb-2" />
+                <stat.icon className="w-5 h-5 text-primary mb-2" />
                 <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>
               </div>
