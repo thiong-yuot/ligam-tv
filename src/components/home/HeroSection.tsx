@@ -48,7 +48,7 @@ const HeroSection = () => {
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              Stream to millions, sell your work, teach your craft, or offer services — 
+              Stream live, sell your work, teach your craft, or offer services — 
               all from one place. Fair fees. Weekly payouts. Your audience, your rules.
             </p>
 

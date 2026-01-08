@@ -404,7 +404,7 @@ const GoLive = () => {
                   )}
                   <p className="font-semibold text-foreground">1080p Full HD</p>
                   <p className="text-sm text-muted-foreground">High quality</p>
-                  <Badge className="mt-2 bg-gradient-to-r from-primary to-purple-500 text-white border-0">
+                  <Badge className="mt-2 bg-gradient-to-r from-primary to-blue-500 text-white border-0">
                     <Sparkles className="w-3 h-3 mr-1" />
                     Creator
                   </Badge>

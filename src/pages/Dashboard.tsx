@@ -75,7 +75,7 @@ const Dashboard = () => {
       name: "Creator",
       icon: Sparkles,
       color: "text-primary",
-      bgColor: "bg-gradient-to-r from-primary/20 to-purple-500/20",
+      bgColor: "bg-gradient-to-r from-primary/20 to-blue-500/20",
       features: [
         { name: "720p Streaming", included: true },
         { name: "Basic Chat", included: true },
@@ -208,7 +208,7 @@ const Dashboard = () => {
             <Card className={`p-6 border-border ${currentTier.bgColor}`}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-foreground">Your Plan</h2>
-                <Badge className={`gap-1 ${tier === "pro" ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0" : tier === "creator" ? "bg-gradient-to-r from-primary to-purple-500 text-white border-0" : ""}`}>
+                <Badge className={`gap-1 ${tier === "pro" ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0" : tier === "creator" ? "bg-gradient-to-r from-primary to-blue-500 text-white border-0" : ""}`}>
                   <currentTier.icon className="h-3 w-3" />
                   {currentTier.name}
                 </Badge>
@@ -331,7 +331,7 @@ const Dashboard = () => {
                 <div className="text-xs text-muted-foreground">Tips/Gifts</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Users className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                <Users className="w-6 h-6 text-blue-500 mx-auto mb-2" />
                 <div className="text-xl font-bold text-foreground">${subEarnings.toFixed(2)}</div>
                 <div className="text-xs text-muted-foreground">Subscriptions</div>
               </div>
@@ -356,7 +356,7 @@ const Dashboard = () => {
                   -{platformFees.gigs}%
                 </span>
               </div>
-              <div className="text-center p-4 rounded-xl bg-gradient-to-r from-primary/20 to-purple-500/20">
+              <div className="text-center p-4 rounded-xl bg-gradient-to-r from-primary/20 to-blue-500/20">
                 <DollarSign className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-xl font-bold text-primary">${totalThisMonth.toFixed(2)}</div>
                 <div className="text-xs text-muted-foreground">Total Net</div>

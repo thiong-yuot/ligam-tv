@@ -23,7 +23,7 @@ const SubscribeWidget = ({
       name: 'Creator',
       price: SUBSCRIPTION_TIERS.creator.price,
       icon: Sparkles,
-      color: 'from-primary to-purple-500',
+      color: 'from-primary to-blue-500',
       features: ['HD Streams', 'Custom Emotes', 'No Ads'],
     },
     {

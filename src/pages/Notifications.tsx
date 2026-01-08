@@ -39,7 +39,7 @@ const getNotificationIcon = (type: string) => {
     case "earning":
       return <DollarSign className="h-5 w-5 text-amber-500" />;
     case "subscription":
-      return <Star className="h-5 w-5 text-purple-500" />;
+      return <Star className="h-5 w-5 text-primary" />;
     default:
       return <Bell className="h-5 w-5 text-muted-foreground" />;
   }

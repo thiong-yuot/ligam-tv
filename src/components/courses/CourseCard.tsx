@@ -49,7 +49,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-purple-500/20 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-blue-500/20 flex items-center justify-center">
               <PlayCircle className="w-12 h-12 text-primary/50" />
             </div>
           )}

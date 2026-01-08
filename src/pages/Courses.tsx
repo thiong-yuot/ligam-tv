@@ -183,16 +183,16 @@ const Courses = () => {
       <Navbar />
       
       {/* Hero Banner - Like Freelance */}
-      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-purple-500/5 to-background border-b border-border">
+      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-primary/5 to-background border-b border-border">
         <div className="container mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                 <GraduationCap className="w-4 h-4" />
                 Skills Academy
               </div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-                Level Up <span className="text-purple-400">Your Skills</span>
+                Level Up <span className="text-primary">Your Skills</span>
               </h1>
               <p className="text-muted-foreground max-w-lg">
                 Courses taught by working professionals in dev, design, marketing, and beyond.
@@ -211,7 +211,7 @@ const Courses = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             {stats.map((stat, index) => (
               <div key={index} className="bg-card/50 rounded-xl p-4 border border-border">
-                <stat.icon className="w-5 h-5 text-purple-400 mb-2" />
+                <stat.icon className="w-5 h-5 text-primary mb-2" />
                 <p className="text-2xl font-bold text-foreground">{stat.value}</p>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>
               </div>
@@ -246,23 +246,23 @@ const Courses = () => {
               {!searchQuery && (!selectedCategory || selectedCategory === "all") && (
                 <div className="mb-8">
                   <div className="flex items-center gap-2 mb-4">
-                    <Award className="w-5 h-5 text-purple-400" />
+                    <Award className="w-5 h-5 text-primary" />
                     <h2 className="text-lg font-semibold text-foreground">Top Instructors</h2>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {featuredInstructors.map((instructor) => (
-                      <Card key={instructor.id} className="bg-card border-border hover:border-purple-500/50 transition-all group">
+                      <Card key={instructor.id} className="bg-card border-border hover:border-primary/50 transition-all group">
                         <CardContent className="p-4">
                           <div className="flex items-start gap-3">
-                            <Avatar className="w-12 h-12 border-2 border-purple-500/20">
+                            <Avatar className="w-12 h-12 border-2 border-primary/20">
                               <AvatarImage src={instructor.avatar} />
-                              <AvatarFallback className="bg-purple-500/10 text-purple-400">
+                              <AvatarFallback className="bg-primary/10 text-primary">
                                 {instructor.name.split(' ').map(n => n[0]).join('')}
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold text-foreground group-hover:text-purple-400 transition-colors">
+                                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                                   {instructor.name}
                                 </h3>
                               </div>
@@ -390,10 +390,10 @@ const Courses = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-t from-purple-500/5 to-background border-t border-border">
+      <section className="py-16 px-4 bg-gradient-to-t from-primary/5 to-background border-t border-border">
         <div className="container mx-auto">
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <GraduationCap className="w-4 h-4" />
               Share Your Knowledge
             </div>
@@ -401,7 +401,7 @@ const Courses = () => {
               Ready to Teach Your Skills?
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-              Create and sell courses to thousands of learners. Earn up to 85% revenue share on every enrollment.
+              Create and sell courses to learners worldwide. Earn up to 85% revenue share on every enrollment.
             </p>
             <Button size="lg" className="glow" onClick={handleCreateCourse}>
               <Play className="w-4 h-4 mr-2" />

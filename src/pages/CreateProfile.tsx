@@ -28,7 +28,7 @@ const CreateProfile = () => {
   const themes = [
     { color: "bg-primary", name: "Default" },
     { color: "bg-blue-500", name: "Ocean" },
-    { color: "bg-purple-500", name: "Violet" },
+    { color: "bg-cyan-500", name: "Sky" },
     { color: "bg-pink-500", name: "Rose" },
     { color: "bg-orange-500", name: "Sunset" },
   ];

@@ -259,10 +259,10 @@ const Shop = () => {
       </main>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-t from-purple-500/5 to-background border-t border-border">
+      <section className="py-16 px-4 bg-gradient-to-t from-primary/5 to-background border-t border-border">
         <div className="container mx-auto">
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <Store className="w-4 h-4" />
               Start Selling
             </div>
@@ -270,12 +270,12 @@ const Shop = () => {
               Sell Your Creations on Ligam
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-              Join our growing community of sellers. List your products, reach millions of customers, and grow your business.
+              Join our growing community of sellers. List your products, connect with buyers worldwide, and grow your business.
             </p>
             <div className="flex flex-wrap justify-center gap-6 mb-8">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                  <Users className="w-6 h-6 text-purple-400" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-primary" />
                 </div>
                 <div className="text-left">
                   <p className="text-2xl font-bold text-foreground">500+</p>
@@ -283,8 +283,8 @@ const Shop = () => {
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-purple-400" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-primary" />
                 </div>
                 <div className="text-left">
                   <p className="text-2xl font-bold text-foreground">$50K+</p>
@@ -294,7 +294,7 @@ const Shop = () => {
             </div>
             <Button
               size="lg"
-              className="glow bg-purple-600 hover:bg-purple-700"
+              className="glow"
               onClick={() => {
                 if (user) {
                   navigate("/seller/dashboard");
