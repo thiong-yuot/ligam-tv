@@ -16,7 +16,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import LigamLogo from "./LigamLogo";
-import ThemeToggle from "./ThemeToggle";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -152,7 +151,6 @@ const Navbar = () => {
 
           {/* Right Section */}
           <div className="flex items-center gap-2">
-            <ThemeToggle />
             
             {!loading && (
               <>
@@ -179,7 +177,6 @@ const Navbar = () => {
                         </Avatar>
                         <div className="flex flex-col space-y-0.5">
                           <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
-                          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                         </div>
                       </div>
                       <DropdownMenuSeparator />
@@ -305,7 +302,6 @@ const Navbar = () => {
                       </Avatar>
                       <div>
                         <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
-                        <p className="text-xs text-muted-foreground">{user.email}</p>
                       </div>
                     </div>
                     {getPlanBadge()}

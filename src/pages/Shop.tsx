@@ -125,20 +125,6 @@ const Shop = () => {
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-            {[
-              { icon: Store, label: "Active Sellers", value: "500+" },
-              { icon: Users, label: "Happy Customers", value: "10K+" },
-              { icon: TrendingUp, label: "Monthly Sales", value: "$50K+" },
-            ].map((stat, index) => (
-              <div key={index} className="bg-card/50 rounded-xl p-4 border border-border">
-                <stat.icon className="w-5 h-5 text-primary mb-2" />
-                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -272,26 +258,6 @@ const Shop = () => {
             <p className="text-muted-foreground max-w-xl mx-auto mb-8">
               Join our growing community of sellers. List your products, connect with buyers worldwide, and grow your business.
             </p>
-            <div className="flex flex-wrap justify-center gap-6 mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary" />
-                </div>
-                <div className="text-left">
-                  <p className="text-2xl font-bold text-foreground">500+</p>
-                  <p className="text-sm text-muted-foreground">Active Sellers</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-primary" />
-                </div>
-                <div className="text-left">
-                  <p className="text-2xl font-bold text-foreground">$50K+</p>
-                  <p className="text-sm text-muted-foreground">Monthly Sales</p>
-                </div>
-              </div>
-            </div>
             <Button
               size="lg"
               className="glow"

@@ -145,6 +145,9 @@ serve(async (req) => {
       mode: mode as "payment" | "subscription",
       success_url: successUrl || `${req.headers.get("origin")}/shop?success=true`,
       cancel_url: cancelUrl || `${req.headers.get("origin")}/shop?canceled=true`,
+      shipping_address_collection: mode === "payment" ? {
+        allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'SE', 'NO', 'DK', 'BE', 'CH', 'AT', 'IE', 'NZ', 'JP', 'SG', 'HK', 'MX', 'BR', 'ZA', 'NG', 'KE', 'GH', 'IN', 'PK', 'AE', 'SA'],
+      } : undefined,
       metadata: {
         supabase_user_id: user.id,
       },
