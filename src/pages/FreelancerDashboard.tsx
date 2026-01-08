@@ -495,6 +495,36 @@ const FreelancerDashboard = () => {
                         </DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4 py-4">
+                        {/* Tier quick select */}
+                        <div className="space-y-2">
+                          <Label>Quick Select Tier</Label>
+                          <div className="flex gap-2">
+                            <Button
+                              type="button"
+                              variant={packageForm.name === "Basic" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setPackageForm({ ...packageForm, name: "Basic", price: "49", delivery_days: "7", revisions: "1" })}
+                            >
+                              Basic
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={packageForm.name === "Standard" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setPackageForm({ ...packageForm, name: "Standard", price: "99", delivery_days: "5", revisions: "3", is_popular: true })}
+                            >
+                              Standard
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={packageForm.name === "Premium" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setPackageForm({ ...packageForm, name: "Premium", price: "199", delivery_days: "3", revisions: "5" })}
+                            >
+                              Premium
+                            </Button>
+                          </div>
+                        </div>
                         <div className="space-y-2">
                           <Label>Package Name</Label>
                           <Input
@@ -594,7 +624,7 @@ const FreelancerDashboard = () => {
                       <Package className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
                       <h3 className="font-semibold mb-2">No packages yet</h3>
                       <p className="text-muted-foreground mb-4">
-                        Create packages with tiered pricing to attract more clients
+                        Create Basic, Standard, and Premium packages to give clients flexible options
                       </p>
                       <Button onClick={() => setAddPackageOpen(true)}>
                         <Plus className="w-4 h-4 mr-2" />
