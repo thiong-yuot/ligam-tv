@@ -1,0 +1,35 @@
+# Docker Compose Override Example
+# Copy this file to docker-compose.override.yml for local development customizations
+# docker-compose.override.yml is in .gitignore and won't be committed
+
+services:
+  srs:
+    # Override ports for development
+    # ports:
+    #   - "1936:1935"  # Use different local port
+    #   - "8081:8080"
+    #   - "1986:1985"
+    
+    # Enable DVR (recording) for local testing
+    # volumes:
+    #   - ./local-recordings:/usr/local/srs/objs/nginx/html/recordings
+    
+    # Development environment
+    environment:
+      - SRS_CALLBACK_SECRET=local-dev-secret
+
+  app:
+    # For development with hot reload, use the dev server instead
+    # Build development version
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.dev
+    
+    # Mount source for live reloading (if using dev mode)
+    # volumes:
+    #   - ./src:/app/src
+    
+    # Development environment
+    environment:
+      - VITE_RTMP_URL=rtmp://localhost:1935/live
+      - VITE_HLS_URL=http://localhost:8080/live
