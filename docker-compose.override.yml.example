@@ -29,7 +29,7 @@ services:
     # volumes:
     #   - ./src:/app/src
     
-    # Development environment
+    # Development environment - URLs should be accessible from browser
     environment:
       - VITE_RTMP_URL=rtmp://localhost:1935/live
       - VITE_HLS_URL=http://localhost:8080/live

@@ -35,8 +35,11 @@ services:
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
       - VITE_SUPABASE_PUBLISHABLE_KEY=${VITE_SUPABASE_PUBLISHABLE_KEY}
       - VITE_SUPABASE_PROJECT_ID=${VITE_SUPABASE_PROJECT_ID}
-      - VITE_RTMP_URL=rtmp://srs:1935/live
-      - VITE_HLS_URL=http://srs:8080/live
+      # Note: These URLs are for server-side use only
+      # Client-side should use localhost:1935 and localhost:8080 for local dev
+      # or production domain URLs for deployed environments
+      - VITE_RTMP_URL=${VITE_RTMP_URL:-rtmp://localhost:1935/live}
+      - VITE_HLS_URL=${VITE_HLS_URL:-http://localhost:8080/live}
       - SRS_CALLBACK_SECRET=${SRS_CALLBACK_SECRET:-default-secret-change-me}
     depends_on:
       - srs

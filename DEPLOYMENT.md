@@ -46,13 +46,17 @@ This guide covers the complete deployment setup for ligam-tv with SRS (Simple Re
 
 5. **Start SRS server (in another terminal)**
    ```bash
-   docker-compose up srs
+   docker compose up srs
    ```
 
-The app will be available at `http://localhost:8080` and SRS will be running with:
+The development server will be available at `http://localhost:8080` (Vite dev server).
+
+SRS will be running with:
 - RTMP on port 1935
-- HLS on port 8080
+- HLS on port 8080  
 - HTTP API on port 1985
+
+**Note**: When using Docker Compose (step 6 below), the app runs on port 80 instead.
 
 ## Docker Setup
 
