@@ -54,8 +54,8 @@ const features = [
 
 const FeaturesGrid = () => {
   return (
-    <section className="py-20 px-4 bg-muted/30">
-      <div className="container mx-auto">
+    <section className="py-20 px-4 md:px-6 lg:px-8 bg-muted/30">
+      <div className="w-full max-w-[1920px] mx-auto">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
