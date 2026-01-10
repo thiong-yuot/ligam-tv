@@ -183,8 +183,8 @@ const Courses = () => {
       <Navbar />
       
       {/* Hero Banner - Like Freelance */}
-      <section className="pt-24 pb-8 px-4 bg-gradient-to-b from-primary/5 to-background border-b border-border">
-        <div className="container mx-auto">
+      <section className="pt-24 pb-8 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background border-b border-border">
+        <div className="w-full max-w-[1920px] mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
@@ -221,8 +221,8 @@ const Courses = () => {
       </section>
 
       {/* Main Content with Sidebar */}
-      <section className="py-8 px-4">
-        <div className="container mx-auto">
+      <section className="py-8 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto">
           <div className="flex gap-8">
             {/* Sidebar */}
             <CoursesSidebar
@@ -390,8 +390,8 @@ const Courses = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-t from-primary/5 to-background border-t border-border">
-        <div className="container mx-auto">
+      <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-t from-primary/5 to-background border-t border-border">
+        <div className="w-full max-w-[1920px] mx-auto">
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <GraduationCap className="w-4 h-4" />

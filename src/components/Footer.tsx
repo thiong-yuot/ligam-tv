@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Twitter, Instagram, Youtube, Linkedin, Video, ArrowRight } from "lucide-react";
-import ligamLogo from "@/assets/ligam-logo.png";
+import LigamLogo from "./LigamLogo";
 
 const Footer = () => {
   const footerLinks = {
@@ -43,7 +43,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <img src={ligamLogo} alt="Ligam" className="h-10 w-auto" />
+              <LigamLogo className="h-10 w-10" />
               <span className="text-xl font-display font-bold text-foreground">
                 Ligam<span className="text-primary">.tv</span>
               </span>

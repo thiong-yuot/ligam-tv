@@ -49,8 +49,8 @@ const About = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4">
-        <div className="container mx-auto text-center">
+      <section className="pt-32 pb-20 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <Globe className="w-4 h-4" />
             Why Ligam Exists
@@ -67,8 +67,8 @@ const About = () => {
       </section>
 
       {/* Mission Section */}
-      <section className="py-20 px-4 bg-card/30 border-y border-border">
-        <div className="container mx-auto">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-card/30 border-y border-border">
+        <div className="w-full max-w-[1920px] mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
@@ -110,8 +110,8 @@ const About = () => {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto">
+      <section className="py-20 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
               Principles That Guide Us
@@ -142,8 +142,8 @@ const About = () => {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-20 px-4 bg-card/30 border-y border-border">
-        <div className="container mx-auto">
+      <section className="py-20 px-4 md:px-6 lg:px-8 bg-card/30 border-y border-border">
+        <div className="w-full max-w-[1920px] mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
               Building in Public
@@ -178,8 +178,8 @@ const About = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
+      <section className="py-20 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
             Join the Movement
           </h2>

@@ -81,8 +81,8 @@ const Categories = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pt-24 pb-12 px-4">
-        <div className="container mx-auto">
+      <main className="pt-24 pb-12 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto">
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
