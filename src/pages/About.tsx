@@ -38,10 +38,10 @@ const About = () => {
   ];
 
   const timeline = [
-    { year: "2024", title: "Foundation", description: "Streaming, marketplace, and services launch as one integrated platform" },
-    { year: "2024", title: "Monetization Layer", description: "Tips, subscriptions, and affiliate tools go live for creators" },
-    { year: "2025", title: "Education Hub", description: "Courses and 1-on-1 bookings open new paths to income" },
-    { year: "2026", title: "Global Reach", description: "Multi-currency payouts and localized experiences expand worldwide" },
+    { year: "2026", title: "Foundation", description: "Streaming, marketplace, and services launch as one integrated platform" },
+    { year: "2026", title: "Monetization Layer", description: "Tips, subscriptions, and affiliate tools go live for creators" },
+    { year: "2026", title: "Education Hub", description: "Courses and 1-on-1 bookings open new paths to income" },
+    { year: "2027", title: "Global Reach", description: "Multi-currency payouts and localized experiences expand worldwide" },
   ];
 
   return (

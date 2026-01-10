@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 
 const GetFeatured = () => {
   return (
-    <section id="get-featured" className="py-20 px-4">
-      <div className="container mx-auto">
+    <section id="get-featured" className="py-20 px-4 md:px-6 lg:px-8">
+      <div className="w-full max-w-[1920px] mx-auto">
         <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-border rounded-2xl p-8 md:p-12">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             {/* Left Content */}
