@@ -163,8 +163,8 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="pt-28 pb-12 px-4">
-        <div className="container mx-auto">
+      <section className="pt-28 pb-12 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
