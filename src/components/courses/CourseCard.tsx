@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Users, Clock, PlayCircle, Award, TrendingUp } from "lucide-react";
 import { Course } from "@/hooks/useCourses";
+import instructor1 from "@/assets/instructor-1.jpg";
+import instructor2 from "@/assets/instructor-2.jpg";
 
 interface CourseCardProps {
   course: Course;
@@ -15,12 +17,12 @@ const getInstructor = (creatorId: string) => {
   const instructors: Record<string, { name: string; avatar: string; title: string }> = {
     "00000000-0000-0000-0000-000000000001": {
       name: "Sarah Chen",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face",
+      avatar: instructor1,
       title: "Senior Developer"
     },
     "00000000-0000-0000-0000-000000000002": {
       name: "Marcus Thompson", 
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+      avatar: instructor2,
       title: "Marketing Expert"
     }
   };
