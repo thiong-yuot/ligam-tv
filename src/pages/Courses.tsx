@@ -18,13 +18,15 @@ import {
   Play, Star, Users, TrendingUp, Award
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import instructor1 from "@/assets/instructor-1.jpg";
+import instructor2 from "@/assets/instructor-2.jpg";
 
 // Featured instructors
 const featuredInstructors = [
   {
     id: "00000000-0000-0000-0000-000000000001",
     name: "Sarah Chen",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face",
+    avatar: instructor1,
     title: "Full-Stack Developer",
     students: 8543,
     courses: 3,
@@ -33,7 +35,7 @@ const featuredInstructors = [
   {
     id: "00000000-0000-0000-0000-000000000002",
     name: "Marcus Thompson",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face",
+    avatar: instructor2,
     title: "Marketing Expert",
     students: 5621,
     courses: 2,

@@ -1,5 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Compass, Heart, Clock, Settings, Users, Gamepad2, Music, Palette, Trophy } from "lucide-react";
+import streamer1 from "@/assets/streamer-1.jpg";
+import streamer2 from "@/assets/streamer-2.jpg";
+import streamer3 from "@/assets/streamer-3.jpg";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -19,9 +22,9 @@ const Sidebar = () => {
   ];
 
   const recommendedStreamers = [
-    { name: "NightOwl", avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop", isLive: true, viewers: 15420 },
-    { name: "GameMaster", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop", isLive: true, viewers: 8930 },
-    { name: "StreamQueen", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=100&h=100&fit=crop", isLive: false, viewers: 0 },
+    { name: "NightOwl", avatar: streamer1, isLive: true, viewers: 15420 },
+    { name: "GameMaster", avatar: streamer2, isLive: true, viewers: 8930 },
+    { name: "StreamQueen", avatar: streamer3, isLive: false, viewers: 0 },
   ];
 
   const isActive = (path: string) => location.pathname === path;
