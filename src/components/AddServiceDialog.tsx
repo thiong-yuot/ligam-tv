@@ -70,8 +70,9 @@ const AddServiceDialog = ({ open, onOpenChange, freelancerId }: AddServiceDialog
       toast.success("Service added successfully!");
       onOpenChange(false);
       resetForm();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to add service");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to add service";
+      toast.error(errorMessage);
     }
   };
 

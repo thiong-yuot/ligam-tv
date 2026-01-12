@@ -104,7 +104,7 @@ export const useUpdateOrderStatus = () => {
   
   return useMutation({
     mutationFn: async ({ id, status, tracking_number }: { id: string; status: string; tracking_number?: string }) => {
-      const updateData: Record<string, any> = { status };
+      const updateData: Record<string, string | number | boolean> = { status };
       if (tracking_number) updateData.tracking_number = tracking_number;
       
       const { error } = await supabase

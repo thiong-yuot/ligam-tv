@@ -194,8 +194,9 @@ const FreelancerDashboard = () => {
       });
       toast.success("Profile updated!");
       setIsEditing(false);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update profile");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to update profile";
+      toast.error(errorMessage);
     }
   };
 
@@ -203,7 +204,7 @@ const FreelancerDashboard = () => {
     try {
       await updateProfile.mutateAsync({ is_available: !profile.is_available });
       toast.success(profile.is_available ? "You're now unavailable" : "You're now available!");
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Failed to update availability");
     }
   };
@@ -213,7 +214,7 @@ const FreelancerDashboard = () => {
     try {
       await deleteService.mutateAsync(id);
       toast.success("Service deleted");
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Failed to delete service");
     }
   };
@@ -257,8 +258,9 @@ const FreelancerDashboard = () => {
         features: [],
         is_popular: false,
       });
-    } catch (error: any) {
-      toast.error(error.message || "Failed to create package");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create package";
+      toast.error(errorMessage);
     }
   };
 
@@ -267,7 +269,7 @@ const FreelancerDashboard = () => {
     try {
       await deletePackage.mutateAsync(id);
       toast.success("Package deleted");
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Failed to delete package");
     }
   };
@@ -280,7 +282,7 @@ const FreelancerDashboard = () => {
       }
       await updateOrder.mutateAsync({ id: orderId, ...updateData });
       toast.success(`Order marked as ${newStatus}`);
-    } catch (error: any) {
+    } catch (error) {
       toast.error("Failed to update order");
     }
   };

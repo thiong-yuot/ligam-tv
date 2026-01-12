@@ -18,10 +18,11 @@ export const useFreelancerCheckout = () => {
       if (data?.url) {
         window.open(data.url, "_blank");
       }
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create checkout session";
       toast({
         title: "Checkout failed",
-        description: error.message || "Failed to create checkout session",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -48,10 +49,11 @@ export const useCourseCheckout = () => {
       if (data?.url) {
         window.open(data.url, "_blank");
       }
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to create checkout session";
       toast({
         title: "Checkout failed",
-        description: error.message || "Failed to create checkout session",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

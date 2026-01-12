@@ -59,11 +59,12 @@ const Auth = ({ mode }: AuthProps) => {
         description: "Check your email for a password reset link.",
       });
       setResetMode(false);
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to send reset email.";
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Failed to send reset email.",
+        description: errorMessage,
       });
     } finally {
       setLoading(false);
@@ -169,11 +170,12 @@ const Auth = ({ mode }: AuthProps) => {
           });
         }
       }
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Something went wrong. Please try again.";
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "Something went wrong. Please try again.",
+        description: errorMessage,
       });
     } finally {
       setLoading(false);

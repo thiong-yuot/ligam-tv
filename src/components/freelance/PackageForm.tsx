@@ -18,7 +18,15 @@ interface PackageFormProps {
     features: string[];
     is_popular: boolean;
   };
-  onSubmit: (data: any) => void;
+  onSubmit: (data: {
+    name: string;
+    description: string;
+    price: number;
+    delivery_days: number;
+    revisions: number;
+    features: string[];
+    is_popular: boolean;
+  }) => void;
   onCancel: () => void;
   isLoading?: boolean;
   tier?: "basic" | "standard" | "premium";

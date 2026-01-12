@@ -21,7 +21,16 @@ interface FreelancerProfileFormProps {
     thumbnail_url: string;
     portfolio_images: string[];
   };
-  onSubmit: (data: any) => void;
+  onSubmit: (data: {
+    name: string;
+    title: string;
+    bio: string;
+    skills: string[];
+    hourly_rate: number;
+    availability: string;
+    thumbnail_url: string;
+    portfolio_images: string[];
+  }) => void;
   isLoading?: boolean;
 }
 

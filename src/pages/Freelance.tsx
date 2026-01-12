@@ -30,7 +30,7 @@ const Freelance = () => {
   const { data: myProfile } = useMyFreelancerProfile();
 
   const filteredFreelancers = useMemo(() => {
-    let filtered = freelancers.filter((f) => {
+    const filtered = freelancers.filter((f) => {
       // Category filter
       const matchesCategory = activeCategory === "All" || (f.skills && f.skills.some(skill => 
         skill.toLowerCase().includes(activeCategory.toLowerCase())
@@ -54,23 +54,19 @@ const Freelance = () => {
     // Sort
     switch (sortBy) {
       case "rating":
-        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
+        return [...filtered].sort((a, b) => (b.rating || 0) - (a.rating || 0));
       case "price-low":
-        filtered.sort((a, b) => (a.hourly_rate || 0) - (b.hourly_rate || 0));
-        break;
+        return [...filtered].sort((a, b) => (a.hourly_rate || 0) - (b.hourly_rate || 0));
       case "price-high":
-        filtered.sort((a, b) => (b.hourly_rate || 0) - (a.hourly_rate || 0));
-        break;
+        return [...filtered].sort((a, b) => (b.hourly_rate || 0) - (a.hourly_rate || 0));
       case "jobs":
-        filtered.sort((a, b) => (b.total_jobs || 0) - (a.total_jobs || 0));
-        break;
+        return [...filtered].sort((a, b) => (b.total_jobs || 0) - (a.total_jobs || 0));
       case "newest":
         // Already sorted by created_at in hook
-        break;
+        return filtered;
+      default:
+        return filtered;
     }
-
-    return filtered;
   }, [freelancers, activeCategory, searchQuery, priceRange, minRating, sortBy]);
 
   const handleBecomeFreelancer = () => {

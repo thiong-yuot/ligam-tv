@@ -135,8 +135,9 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
 
       setImageUrl(urlData.signedUrl);
       toast.success("Image uploaded successfully");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to upload image");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to upload image";
+      toast.error(errorMessage);
       setImagePreview(null);
     } finally {
       setIsUploading(false);
@@ -213,8 +214,9 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
       queryClient.invalidateQueries({ queryKey: ["my-products"] });
       onOpenChange(false);
       resetForm();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to add product");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to add product";
+      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

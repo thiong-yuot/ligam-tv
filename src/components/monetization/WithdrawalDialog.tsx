@@ -234,7 +234,7 @@ const WithdrawalDialog = ({ open, onOpenChange, availableBalance }: WithdrawalDi
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label>Method Type</Label>
-              <Select value={newMethodType} onValueChange={(v: any) => setNewMethodType(v)}>
+              <Select value={newMethodType} onValueChange={(v: string) => setNewMethodType(v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
