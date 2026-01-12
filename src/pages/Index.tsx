@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/home/HeroSection";
 import LiveStreamsSection from "@/components/home/LiveStreamsSection";
+import FeaturedCreatorsShowcase from "@/components/home/FeaturedCreatorsShowcase";
 import TrendingCategories from "@/components/home/TrendingCategories";
 import FeaturesGrid from "@/components/home/FeaturesGrid";
 import MarketplacePreview from "@/components/home/MarketplacePreview";
@@ -21,6 +22,7 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <LiveStreamsSection streams={streams} isLoading={streamsLoading} />
+      <FeaturedCreatorsShowcase />
       <TrendingCategories categories={categories} isLoading={categoriesLoading} />
       <FeaturesGrid />
       <MarketplacePreview />
