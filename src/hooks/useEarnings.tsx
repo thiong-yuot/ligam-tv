@@ -5,7 +5,7 @@ import { PLATFORM_FEES } from "./useSubscription";
 export interface Earning {
   id: string;
   user_id: string;
-  type: 'gift' | 'subscription' | 'ad' | 'store' | 'gig';
+  type: 'gift' | 'subscription' | 'ad' | 'store' | 'service';
   amount: number;
   source_id: string | null;
   status: string;
@@ -63,25 +63,25 @@ export const useEarningsSummary = () => {
     .reduce((sum, e) => sum + Number(e.amount), 0);
   const storeEarnings = storeEarningsGross * (1 - PLATFORM_FEES.store);
   
-  // Gig commissions (after 15% platform fee)
-  const gigEarningsGross = thisMonth
-    .filter(e => e.type === 'gig')
+  // Service commissions (after 20% platform fee)
+  const serviceEarningsGross = thisMonth
+    .filter(e => e.type === 'service' || e.type === 'gig' as any)
     .reduce((sum, e) => sum + Number(e.amount), 0);
-  const gigEarnings = gigEarningsGross * (1 - PLATFORM_FEES.gigs);
+  const serviceEarnings = serviceEarningsGross * (1 - PLATFORM_FEES.services);
   
   // Calculate actual net earnings
-  const netTotal = giftEarnings + subEarnings + adEarnings + storeEarnings + gigEarnings;
+  const netTotal = giftEarnings + subEarnings + adEarnings + storeEarnings + serviceEarnings;
   
   return {
     totalThisMonth: netTotal,
-    giftEarnings,      // Tips/donations
-    subEarnings,       // Subscriptions
-    adEarnings,        // Ad revenue
-    storeEarnings,     // Store sales (net)
-    gigEarnings,       // Gig commissions (net)
+    giftEarnings,        // Tips/donations
+    subEarnings,         // Subscriptions
+    adEarnings,          // Ad revenue
+    storeEarnings,       // Store sales (net)
+    serviceEarnings,     // Service commissions (net)
     platformFees: {
       store: PLATFORM_FEES.store * 100,
-      gigs: PLATFORM_FEES.gigs * 100,
+      services: PLATFORM_FEES.services * 100,
     },
   };
 };

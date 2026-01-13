@@ -60,13 +60,13 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {isBestseller && (
               <Badge className="bg-yellow-500 text-yellow-950 text-xs font-bold">
-                Bestseller
+                Top Rated
               </Badge>
             )}
             {isPopular && !isBestseller && (
               <Badge className="bg-orange-500 text-white text-xs font-bold">
                 <TrendingUp className="w-3 h-3 mr-1" />
-                Popular
+                Trending
               </Badge>
             )}
             {course.is_featured && !isBestseller && !isPopular && (

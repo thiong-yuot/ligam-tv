@@ -45,7 +45,7 @@ const Dashboard = () => {
     subEarnings, 
     adEarnings, 
     storeEarnings, 
-    gigEarnings,
+    serviceEarnings,
     platformFees 
   } = useEarningsSummary();
   const { data: allStreams = [] } = useStreams();
@@ -64,7 +64,7 @@ const Dashboard = () => {
         { name: "Basic Chat", included: true },
         { name: "Community Access", included: true },
         { name: "HD Streaming", included: false },
-        { name: "Custom Emotes", included: false },
+        { name: "Custom Reactions", included: false },
         { name: "Priority Support", included: false },
         { name: "No Ads for Viewers", included: false },
         { name: "4K Streaming", included: false },
@@ -81,7 +81,7 @@ const Dashboard = () => {
         { name: "Basic Chat", included: true },
         { name: "Community Access", included: true },
         { name: "HD Streaming", included: true },
-        { name: "Custom Emotes", included: true },
+        { name: "Custom Reactions", included: true },
         { name: "Priority Support", included: true },
         { name: "No Ads for Viewers", included: true },
         { name: "4K Streaming", included: false },
@@ -98,7 +98,7 @@ const Dashboard = () => {
         { name: "Basic Chat", included: true },
         { name: "Community Access", included: true },
         { name: "HD Streaming", included: true },
-        { name: "Custom Emotes", included: true },
+        { name: "Custom Reactions", included: true },
         { name: "Priority Support", included: true },
         { name: "No Ads for Viewers", included: true },
         { name: "4K Streaming", included: true },
@@ -350,10 +350,10 @@ const Dashboard = () => {
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/50 relative">
                 <Briefcase className="w-6 h-6 text-amber-500 mx-auto mb-2" />
-                <div className="text-xl font-bold text-foreground">${gigEarnings.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Gig Commissions</div>
+                <div className="text-xl font-bold text-foreground">${serviceEarnings.toFixed(2)}</div>
+                <div className="text-xs text-muted-foreground">Service Commissions</div>
                 <span className="absolute top-2 right-2 text-[10px] text-muted-foreground">
-                  -{platformFees.gigs}%
+                  -{platformFees.services}%
                 </span>
               </div>
               <div className="text-center p-4 rounded-xl bg-gradient-to-r from-primary/20 to-blue-500/20">
@@ -366,7 +366,7 @@ const Dashboard = () => {
             {/* Platform Fee Info */}
             <div className="mt-4 pt-4 border-t border-border">
               <p className="text-xs text-muted-foreground text-center">
-                Platform fees: {platformFees.store}% on store sales • {platformFees.gigs}% on gig commissions • No fees on tips
+                Platform fees: {platformFees.store}% on store sales • {platformFees.services}% on service commissions • No fees on tips
               </p>
             </div>
           </Card>
