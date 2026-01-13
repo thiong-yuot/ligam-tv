@@ -1,0 +1,62 @@
+services:
+  # SRS Media Server
+  srs:
+    build:
+      context: ./srs
+      dockerfile: Dockerfile
+    container_name: ligam-tv-srs
+    ports:
+      - "1935:1935"  # RTMP
+      - "8080:8080"  # HLS/HTTP-FLV
+      - "1985:1985"  # HTTP API
+    environment:
+      - SRS_CALLBACK_SECRET=${SRS_CALLBACK_SECRET:-default-secret-change-me}
+    volumes:
+      - srs-data:/usr/local/srs/objs/nginx/html
+    networks:
+      - ligam-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1985/api/v1/versions"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Main Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ligam-tv-app
+    ports:
+      - "80:80"
+    environment:
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_PUBLISHABLE_KEY=${VITE_SUPABASE_PUBLISHABLE_KEY}
+      - VITE_SUPABASE_PROJECT_ID=${VITE_SUPABASE_PROJECT_ID}
+      # Note: These URLs are for server-side use only
+      # Client-side should use localhost:1935 and localhost:8080 for local dev
+      # or production domain URLs for deployed environments
+      - VITE_RTMP_URL=${VITE_RTMP_URL:-rtmp://localhost:1935/live}
+      - VITE_HLS_URL=${VITE_HLS_URL:-http://localhost:8080/live}
+      - SRS_CALLBACK_SECRET=${SRS_CALLBACK_SECRET:-default-secret-change-me}
+    depends_on:
+      - srs
+    networks:
+      - ligam-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  ligam-network:
+    driver: bridge
+
+volumes:
+  srs-data:
+    driver: local

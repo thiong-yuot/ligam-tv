@@ -1,73 +1,173 @@
-# Welcome to your Lovable project
+# ligam-tv - Live Streaming Platform
 
-## Project info
+A modern live streaming platform with RTMP ingestion and HLS playback powered by SRS (Simple Realtime Server).
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🎥 Features
 
-## How can I edit this code?
+- **Live Streaming**: RTMP ingestion with HLS/HTTP-FLV playback
+- **Low Latency**: Optimized for real-time streaming
+- **Secure**: Stream authentication with callback secrets
+- **Scalable**: Docker-based deployment ready for production
+- **Modern UI**: Built with React, TypeScript, and Tailwind CSS
 
-There are several ways of editing your application.
+## 🚀 Quick Start
 
-**Use Lovable**
+### Local Development
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+1. **Clone the repository**
+   ```sh
+   git clone https://github.com/thiong-yuot/ligam-tv.git
+   cd ligam-tv
+   ```
 
-Changes made via Lovable will be committed automatically to this repo.
+2. **Install dependencies**
+   ```sh
+   npm install
+   ```
 
-**Use your preferred IDE**
+3. **Configure environment**
+   ```sh
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+4. **Start development server**
+   ```sh
+   npm run dev
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+5. **Start SRS server (optional, for local streaming)**
+   ```sh
+   docker compose up srs
+   ```
 
-Follow these steps:
+The app will be available at `http://localhost:8080`
 
+### Docker Deployment
+
+**Build and run all services:**
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+docker compose up -d
 ```
 
-**Edit a file directly in GitHub**
+**View logs:**
+```sh
+docker compose logs -f
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+**Stop services:**
+```sh
+docker compose down
+```
 
-**Use GitHub Codespaces**
+## 📡 Streaming Setup
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Publishing Streams
 
-## What technologies are used for this project?
+**RTMP URL Format:**
+```
+rtmp://your-domain:1935/live/{stream_key}
+```
 
-This project is built with:
+**Using OBS Studio:**
+1. Settings → Stream
+2. Service: Custom
+3. Server: `rtmp://localhost:1935/live` (or your production URL)
+4. Stream Key: your_unique_stream_key
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Using FFmpeg:**
+```sh
+ffmpeg -re -i input.mp4 -c copy -f flv rtmp://localhost:1935/live/mystream
+```
 
-## How can I deploy this project?
+### Watching Streams
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+**HLS URL Format:**
+```
+http://your-domain:8080/live/{stream_key}.m3u8
+```
 
-## Can I connect a custom domain to my Lovable project?
+Open in any HLS-compatible player (browser, VLC, etc.)
 
-Yes, you can!
+## 🛠 Technologies
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- **Frontend**: Vite, React 18, TypeScript
+- **UI Framework**: shadcn-ui, Tailwind CSS
+- **Streaming Server**: SRS (Simple Realtime Server)
+- **Video Player**: HLS.js
+- **Backend**: Supabase
+- **Deployment**: Docker, Docker Compose
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📚 Documentation
+
+- [Deployment Guide](DEPLOYMENT.md) - Complete deployment instructions
+- [SRS Configuration](srs/README.md) - SRS server documentation
+
+## 🔧 Environment Variables
+
+Required environment variables:
+
+```env
+# Supabase
+VITE_SUPABASE_PROJECT_ID=your-project-id
+VITE_SUPABASE_PUBLISHABLE_KEY=your-key
+VITE_SUPABASE_URL=your-url
+
+# SRS Streaming
+SRS_CALLBACK_SECRET=your-secret
+VITE_RTMP_URL=rtmp://localhost:1935/live
+VITE_HLS_URL=http://localhost:8080/live
+```
+
+See `.env.example` for complete configuration.
+
+## 🧪 Testing
+
+**Run linter:**
+```sh
+npm run lint
+```
+
+**Build application:**
+```sh
+npm run build
+```
+
+**Test local streaming:**
+See [DEPLOYMENT.md](DEPLOYMENT.md#testing-your-stream) for complete testing guide.
+
+## 📦 Deployment
+
+This project supports deployment to:
+- Railway (recommended for RTMP support)
+- Render
+- AWS ECS/Fargate
+- Google Cloud Run
+- Self-hosted with Docker Compose
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for platform-specific instructions.
+
+## 🔐 Security
+
+- Secure callback authentication with secrets
+- Stream key validation
+- Environment variable protection
+- HTTPS for production HLS delivery
+- CORS configuration
+
+## 📄 License
+
+This project is part of the Lovable platform.
+
+## 🤝 Contributing
+
+For development workflow, see the [development guide](DEPLOYMENT.md#local-development-setup).
+
+## 📞 Support
+
+- [GitHub Issues](https://github.com/thiong-yuot/ligam-tv/issues)
+- [SRS Documentation](https://ossrs.io/lts/en-us/)
+
+---
+
+Built with ❤️ using [Lovable](https://lovable.dev)

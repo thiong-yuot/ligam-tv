@@ -1,0 +1,182 @@
+name: Deploy ligam-tv with SRS
+
+on:
+  push:
+    branches:
+      - main
+      - production
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_APP: ${{ github.repository }}/app
+  IMAGE_NAME_SRS: ${{ github.repository }}/srs
+
+jobs:
+  test:
+    name: Test Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_PROJECT_ID: ${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+
+  build-and-push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/production')
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for App
+        id: meta-app
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_APP }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push App image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta-app.outputs.tags }}
+          labels: ${{ steps.meta-app.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}
+            VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+            VITE_SUPABASE_PROJECT_ID=${{ secrets.VITE_SUPABASE_PROJECT_ID }}
+
+      - name: Extract metadata for SRS
+        id: meta-srs
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_SRS }}
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push SRS image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./srs
+          file: ./srs/Dockerfile
+          push: true
+          tags: ${{ steps.meta-srs.outputs.tags }}
+          labels: ${{ steps.meta-srs.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/production'
+    environment:
+      name: production
+      url: https://your-domain.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Example deployment to Railway
+      # Uncomment and configure based on your deployment platform
+      
+      # - name: Install Railway CLI
+      #   run: npm install -g @railway/cli
+      
+      # - name: Deploy to Railway
+      #   run: railway up
+      #   env:
+      #     RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      # Example deployment using SSH
+      # - name: Deploy via SSH
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.DEPLOY_HOST }}
+      #     username: ${{ secrets.DEPLOY_USER }}
+      #     key: ${{ secrets.DEPLOY_KEY }}
+      #     script: |
+      #       cd /opt/ligam-tv
+      #       docker-compose pull
+      #       docker-compose up -d
+      #       docker-compose exec -T app sh -c "echo 'Deployment successful'"
+
+      - name: Deployment placeholder
+        run: |
+          echo "Configure your deployment method in this step"
+          echo "Supported platforms: Railway, Render, AWS ECS, Google Cloud Run, or self-hosted"
+          echo "Set the following secrets in your repository:"
+          echo "  - SRS_CALLBACK_SECRET"
+          echo "  - VITE_SUPABASE_URL"
+          echo "  - VITE_SUPABASE_PUBLISHABLE_KEY"
+          echo "  - VITE_SUPABASE_PROJECT_ID"
+          echo "  - VITE_RTMP_URL"
+          echo "  - VITE_HLS_URL"
+
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/production'
+
+    steps:
+      - name: Wait for deployment
+        run: sleep 30
+
+      # - name: Check App health
+      #   run: |
+      #     curl -f https://your-domain.com/health || exit 1
+
+      # - name: Check SRS API health
+      #   run: |
+      #     curl -f http://your-domain.com:1985/api/v1/versions || exit 1
+
+      - name: Health check placeholder
+        run: echo "Configure health checks for your deployment"

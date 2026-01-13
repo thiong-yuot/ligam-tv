@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Docker
+docker-compose.override.yml
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.*.local
+
+# Build artifacts
+build/
+coverage/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
