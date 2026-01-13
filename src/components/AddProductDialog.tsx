@@ -276,7 +276,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
 
         <ScrollArea className="flex-1 pr-4 -mr-4">
           <form id="add-product-form" onSubmit={handleSubmit} className="space-y-5 pr-4">
-            {/* Image Upload - Twitch Style */}
+            {/* Image Upload */}
             <div className="space-y-2">
               <Label>Product Image</Label>
               <div
@@ -337,7 +337,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
               </div>
             </div>
 
-            {/* Category Selection - Twitch Style Grid */}
+            {/* Category Selection */}
             <div className="space-y-2">
               <Label>Category *</Label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">

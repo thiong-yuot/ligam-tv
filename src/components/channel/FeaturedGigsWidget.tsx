@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Star, Clock, ExternalLink } from "lucide-react";
 
-interface GigPackage {
+interface ServicePackage {
   id: string;
   name: string;
   price: number;
@@ -18,17 +18,17 @@ interface Freelancer {
   rating?: number | null;
 }
 
-interface FeaturedGigsWidgetProps {
+interface FeaturedServicesWidgetProps {
   freelancer: Freelancer | null;
-  packages: GigPackage[];
+  packages: ServicePackage[];
   maxItems?: number;
 }
 
-const FeaturedGigsWidget = ({ 
+const FeaturedServicesWidget = ({ 
   freelancer, 
   packages,
   maxItems = 3 
-}: FeaturedGigsWidgetProps) => {
+}: FeaturedServicesWidgetProps) => {
   const displayPackages = packages.slice(0, maxItems);
 
   if (!freelancer || displayPackages.length === 0) return null;
@@ -38,7 +38,7 @@ const FeaturedGigsWidget = ({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Briefcase className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold text-foreground">Available Gigs</h3>
+          <h3 className="font-semibold text-foreground">Available Services</h3>
         </div>
         <Link to={`/freelancers/${freelancer.id}`}>
           <Button variant="ghost" size="sm" className="gap-1 text-xs">
@@ -88,4 +88,4 @@ const FeaturedGigsWidget = ({
   );
 };
 
-export default FeaturedGigsWidget;
+export default FeaturedServicesWidget;
