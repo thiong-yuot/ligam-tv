@@ -11,8 +11,8 @@ export const SUBSCRIPTION_TIERS = {
     price: 0,
     maxProducts: 1,
     maxCourses: 1,
-    maxGigs: Infinity, // Full freelance access for all tiers
-    canFulfillGigs: true, // All tiers can fulfill services
+    maxGigs: Infinity,
+    canFulfillGigs: true,
     features: [
       "Unlimited streaming",
       "Basic chat features",
@@ -22,6 +22,26 @@ export const SUBSCRIPTION_TIERS = {
       "1 store product",
       "1 course",
       "Buy unlimited products & courses",
+    ],
+  },
+  adfree: {
+    name: "Ad-Free",
+    price_id: "price_1SpRpU2NM66Z7c4cZTLwt0Bt",
+    product_id: "prod_Tn1tFTeJxapqUs",
+    price: 13,
+    maxProducts: 1,
+    maxCourses: 1,
+    maxGigs: Infinity,
+    canFulfillGigs: true,
+    isViewerPlan: true,
+    features: [
+      "Ad-free viewing experience",
+      "No ads during live broadcasts",
+      "No ads on all platform content",
+      "Standard video quality",
+      "Community support",
+      "1 store product",
+      "1 course",
     ],
   },
   creator: {
@@ -136,7 +156,9 @@ export const useSubscription = () => {
 
       // Determine tier from product ID
       let tier: SubscriptionTier = null;
-      if (data.product_id === SUBSCRIPTION_TIERS.creator.product_id) {
+      if (data.product_id === SUBSCRIPTION_TIERS.adfree.product_id) {
+        tier = "adfree";
+      } else if (data.product_id === SUBSCRIPTION_TIERS.creator.product_id) {
         tier = "creator";
       } else if (data.product_id === SUBSCRIPTION_TIERS.pro.product_id) {
         tier = "pro";
