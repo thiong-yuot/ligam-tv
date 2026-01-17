@@ -49,6 +49,8 @@ import CreatorCourses from "./pages/CreatorCourses";
 import MyLearning from "./pages/MyLearning";
 import StreamSetup from "./pages/StreamSetup";
 import Affiliates from "./pages/Affiliates";
+import ScrollToTop from "./components/ScrollToTop";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -60,6 +62,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <ScrollToTop />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/browse" element={<Browse />} />
