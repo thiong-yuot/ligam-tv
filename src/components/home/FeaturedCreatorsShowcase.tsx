@@ -46,6 +46,140 @@ interface CreatorWithContent {
   } | null;
 }
 
+// Sample data for demo purposes
+const sampleCreators: CreatorWithContent[] = [
+  {
+    id: "demo-1",
+    user_id: "demo-user-1",
+    title: "Building a Full-Stack App from Scratch",
+    thumbnail_url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop",
+    viewer_count: 567,
+    is_live: true,
+    profile: {
+      display_name: "Sarah Codes",
+      username: "sarahcodes",
+      avatar_url: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face"
+    },
+    products: [],
+    courses: [
+      {
+        id: "course-1",
+        title: "Master React in 30 Days",
+        price: 99,
+        thumbnail_url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=200&h=200&fit=crop"
+      }
+    ],
+    freelancer: {
+      id: "freelancer-1",
+      title: "Full-Stack Web Development",
+      hourly_rate: 85
+    }
+  },
+  {
+    id: "demo-2",
+    user_id: "demo-user-2",
+    title: "Pro Gaming Session - Ranked Matches",
+    thumbnail_url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop",
+    viewer_count: 1234,
+    is_live: true,
+    profile: {
+      display_name: "Marcus Gaming",
+      username: "marcusgaming",
+      avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
+    },
+    products: [
+      {
+        id: "product-1",
+        name: "Gaming Mousepad XL",
+        price: 29,
+        image_url: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=200&h=200&fit=crop"
+      },
+      {
+        id: "product-2",
+        name: "Pro Headset",
+        price: 149,
+        image_url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=200&h=200&fit=crop"
+      }
+    ],
+    courses: [],
+    freelancer: null
+  },
+  {
+    id: "demo-3",
+    user_id: "demo-user-3",
+    title: "Live Music Production Session",
+    thumbnail_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&h=400&fit=crop",
+    viewer_count: 892,
+    is_live: true,
+    profile: {
+      display_name: "Aria Music",
+      username: "ariamusic",
+      avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face"
+    },
+    products: [
+      {
+        id: "product-3",
+        name: "Sample Pack Vol.1",
+        price: 19,
+        image_url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop"
+      }
+    ],
+    courses: [
+      {
+        id: "course-2",
+        title: "Music Production Masterclass",
+        price: 149,
+        thumbnail_url: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=200&h=200&fit=crop"
+      }
+    ],
+    freelancer: {
+      id: "freelancer-2",
+      title: "Music Production & Mixing",
+      hourly_rate: 75
+    }
+  },
+  {
+    id: "demo-4",
+    user_id: "demo-user-4",
+    title: "Morning HIIT Workout - Join Live!",
+    thumbnail_url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop",
+    viewer_count: 445,
+    is_live: true,
+    profile: {
+      display_name: "Alex Fitness",
+      username: "alexfitness",
+      avatar_url: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face"
+    },
+    products: [
+      {
+        id: "product-4",
+        name: "Resistance Bands Set",
+        price: 35,
+        image_url: "https://images.unsplash.com/photo-1598289431512-b97b0917affc?w=200&h=200&fit=crop"
+      },
+      {
+        id: "product-5",
+        name: "Protein Shaker",
+        price: 15,
+        image_url: "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=200&h=200&fit=crop"
+      }
+    ],
+    courses: [
+      {
+        id: "course-3",
+        title: "12-Week Transformation Program",
+        price: 79,
+        thumbnail_url: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=200&h=200&fit=crop"
+      }
+    ],
+    freelancer: {
+      id: "freelancer-3",
+      title: "Personal Training & Nutrition",
+      hourly_rate: 60
+    }
+  }
+];
+
 const useFeaturedCreators = () => {
   return useQuery({
     queryKey: ["featured-creators-showcase"],
@@ -58,7 +192,11 @@ const useFeaturedCreators = () => {
         .limit(4);
       
       if (streamsError) throw streamsError;
-      if (!streams || streams.length === 0) return [];
+      
+      // If no real streams, return sample data for demo
+      if (!streams || streams.length === 0) {
+        return sampleCreators;
+      }
       
       // Get unique user_ids
       const userIds = [...new Set(streams.map(s => s.user_id))];
@@ -123,8 +261,6 @@ const useFeaturedCreators = () => {
             : null
         };
       });
-      
-      return creatorsWithContent;
       
       return creatorsWithContent;
     },
