@@ -1531,6 +1531,50 @@ export type Database = {
           },
         ]
       }
+      stream_access: {
+        Row: {
+          amount_paid: number
+          created_at: string
+          expires_at: string | null
+          id: string
+          platform_fee: number
+          stream_id: string
+          streamer_earnings: number
+          stripe_payment_intent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_paid: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          platform_fee: number
+          stream_id: string
+          streamer_earnings: number
+          stripe_payment_intent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_paid?: number
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          platform_fee?: number
+          stream_id?: string
+          streamer_earnings?: number
+          stripe_payment_intent_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stream_access_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       stream_credentials: {
         Row: {
           created_at: string | null
@@ -1563,8 +1607,50 @@ export type Database = {
           },
         ]
       }
+      stream_earnings: {
+        Row: {
+          access_count: number
+          created_at: string
+          id: string
+          platform_fees: number
+          stream_id: string
+          streamer_id: string
+          total_earnings: number
+          updated_at: string
+        }
+        Insert: {
+          access_count?: number
+          created_at?: string
+          id?: string
+          platform_fees?: number
+          stream_id: string
+          streamer_id: string
+          total_earnings?: number
+          updated_at?: string
+        }
+        Update: {
+          access_count?: number
+          created_at?: string
+          id?: string
+          platform_fees?: number
+          stream_id?: string
+          streamer_id?: string
+          total_earnings?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stream_earnings_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: true
+            referencedRelation: "streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       streams: {
         Row: {
+          access_price: number | null
           category_id: string | null
           created_at: string | null
           description: string | null
@@ -1574,10 +1660,13 @@ export type Database = {
           id: string
           is_featured: boolean | null
           is_live: boolean | null
+          is_paid: boolean | null
           mux_playback_id: string | null
           mux_stream_id: string | null
           peak_viewers: number | null
+          preview_video_url: string | null
           started_at: string | null
+          stream_type: string | null
           tags: string[] | null
           thumbnail_url: string | null
           title: string
@@ -1587,6 +1676,7 @@ export type Database = {
           viewer_count: number | null
         }
         Insert: {
+          access_price?: number | null
           category_id?: string | null
           created_at?: string | null
           description?: string | null
@@ -1596,10 +1686,13 @@ export type Database = {
           id?: string
           is_featured?: boolean | null
           is_live?: boolean | null
+          is_paid?: boolean | null
           mux_playback_id?: string | null
           mux_stream_id?: string | null
           peak_viewers?: number | null
+          preview_video_url?: string | null
           started_at?: string | null
+          stream_type?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
           title: string
@@ -1609,6 +1702,7 @@ export type Database = {
           viewer_count?: number | null
         }
         Update: {
+          access_price?: number | null
           category_id?: string | null
           created_at?: string | null
           description?: string | null
@@ -1618,10 +1712,13 @@ export type Database = {
           id?: string
           is_featured?: boolean | null
           is_live?: boolean | null
+          is_paid?: boolean | null
           mux_playback_id?: string | null
           mux_stream_id?: string | null
           peak_viewers?: number | null
+          preview_video_url?: string | null
           started_at?: string | null
+          stream_type?: string | null
           tags?: string[] | null
           thumbnail_url?: string | null
           title?: string

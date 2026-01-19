@@ -23,3 +23,21 @@ verify_jwt = false
 
 [functions.get-stream-status]
 verify_jwt = false
+
+[functions.create-stream-checkout]
+verify_jwt = false
+
+[functions.verify-stream-access]
+verify_jwt = false
+
+[functions.check-stream-access]
+verify_jwt = false
+
+[functions.create-course-checkout]
+verify_jwt = false
+
+[functions.create-freelancer-checkout]
+verify_jwt = false
+
+[functions.check-admin]
+verify_jwt = false
