@@ -1,28 +1,35 @@
 import { useState, useCallback, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import TipDialog from "@/components/TipDialog";
 import HighlightedTip from "@/components/HighlightedTip";
 import FeaturedProductsWidget from "@/components/channel/FeaturedProductsWidget";
 import FeaturedGigsWidget from "@/components/channel/FeaturedGigsWidget";
+import FeaturedCoursesWidget from "@/components/channel/FeaturedCoursesWidget";
 import SubscribeWidget from "@/components/channel/SubscribeWidget";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { 
   Heart, 
   Share2, 
   MessageCircle, 
   Users, 
-  Settings, 
   Send,
   Smile,
   Gift,
   Loader2,
   Crown,
   ShoppingBag,
-  Briefcase
+  Briefcase,
+  GraduationCap,
+  Lock,
+  Play,
+  DollarSign,
+  CheckCircle
 } from "lucide-react";
 import { useStream } from "@/hooks/useStreams";
 import { useChatMessages } from "@/hooks/useChat";
@@ -31,10 +38,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
 import { useProducts } from "@/hooks/useProducts";
 import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
+import { useCourses } from "@/hooks/useCourses";
+import { useCheckStreamAccess, useCreateStreamCheckout, useVerifyStreamAccess } from "@/hooks/useStreamAccess";
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 const StreamView = () => {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
   const [highlightedTips, setHighlightedTips] = useState<Array<{
@@ -45,12 +56,42 @@ const StreamView = () => {
     amount: number;
     message?: string;
   }>>([]);
+  const { toast } = useToast();
 
   const { user } = useAuth();
   const { tier, createSubscriptionCheckout } = useSubscription();
   const { data: stream, isLoading } = useStream(id || "");
+  const { data: accessInfo, isLoading: accessLoading, refetch: refetchAccess } = useCheckStreamAccess(id || "");
   const messages = useChatMessages(id || "");
   const { data: allProducts = [] } = useProducts();
+  const { data: allCourses = [] } = useCourses();
+  const createStreamCheckout = useCreateStreamCheckout();
+  const verifyStreamAccess = useVerifyStreamAccess();
+
+  // Verify payment on return from Stripe
+  useEffect(() => {
+    const accessParam = searchParams.get('access');
+    const sessionId = searchParams.get('session_id');
+    
+    if (accessParam === 'granted' && sessionId && id) {
+      verifyStreamAccess.mutate({ sessionId, streamId: id }, {
+        onSuccess: () => {
+          toast({
+            title: "Access Granted!",
+            description: "You now have access to this stream.",
+          });
+          refetchAccess();
+        },
+        onError: (error) => {
+          toast({
+            title: "Verification Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        },
+      });
+    }
+  }, [searchParams, id]);
 
   // Fetch streamer's freelancer profile and packages
   const { data: streamerFreelancer } = useQuery({
@@ -81,8 +122,9 @@ const StreamView = () => {
     enabled: !!streamerFreelancer?.id,
   });
 
-  // Filter products by streamer
+  // Filter products and courses by streamer
   const streamerProducts = allProducts.filter(p => p.seller_id === stream?.user_id);
+  const streamerCourses = allCourses.filter(c => c.creator_id === stream?.user_id);
 
   // Use Mux HLS URL from stream data or construct from playback ID
   const hlsUrl = stream?.hls_url || (stream?.mux_playback_id 
@@ -105,13 +147,37 @@ const StreamView = () => {
     }
   }, [stream?.id]);
 
+  const handlePurchaseAccess = async () => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to purchase stream access",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const result = await createStreamCheckout.mutateAsync(id!);
+      if (result.url) {
+        window.location.href = result.url;
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create checkout",
+        variant: "destructive",
+      });
+    }
+  };
+
   const formatViewers = (count: number) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
   };
 
-  if (isLoading) {
+  if (isLoading || accessLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -134,6 +200,85 @@ const StreamView = () => {
     );
   }
 
+  const isPaidStream = accessInfo?.isPaid;
+  const hasAccess = accessInfo?.hasAccess;
+  const streamPrice = accessInfo?.price || 0;
+
+  // Paid Stream Paywall Component
+  const PaidStreamPaywall = () => (
+    <div className="relative aspect-video bg-gradient-to-br from-secondary via-secondary/80 to-secondary flex items-center justify-center">
+      {/* Preview Video or Thumbnail */}
+      {accessInfo?.previewUrl ? (
+        <video
+          src={accessInfo.previewUrl}
+          poster={stream.thumbnail_url || undefined}
+          controls
+          className="w-full h-full object-cover absolute inset-0"
+        />
+      ) : stream.thumbnail_url ? (
+        <img
+          src={stream.thumbnail_url}
+          alt={stream.title}
+          className="w-full h-full object-cover absolute inset-0 opacity-30"
+        />
+      ) : null}
+      
+      {/* Paywall Overlay */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+        <Card className="max-w-md mx-4 p-6 text-center bg-card/95 border-primary/20">
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8 text-primary" />
+          </div>
+          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 mb-4">
+            <Crown className="w-3 h-3 mr-1" />
+            Premium Stream
+          </Badge>
+          <h2 className="text-xl font-bold text-foreground mb-2">{stream.title}</h2>
+          <p className="text-muted-foreground mb-4">
+            This is a paid live stream. Purchase access to watch the full content.
+          </p>
+          
+          {accessInfo?.previewUrl && (
+            <div className="mb-4 p-3 rounded-lg bg-secondary/50 border border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Play className="w-4 h-4" />
+                <span>Free preview available above</span>
+              </div>
+            </div>
+          )}
+          
+          <div className="space-y-3">
+            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-foreground">
+              <DollarSign className="w-6 h-6 text-primary" />
+              <span>{streamPrice.toFixed(2)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">One-time payment • Lifetime access</p>
+            
+            <Button 
+              onClick={handlePurchaseAccess}
+              disabled={createStreamCheckout.isPending}
+              className="w-full bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-600"
+              size="lg"
+            >
+              {createStreamCheckout.isPending ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Crown className="w-4 h-4 mr-2" />
+              )}
+              Purchase Access
+            </Button>
+            
+            {!user && (
+              <p className="text-xs text-muted-foreground">
+                <Link to="/auth" className="text-primary hover:underline">Login</Link> to purchase
+              </p>
+            )}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -141,8 +286,10 @@ const StreamView = () => {
       <div className="pt-16 flex flex-col lg:flex-row min-h-screen">
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          {/* Video Player */}
-          {stream.is_live && hlsUrl ? (
+          {/* Video Player or Paywall */}
+          {isPaidStream && !hasAccess ? (
+            <PaidStreamPaywall />
+          ) : stream.is_live && hlsUrl ? (
             <HLSVideoPlayer
               src={hlsUrl}
               poster={stream.thumbnail_url || undefined}
@@ -176,9 +323,23 @@ const StreamView = () => {
                   <Users className="w-6 h-6 text-muted-foreground" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-display font-bold text-foreground mb-1">
-                    {stream.title}
-                  </h1>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h1 className="text-xl font-display font-bold text-foreground">
+                      {stream.title}
+                    </h1>
+                    {isPaidStream && (
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
+                        <DollarSign className="w-3 h-3 mr-1" />
+                        ${streamPrice}
+                      </Badge>
+                    )}
+                    {hasAccess && isPaidStream && (
+                      <Badge variant="secondary" className="border-green-500/50 text-green-500">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Access Granted
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-primary font-semibold">
                     Streamer
                   </p>
@@ -245,11 +406,11 @@ const StreamView = () => {
                 Shop
               </TabsTrigger>
               <TabsTrigger 
-                value="gigs" 
+                value="services" 
                 className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
               >
                 <Briefcase className="w-4 h-4" />
-                Gigs
+                Services
               </TabsTrigger>
             </TabsList>
 
@@ -337,7 +498,7 @@ const StreamView = () => {
                 currentTier={tier}
                 onSubscribe={(tierKey) => {
                   const priceId = SUBSCRIPTION_TIERS[tierKey].price_id;
-                  createSubscriptionCheckout(priceId);
+                  if (priceId) createSubscriptionCheckout(priceId);
                 }}
               />
               
@@ -356,19 +517,28 @@ const StreamView = () => {
               )}
             </TabsContent>
 
-            {/* Gigs Tab */}
-            <TabsContent value="gigs" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
-              {streamerFreelancer && streamerPackages.length > 0 ? (
+            {/* Services Tab (Gigs + Courses) */}
+            <TabsContent value="services" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
+              {streamerFreelancer && streamerPackages.length > 0 && (
                 <FeaturedGigsWidget
                   freelancer={streamerFreelancer}
                   packages={streamerPackages}
-                  maxItems={4}
+                  maxItems={3}
                 />
-              ) : (
+              )}
+              
+              {streamerCourses.length > 0 && (
+                <FeaturedCoursesWidget
+                  courses={streamerCourses}
+                  maxItems={3}
+                />
+              )}
+              
+              {(!streamerFreelancer || streamerPackages.length === 0) && streamerCourses.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No gigs available</p>
-                  <p className="text-xs">This streamer hasn't set up any services yet</p>
+                  <p className="text-sm">No services available</p>
+                  <p className="text-xs">This streamer hasn't set up any gigs or courses yet</p>
                 </div>
               )}
             </TabsContent>

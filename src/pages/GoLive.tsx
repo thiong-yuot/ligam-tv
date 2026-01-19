@@ -13,7 +13,8 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { FeatureGate, FeatureLockedOverlay } from "@/components/FeatureGate";
-import { useUserStream, useCreateMuxStream, useStreamStatus, useStreamCredentials } from "@/hooks/useStreams";
+import { useUserStream, useCreateMuxStream, useStreamStatus, useStreamCredentials, useUpdateStream } from "@/hooks/useStreams";
+import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
 import { 
   Video, 
   Copy, 
@@ -33,8 +34,12 @@ import {
   Key,
   CheckCircle2,
   AlertCircle,
-  RefreshCw
+  RefreshCw,
+  DollarSign,
+  Upload,
+  Play
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const GoLive = () => {
   const [checking, setChecking] = useState(true);
@@ -45,9 +50,13 @@ const GoLive = () => {
   const [category, setCategory] = useState("Gaming");
   const [streamQuality, setStreamQuality] = useState<"720p" | "1080p" | "4k">("720p");
   const [enableOverlay, setEnableOverlay] = useState(false);
+  const [isPaidStream, setIsPaidStream] = useState(false);
+  const [accessPrice, setAccessPrice] = useState("");
+  const [previewVideoUrl, setPreviewVideoUrl] = useState("");
   const navigate = useNavigate();
   const { toast } = useToast();
   const { hasAccess } = useFeatureAccess();
+  const { tier } = useSubscription();
 
   const { data: userStream, isLoading: streamLoading, refetch: refetchStream } = useUserStream(userId || "");
   const { data: streamCredentials, isLoading: credentialsLoading } = useStreamCredentials(userStream?.id || "");
@@ -217,11 +226,95 @@ const GoLive = () => {
                         size="sm"
                         onClick={() => setCategory(cat)}
                       >
-                        {cat}
+                      {cat}
                       </Button>
                     ))}
                   </div>
                 </div>
+
+                {/* Paid Streaming Section - Pro Only */}
+                {tier === 'pro' && (
+                  <div className="space-y-4 p-4 rounded-xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
+                    <div className="flex items-center gap-2">
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
+                        <Crown className="w-3 h-3 mr-1" />
+                        Pro Feature
+                      </Badge>
+                      <span className="text-sm font-medium text-foreground">Paid Live Streaming</span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-foreground">Enable Paid Access</p>
+                        <p className="text-sm text-muted-foreground">Viewers pay to watch your stream</p>
+                      </div>
+                      <Switch 
+                        checked={isPaidStream} 
+                        onCheckedChange={setIsPaidStream}
+                      />
+                    </div>
+
+                    {isPaidStream && (
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="accessPrice">Access Price (USD)</Label>
+                          <div className="relative">
+                            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              id="accessPrice"
+                              type="number"
+                              min="1"
+                              step="0.01"
+                              placeholder="9.99"
+                              value={accessPrice}
+                              onChange={(e) => setAccessPrice(e.target.value)}
+                              className="pl-9"
+                            />
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Ligam takes 20% • You receive ${accessPrice ? (parseFloat(accessPrice) * 0.8).toFixed(2) : '0.00'}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="previewVideo">Preview Video URL (Optional)</Label>
+                          <div className="relative">
+                            <Play className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <Input
+                              id="previewVideo"
+                              type="url"
+                              placeholder="https://youtube.com/watch?v=..."
+                              value={previewVideoUrl}
+                              onChange={(e) => setPreviewVideoUrl(e.target.value)}
+                              className="pl-9"
+                            />
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            A free preview video explaining what viewers will see in your paid stream
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {tier !== 'pro' && (
+                  <div className="p-4 rounded-xl border border-border bg-secondary/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lock className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm font-medium text-foreground">Paid Streaming</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Upgrade to Pro to monetize your live streams with paid access
+                    </p>
+                    <Link to="/pricing">
+                      <Button size="sm" variant="outline" className="w-full">
+                        <Crown className="w-4 h-4 mr-2 text-amber-500" />
+                        Upgrade to Pro
+                      </Button>
+                    </Link>
+                  </div>
+                )}
 
                 {!streamKey && (
                   <Button 

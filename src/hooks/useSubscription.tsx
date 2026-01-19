@@ -74,9 +74,13 @@ export const SUBSCRIPTION_TIERS = {
     maxCourses: Infinity,
     maxGigs: Infinity,
     canFulfillGigs: true,
+    canGoLive: true,
+    canPaidStream: true,
     features: [
       "Everything in Creator",
       "4K streaming",
+      "Go Live access",
+      "Paid live streaming (set your price)",
       "Custom overlays",
       "API access",
       "Dedicated support",
