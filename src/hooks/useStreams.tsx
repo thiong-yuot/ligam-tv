@@ -67,16 +67,34 @@ export const useStream = (id: string) => {
   return useQuery({
     queryKey: ["stream", id],
     queryFn: async () => {
+      // Skip demo IDs - they don't exist in database
+      if (id.startsWith('demo-') || id.startsWith('sample-')) {
+        return null;
+      }
+      
       const { data, error } = await supabase
         .from("streams")
-        .select("*")
+        .select(`
+          *,
+          profiles:user_id (
+            display_name,
+            username,
+            avatar_url,
+            is_verified,
+            follower_count
+          ),
+          categories:category_id (
+            name,
+            slug
+          )
+        `)
         .eq("id", id)
         .maybeSingle();
       
       if (error) throw error;
       return data as unknown as Stream | null;
     },
-    enabled: !!id,
+    enabled: !!id && !id.startsWith('demo-') && !id.startsWith('sample-'),
   });
 };
 
