@@ -527,10 +527,9 @@ const StreamView = () => {
                 />
               )}
               
-              {streamerCourses.length > 0 && (
+              {stream?.user_id && (
                 <FeaturedCoursesWidget
-                  courses={streamerCourses}
-                  maxItems={3}
+                  creatorId={stream.user_id}
                 />
               )}
               
