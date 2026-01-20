@@ -319,8 +319,18 @@ const StreamView = () => {
           <div className="p-4 md:p-6 border-b border-border">
             <div className="flex flex-col md:flex-row gap-4 md:items-start justify-between">
               <div className="flex gap-4">
-                <div className="w-14 h-14 rounded-full ring-2 ring-primary bg-secondary flex items-center justify-center">
-                  <Users className="w-6 h-6 text-muted-foreground" />
+                <div className="w-14 h-14 rounded-full ring-2 ring-primary bg-secondary overflow-hidden">
+                  {stream.profiles?.avatar_url ? (
+                    <img 
+                      src={stream.profiles.avatar_url} 
+                      alt={stream.profiles.display_name || "Streamer"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Users className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -341,11 +351,17 @@ const StreamView = () => {
                     )}
                   </div>
                   <p className="text-primary font-semibold">
-                    Streamer
+                    {stream.profiles?.display_name || stream.profiles?.username || "Streamer"}
+                    {stream.profiles?.is_verified && (
+                      <Badge variant="secondary" className="ml-2 text-xs">Verified</Badge>
+                    )}
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    {formatViewers(stream.viewer_count || 0)} viewers
-                  </p>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <span>{formatViewers(stream.viewer_count || 0)} viewers</span>
+                    {stream.profiles?.follower_count && (
+                      <span>{formatViewers(stream.profiles.follower_count)} followers</span>
+                    )}
+                  </div>
                   {stream.tags && stream.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {stream.tags.map((tag) => (

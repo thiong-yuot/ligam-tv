@@ -49,109 +49,7 @@ interface StreamWithServices {
   } | null;
 }
 
-// Reduced sample data - only 3 streamers with full services
-const sampleStreams: StreamWithServices[] = [
-  {
-    id: "demo-1",
-    user_id: "demo-user-1",
-    title: "Building a Full-Stack App from Scratch",
-    thumbnail_url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop",
-    viewer_count: 567,
-    is_live: true,
-    profile: {
-      display_name: "Sarah Codes",
-      username: "sarahcodes",
-      avatar_url: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=200&h=200&fit=crop&crop=face"
-    },
-    category: { name: "Programming" },
-    products: [
-      {
-        id: "product-1",
-        name: "React Dev Kit",
-        price: 49,
-        image_url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=200&h=200&fit=crop"
-      }
-    ],
-    courses: [
-      {
-        id: "course-1",
-        title: "Master React in 30 Days",
-        price: 99,
-        thumbnail_url: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=200&h=200&fit=crop"
-      }
-    ],
-    freelancer: {
-      id: "freelancer-1",
-      title: "Full-Stack Web Development",
-      hourly_rate: 85
-    }
-  },
-  {
-    id: "demo-2",
-    user_id: "demo-user-2",
-    title: "Pro Gaming Session - Ranked Matches",
-    thumbnail_url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600&h=400&fit=crop",
-    viewer_count: 1234,
-    is_live: true,
-    profile: {
-      display_name: "Marcus Gaming",
-      username: "marcusgaming",
-      avatar_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face"
-    },
-    category: { name: "Gaming" },
-    products: [
-      {
-        id: "product-2",
-        name: "Gaming Mousepad XL",
-        price: 29,
-        image_url: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=200&h=200&fit=crop"
-      },
-      {
-        id: "product-3",
-        name: "Pro Headset",
-        price: 149,
-        image_url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=200&h=200&fit=crop"
-      }
-    ],
-    courses: [],
-    freelancer: null
-  },
-  {
-    id: "demo-3",
-    user_id: "demo-user-3",
-    title: "Live Music Production Session",
-    thumbnail_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&h=400&fit=crop",
-    viewer_count: 892,
-    is_live: true,
-    profile: {
-      display_name: "Aria Music",
-      username: "ariamusic",
-      avatar_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=face"
-    },
-    category: { name: "Music" },
-    products: [
-      {
-        id: "product-4",
-        name: "Sample Pack Vol.1",
-        price: 19,
-        image_url: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&h=200&fit=crop"
-      }
-    ],
-    courses: [
-      {
-        id: "course-2",
-        title: "Music Production Masterclass",
-        price: 149,
-        thumbnail_url: "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=200&h=200&fit=crop"
-      }
-    ],
-    freelancer: {
-      id: "freelancer-2",
-      title: "Music Production & Mixing",
-      hourly_rate: 75
-    }
-  }
-];
+// No more sample data - using real database data only
 
 // Hook to fetch streams with their associated services
 const useLiveStreamsWithServices = () => {
@@ -176,9 +74,9 @@ const useLiveStreamsWithServices = () => {
       
       if (streamsError) throw streamsError;
       
-      // If no real streams, return sample data
+      // If no live streams, return empty array
       if (!streams || streams.length === 0) {
-        return sampleStreams;
+        return [];
       }
       
       // Get unique user_ids and category_ids
