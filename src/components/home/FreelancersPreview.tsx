@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const FreelancersPreview = () => {
   const { data: freelancers = [], isLoading } = useFreelancers();
-  const featuredFreelancers = freelancers.slice(0, 4);
+  const featuredFreelancers = freelancers.slice(0, 2);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -26,19 +26,19 @@ const FreelancersPreview = () => {
           {/* Left - Freelancers Cards */}
           <div className="order-2 lg:order-1">
             <div className="grid grid-cols-2 gap-4">
-              {isLoading ? (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-12 h-12 rounded-full bg-muted" />
-                      <div className="flex-1">
-                        <div className="h-4 bg-muted rounded w-3/4 mb-2" />
-                        <div className="h-3 bg-muted rounded w-1/2" />
-                      </div>
+            {isLoading ? (
+              Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full bg-muted" />
+                    <div className="flex-1">
+                      <div className="h-4 bg-muted rounded w-3/4 mb-2" />
+                      <div className="h-3 bg-muted rounded w-1/2" />
                     </div>
-                    <div className="h-3 bg-muted rounded w-full" />
                   </div>
-                ))
+                  <div className="h-3 bg-muted rounded w-full" />
+                </div>
+              ))
               ) : featuredFreelancers.length > 0 ? (
                 featuredFreelancers.map((freelancer, index) => (
                   <Link

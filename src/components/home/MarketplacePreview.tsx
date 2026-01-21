@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const MarketplacePreview = () => {
   const { data: products = [], isLoading } = useProducts();
-  const featuredProducts = products.slice(0, 4);
+  const featuredProducts = products.slice(0, 2);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -74,7 +74,7 @@ const MarketplacePreview = () => {
           {/* Right - Products Grid */}
           <div className="grid grid-cols-2 gap-4">
             {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => (
+              Array.from({ length: 2 }).map((_, i) => (
                 <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse">
                   <div className="aspect-square bg-muted rounded-lg mb-3" />
                   <div className="h-4 bg-muted rounded w-3/4 mb-2" />
