@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const CoursesPreview = () => {
   const { data: courses = [], isLoading } = useFeaturedCourses();
-  const featuredCourses = courses.slice(0, 4);
+  const featuredCourses = courses.slice(0, 2);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -74,7 +74,7 @@ const CoursesPreview = () => {
           {/* Right - Courses Grid */}
           <div className="grid grid-cols-2 gap-4">
             {isLoading ? (
-              Array.from({ length: 4 }).map((_, i) => (
+              Array.from({ length: 2 }).map((_, i) => (
                 <div key={i} className="bg-card border border-border rounded-xl p-4 animate-pulse">
                   <div className="aspect-video bg-muted rounded-lg mb-3" />
                   <div className="h-4 bg-muted rounded w-3/4 mb-2" />

@@ -32,7 +32,7 @@ import {
   CheckCircle
 } from "lucide-react";
 import { useStream } from "@/hooks/useStreams";
-import { useChatMessages } from "@/hooks/useChat";
+import { useChatMessages, useSendMessage } from "@/hooks/useChat";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
@@ -63,6 +63,7 @@ const StreamView = () => {
   const { data: stream, isLoading } = useStream(id || "");
   const { data: accessInfo, isLoading: accessLoading, refetch: refetchAccess } = useCheckStreamAccess(id || "");
   const messages = useChatMessages(id || "");
+  const sendMessage = useSendMessage();
   const { data: allProducts = [] } = useProducts();
   const { data: allCourses = [] } = useCourses();
   const createStreamCheckout = useCreateStreamCheckout();
@@ -166,6 +167,30 @@ const StreamView = () => {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create checkout",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!chatMessage.trim() || !id || !user) {
+      if (!user) {
+        toast({
+          title: "Login Required",
+          description: "Please login to chat",
+          variant: "destructive",
+        });
+      }
+      return;
+    }
+
+    try {
+      await sendMessage.mutateAsync({ streamId: id, message: chatMessage });
+      setChatMessage("");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send message",
         variant: "destructive",
       });
     }
@@ -473,10 +498,12 @@ const StreamView = () => {
                   <div className="relative flex-1">
                     <Input
                       type="text"
-                      placeholder="Send a message"
+                      placeholder={user ? "Send a message" : "Login to chat"}
                       value={chatMessage}
                       onChange={(e) => setChatMessage(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                       className="pr-16 bg-secondary"
+                      disabled={!user}
                     />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
                       <Button variant="ghost" size="icon" className="h-7 w-7">
@@ -500,8 +527,17 @@ const StreamView = () => {
                       )}
                     </div>
                   </div>
-                  <Button variant="default" size="icon">
-                    <Send className="w-4 h-4" />
+                  <Button 
+                    variant="default" 
+                    size="icon"
+                    onClick={handleSendMessage}
+                    disabled={!chatMessage.trim() || !user || sendMessage.isPending}
+                  >
+                    {sendMessage.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
                   </Button>
                 </div>
               </div>
