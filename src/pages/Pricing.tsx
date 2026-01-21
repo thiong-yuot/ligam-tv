@@ -56,6 +56,7 @@ const creatorPlans = [
     description: "For professional streamers",
     features: [
       "Everything in Creator",
+      "Host paid live streams",
       "4K streaming",
       "Custom overlays",
       "API access",

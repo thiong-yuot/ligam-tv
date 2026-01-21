@@ -2,8 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
-import TipDialog from "@/components/TipDialog";
 import HighlightedTip from "@/components/HighlightedTip";
+import StreamGifts from "@/components/stream/StreamGifts";
 import FeaturedProductsWidget from "@/components/channel/FeaturedProductsWidget";
 import FeaturedGigsWidget from "@/components/channel/FeaturedGigsWidget";
 import FeaturedCoursesWidget from "@/components/channel/FeaturedCoursesWidget";
@@ -493,6 +493,26 @@ const StreamView = () => {
                 )}
               </div>
 
+              {/* Gifts Panel */}
+              {stream?.user_id && (
+                <div className="px-4 pb-2">
+                  <StreamGifts
+                    streamId={stream.id}
+                    recipientId={stream.user_id}
+                    onGiftSent={(gift) => {
+                      setHighlightedTips(prev => [...prev, {
+                        id: crypto.randomUUID(),
+                        senderName: gift.senderName,
+                        giftName: gift.giftName,
+                        giftIcon: gift.giftIcon,
+                        amount: gift.amount,
+                        message: gift.message,
+                      }]);
+                    }}
+                  />
+                </div>
+              )}
+
               <div className="p-4 border-t border-border">
                 <div className="flex gap-2">
                   <div className="relative flex-1">
@@ -502,29 +522,13 @@ const StreamView = () => {
                       value={chatMessage}
                       onChange={(e) => setChatMessage(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                      className="pr-16 bg-secondary"
+                      className="pr-10 bg-secondary"
                       disabled={!user}
                     />
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
                       <Button variant="ghost" size="icon" className="h-7 w-7">
                         <Smile className="w-4 h-4" />
                       </Button>
-                      {stream?.user_id && (
-                        <TipDialog
-                          streamId={stream.id}
-                          recipientId={stream.user_id}
-                          onTipSent={(tip) => {
-                            setHighlightedTips(prev => [...prev, {
-                              id: crypto.randomUUID(),
-                              senderName: user?.email?.split('@')[0] || 'Anonymous',
-                              giftName: tip.giftName,
-                              giftIcon: tip.giftName.toLowerCase(),
-                              amount: tip.amount,
-                              message: tip.message,
-                            }]);
-                          }}
-                        />
-                      )}
                     </div>
                   </div>
                   <Button 
