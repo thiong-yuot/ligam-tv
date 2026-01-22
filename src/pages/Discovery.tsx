@@ -3,22 +3,23 @@ import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { 
   Send, 
   Sparkles, 
-  Newspaper, 
-  Video, 
-  TrendingUp, 
-  Search,
   Play,
   Clock,
-  Eye
+  Eye,
+  ChevronDown,
+  Mic,
+  Plus,
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
+import { useDiscoveryContent, useFeaturedContent } from "@/hooks/useDiscoveryContent";
+import { format } from "date-fns";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -27,6 +28,8 @@ const Discovery = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const { data: allContent } = useDiscoveryContent();
+  const { data: featuredContent } = useFeaturedContent();
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -116,231 +119,304 @@ const Discovery = () => {
     }
   };
 
-  const suggestedTopics = [
-    { icon: TrendingUp, label: "Trending News", query: "What are the top trending news stories today?" },
-    { icon: Sparkles, label: "Tech Updates", query: "What's new in technology and AI?" },
-    { icon: Video, label: "Entertainment", query: "What's trending in entertainment right now?" },
-    { icon: Newspaper, label: "World News", query: "Give me a summary of major world events" },
-  ];
-
-  const featuredVideos = [
-    { title: "Daily Tech Briefing", duration: "5 min", views: "12.5K", thumbnail: "📱" },
-    { title: "World News Roundup", duration: "8 min", views: "8.2K", thumbnail: "🌍" },
-    { title: "Entertainment Spotlight", duration: "6 min", views: "15.1K", thumbnail: "🎬" },
-    { title: "Sports Highlights", duration: "4 min", views: "20.3K", thumbnail: "⚽" },
-  ];
+  const featuredNews = featuredContent?.find(c => c.content_type === 'news');
+  const dailyBriefing = featuredContent?.find(c => c.content_type === 'daily_briefing') || allContent?.find(c => c.content_type === 'daily_briefing');
+  const newsItems = allContent?.filter(c => c.content_type === 'news') || [];
+  const videoItems = allContent?.filter(c => c.content_type === 'video' || c.content_type === 'daily_briefing') || [];
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gradient-to-b from-background via-background to-primary/5">
-        <div className="w-full max-w-6xl mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Your AI Companion</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
-              Let's discover what's new
-            </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Ask Eelai anything - get up-to-date information, news, and discover content
-            </p>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a1a] via-[#0d1033] to-[#1a0a2e] relative overflow-hidden">
+        {/* Background gradient orbs */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-indigo-500/10 rounded-full blur-[150px]" />
+        </div>
+
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-8">
+          {/* Eelai branding */}
+          <div className="flex items-center gap-2 mb-8 text-muted-foreground">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <span className="text-sm">your AI companion</span>
           </div>
 
-          <Tabs defaultValue="chat" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
-              <TabsTrigger value="chat" className="gap-2">
-                <Sparkles className="w-4 h-4" />
-                Chat
-              </TabsTrigger>
-              <TabsTrigger value="news" className="gap-2">
-                <Newspaper className="w-4 h-4" />
-                News
-              </TabsTrigger>
-              <TabsTrigger value="videos" className="gap-2">
-                <Video className="w-4 h-4" />
-                Videos
-              </TabsTrigger>
-            </TabsList>
+          {messages.length === 0 ? (
+            <>
+              {/* Main heading */}
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-center mb-10 text-white">
+                Let's discover what's new
+              </h1>
 
-            {/* Chat Tab */}
-            <TabsContent value="chat" className="space-y-6">
-              {messages.length === 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  {suggestedTopics.map((topic, i) => (
-                    <Card
-                      key={i}
-                      className="cursor-pointer hover:border-primary/50 transition-all hover:shadow-lg hover:shadow-primary/10"
-                      onClick={() => {
-                        setInput(topic.query);
-                        setTimeout(() => handleSend(), 100);
-                      }}
-                    >
-                      <CardContent className="p-4 text-center">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mx-auto mb-3">
-                          <topic.icon className="w-6 h-6 text-primary" />
-                        </div>
-                        <span className="text-sm font-medium">{topic.label}</span>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <Card className="bg-card/50 backdrop-blur border-border/50">
-                  <ScrollArea className="h-[400px] p-4">
-                    <div className="space-y-4">
-                      {messages.map((msg, i) => (
-                        <div
-                          key={i}
-                          className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                        >
-                          {msg.role === "assistant" && (
-                            <Avatar className="w-8 h-8">
-                              <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground text-xs">
-                                EE
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          <div
-                            className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                              msg.role === "user"
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted/50"
-                            }`}
-                          >
-                            <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
-                          </div>
-                        </div>
-                      ))}
-                      {isLoading && messages[messages.length - 1]?.role === "user" && (
-                        <div className="flex gap-3">
-                          <Avatar className="w-8 h-8">
-                            <AvatarFallback className="bg-gradient-to-br from-primary to-accent text-primary-foreground text-xs">
-                              EE
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="bg-muted/50 rounded-2xl px-4 py-3">
-                            <div className="flex gap-1">
-                              <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" />
-                              <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce [animation-delay:0.2s]" />
-                              <span className="w-2 h-2 bg-primary/50 rounded-full animate-bounce [animation-delay:0.4s]" />
-                            </div>
-                          </div>
+              {/* Featured Content Grid */}
+              <div className="grid md:grid-cols-2 gap-4 mb-8">
+                {/* Featured News Card */}
+                {featuredNews && (
+                  <Card 
+                    className="overflow-hidden bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 backdrop-blur-xl cursor-pointer group hover:border-primary/50 transition-all"
+                    onClick={() => setInput(`Tell me about: ${featuredNews.title}`)}
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      {featuredNews.thumbnail_url ? (
+                        <img 
+                          src={featuredNews.thumbnail_url} 
+                          alt={featuredNews.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-600/30 to-purple-600/30 flex items-center justify-center text-6xl">
+                          📰
                         </div>
                       )}
-                      <div ref={chatEndRef} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      
+                      {/* Source badge */}
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="secondary" className="bg-red-600/90 text-white border-0 text-xs">
+                            {featuredNews.source_name || 'NEWS'}
+                          </Badge>
+                          <span className="text-xs text-white/80">{featuredNews.source_count} sources</span>
+                        </div>
+                        <h3 className="text-lg font-semibold text-white leading-tight">
+                          {featuredNews.title}
+                        </h3>
+                      </div>
                     </div>
-                  </ScrollArea>
-                </Card>
-              )}
+                  </Card>
+                )}
 
-              {/* Chat Input */}
-              <Card className="p-4 bg-card/80 backdrop-blur border-border/50">
-                <div className="flex gap-3">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                      placeholder="Ask Eelai anything..."
-                      value={input}
-                      onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-                      className="pl-10 h-12 bg-secondary/50 border-0"
-                      disabled={isLoading}
-                    />
-                  </div>
-                  <Button
-                    onClick={handleSend}
-                    disabled={!input.trim() || isLoading}
-                    className="h-12 px-6 bg-gradient-to-r from-primary to-accent"
-                  >
-                    <Send className="w-5 h-5" />
-                  </Button>
-                </div>
-              </Card>
-            </TabsContent>
-
-            {/* News Tab */}
-            <TabsContent value="news" className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <Card className="overflow-hidden group cursor-pointer hover:shadow-xl transition-all">
-                  <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-6xl">
-                    🌍
-                  </div>
-                  <CardContent className="p-4">
-                    <Badge className="mb-2">Breaking</Badge>
-                    <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
-                      Ask Eelai about today's top stories
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Get personalized news summaries and analysis
-                    </p>
-                  </CardContent>
-                </Card>
-
+                {/* Daily Briefing Card */}
                 <div className="space-y-4">
-                  {["Technology", "Entertainment", "Sports", "Business"].map((category, i) => (
-                    <Card
-                      key={i}
-                      className="p-4 flex items-center gap-4 cursor-pointer hover:border-primary/50 transition-all"
-                      onClick={() => {
-                        setInput(`What's the latest news in ${category}?`);
-                      }}
+                  {dailyBriefing && (
+                    <Card 
+                      className="p-4 bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 backdrop-blur-xl cursor-pointer hover:border-primary/50 transition-all group"
+                      onClick={() => setInput("Give me today's briefing")}
                     >
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center text-xl">
-                        {["💻", "🎬", "⚽", "📈"][i]}
-                      </div>
-                      <div>
-                        <h4 className="font-medium">{category}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Latest updates and analysis
-                        </p>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Videos Tab */}
-            <TabsContent value="videos" className="space-y-6">
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {featuredVideos.map((video, i) => (
-                  <Card key={i} className="overflow-hidden group cursor-pointer hover:shadow-xl transition-all">
-                    <div className="aspect-video bg-gradient-to-br from-secondary to-secondary/50 flex items-center justify-center text-5xl relative">
-                      {video.thumbnail}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
-                          <Play className="w-5 h-5 text-primary-foreground ml-0.5" />
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0">
+                          <Play className="w-5 h-5 text-white ml-0.5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-semibold text-white">Eelai Daily</h4>
+                            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-400/30 to-purple-400/30 flex items-center justify-center">
+                              <div className="w-6 h-1 bg-white/60 rounded-full" />
+                            </div>
+                          </div>
+                          <p className="text-xs text-muted-foreground mb-2">
+                            {format(new Date(), "MMM d")} • {dailyBriefing.duration_minutes} min
+                          </p>
+                          <p className="text-sm text-slate-300 line-clamp-2">
+                            {dailyBriefing.summary}
+                          </p>
                         </div>
                       </div>
+                    </Card>
+                  )}
+
+                  {/* Mood/Reaction Card */}
+                  <Card className="p-4 bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-xl">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">😊</span>
+                      <span className="text-sm text-slate-400">How are you feeling today?</span>
+                    </div>
+                  </Card>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex flex-wrap gap-2 justify-center mb-6">
+                {["Trending News", "Tech Updates", "Sports", "Entertainment"].map((topic) => (
+                  <Button
+                    key={topic}
+                    variant="outline"
+                    size="sm"
+                    className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50 hover:border-primary/50 text-slate-300"
+                    onClick={() => setInput(`What's the latest in ${topic}?`)}
+                  >
+                    {topic}
+                  </Button>
+                ))}
+              </div>
+            </>
+          ) : (
+            /* Chat Messages */
+            <Card className="bg-slate-900/50 backdrop-blur-xl border-slate-700/50 mb-4">
+              <ScrollArea className="h-[500px] p-4">
+                <div className="space-y-4">
+                  {messages.map((msg, i) => (
+                    <div
+                      key={i}
+                      className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                    >
+                      {msg.role === "assistant" && (
+                        <Avatar className="w-8 h-8 shrink-0">
+                          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs">
+                            <Sparkles className="w-4 h-4" />
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                          msg.role === "user"
+                            ? "bg-blue-600 text-white"
+                            : "bg-slate-800/80 text-slate-200"
+                        }`}
+                      >
+                        <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {isLoading && messages[messages.length - 1]?.role === "user" && (
+                    <div className="flex gap-3">
+                      <Avatar className="w-8 h-8 shrink-0">
+                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs">
+                          <Sparkles className="w-4 h-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="bg-slate-800/80 rounded-2xl px-4 py-3">
+                        <Loader2 className="w-5 h-5 animate-spin text-blue-400" />
+                      </div>
+                    </div>
+                  )}
+                  <div ref={chatEndRef} />
+                </div>
+              </ScrollArea>
+            </Card>
+          )}
+
+          {/* Chat Input - Copilot Style */}
+          <Card className="p-3 bg-slate-800/60 backdrop-blur-xl border-slate-700/50 rounded-2xl">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0 text-slate-400 hover:text-white hover:bg-slate-700/50"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                className="shrink-0 text-slate-400 hover:text-white hover:bg-slate-700/50 gap-1 px-3"
+              >
+                <span className="text-sm">Smart</span>
+                <ChevronDown className="w-4 h-4" />
+              </Button>
+
+              <Input
+                placeholder="Ask me anything..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
+                className="flex-1 bg-transparent border-0 text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+                disabled={isLoading}
+              />
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0 text-slate-400 hover:text-white hover:bg-slate-700/50"
+              >
+                <Mic className="w-5 h-5" />
+              </Button>
+
+              {input.trim() && (
+                <Button
+                  onClick={handleSend}
+                  disabled={isLoading}
+                  size="icon"
+                  className="shrink-0 bg-blue-600 hover:bg-blue-700"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+          </Card>
+
+          {/* Videos Section */}
+          {messages.length === 0 && videoItems.length > 0 && (
+            <div className="mt-10">
+              <h2 className="text-xl font-semibold text-white mb-4">Short Videos</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {videoItems.slice(0, 4).map((video) => (
+                  <Card 
+                    key={video.id} 
+                    className="overflow-hidden bg-slate-800/50 border-slate-700/50 cursor-pointer group hover:border-primary/50 transition-all"
+                    onClick={() => setInput(`Tell me about: ${video.title}`)}
+                  >
+                    <div className="aspect-video relative overflow-hidden">
+                      {video.thumbnail_url ? (
+                        <img 
+                          src={video.thumbnail_url} 
+                          alt={video.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center text-4xl">
+                          🎬
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                          <Play className="w-4 h-4 text-slate-900 ml-0.5" />
+                        </div>
+                      </div>
+                      {video.duration_minutes && (
+                        <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded bg-black/70 text-xs text-white">
+                          {video.duration_minutes}:00
+                        </div>
+                      )}
                     </div>
                     <CardContent className="p-3">
-                      <h4 className="font-medium text-sm mb-2 line-clamp-2">{video.title}</h4>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {video.duration}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          {video.views}
-                        </span>
+                      <h4 className="text-sm font-medium text-white line-clamp-2">{video.title}</h4>
+                      <div className="flex items-center gap-2 mt-1 text-xs text-slate-400">
+                        <Eye className="w-3 h-3" />
+                        <span>{video.view_count?.toLocaleString() || 0}</span>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
+            </div>
+          )}
 
-              <Card className="p-6 text-center bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
-                <Video className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="font-semibold text-lg mb-2">Short Videos Coming Soon</h3>
-                <p className="text-muted-foreground text-sm max-w-md mx-auto">
-                  We're building a video discovery experience. Upload and watch short-form content soon!
-                </p>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          {/* More News */}
+          {messages.length === 0 && newsItems.length > 1 && (
+            <div className="mt-10">
+              <h2 className="text-xl font-semibold text-white mb-4">More Stories</h2>
+              <div className="space-y-3">
+                {newsItems.slice(1, 5).map((news) => (
+                  <Card 
+                    key={news.id}
+                    className="p-4 bg-slate-800/50 border-slate-700/50 cursor-pointer hover:border-primary/50 transition-all flex gap-4"
+                    onClick={() => setInput(`Tell me about: ${news.title}`)}
+                  >
+                    {news.thumbnail_url && (
+                      <img 
+                        src={news.thumbnail_url} 
+                        alt={news.title}
+                        className="w-20 h-20 rounded-lg object-cover shrink-0"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge variant="outline" className="text-xs border-slate-600 text-slate-400">
+                          {news.source_name || 'News'}
+                        </Badge>
+                        <span className="text-xs text-slate-500">{news.source_count} sources</span>
+                      </div>
+                      <h4 className="font-medium text-white line-clamp-2">{news.title}</h4>
+                      {news.summary && (
+                        <p className="text-sm text-slate-400 line-clamp-1 mt-1">{news.summary}</p>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
