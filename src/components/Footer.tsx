@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Twitter, Instagram, Youtube, Linkedin, Video, ArrowRight } from "lucide-react";
+import { Twitter, Instagram, Youtube, Linkedin, Video, ArrowRight, Sparkles } from "lucide-react";
 import LigamLogo from "./LigamLogo";
 
 const Footer = () => {
@@ -10,6 +10,7 @@ const Footer = () => {
       { name: "Marketplace", path: "/shop" },
       { name: "Freelancers", path: "/freelance" },
       { name: "Learn", path: "/courses" },
+      { name: "Discovery", path: "/discovery", highlight: true },
       { name: "Pricing", path: "/pricing" },
       { name: "Get Featured", path: "/premium" },
       { name: "Affiliates", path: "/affiliates" },
@@ -73,8 +74,13 @@ const Footer = () => {
                 <li key={link.name}>
                   <Link
                     to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className={`text-sm transition-colors inline-flex items-center gap-1.5 ${
+                      link.highlight 
+                        ? "text-primary font-medium hover:text-primary/80" 
+                        : "text-muted-foreground hover:text-primary"
+                    }`}
                   >
+                    {link.highlight && <Sparkles className="w-3 h-3" />}
                     {link.name}
                   </Link>
                 </li>
