@@ -49,6 +49,7 @@ import CreatorCourses from "./pages/CreatorCourses";
 import MyLearning from "./pages/MyLearning";
 import StreamSetup from "./pages/StreamSetup";
 import Affiliates from "./pages/Affiliates";
+import Discovery from "./pages/Discovery";
 import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
@@ -108,6 +109,7 @@ const App = () => (
                 <Route path="/my-learning" element={<MyLearning />} />
                 <Route path="/stream-setup" element={<StreamSetup />} />
                 <Route path="/affiliates" element={<Affiliates />} />
+                <Route path="/discovery" element={<Discovery />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
