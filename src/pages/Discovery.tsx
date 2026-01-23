@@ -46,6 +46,21 @@ const Discovery = () => {
     setInput("");
   };
 
+  const askAboutContent = async (topic: string) => {
+    const userMsg: Message = { role: "user", content: topic };
+    setMessages([userMsg]);
+    setIsLoading(true);
+
+    try {
+      await streamChat([userMsg]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to get response");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const streamChat = async (userMessages: Message[]) => {
     const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/eelai-chat`;
 
@@ -213,7 +228,7 @@ const Discovery = () => {
               {featuredNews && (
                 <Card 
                   className="overflow-hidden bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 backdrop-blur-xl cursor-pointer group hover:border-primary/50 transition-all"
-                  onClick={() => setInput(`Tell me about: ${featuredNews.title}`)}
+                  onClick={() => askAboutContent(`Tell me about: ${featuredNews.title}`)}
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     {featuredNews.thumbnail_url ? (
@@ -250,7 +265,7 @@ const Discovery = () => {
                 {dailyBriefing && (
                   <Card 
                     className="p-4 bg-gradient-to-br from-slate-800/80 to-slate-900/80 border-slate-700/50 backdrop-blur-xl cursor-pointer hover:border-primary/50 transition-all group"
-                    onClick={() => setInput("Give me today's briefing")}
+                    onClick={() => askAboutContent("Give me today's briefing")}
                   >
                     <div className="flex items-start gap-4">
                       <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shrink-0">
@@ -308,7 +323,7 @@ const Discovery = () => {
                   variant="outline"
                   size="sm"
                   className="bg-slate-800/50 border-slate-700/50 hover:bg-slate-700/50 hover:border-primary/50 text-slate-300"
-                  onClick={() => setInput(`What's the latest in ${topic}?`)}
+                  onClick={() => askAboutContent(`What's the latest in ${topic}?`)}
                 >
                   {topic}
                 </Button>
@@ -476,7 +491,7 @@ const Discovery = () => {
                 <Card 
                   key={news.id}
                   className="p-4 bg-slate-800/50 border-slate-700/50 cursor-pointer hover:border-primary/50 transition-all flex gap-4"
-                  onClick={() => setInput(`Tell me about: ${news.title}`)}
+                  onClick={() => askAboutContent(`Tell me about: ${news.title}`)}
                 >
                   {news.thumbnail_url && (
                     <img 
