@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { ThemeProvider } from "@/hooks/useTheme";
+import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import Browse from "./pages/Browse";
 import Categories from "./pages/Categories";
@@ -50,7 +51,7 @@ import MyLearning from "./pages/MyLearning";
 import StreamSetup from "./pages/StreamSetup";
 import Affiliates from "./pages/Affiliates";
 import Discovery from "./pages/Discovery";
-import ScrollToTop from "./components/ScrollToTop";
+import Reels from "./pages/Reels";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +111,7 @@ const App = () => (
                 <Route path="/stream-setup" element={<StreamSetup />} />
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/discovery" element={<Discovery />} />
+                <Route path="/reels" element={<Reels />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
