@@ -16,10 +16,13 @@ import {
   Plus,
   Loader2,
   Home,
-  Film
+  Film,
+  Cloud,
+  MapPin
 } from "lucide-react";
 import { toast } from "sonner";
 import { useDiscoveryContent, useFeaturedContent } from "@/hooks/useDiscoveryContent";
+import { useWeather } from "@/hooks/useWeather";
 import { format } from "date-fns";
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -32,6 +35,7 @@ const Discovery = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { data: allContent } = useDiscoveryContent();
   const { data: featuredContent } = useFeaturedContent();
+  const { weather, isLoading: weatherLoading } = useWeather();
 
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -305,12 +309,46 @@ const Discovery = () => {
                   </div>
                 </Card>
 
-                {/* Mood/Reaction Card */}
-                <Card className="p-4 bg-gradient-to-br from-slate-800/60 to-slate-900/60 border-slate-700/50 backdrop-blur-xl">
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">😊</span>
-                    <span className="text-sm text-slate-400">How are you feeling today?</span>
-                  </div>
+                {/* Weather Card */}
+                <Card 
+                  className="p-4 bg-gradient-to-br from-sky-900/50 to-blue-900/50 border-sky-700/50 backdrop-blur-xl cursor-pointer hover:border-primary/50 transition-all"
+                  onClick={() => askAboutContent(`What's the weather like today? Give me a detailed forecast.`)}
+                >
+                  {weatherLoading ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-sky-500/20 flex items-center justify-center shrink-0 animate-pulse">
+                        <Cloud className="w-5 h-5 text-sky-400" />
+                      </div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-sky-500/20 rounded w-24 animate-pulse" />
+                        <div className="h-3 bg-sky-500/20 rounded w-16 animate-pulse" />
+                      </div>
+                    </div>
+                  ) : weather ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="text-4xl">{weather.icon}</div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-2xl font-bold text-white">{weather.temperature}°C</span>
+                          </div>
+                          <p className="text-xs text-sky-300">{weather.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center gap-1 text-xs text-white/60">
+                          <MapPin className="w-3 h-3" />
+                          <span>{weather.location}</span>
+                        </div>
+                        <p className="text-xs text-white/40 mt-0.5">{format(new Date(), "EEEE")}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <Cloud className="w-5 h-5 text-sky-400" />
+                      <span className="text-sm text-sky-300">Weather unavailable</span>
+                    </div>
+                  )}
                 </Card>
               </div>
             </div>

@@ -29,13 +29,14 @@ const CTASection = () => {
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground leading-tight">
-            Stop Paying Platforms
-            <span className="text-primary"> Before You Earn</span>
+            No More Being
+            <span className="text-primary"> Invisible</span>
           </h2>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Zero monthly fees. We only take a cut when you make money — 
-            and it's one of the lowest in the industry.
+            Traditional platforms bury emerging creators. Ligam.tv's decentralized discovery 
+            highlights niche talent — so you get seen, not ignored. Zero monthly fees, 
+            pay only when you earn.
           </p>
 
           {/* CTA Buttons */}

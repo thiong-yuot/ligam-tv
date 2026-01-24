@@ -12,43 +12,43 @@ import {
 const features = [
   {
     icon: Zap,
-    title: "Sub-Second Latency",
-    description: "Chat feels live because it is. Under 500ms delay worldwide",
+    title: "Fair Discovery System",
+    description: "Every creator gets visibility. No algorithm gatekeeping your content",
   },
   {
     icon: Users,
-    title: "Real Chat, Real Tips",
-    description: "Live chat with emotes, virtual gifts, and highlighted messages",
+    title: "Decentralized Growth",
+    description: "Build your audience without depending on platform algorithms",
   },
   {
     icon: Wallet,
     title: "Five Revenue Streams",
-    description: "Subscriptions, tips, shop, courses, and freelance — pick your mix",
+    description: "Subscriptions, tips, shop, courses, and freelance — own your income",
   },
   {
     icon: ShieldCheck,
-    title: "Fair Creator Split",
-    description: "8–15% platform fee. You keep the rest. No hidden charges",
+    title: "Creator-First Split",
+    description: "Keep 85-92% of earnings. No hidden fees or surprise deductions",
   },
   {
     icon: Globe2,
-    title: "Global CDN",
-    description: "Edge nodes on 6 continents for buffer-free streaming",
+    title: "Global Infrastructure",
+    description: "Enterprise-grade streaming with edge nodes on 6 continents",
   },
   {
     icon: HeadphonesIcon,
-    title: "Creator Support",
-    description: "Email us and a human replies — usually within a few hours",
+    title: "Real Support",
+    description: "Humans who reply in hours, not bots who ignore you",
   },
   {
     icon: BarChart3,
-    title: "Clear Analytics",
-    description: "Revenue, watch time, and growth stats without the clutter",
+    title: "Transparent Analytics",
+    description: "See exactly how you're growing without vanity metrics",
   },
   {
     icon: BookOpen,
-    title: "Sell Courses",
-    description: "Upload lessons, set a price, and earn on autopilot",
+    title: "Teach & Earn",
+    description: "Sell courses, offer services, and monetize your expertise",
   },
 ];
 
@@ -59,10 +59,11 @@ const FeaturesGrid = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            One Place to Do It All
+            Built for Creator Independence
           </h2>
           <p className="text-lg text-muted-foreground">
-            Stream, sell, teach, and freelance — without juggling a dozen different tools
+            Unlike platforms that favor established creators, we give every voice equal 
+            opportunity to be discovered and grow
           </p>
         </div>
 
