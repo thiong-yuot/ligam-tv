@@ -48,9 +48,9 @@ const HeroSection = () => {
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              Not everyone wants to stream—and that's okay. Ligam.tv is for creators who 
-              teach, sell, and build; for viewers who discover and learn; and for everyone 
-              who wants productivity tools that actually work.
+              Ligam.tv is built for all creators—stream, teach, sell, or just watch. 
+              With Eelai AI, a built-in shop, freelance tools, and courses, everyone 
+              has a place to create, discover, and thrive.
             </p>
 
             {/* CTA Buttons */}

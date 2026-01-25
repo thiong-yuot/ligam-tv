@@ -32,7 +32,7 @@ const WhyChooseLigam = () => {
             Why We Built Ligam.tv
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Because not everyone wants to be a streamer—but everyone deserves a platform that works for them
+            A platform built for all—where creators, viewers, and learners thrive together
           </p>
         </div>
 

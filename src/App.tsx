@@ -110,7 +110,7 @@ const App = () => (
                 <Route path="/my-learning" element={<MyLearning />} />
                 <Route path="/stream-setup" element={<StreamSetup />} />
                 <Route path="/affiliates" element={<Affiliates />} />
-                <Route path="/discovery" element={<Discovery />} />
+                <Route path="/eelai" element={<Discovery />} />
                 <Route path="/reels" element={<Reels />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
