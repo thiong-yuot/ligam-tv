@@ -3,23 +3,23 @@ import { Zap, Users, DollarSign, Clock } from "lucide-react";
 const features = [
   {
     icon: Zap,
-    title: "Start in Minutes",
-    description: "Stream, upload courses, list products, or offer services—no complicated setup",
+    title: "One Platform, Many Paths",
+    description: "Stream live, sell products, teach courses, or offer services—all in one place",
   },
   {
     icon: Users,
-    title: "For Everyone",
-    description: "Creators, viewers, teachers, sellers—Ligam is built for all, not just streamers",
+    title: "Built for All",
+    description: "Whether you create or consume, stream or shop, teach or learn—you belong here",
   },
   {
     icon: DollarSign,
-    title: "Earn Your Way",
-    description: "Weekly payouts. Keep 85-92% whether you stream, sell, teach, or freelance",
+    title: "Fair Revenue for All",
+    description: "Keep 85-92% of your earnings. Weekly payouts. No hidden fees",
   },
   {
     icon: Clock,
-    title: "Always Available",
-    description: "Enterprise infrastructure with productivity tools like Eelai AI built in",
+    title: "Productivity Built In",
+    description: "Eelai AI, news, weather, and tools that help everyone get things done",
   },
 ];
 
