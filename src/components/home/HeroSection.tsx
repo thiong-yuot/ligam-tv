@@ -35,22 +35,22 @@ const HeroSection = () => {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Fair Discovery for Every Creator</span>
+              <span className="text-sm font-medium">Built for Everyone, Not Just Streamers</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold leading-tight">
-              <span className="text-foreground">Where</span>
+              <span className="text-foreground">Create.</span>
               <br />
-              <span className="text-primary">Undiscovered</span>
+              <span className="text-primary">Watch.</span>
               <br />
-              <span className="text-foreground">Creators Rise</span>
+              <span className="text-foreground">Thrive.</span>
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
-              Most platforms ignore emerging talent. We don't. Ligam.tv gives every creator 
-              equal visibility through decentralized discovery — stream, sell, teach, and 
-              freelance with fair tools and real ownership.
+              Not everyone wants to stream—and that's okay. Ligam.tv is for creators who 
+              teach, sell, and build; for viewers who discover and learn; and for everyone 
+              who wants productivity tools that actually work.
             </p>
 
             {/* CTA Buttons */}

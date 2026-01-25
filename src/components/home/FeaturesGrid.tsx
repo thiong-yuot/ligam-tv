@@ -12,43 +12,43 @@ import {
 const features = [
   {
     icon: Zap,
-    title: "Fair Discovery System",
-    description: "Every creator gets visibility. No algorithm gatekeeping your content",
+    title: "More Than Streaming",
+    description: "Stream, sell, teach, or just watch—Ligam fits your goals, not the other way around",
   },
   {
     icon: Users,
-    title: "Decentralized Growth",
-    description: "Build your audience without depending on platform algorithms",
+    title: "For Creators & Viewers",
+    description: "Whether you create content or consume it, you belong here",
   },
   {
     icon: Wallet,
-    title: "Five Revenue Streams",
-    description: "Subscriptions, tips, shop, courses, and freelance — own your income",
+    title: "Multiple Income Paths",
+    description: "Subscriptions, tips, shop, courses, and freelance—choose what works for you",
   },
   {
     icon: ShieldCheck,
-    title: "Creator-First Split",
+    title: "Fair Revenue Split",
     description: "Keep 85-92% of earnings. No hidden fees or surprise deductions",
   },
   {
     icon: Globe2,
-    title: "Global Infrastructure",
-    description: "Enterprise-grade streaming with edge nodes on 6 continents",
+    title: "Productivity Built In",
+    description: "Eelai AI companion, news, weather, and tools that help you get things done",
   },
   {
     icon: HeadphonesIcon,
-    title: "Real Support",
+    title: "Real Human Support",
     description: "Humans who reply in hours, not bots who ignore you",
   },
   {
     icon: BarChart3,
-    title: "Transparent Analytics",
-    description: "See exactly how you're growing without vanity metrics",
+    title: "Discover New Talent",
+    description: "Find emerging creators the algorithms hide from you elsewhere",
   },
   {
     icon: BookOpen,
-    title: "Teach & Earn",
-    description: "Sell courses, offer services, and monetize your expertise",
+    title: "Learn & Grow",
+    description: "Access courses, hire freelancers, and level up your skills",
   },
 ];
 
@@ -59,11 +59,11 @@ const FeaturesGrid = () => {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            Built for Creator Independence
+            Built for All Creators
           </h2>
           <p className="text-lg text-muted-foreground">
-            Unlike platforms that favor established creators, we give every voice equal 
-            opportunity to be discovered and grow
+            Not just streamers. Ligam.tv welcomes teachers, sellers, freelancers, viewers, 
+            and anyone who wants a platform that works for them
           </p>
         </div>
 
