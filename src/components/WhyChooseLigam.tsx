@@ -3,23 +3,23 @@ import { Zap, Users, DollarSign, Clock } from "lucide-react";
 const features = [
   {
     icon: Zap,
-    title: "Go Live in Minutes",
-    description: "No complicated setup. Connect OBS, hit start, and you're broadcasting",
+    title: "Start in Minutes",
+    description: "Stream, upload courses, list products, or offer services—no complicated setup",
   },
   {
     icon: Users,
-    title: "Own Your Audience",
-    description: "Direct relationship with fans. No algorithm hiding your content",
+    title: "For Everyone",
+    description: "Creators, viewers, teachers, sellers—Ligam is built for all, not just streamers",
   },
   {
     icon: DollarSign,
-    title: "Get Paid Weekly",
-    description: "Automatic payouts every Friday. Keep 85-92% of what you earn",
+    title: "Earn Your Way",
+    description: "Weekly payouts. Keep 85-92% whether you stream, sell, teach, or freelance",
   },
   {
     icon: Clock,
-    title: "24/7 Uptime",
-    description: "Enterprise infrastructure that scales with your audience size",
+    title: "Always Available",
+    description: "Enterprise infrastructure with productivity tools like Eelai AI built in",
   },
 ];
 
@@ -29,10 +29,10 @@ const WhyChooseLigam = () => {
       <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-            Built for Serious Creators
+            Why We Built Ligam.tv
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            The tools you actually need — nothing more, nothing less
+            Because not everyone wants to be a streamer—but everyone deserves a platform that works for them
           </p>
         </div>
 

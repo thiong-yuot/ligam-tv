@@ -29,14 +29,14 @@ const CTASection = () => {
           </div>
 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground leading-tight">
-            No More Being
-            <span className="text-primary"> Invisible</span>
+            Your Platform,
+            <span className="text-primary"> Your Way</span>
           </h2>
 
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Traditional platforms bury emerging creators. Ligam.tv's decentralized discovery 
-            highlights niche talent — so you get seen, not ignored. Zero monthly fees, 
-            pay only when you earn.
+            Stream if you want. Watch if you prefer. Sell, teach, or hire talent. 
+            Ligam.tv is built for all creators—not just the ones chasing live audiences. 
+            Zero monthly fees, pay only when you earn.
           </p>
 
           {/* CTA Buttons */}
