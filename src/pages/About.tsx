@@ -17,23 +17,23 @@ const About = () => {
   const values = [
     {
       icon: Users,
-      title: "Access Over Gatekeeping",
-      description: "Knowledge and opportunity should reach everyone. We build tools that remove barriers, not create them.",
+      title: "Built for All",
+      description: "Streamers, viewers, teachers, sellers, freelancers—everyone belongs here with tools that work for them.",
     },
     {
       icon: Shield,
-      title: "Honest Infrastructure",
-      description: "Clear pricing, real uptime stats, and fees that make sense. No hidden terms, no surprise cuts.",
+      title: "Fair & Transparent",
+      description: "Keep 85-92% of earnings. Weekly payouts. No hidden fees, no surprise cuts.",
     },
     {
       icon: Zap,
-      title: "Speed to Independence",
-      description: "Every feature we ship is designed to help you earn faster and depend on platforms less.",
+      title: "Productivity First",
+      description: "Eelai AI, news, weather, and tools that help everyone—whether you create or consume.",
     },
     {
       icon: Heart,
-      title: "Creator Ownership",
-      description: "Your audience, your content, your earnings. We handle the pipes — you own the rest.",
+      title: "Your Platform, Your Way",
+      description: "Stream, sell, teach, watch, or hire. One account, endless possibilities.",
     },
   ];
 
@@ -53,15 +53,15 @@ const About = () => {
         <div className="w-full max-w-[1920px] mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <Globe className="w-4 h-4" />
-            Why Ligam Exists
+            Built for All
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-foreground mb-6">
-            Built to Solve <span className="text-primary">Real Problems</span>
+            A Platform for <span className="text-primary">Everyone</span>
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            The world has talent everywhere but opportunity is still concentrated in a few places. 
-            Ligam connects creators, professionals, and learners globally — giving anyone with skills 
-            a direct path to income and impact.
+            Ligam.tv is built for all—streamers, teachers, sellers, freelancers, and viewers alike. 
+            Whether you create or consume, teach or learn, sell or shop—everyone has a place here 
+            to create, discover, and thrive together.
           </p>
         </div>
       </section>
@@ -76,23 +76,24 @@ const About = () => {
                 Our Mission
               </div>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-                Decentralize <span className="text-primary">Professional Opportunity</span>
+                One Platform, <span className="text-primary">Endless Possibilities</span>
               </h2>
               <p className="text-muted-foreground text-lg mb-6">
-                Traditional platforms take too much and give too little. They sit between you and your 
-                audience, extracting value while limiting what you can build.
+                We believe everyone deserves a platform that works for them—not just streamers chasing 
+                live audiences. Ligam.tv is where creators, viewers, and learners thrive together.
               </p>
               <p className="text-muted-foreground">
-                Ligam is different by design. Stream live, sell directly to fans, teach what you know, 
-                or offer your expertise as a service. One account, one dashboard, one place to build your livelihood.
+                Stream if you want. Watch if you prefer. Sell products, teach courses, or offer services. 
+                With Eelai AI, a built-in shop, and productivity tools, everyone has what they need to 
+                create, discover, and grow.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: Video, label: "Live Streaming" },
-                { icon: Users, label: "Community" },
-                { icon: Zap, label: "Monetization" },
-                { icon: Award, label: "Recognition" },
+                { icon: Video, label: "Stream & Watch" },
+                { icon: Users, label: "Teach & Learn" },
+                { icon: Zap, label: "Sell & Shop" },
+                { icon: Award, label: "Hire & Offer" },
               ].map((item, index) => (
                 <div 
                   key={index}
@@ -181,21 +182,21 @@ const About = () => {
       <section className="py-20 px-4 md:px-6 lg:px-8">
         <div className="w-full max-w-[1920px] mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
-            Join the Movement
+            Your Place to Thrive
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-            Whether you are ready to go live, launch a course, or find your next gig — 
-            start building on Ligam today.
+            Whether you stream, teach, sell, watch, or learn—Ligam.tv is built for you. 
+            Join a platform that welcomes everyone.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/create-profile">
+            <Link to="/signup">
               <Button variant="default" size="lg" className="glow">
-                Create Your Profile
+                Get Started Free
               </Button>
             </Link>
             <Link to="/browse">
               <Button variant="outline" size="lg">
-                See What's Live
+                Explore Platform
               </Button>
             </Link>
           </div>
