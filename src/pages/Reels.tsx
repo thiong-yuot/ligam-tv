@@ -107,9 +107,9 @@ const Reels = () => {
           <Sparkles className="w-12 h-12 mx-auto mb-4 text-primary" />
           <h2 className="text-xl font-semibold mb-2">No Reels Yet</h2>
           <p className="text-muted-foreground mb-6">Check back later for new content</p>
-          <Button onClick={() => navigate("/discovery")} variant="outline">
+          <Button onClick={() => navigate("/eelai")} variant="outline">
             <Home className="w-4 h-4 mr-2" />
-            Back to Discovery
+            Back to Eelai AI
           </Button>
         </div>
       </div>
@@ -126,7 +126,7 @@ const Reels = () => {
         variant="ghost"
         size="icon"
         className="fixed top-4 left-4 z-50 bg-black/40 backdrop-blur-md hover:bg-black/60 text-white border border-white/10"
-        onClick={() => navigate("/discovery")}
+        onClick={() => navigate("/eelai")}
       >
         <Sparkles className="w-5 h-5" />
       </Button>
@@ -198,7 +198,7 @@ const Reels = () => {
                     <Sparkles className="w-4 h-4" />
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-semibold text-sm">Eelai Discovery</span>
+                <span className="font-semibold text-sm">Eelai AI</span>
               </div>
               <h3 className="font-medium text-sm mb-1 line-clamp-2">{currentVideo?.title}</h3>
               {currentVideo?.summary && (

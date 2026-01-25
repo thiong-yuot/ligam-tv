@@ -62,8 +62,8 @@ const FeaturesGrid = () => {
             Built for All Creators
           </h2>
           <p className="text-lg text-muted-foreground">
-            Not just streamers. Ligam.tv welcomes teachers, sellers, freelancers, viewers, 
-            and anyone who wants a platform that works for them
+            Streamers, teachers, sellers, freelancers, and viewers—Ligam.tv 
+            welcomes everyone with tools that work for you
           </p>
         </div>
 

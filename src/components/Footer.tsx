@@ -10,7 +10,7 @@ const Footer = () => {
       { name: "Marketplace", path: "/shop" },
       { name: "Freelancers", path: "/freelance" },
       { name: "Learn", path: "/courses" },
-      { name: "Discovery", path: "/discovery", highlight: true },
+      { name: "Eelai AI", path: "/eelai", highlight: true },
       { name: "Pricing", path: "/pricing" },
       { name: "Get Featured", path: "/premium" },
       { name: "Affiliates", path: "/affiliates" },
