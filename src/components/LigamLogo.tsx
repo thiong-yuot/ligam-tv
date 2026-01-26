@@ -1,8 +1,8 @@
-import ligamLogo from "@/assets/ligam-logo.png";
+import ligamLogo from "@/assets/ligam-logo-new.png";
 
 const LigamLogo = ({ className = "w-8 h-8" }: { className?: string }) => {
   return (
-    <div className={`${className} rounded-lg overflow-hidden flex items-center justify-center bg-transparent`}>
+    <div className={`${className} overflow-hidden flex items-center justify-center bg-transparent`}>
       <img
         src={ligamLogo}
         alt="Ligam Logo"

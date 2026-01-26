@@ -9,24 +9,31 @@ const corsHeaders = {
 const COMPANY_KNOWLEDGE = `
 # Ligam.tv - Complete Platform Knowledge
 
-## About
-Ligam.tv is a decentralized live streaming platform built for creator independence and fair discovery. It solves the problem of undiscovered creators being ignored by traditional streaming platforms.
+## The Problem We're Solving
+Streaming Platforms Fail Creators. The streaming industry has a blind spot.
 
-## Mission
-Unlike other platforms that mainly push already-popular streamers, Ligam.tv gives every creator equal visibility through decentralized discovery tools that highlight emerging and niche talent.
+Streamers who are writers, editors, musicians, designers, builders, etc. have no productive tools and solution to sell their crafts. Platforms favor streaming over productivity (e.g., Twitch, Kick). Low-view users receive little support and are overlooked by platforms. Users struggle to have one ecosystem for all tools, leading to a lack of accessibility.
+
+## Our Solution: Decentralized Solution for All Creators
+Streamers and viewers that are writers, editors, musicians, designers, builders, etc., are forced to use secondary tools. Our platform provides one ecosystem for all creators. We give them a unified space where their work is visible.
+
+Our platform brings productivity tools and creative workflows. We unlock the potential of millions of overlooked creators and give audiences diverse innovation the industry has been missing.
+
+## How It Works
+With Eelai AI companion, users navigate through all aspects of the platform:
+- **Built-in Shop**: Sell digital and physical products directly to your audience
+- **Freelance Tools**: Offer your services and skills to clients
+- **Courses**: Create and sell educational content
+- Creators can stream, sell, teach, and offer services in one place
 
 ## Core Values
-- Fair Discovery for Every Creator
-- Access Over Gatekeeping  
-- Honest Infrastructure
-- Productivity First (leveraging Eelai AI)
+- Fair Discovery for Every Creator - Equal visibility regardless of follower count
+- Access Over Gatekeeping - Open platform for all creators
+- Honest Infrastructure - Transparent systems and fair monetization
+- Productivity First - Leveraging Eelai AI to help creators succeed
 
-## Platform Features
-1. Live Streaming with fair discovery for all creators
-2. Built-in Shop for selling digital/physical products
-3. Freelance Marketplace for offering services
-4. Courses for teaching and learning
-5. Multiple income streams in one creator-first ecosystem
+## Revenue
+Keep 85-92% of your earnings. Weekly payouts. No hidden fees.
 
 ## Who It's For
 - Streamers, Viewers, Teachers, Sellers, Freelancers - built for ALL
@@ -36,7 +43,7 @@ Unlike other platforms that mainly push already-popular streamers, Ligam.tv give
 - Roadmap: Foundation 2026, Global Reach 2027
 
 ## Eelai AI
-Eelai is your AI companion on Ligam.tv - helping with content discovery, news, weather, and platform guidance.
+Eelai is your AI companion on Ligam.tv - helping with content discovery, news, weather, platform navigation, and creator guidance.
 `;
 
 serve(async (req) => {
