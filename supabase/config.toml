@@ -44,3 +44,9 @@ verify_jwt = false
 
 [functions.eelai-chat]
 verify_jwt = false
+
+[functions.eelai-news]
+verify_jwt = false
+
+[functions.eelai-company]
+verify_jwt = false
