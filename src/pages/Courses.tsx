@@ -20,6 +20,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import instructor1 from "@/assets/instructor-1.jpg";
 import instructor2 from "@/assets/instructor-2.jpg";
+import TeacherCard from "@/components/courses/TeacherCard";
 
 // Featured instructors
 const featuredInstructors = [
@@ -30,7 +31,10 @@ const featuredInstructors = [
     title: "Full-Stack Developer",
     students: 8543,
     courses: 3,
-    rating: 4.8
+    rating: 4.8,
+    isVerified: true,
+    bio: "Passionate full-stack developer with 10+ years of experience building scalable web applications.",
+    specialties: ["React", "Node.js", "TypeScript", "PostgreSQL"]
   },
   {
     id: "00000000-0000-0000-0000-000000000002",
@@ -39,7 +43,10 @@ const featuredInstructors = [
     title: "Marketing Expert",
     students: 5621,
     courses: 2,
-    rating: 4.7
+    rating: 4.7,
+    isVerified: true,
+    bio: "Digital marketing strategist helping businesses grow their online presence and reach new audiences.",
+    specialties: ["SEO", "Content Marketing", "Social Media", "Analytics"]
   }
 ];
 
@@ -247,42 +254,18 @@ const Courses = () => {
               {/* Featured Instructors */}
               {!searchQuery && (!selectedCategory || selectedCategory === "all") && (
                 <div className="mb-8">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Award className="w-5 h-5 text-primary" />
-                    <h2 className="text-lg font-semibold text-foreground">Top Instructors</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Award className="w-5 h-5 text-primary" />
+                      <h2 className="text-lg font-semibold text-foreground">Top Instructors</h2>
+                    </div>
+                    <Button variant="ghost" size="sm" className="text-primary">
+                      View All
+                    </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {featuredInstructors.map((instructor) => (
-                      <Card key={instructor.id} className="bg-card border-border hover:border-primary/50 transition-all group">
-                        <CardContent className="p-4">
-                          <div className="flex items-start gap-3">
-                            <Avatar className="w-12 h-12 border-2 border-primary/20">
-                              <AvatarImage src={instructor.avatar} />
-                              <AvatarFallback className="bg-primary/10 text-primary">
-                                {instructor.name.split(' ').map(n => n[0]).join('')}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                                  {instructor.name}
-                                </h3>
-                              </div>
-                              <p className="text-sm text-muted-foreground mb-2">{instructor.title}</p>
-                              <div className="flex items-center gap-3 text-xs">
-                                <div className="flex items-center gap-1">
-                                  <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                                  <span>{instructor.rating}</span>
-                                </div>
-                                <div className="flex items-center gap-1 text-muted-foreground">
-                                  <Users className="w-3 h-3" />
-                                  <span>{instructor.students.toLocaleString()}</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
+                      <TeacherCard key={instructor.id} teacher={instructor} />
                     ))}
                   </div>
                 </div>
