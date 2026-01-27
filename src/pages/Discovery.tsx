@@ -287,7 +287,7 @@ const Discovery = () => {
           {activeTab === "home" && (
             <>
               <h1 className="text-4xl md:text-5xl font-display font-bold text-center mb-10 text-white">
-                Let's discover what's new
+                Discover what's new
               </h1>
 
               {/* Featured Content Grid */}

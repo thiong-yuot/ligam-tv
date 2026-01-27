@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import HighlightedTip from "@/components/HighlightedTip";
 import StreamGifts from "@/components/stream/StreamGifts";
+import TipDialog from "@/components/TipDialog";
 import FeaturedProductsWidget from "@/components/channel/FeaturedProductsWidget";
 import FeaturedGigsWidget from "@/components/channel/FeaturedGigsWidget";
 import FeaturedCoursesWidget from "@/components/channel/FeaturedCoursesWidget";
@@ -29,7 +30,8 @@ import {
   Lock,
   Play,
   DollarSign,
-  CheckCircle
+  CheckCircle,
+  Coins
 } from "lucide-react";
 import { useStream } from "@/hooks/useStreams";
 import { useChatMessages, useSendMessage } from "@/hooks/useChat";
@@ -410,8 +412,27 @@ const StreamView = () => {
                   <Heart className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`} />
                   {isFollowing ? "Following" : "Follow"}
                 </Button>
+                
+                {/* Tip/Donate Button */}
+                {stream?.user_id && (
+                  <TipDialog
+                    streamId={stream.id}
+                    recipientId={stream.user_id}
+                    onTipSent={(tip) => {
+                      setHighlightedTips(prev => [...prev, {
+                        id: crypto.randomUUID(),
+                        senderName: user?.email?.split('@')[0] || "Anonymous",
+                        giftName: tip.giftName,
+                        giftIcon: tip.giftIcon,
+                        amount: tip.amount,
+                        message: tip.message,
+                      }]);
+                    }}
+                  />
+                )}
+                
                 <Button variant="outline">
-                  <Gift className="w-4 h-4" />
+                  <Crown className="w-4 h-4" />
                   Subscribe
                 </Button>
                 <Button variant="ghost" size="icon">
