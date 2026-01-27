@@ -72,27 +72,39 @@ export const useStream = (id: string) => {
         return null;
       }
       
-      const { data, error } = await supabase
+      // Fetch stream data
+      const { data: stream, error: streamError } = await supabase
         .from("streams")
-        .select(`
-          *,
-          profiles:user_id (
-            display_name,
-            username,
-            avatar_url,
-            is_verified,
-            follower_count
-          ),
-          categories:category_id (
-            name,
-            slug
-          )
-        `)
+        .select("*")
         .eq("id", id)
         .maybeSingle();
       
-      if (error) throw error;
-      return data as unknown as Stream | null;
+      if (streamError) throw streamError;
+      if (!stream) return null;
+
+      // Fetch profile data separately (no FK relationship)
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("display_name, username, avatar_url, is_verified, follower_count")
+        .eq("user_id", stream.user_id)
+        .maybeSingle();
+
+      // Fetch category data if category_id exists
+      let category = null;
+      if (stream.category_id) {
+        const { data: categoryData } = await supabase
+          .from("categories")
+          .select("name, slug")
+          .eq("id", stream.category_id)
+          .maybeSingle();
+        category = categoryData;
+      }
+
+      return {
+        ...stream,
+        profiles: profile,
+        categories: category,
+      } as unknown as Stream;
     },
     enabled: !!id && !id.startsWith('demo-') && !id.startsWith('sample-'),
   });
