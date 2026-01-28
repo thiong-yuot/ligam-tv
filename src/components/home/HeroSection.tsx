@@ -74,7 +74,7 @@ const HeroSection = () => {
               {/* Streaming Card */}
               <Link 
                 to="/browse" 
-                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5"
+                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1"
               >
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Play className="w-7 h-7 text-primary" />
@@ -86,7 +86,7 @@ const HeroSection = () => {
               {/* Shop Card */}
               <Link 
                 to="/shop" 
-                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 mt-8"
+                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 mt-8"
               >
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <ShoppingBag className="w-7 h-7 text-primary" />
@@ -98,7 +98,7 @@ const HeroSection = () => {
               {/* Freelance Card */}
               <Link 
                 to="/freelance" 
-                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5"
+                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1"
               >
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Users className="w-7 h-7 text-primary" />
@@ -110,7 +110,7 @@ const HeroSection = () => {
               {/* Courses Card */}
               <Link 
                 to="/courses" 
-                className="group p-6 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm border border-primary/30 rounded-2xl hover:border-primary transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 mt-8"
+                className="group p-6 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm border border-primary/30 rounded-2xl hover:border-primary transition-all hover:-translate-y-1 mt-8"
               >
                 <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <GraduationCap className="w-7 h-7 text-primary" />

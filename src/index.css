@@ -52,11 +52,11 @@
     --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-yellow-glow)));
     --gradient-gold: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-yellow)));
 
-    /* Shadows */
-    --shadow-glow: 0 0 30px hsl(var(--ligam-gold) / 0.4);
-    --shadow-glow-lg: 0 0 60px hsl(var(--ligam-gold) / 0.3);
-    --shadow-glow-yellow: 0 0 30px hsl(var(--ligam-yellow) / 0.4);
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.5);
+    /* Shadows - removed for clean look */
+    --shadow-glow: none;
+    --shadow-glow-lg: none;
+    --shadow-glow-yellow: none;
+    --shadow-card: none;
 
     --sidebar-background: 220 20% 10%;
     --sidebar-foreground: 0 0% 98%;
@@ -92,7 +92,7 @@
     --ligam-card: 0 0% 8%;
     --ligam-surface: 0 0% 12%;
     --ligam-dark: 0 0% 4%;
-    --shadow-card: 0 4px 24px hsl(0 0% 0% / 0.7);
+    --shadow-card: none;
     --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 50 100% 50%;
@@ -130,15 +130,15 @@
   }
 
   .glow {
-    box-shadow: var(--shadow-glow);
+    box-shadow: none;
   }
 
   .glow-lg {
-    box-shadow: var(--shadow-glow-lg);
+    box-shadow: none;
   }
 
   .glow-sm {
-    box-shadow: 0 0 20px hsl(var(--ligam-gold) / 0.3);
+    box-shadow: none;
   }
 
   .card-shadow {
@@ -193,28 +193,27 @@
   animation: pulse-live 2s ease-in-out infinite;
 }
 
-/* Glow pulse animation */
+/* Glow pulse animation - disabled */
 @keyframes glow-pulse {
   0%, 100% {
-    box-shadow: 0 0 20px hsl(var(--ligam-gold) / 0.4);
+    box-shadow: none;
   }
   50% {
-    box-shadow: 0 0 40px hsl(var(--ligam-gold) / 0.6);
+    box-shadow: none;
   }
 }
 
 .animate-glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
+  animation: none;
 }
 
-/* Hover lift effect */
+/* Hover lift effect - simplified */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
 }
 
 /* Counter animation */

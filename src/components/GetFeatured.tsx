@@ -1,4 +1,4 @@
-import { Star, Check } from "lucide-react";
+import { Sparkles, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -11,7 +11,7 @@ const GetFeatured = () => {
             {/* Left Content */}
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <Star className="w-6 h-6 text-primary fill-primary" />
+                <Sparkles className="w-6 h-6 text-primary" />
                 <span className="text-primary font-semibold">Premium Feature</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
@@ -48,7 +48,7 @@ const GetFeatured = () => {
               <div className="relative">
                 <div className="w-64 h-64 rounded-full bg-primary/20 animate-float" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Star className="w-24 h-24 text-primary animate-glow-pulse" />
+                  <Sparkles className="w-24 h-24 text-primary" />
                 </div>
               </div>
             </div>

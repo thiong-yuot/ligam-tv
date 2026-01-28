@@ -15,11 +15,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Search, Filter, BookOpen, Loader2, X, GraduationCap, 
-  Play, Star, Users, TrendingUp, Award
+  Play, Users, TrendingUp, Award
 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import instructor1 from "@/assets/instructor-1.jpg";
-import instructor2 from "@/assets/instructor-2.jpg";
+import profile1 from "@/assets/profile-1.jpg";
+import profile2 from "@/assets/profile-2.jpg";
 import TeacherCard from "@/components/courses/TeacherCard";
 
 // Featured instructors
@@ -27,7 +27,7 @@ const featuredInstructors = [
   {
     id: "00000000-0000-0000-0000-000000000001",
     name: "Sarah Chen",
-    avatar: instructor1,
+    avatar: profile1,
     title: "Full-Stack Developer",
     students: 8543,
     courses: 3,
@@ -39,7 +39,7 @@ const featuredInstructors = [
   {
     id: "00000000-0000-0000-0000-000000000002",
     name: "Marcus Thompson",
-    avatar: instructor2,
+    avatar: profile2,
     title: "Marketing Expert",
     students: 5621,
     courses: 2,
@@ -115,7 +115,7 @@ const Courses = () => {
 
   const stats = [
     { icon: BookOpen, label: "Learn Anytime", value: "On-Demand" },
-    { icon: Star, label: "Top Rated", value: "Quality" },
+    { icon: Users, label: "Join Community", value: "Connect" },
     { icon: Award, label: "Verified Pros", value: "Experts" },
     { icon: TrendingUp, label: "Track Progress", value: "Real-time" },
   ];

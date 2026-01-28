@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Star, DollarSign, CheckCircle, Clock, MessageCircle, Heart } from "lucide-react";
+import { DollarSign, CheckCircle, MessageCircle, Heart, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -54,10 +54,9 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
             </div>
 
             <div className="flex items-center gap-4 mt-2 text-sm">
-              <div className="flex items-center gap-1 text-amber-500">
-                <Star className="w-4 h-4 fill-current" />
-                <span className="font-medium">{freelancer.rating?.toFixed(1) || "New"}</span>
-                <span className="text-muted-foreground">({freelancer.total_jobs || 0} jobs)</span>
+              <div className="flex items-center gap-1 text-primary">
+                <Briefcase className="w-4 h-4" />
+                <span className="font-medium">{freelancer.total_jobs || 0} jobs</span>
               </div>
               {freelancer.hourly_rate && (
                 <div className="flex items-center gap-1 text-muted-foreground">
@@ -96,7 +95,7 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
   }
 
   return (
-    <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+    <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300">
       {/* Header with Avatar */}
       <div className="relative p-4 pb-0">
         <div className="flex items-start gap-3">
@@ -130,10 +129,9 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
       {/* Stats */}
       <div className="p-4">
         <div className="flex items-center justify-between text-sm mb-3">
-          <div className="flex items-center gap-1 text-amber-500">
-            <Star className="w-4 h-4 fill-current" />
-            <span className="font-medium">{freelancer.rating?.toFixed(1) || "New"}</span>
-            <span className="text-muted-foreground">({freelancer.total_jobs || 0})</span>
+          <div className="flex items-center gap-1 text-primary">
+            <Briefcase className="w-4 h-4" />
+            <span className="font-medium">{freelancer.total_jobs || 0} jobs</span>
           </div>
           {freelancer.hourly_rate && (
             <div className="flex items-center gap-1">

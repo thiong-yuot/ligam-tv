@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Users, Clock, PlayCircle, Award, TrendingUp } from "lucide-react";
+import { Users, Clock, PlayCircle, Award, TrendingUp } from "lucide-react";
 import { Course } from "@/hooks/useCourses";
-import instructor1 from "@/assets/instructor-1.jpg";
-import instructor2 from "@/assets/instructor-2.jpg";
+import profile3 from "@/assets/profile-3.jpg";
+import profile4 from "@/assets/profile-4.jpg";
 
 interface CourseCardProps {
   course: Course;
@@ -17,12 +17,12 @@ const getInstructor = (creatorId: string) => {
   const instructors: Record<string, { name: string; avatar: string; title: string }> = {
     "00000000-0000-0000-0000-000000000001": {
       name: "Sarah Chen",
-      avatar: instructor1,
+      avatar: profile3,
       title: "Senior Developer"
     },
     "00000000-0000-0000-0000-000000000002": {
       name: "Marcus Thompson", 
-      avatar: instructor2,
+      avatar: profile4,
       title: "Marketing Expert"
     }
   };
@@ -41,7 +41,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
 
   return (
     <Link to={`/courses/${course.id}`}>
-      <Card className="group h-full overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1">
+      <Card className="group h-full overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
         {/* Thumbnail */}
         <div className="relative aspect-video overflow-hidden">
           {course.thumbnail_url ? (
@@ -51,7 +51,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
               <PlayCircle className="w-12 h-12 text-primary/50" />
             </div>
           )}
@@ -59,12 +59,12 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
           {/* Badges */}
           <div className="absolute top-2 left-2 flex flex-col gap-1">
             {isBestseller && (
-              <Badge className="bg-yellow-500 text-yellow-950 text-xs font-bold">
+              <Badge className="bg-primary text-primary-foreground text-xs font-bold">
                 Top Rated
               </Badge>
             )}
             {isPopular && !isBestseller && (
-              <Badge className="bg-orange-500 text-white text-xs font-bold">
+              <Badge className="bg-primary/80 text-primary-foreground text-xs font-bold">
                 <TrendingUp className="w-3 h-3 mr-1" />
                 Trending
               </Badge>
@@ -111,18 +111,12 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
             </p>
           )}
 
-          {/* Rating and stats */}
+          {/* Enrollment count */}
           <div className="flex items-center gap-2 text-xs">
-            <span className="font-bold text-yellow-500">{course.average_rating.toFixed(1)}</span>
-            <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  className={`w-3 h-3 ${i < Math.floor(course.average_rating) ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground/30"}`} 
-                />
-              ))}
-            </div>
-            <span className="text-muted-foreground">({course.total_reviews.toLocaleString()})</span>
+            <span className="font-bold text-primary">{course.total_enrollments.toLocaleString()}</span>
+            <span className="text-muted-foreground">students enrolled</span>
+            <span className="text-muted-foreground">•</span>
+            <span className="text-muted-foreground">({course.total_reviews.toLocaleString()} reviews)</span>
           </div>
 
           {/* Course meta */}

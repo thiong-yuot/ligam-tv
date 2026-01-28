@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Star, ArrowRight, GraduationCap, Award, Users } from "lucide-react";
+import { BookOpen, ArrowRight, GraduationCap, Award, Users } from "lucide-react";
 import { useFeaturedCourses } from "@/hooks/useCourses";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -97,7 +97,7 @@ const CoursesPreview = () => {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-amber-500/20">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
                         <BookOpen className="w-8 h-8 text-muted-foreground" />
                       </div>
                     )}
@@ -106,10 +106,10 @@ const CoursesPreview = () => {
                     {course.title}
                   </h4>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <Star className="w-3 h-3 fill-current" />
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      <Users className="w-3 h-3" />
                       <span className="text-xs font-medium">
-                        {course.average_rating?.toFixed(1) || "New"}
+                        {course.total_enrollments || 0} enrolled
                       </span>
                     </div>
                     <span className="text-primary font-bold text-sm">
