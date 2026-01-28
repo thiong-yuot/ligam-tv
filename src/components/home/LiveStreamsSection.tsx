@@ -161,7 +161,12 @@ const formatViewers = (count: number) => {
   return count.toString();
 };
 
-const StreamCardWithServices = ({ stream }: { stream: StreamWithServices }) => {
+const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices; index: number }) => {
+  // Show different service combinations based on stream index
+  const showProducts = index === 0 || index === 2;
+  const showCourses = index === 0 || index === 1;
+  const showFreelancer = index === 1 || index === 2;
+  
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300 group">
       {/* Stream Preview */}
@@ -221,17 +226,17 @@ const StreamCardWithServices = ({ stream }: { stream: StreamWithServices }) => {
         </div>
       </Link>
       
-      {/* Creator Services */}
+      {/* Creator Services - Show different combinations per card */}
       <div className="p-4 space-y-3">
-        {/* Store Products */}
-        {stream.products.length > 0 && (
+        {/* Store Products - Only show for some cards */}
+        {showProducts && stream.products.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <ShoppingBag className="w-3.5 h-3.5 text-primary" />
               <span>Store</span>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-              {stream.products.map(product => (
+            <div className="flex gap-2">
+              {stream.products.slice(0, 2).map(product => (
                 <Link
                   key={product.id}
                   to="/shop"
@@ -251,41 +256,36 @@ const StreamCardWithServices = ({ stream }: { stream: StreamWithServices }) => {
           </div>
         )}
         
-        {/* Courses */}
-        {stream.courses.length > 0 && (
+        {/* Courses - Only show for some cards */}
+        {showCourses && stream.courses.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <GraduationCap className="w-3.5 h-3.5 text-primary" />
               <span>Courses</span>
             </div>
-            <div className="space-y-1">
-              {stream.courses.slice(0, 1).map(course => (
-                <Link
-                  key={course.id}
-                  to={`/courses/${course.id}`}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors group/course"
-                >
-                  <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
-                    <img
-                      src={course.thumbnail_url || "/placeholder.svg"}
-                      alt={course.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate group-hover/course:text-primary transition-colors">
-                      {course.title}
-                    </p>
-                    <p className="text-xs text-primary font-semibold">${course.price}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <Link
+              to={`/courses/${stream.courses[0].id}`}
+              className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors group/course"
+            >
+              <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
+                <img
+                  src={stream.courses[0].thumbnail_url || "/placeholder.svg"}
+                  alt={stream.courses[0].title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium truncate group-hover/course:text-primary transition-colors">
+                  {stream.courses[0].title}
+                </p>
+                <p className="text-xs text-primary font-semibold">${stream.courses[0].price}</p>
+              </div>
+            </Link>
           </div>
         )}
         
-        {/* Freelance Gig */}
-        {stream.freelancer && (
+        {/* Freelance Gig - Only show for some cards */}
+        {showFreelancer && stream.freelancer && (
           <Link
             to={`/freelance/${stream.freelancer.id}`}
             className="flex items-center gap-3 p-2 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors border border-primary/20"
@@ -303,10 +303,10 @@ const StreamCardWithServices = ({ stream }: { stream: StreamWithServices }) => {
           </Link>
         )}
         
-        {/* Empty State */}
-        {stream.products.length === 0 && stream.courses.length === 0 && !stream.freelancer && (
+        {/* Empty State - Only if nothing shown for this card */}
+        {!showProducts && !showCourses && !showFreelancer && (
           <p className="text-xs text-muted-foreground text-center py-2">
-            No services available yet
+            Watching stream...
           </p>
         )}
       </div>
@@ -371,7 +371,7 @@ const LiveStreamsSection = () => {
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <StreamCardWithServices stream={stream} />
+                <StreamCardWithServices stream={stream} index={index} />
               </div>
             ))}
           </div>
