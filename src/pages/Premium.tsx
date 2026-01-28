@@ -189,37 +189,27 @@ const Premium = () => {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
             {[
               { 
                 icon: Video, 
-                title: "Live Streaming Setup", 
-                description: "Complete OBS/streaming software configuration, overlays, and optimization for professional broadcasts"
+                title: "Streaming Setup", 
+                description: "OBS configuration, overlays, and broadcast optimization"
               },
               { 
                 icon: ShoppingBag, 
-                title: "Shop & Store Setup", 
-                description: "Full e-commerce setup including product listings, pricing strategy, and storefront design"
-              },
-              { 
-                icon: Users, 
-                title: "Gigs Configuration", 
-                description: "Set up your freelance services with compelling packages, pricing tiers, and portfolio showcase"
+                title: "Store Setup", 
+                description: "Product listings, pricing strategy, and storefront design"
               },
               { 
                 icon: GraduationCap, 
-                title: "Skills Share Setup", 
-                description: "Create and structure your courses with engaging content, modules, and learning paths"
+                title: "Course Setup", 
+                description: "Structure courses with modules and learning paths"
               },
               { 
                 icon: Phone, 
-                title: "1-on-1 Strategy Call", 
-                description: "Personal consultation to discuss your goals, brand positioning, and growth strategy"
-              },
-              { 
-                icon: Camera, 
-                title: "Content Filming", 
-                description: "Professional video production for promotional content, intros, and course materials"
+                title: "Strategy Call", 
+                description: "Personal consultation for goals and growth strategy"
               },
             ].map((service, index) => (
               <Card key={index} className="p-6 bg-card border-border hover:border-primary/50 transition-colors group">
