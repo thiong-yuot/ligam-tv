@@ -1,12 +1,8 @@
 import { 
   Zap, 
-  Users, 
   Wallet, 
   ShieldCheck, 
-  Globe2, 
-  HeadphonesIcon,
-  BarChart3,
-  BookOpen
+  BarChart3
 } from "lucide-react";
 
 const features = [
@@ -14,11 +10,6 @@ const features = [
     icon: Zap,
     title: "More Than Streaming",
     description: "Stream, sell, teach, or just watch—Ligam fits your goals, not the other way around",
-  },
-  {
-    icon: Users,
-    title: "For Creators & Viewers",
-    description: "Whether you create content or consume it, you belong here",
   },
   {
     icon: Wallet,
@@ -31,24 +22,9 @@ const features = [
     description: "Keep 85-92% of earnings. No hidden fees or surprise deductions",
   },
   {
-    icon: Globe2,
-    title: "Productivity Built In",
-    description: "Eelai AI companion, news, weather, and tools that help you get things done",
-  },
-  {
-    icon: HeadphonesIcon,
-    title: "Real Human Support",
-    description: "Humans who reply in hours, not bots who ignore you",
-  },
-  {
     icon: BarChart3,
     title: "Discover New Talent",
     description: "Find emerging creators the algorithms hide from you elsewhere",
-  },
-  {
-    icon: BookOpen,
-    title: "Learn & Grow",
-    description: "Access courses, hire freelancers, and level up your skills",
   },
 ];
 
