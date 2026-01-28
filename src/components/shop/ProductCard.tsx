@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart, Eye, Star, CheckCircle } from "lucide-react";
+import { Heart, ShoppingCart, Eye, CheckCircle, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -72,10 +72,9 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
             )}
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-primary text-primary" />
-                <span className="text-sm font-medium text-foreground">{rating}</span>
+                <Package className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-foreground">{reviewCount} sold</span>
               </div>
-              <span className="text-xs text-muted-foreground">({reviewCount} reviews)</span>
             </div>
           </div>
 
@@ -109,7 +108,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   }
 
   return (
-    <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+    <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-primary/30 transition-all duration-300">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden">
         {product.image_url ? (
@@ -188,24 +187,10 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
           {product.name}
         </h3>
 
-        {/* Rating */}
+        {/* Sales count */}
         <div className="flex items-center gap-1.5 mt-2">
-          <div className="flex items-center">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <Star
-                key={star}
-                className={cn(
-                  "w-3.5 h-3.5",
-                  star <= Math.floor(rating)
-                    ? "fill-primary text-primary"
-                    : star <= rating
-                    ? "fill-primary/50 text-primary"
-                    : "fill-muted text-muted"
-                )}
-              />
-            ))}
-          </div>
-          <span className="text-xs text-muted-foreground">({reviewCount})</span>
+          <Package className="w-3.5 h-3.5 text-primary" />
+          <span className="text-xs text-muted-foreground">{reviewCount} sold</span>
         </div>
 
         {/* Price */}

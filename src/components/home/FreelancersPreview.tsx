@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Users, Star, ArrowRight, Briefcase, CheckCircle } from "lucide-react";
+import { Users, ArrowRight, Briefcase, CheckCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFreelancers } from "@/hooks/useFreelancers";
 import { useAuth } from "@/hooks/useAuth";
@@ -65,9 +65,9 @@ const FreelancersPreview = () => {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 text-yellow-500">
-                        <Star className="w-3 h-3 fill-current" />
-                        <span className="text-xs font-medium">{freelancer.rating?.toFixed(1) || "New"}</span>
+                      <div className="flex items-center gap-1 text-primary">
+                        <Briefcase className="w-3 h-3" />
+                        <span className="text-xs font-medium">{freelancer.total_jobs || 0} jobs</span>
                       </div>
                       {freelancer.hourly_rate && (
                         <span className="text-xs font-medium text-primary">
@@ -113,7 +113,7 @@ const FreelancersPreview = () => {
               </li>
               <li className="flex items-center gap-3 text-foreground">
                 <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Star className="w-4 h-4 text-primary" />
+                  <CheckCircle className="w-4 h-4 text-primary" />
                 </div>
                 <span>Build reputation with client reviews</span>
               </li>

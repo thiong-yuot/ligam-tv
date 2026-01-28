@@ -72,7 +72,7 @@ const FeaturesGrid = () => {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group relative p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 hover:shadow-lg animate-fade-in"
+              className="group relative p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 animate-fade-in"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               {/* Gradient Background */}

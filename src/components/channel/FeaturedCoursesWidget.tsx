@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Star, ArrowRight } from "lucide-react";
+import { BookOpen, Users, ArrowRight } from "lucide-react";
 import { useCourses, Course } from "@/hooks/useCourses";
 
 interface FeaturedCoursesWidgetProps {
@@ -51,8 +51,8 @@ const FeaturedCoursesWidget = ({ creatorId }: FeaturedCoursesWidgetProps) => {
                 </p>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                    <span>{course.average_rating.toFixed(1)}</span>
+                    <Users className="w-3 h-3 text-primary" />
+                    <span>{course.total_enrollments} enrolled</span>
                   </div>
                   <span>•</span>
                   <span>{course.price === 0 ? "Free" : `$${course.price}`}</span>

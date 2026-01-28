@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Star, X } from "lucide-react";
+import { Users, X } from "lucide-react";
 import { COURSE_CATEGORIES, COURSE_LEVELS } from "@/hooks/useCourses";
 
 interface CoursesSidebarProps {
@@ -139,8 +139,8 @@ const CoursesSidebar = ({
                 "Any Rating"
               ) : (
                 <>
-                  <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                  {rating}+
+                  <Users className="w-4 h-4 text-primary" />
+                  {rating}+ enrolled
                 </>
               )}
             </button>

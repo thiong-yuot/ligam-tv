@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Star, Clock, ExternalLink } from "lucide-react";
+import { Briefcase, Clock, ExternalLink } from "lucide-react";
 
 interface ServicePackage {
   id: string;
@@ -54,8 +54,8 @@ const FeaturedServicesWidget = ({
         <p className="text-xs text-muted-foreground">{freelancer.title}</p>
         {freelancer.rating && (
           <div className="flex items-center gap-1 mt-1">
-            <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
-            <span className="text-xs text-foreground">{freelancer.rating.toFixed(1)}</span>
+            <Briefcase className="w-3 h-3 text-primary" />
+            <span className="text-xs text-foreground">Verified Pro</span>
           </div>
         )}
       </div>

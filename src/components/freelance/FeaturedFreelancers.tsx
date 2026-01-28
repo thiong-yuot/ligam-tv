@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight, Star, CheckCircle, TrendingUp } from "lucide-react";
+import { ChevronLeft, ChevronRight, CheckCircle, TrendingUp, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -94,10 +94,9 @@ const FeaturedFreelancers = ({ freelancers }: FeaturedFreelancersProps) => {
 
             {/* Stats */}
             <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-1 text-amber-500">
-                <Star className="w-4 h-4 fill-current" />
-                <span className="font-bold">{freelancer.rating?.toFixed(1) || "5.0"}</span>
-                <span className="text-muted-foreground">({freelancer.total_jobs || 0})</span>
+              <div className="flex items-center gap-1 text-primary">
+                <Briefcase className="w-4 h-4" />
+                <span className="font-bold">{freelancer.total_jobs || 0} jobs</span>
               </div>
               {freelancer.hourly_rate && (
                 <span className="font-semibold text-foreground">

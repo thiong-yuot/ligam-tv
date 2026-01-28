@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Star, Users, CheckCircle, BookOpen, MessageCircle, Heart, GraduationCap } from "lucide-react";
+import { Users, CheckCircle, BookOpen, MessageCircle, Heart, GraduationCap, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -64,9 +64,9 @@ const TeacherCard = ({ teacher, viewMode = "grid" }: TeacherCardProps) => {
             </div>
 
             <div className="flex items-center gap-4 mt-2 text-sm">
-              <div className="flex items-center gap-1 text-amber-500">
-                <Star className="w-4 h-4 fill-current" />
-                <span className="font-medium">{teacher.rating?.toFixed(1)}</span>
+              <div className="flex items-center gap-1 text-primary">
+                <Briefcase className="w-4 h-4" />
+                <span className="font-medium">{teacher.courses} courses</span>
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
                 <Users className="w-4 h-4" />
@@ -106,7 +106,7 @@ const TeacherCard = ({ teacher, viewMode = "grid" }: TeacherCardProps) => {
   }
 
   return (
-    <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+    <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300">
       {/* Header with Avatar */}
       <div className="relative p-4 pb-0">
         <div className="flex items-start gap-3">
@@ -138,14 +138,9 @@ const TeacherCard = ({ teacher, viewMode = "grid" }: TeacherCardProps) => {
       {/* Stats */}
       <div className="p-4">
         <div className="flex items-center justify-between text-sm mb-3">
-          <div className="flex items-center gap-1 text-amber-500">
-            <Star className="w-4 h-4 fill-current" />
-            <span className="font-medium">{teacher.rating?.toFixed(1)}</span>
-            <span className="text-muted-foreground">rating</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="text-lg font-bold text-foreground">{teacher.courses}</span>
-            <span className="text-muted-foreground text-xs">courses</span>
+          <div className="flex items-center gap-1 text-primary">
+            <Briefcase className="w-4 h-4" />
+            <span className="font-medium">{teacher.courses} courses</span>
           </div>
         </div>
 

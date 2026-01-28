@@ -7,7 +7,7 @@ import {
   Clapperboard, 
   Box, 
   Users,
-  Star,
+  Briefcase,
   ChevronDown,
   ChevronUp,
   Sparkles
@@ -138,8 +138,7 @@ const FreelanceSidebar = ({
                         "Any"
                       ) : (
                         <span className="flex items-center gap-1">
-                          {rating}
-                          <Star className="w-3 h-3 fill-current" />
+                          {rating}+
                         </span>
                       )}
                     </Button>
@@ -156,7 +155,7 @@ const FreelanceSidebar = ({
                 </label>
                 <div className="space-y-2">
                   <Button variant="outline" size="sm" className="w-full justify-start">
-                    <Star className="w-4 h-4 mr-2 text-primary fill-primary" />
+                    <Briefcase className="w-4 h-4 mr-2 text-primary" />
                     Top Rated
                   </Button>
                   <Button variant="outline" size="sm" className="w-full justify-start">
