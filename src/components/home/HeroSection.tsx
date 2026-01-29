@@ -15,6 +15,13 @@ const HeroSection = () => {
     }
   };
 
+  const features = [
+    { icon: Play, title: "Live Streams", description: "Watch creators worldwide", to: "/browse" },
+    { icon: ShoppingBag, title: "Marketplace", description: "Shop exclusive products", to: "/shop" },
+    { icon: Users, title: "Freelancers", description: "Hire professionals", to: "/freelance" },
+    { icon: GraduationCap, title: "Learn Skills", description: "Expert-led courses", to: "/courses", highlight: true },
+  ];
+
   return (
     <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Animated Background */}
@@ -29,32 +36,30 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />
 
       <div className="w-full px-4 md:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-[1920px] mx-auto">
-          {/* Left Content */}
-          <div className="space-y-8">
+        <div className="max-w-[1920px] mx-auto">
+          {/* Centered Content */}
+          <div className="flex flex-col items-center text-center mb-16">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-8">
               <Sparkles className="w-4 h-4" />
               <span className="text-sm font-medium">Built for Everyone, Not Just Streamers</span>
             </div>
 
-            {/* Headline */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold leading-tight">
+            {/* Headline - Horizontal Layout */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold leading-tight mb-6">
               <span className="text-foreground">Create.</span>
-              <br />
-              <span className="text-primary">Watch.</span>
-              <br />
+              <span className="text-primary mx-4">Watch.</span>
               <span className="text-foreground">Thrive.</span>
             </h1>
 
-            <p className="text-xl text-muted-foreground max-w-lg leading-relaxed">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-10">
               Ligam.tv is built for all creators—stream, teach, sell, or just watch. 
               With Eelai AI, a built-in shop, freelance tools, and courses, everyone 
               has a place to create, discover, and thrive.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <Link to="/browse">
                 <Button size="xl" className="glow group">
                   <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -68,57 +73,27 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {/* Right Content - Feature Cards */}
-          <div className="relative hidden lg:block">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Streaming Card */}
+          {/* Feature Cards - Horizontal Row */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+            {features.map((feature, index) => (
               <Link 
-                to="/browse" 
-                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1"
+                key={index}
+                to={feature.to} 
+                className={`group p-5 backdrop-blur-sm border rounded-2xl transition-all hover:-translate-y-1 ${
+                  feature.highlight 
+                    ? "bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 hover:border-primary" 
+                    : "bg-card/80 border-border hover:border-primary/50"
+                }`}
               >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Play className="w-7 h-7 text-primary" />
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform ${
+                  feature.highlight ? "bg-primary/20" : "bg-primary/10"
+                }`}>
+                  <feature.icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Live Streams</h3>
-                <p className="text-muted-foreground text-sm">Watch live content from creators worldwide</p>
+                <h3 className="text-lg font-bold text-foreground mb-1">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm">{feature.description}</p>
               </Link>
-
-              {/* Shop Card */}
-              <Link 
-                to="/shop" 
-                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 mt-8"
-              >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <ShoppingBag className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Marketplace</h3>
-                <p className="text-muted-foreground text-sm">Shop exclusive products from sellers</p>
-              </Link>
-
-              {/* Freelance Card */}
-              <Link 
-                to="/freelance" 
-                className="group p-6 bg-card/80 backdrop-blur-sm border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1"
-              >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Users className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Freelancers</h3>
-                <p className="text-muted-foreground text-sm">Hire talented professionals</p>
-              </Link>
-
-              {/* Courses Card */}
-              <Link 
-                to="/courses" 
-                className="group p-6 bg-gradient-to-br from-primary/20 to-primary/5 backdrop-blur-sm border border-primary/30 rounded-2xl hover:border-primary transition-all hover:-translate-y-1 mt-8"
-              >
-                <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <GraduationCap className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">Learn Skills</h3>
-                <p className="text-muted-foreground text-sm">Courses from expert creators</p>
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
       </div>
