@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Play, ShoppingBag, Users, ArrowRight, Sparkles, GraduationCap } from "lucide-react";
+import { Play, ArrowRight, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const HeroSection = () => {
@@ -15,15 +15,8 @@ const HeroSection = () => {
     }
   };
 
-  const features = [
-    { icon: Play, title: "Live Streams", description: "Watch creators worldwide", to: "/browse" },
-    { icon: ShoppingBag, title: "Marketplace", description: "Shop exclusive products", to: "/shop" },
-    { icon: Users, title: "Freelancers", description: "Hire professionals", to: "/freelance" },
-    { icon: GraduationCap, title: "Learn Skills", description: "Expert-led courses", to: "/courses", highlight: true },
-  ];
-
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[80vh] flex items-center overflow-hidden">
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
@@ -38,11 +31,11 @@ const HeroSection = () => {
       <div className="w-full px-4 md:px-6 lg:px-8 relative z-10">
         <div className="max-w-[1920px] mx-auto">
           {/* Centered Content */}
-          <div className="flex flex-col items-center text-center mb-16">
+          <div className="flex flex-col items-center text-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary mb-8">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Built for Everyone, Not Just Streamers</span>
+              <span className="text-sm font-medium">Built for Everyone</span>
             </div>
 
             {/* Headline - Horizontal Layout */}
@@ -52,10 +45,8 @@ const HeroSection = () => {
               <span className="text-foreground">Thrive.</span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed mb-10">
-              Ligam.tv is built for all creators—stream, teach, sell, or just watch. 
-              With Eelai AI, a built-in shop, freelance tools, and courses, everyone 
-              has a place to create, discover, and thrive.
+            <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-10">
+              Stream, teach, sell, or discover. Your platform, your way.
             </p>
 
             {/* CTA Buttons */}
@@ -71,29 +62,6 @@ const HeroSection = () => {
                 Start Creating
               </Button>
             </div>
-          </div>
-
-          {/* Feature Cards - Horizontal Row */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
-            {features.map((feature, index) => (
-              <Link 
-                key={index}
-                to={feature.to} 
-                className={`group p-5 backdrop-blur-sm border rounded-2xl transition-all hover:-translate-y-1 ${
-                  feature.highlight 
-                    ? "bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 hover:border-primary" 
-                    : "bg-card/80 border-border hover:border-primary/50"
-                }`}
-              >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform ${
-                  feature.highlight ? "bg-primary/20" : "bg-primary/10"
-                }`}>
-                  <feature.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-1">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm">{feature.description}</p>
-              </Link>
-            ))}
           </div>
         </div>
       </div>
