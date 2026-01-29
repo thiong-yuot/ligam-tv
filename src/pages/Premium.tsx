@@ -3,22 +3,13 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { 
-  Star, 
-  Zap, 
-  TrendingUp, 
   Eye, 
+  TrendingUp, 
   Award,
   Clock,
   Check,
   Sparkles,
-  Video,
-  ShoppingBag,
-  Users,
-  GraduationCap,
-  Phone,
-  Calendar,
-  Camera,
-  Headphones
+  ArrowRight
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -76,21 +67,54 @@ const Premium = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
-        <div className="container mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-            <Sparkles className="w-4 h-4" />
-            Get Featured
+      {/* Hero Section - Redesigned */}
+      <section className="relative min-h-[60vh] flex items-center overflow-hidden pt-20">
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-20" />
+
+        <div className="w-full px-4 md:px-6 lg:px-8 relative z-10">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">Get Featured on Ligam.tv</span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold leading-tight">
+              <span className="text-foreground">Boost.</span>
+              <br />
+              <span className="text-primary">Grow.</span>
+              <br />
+              <span className="text-foreground">Shine.</span>
+            </h1>
+
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Get premium placement and reach new audiences. Stand out from 
+              the crowd with featured spots that put your content front and center.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button size="xl" className="glow group">
+                View Packages
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Link to="/browse">
+                <Button variant="outline" size="xl">
+                  Explore Platform
+                </Button>
+              </Link>
+            </div>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-foreground mb-6">
-            Boost Your <span className="text-primary">Visibility</span>
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-            Get featured placement on Ligam.tv and reach new viewers. 
-            Stand out from the crowd and grow your audience faster.
-          </p>
         </div>
       </section>
 
@@ -168,80 +192,6 @@ const Premium = () => {
                 </Button>
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Premium Services Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-primary/5 to-transparent border-t border-border">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Headphones className="w-4 h-4" />
-              Premium Support
-            </div>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-              Hands-On Setup Assistance
-            </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Our team walks you through OBS configuration, store setup, and content strategy — 
-              so you launch with confidence, not guesswork.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto mb-12">
-            {[
-              { 
-                icon: Video, 
-                title: "Streaming Setup", 
-                description: "OBS configuration, overlays, and broadcast optimization"
-              },
-              { 
-                icon: ShoppingBag, 
-                title: "Store Setup", 
-                description: "Product listings, pricing strategy, and storefront design"
-              },
-              { 
-                icon: GraduationCap, 
-                title: "Course Setup", 
-                description: "Structure courses with modules and learning paths"
-              },
-              { 
-                icon: Phone, 
-                title: "Strategy Call", 
-                description: "Personal consultation for goals and growth strategy"
-              },
-            ].map((service, index) => (
-              <Card key={index} className="p-6 bg-card border-border hover:border-primary/50 transition-colors group">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <service.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {service.description}
-                </p>
-              </Card>
-            ))}
-          </div>
-
-          {/* CTA for Premium Services */}
-          <div className="text-center">
-            <Card className="inline-flex flex-col sm:flex-row items-center gap-6 p-8 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-                  <Calendar className="w-7 h-7 text-primary" />
-                </div>
-                <div className="text-left">
-                  <h3 className="text-lg font-semibold text-foreground">Book a Meeting</h3>
-                  <p className="text-sm text-muted-foreground">Schedule a call to discuss your needs</p>
-                </div>
-              </div>
-              <Button size="lg" className="glow">
-                Schedule Consultation
-              </Button>
-            </Card>
           </div>
         </div>
       </section>
