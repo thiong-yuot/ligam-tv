@@ -20,8 +20,10 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
     ? Math.round(((product.price - product.sale_price!) / product.price) * 100)
     : 0;
   const displayPrice = product.sale_price ?? product.price;
-  const isOutOfStock = product.stock_quantity === 0;
-  const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
+  // -1 means unlimited stock (digital products), null also means available
+  const isDigitalOrUnlimited = product.stock_quantity === null || product.stock_quantity < 0;
+  const isOutOfStock = !isDigitalOrUnlimited && product.stock_quantity === 0;
+  const isLowStock = !isDigitalOrUnlimited && product.stock_quantity > 0 && product.stock_quantity <= 5;
 
   // Use real seller data from profile or fallback
   const seller = {
