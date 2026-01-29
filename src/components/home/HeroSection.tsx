@@ -16,7 +16,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-[80vh] flex items-center overflow-hidden">
+    <section className="relative py-20 md:py-28 flex items-center overflow-hidden">
       {/* Clean Background */}
       <div className="absolute inset-0 bg-background" />
       
