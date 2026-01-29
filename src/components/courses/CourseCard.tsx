@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -81,7 +81,25 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
           </h3>
 
           {/* Instructor */}
-          {showInstructor && (
+          {showInstructor && creatorProfile?.username && (
+            <Link 
+              to={`/@${creatorProfile.username}`}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Avatar className="w-6 h-6">
+                <AvatarImage src={instructor.avatar} />
+                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                  {instructor.name.split(' ').map(n => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-xs text-muted-foreground truncate hover:text-primary">{instructor.name}</span>
+              {instructor.isVerified && (
+                <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
+              )}
+            </Link>
+          )}
+          {showInstructor && !creatorProfile?.username && (
             <div className="flex items-center gap-2">
               <Avatar className="w-6 h-6">
                 <AvatarImage src={instructor.avatar} />
@@ -90,9 +108,6 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
                 </AvatarFallback>
               </Avatar>
               <span className="text-xs text-muted-foreground truncate">{instructor.name}</span>
-              {instructor.isVerified && (
-                <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
-              )}
             </div>
           )}
 
