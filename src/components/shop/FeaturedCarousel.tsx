@@ -25,7 +25,7 @@ const slides: FeaturedSlide[] = [
     cta: "Shop New",
     badge: "Just Landed",
     badgeIcon: Sparkles,
-    gradient: "from-primary/20 via-primary/10 to-transparent",
+    gradient: "from-muted/50 to-transparent",
   },
   {
     id: "2",
@@ -36,7 +36,7 @@ const slides: FeaturedSlide[] = [
     cta: "View Trending",
     badge: "Hot",
     badgeIcon: TrendingUp,
-    gradient: "from-orange-500/20 via-orange-500/10 to-transparent",
+    gradient: "from-muted/50 to-transparent",
   },
   {
     id: "3",
@@ -47,7 +47,7 @@ const slides: FeaturedSlide[] = [
     cta: "Shop Deals",
     badge: "Sale",
     badgeIcon: Tag,
-    gradient: "from-destructive/20 via-destructive/10 to-transparent",
+    gradient: "from-muted/50 to-transparent",
   },
 ];
 
@@ -84,8 +84,8 @@ const FeaturedCarousel = () => {
       <div className="relative z-10 flex items-center justify-between p-8 md:p-12 min-h-[240px]">
         <div className="max-w-lg">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-4">
-            <BadgeIcon className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted border border-border text-foreground text-sm font-medium mb-4">
+            <BadgeIcon className="w-4 h-4 text-primary" />
             {slide.badge}
           </div>
 
@@ -109,9 +109,8 @@ const FeaturedCarousel = () => {
         {/* Decorative Elements */}
         <div className="hidden lg:flex items-center justify-center w-64 h-64">
           <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-3xl animate-pulse" />
-            <div className="relative w-48 h-48 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/20 flex items-center justify-center">
-              <BadgeIcon className="w-20 h-20 text-primary" />
+            <div className="relative w-48 h-48 rounded-2xl bg-muted border border-border flex items-center justify-center">
+              <BadgeIcon className="w-20 h-20 text-muted-foreground" />
             </div>
           </div>
         </div>
