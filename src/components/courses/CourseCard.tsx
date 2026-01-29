@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,6 +12,7 @@ interface CourseCardProps {
 }
 
 const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
+  const navigate = useNavigate();
   const { data: creatorProfile } = useCreatorProfile(course.creator_id);
   
   // Use real creator data or fallback
@@ -29,9 +30,22 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
   const isPopular = course.total_enrollments > 5000;
   const isBestseller = course.average_rating >= 4.7 && course.total_reviews > 500;
 
+  const handleCardClick = () => {
+    navigate(`/courses/${course.id}`);
+  };
+
+  const handleInstructorClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (creatorProfile?.username) {
+      navigate(`/@${creatorProfile.username}`);
+    }
+  };
+
   return (
-    <Link to={`/courses/${course.id}`}>
-      <Card className="group h-full overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1">
+    <Card 
+      className="group h-full overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      onClick={handleCardClick}
+    >
         {/* Thumbnail */}
         <div className="relative aspect-video overflow-hidden">
           {course.thumbnail_url ? (
@@ -80,12 +94,11 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
             {course.title}
           </h3>
 
-          {/* Instructor */}
-          {showInstructor && creatorProfile?.username && (
-            <Link 
-              to={`/@${creatorProfile.username}`}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-              onClick={(e) => e.stopPropagation()}
+        {/* Instructor */}
+          {showInstructor && (
+            <div 
+              className={`flex items-center gap-2 ${creatorProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
+              onClick={creatorProfile?.username ? handleInstructorClick : undefined}
             >
               <Avatar className="w-6 h-6">
                 <AvatarImage src={instructor.avatar} />
@@ -93,21 +106,12 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
                   {instructor.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>
               </Avatar>
-              <span className="text-xs text-muted-foreground truncate hover:text-primary">{instructor.name}</span>
+              <span className={`text-xs text-muted-foreground truncate ${creatorProfile?.username ? 'hover:text-primary' : ''}`}>
+                {instructor.name}
+              </span>
               {instructor.isVerified && (
                 <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
               )}
-            </Link>
-          )}
-          {showInstructor && !creatorProfile?.username && (
-            <div className="flex items-center gap-2">
-              <Avatar className="w-6 h-6">
-                <AvatarImage src={instructor.avatar} />
-                <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                  {instructor.name.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              <span className="text-xs text-muted-foreground truncate">{instructor.name}</span>
             </div>
           )}
 
@@ -168,7 +172,6 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
           </div>
         </CardContent>
       </Card>
-    </Link>
   );
 };
 
