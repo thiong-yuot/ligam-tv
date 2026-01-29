@@ -2,40 +2,30 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, Clock, PlayCircle, Award, TrendingUp } from "lucide-react";
+import { Users, Clock, PlayCircle, CheckCircle, TrendingUp } from "lucide-react";
 import { Course } from "@/hooks/useCourses";
-import profile3 from "@/assets/profile-3.jpg";
-import profile4 from "@/assets/profile-4.jpg";
+import { useCreatorProfile } from "@/hooks/useCreatorProfile";
 
 interface CourseCardProps {
   course: Course;
   showInstructor?: boolean;
 }
 
-// Mock instructor data based on creator_id
-const getInstructor = (creatorId: string) => {
-  const instructors: Record<string, { name: string; avatar: string; title: string }> = {
-    "00000000-0000-0000-0000-000000000001": {
-      name: "Sarah Chen",
-      avatar: profile3,
-      title: "Senior Developer"
-    },
-    "00000000-0000-0000-0000-000000000002": {
-      name: "Marcus Thompson", 
-      avatar: profile4,
-      title: "Marketing Expert"
-    }
-  };
-  return instructors[creatorId] || { name: "Instructor", avatar: "", title: "Expert" };
-};
-
 const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
+  const { data: creatorProfile } = useCreatorProfile(course.creator_id);
+  
+  // Use real creator data or fallback
+  const instructor = {
+    name: creatorProfile?.display_name || creatorProfile?.username || "Instructor",
+    avatar: creatorProfile?.avatar_url || "",
+    isVerified: creatorProfile?.is_verified || false,
+  };
+
   const formatPrice = (price: number) => {
     if (price === 0) return "Free";
     return `$${price.toFixed(2)}`;
   };
 
-  const instructor = getInstructor(course.creator_id);
   const isPopular = course.total_enrollments > 5000;
   const isBestseller = course.average_rating >= 4.7 && course.total_reviews > 500;
 
@@ -100,7 +90,9 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
                 </AvatarFallback>
               </Avatar>
               <span className="text-xs text-muted-foreground truncate">{instructor.name}</span>
-              <Award className="w-3 h-3 text-primary flex-shrink-0" />
+              {instructor.isVerified && (
+                <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
+              )}
             </div>
           )}
 
