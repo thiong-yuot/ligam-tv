@@ -124,18 +124,18 @@ const Footer = () => {
             {/* Stream Setup Promo Card */}
             <Link 
               to="/stream-setup"
-              className="mt-6 block p-4 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 hover:border-primary/40 transition-all group"
+              className="mt-6 block p-4 rounded-xl bg-muted border border-border hover:border-muted-foreground/30 transition-all group"
             >
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Video className="w-4 h-4 text-primary-foreground" />
+                <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center">
+                  <Video className="w-4 h-4 text-foreground" />
                 </div>
                 <span className="text-sm font-semibold text-foreground">Start Streaming</span>
               </div>
               <p className="text-xs text-muted-foreground mb-2">
                 Learn how to set up OBS, get your stream key, and go live in minutes.
               </p>
-              <span className="inline-flex items-center text-xs text-primary group-hover:gap-2 transition-all">
+              <span className="inline-flex items-center text-xs text-muted-foreground group-hover:text-foreground group-hover:gap-2 transition-all">
                 Read the guide <ArrowRight className="w-3 h-3 ml-1" />
               </span>
             </Link>
