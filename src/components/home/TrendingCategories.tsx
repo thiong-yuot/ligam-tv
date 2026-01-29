@@ -65,7 +65,7 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5" />
+                    <div className="w-full h-full bg-muted" />
                   )}
                   
                   {/* Overlay */}
