@@ -1,8 +1,10 @@
 import { Heart, ShoppingCart, Eye, CheckCircle, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Product } from "@/hooks/useProducts";
+import { useSellerProfile } from "@/hooks/useCreatorProfile";
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +13,8 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardProps) => {
+  const { data: sellerProfile } = useSellerProfile(product.seller_id || undefined);
+  
   const hasDiscount = product.sale_price !== null && product.sale_price < product.price;
   const discountPercent = hasDiscount
     ? Math.round(((product.price - product.sale_price!) / product.price) * 100)
@@ -19,16 +23,15 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   const isOutOfStock = product.stock_quantity === 0;
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
 
-  // Mock seller data - in real app this would come from product.seller
+  // Use real seller data from profile or fallback
   const seller = {
-    name: "Ligam Store",
-    verified: true,
-    avatar: null,
+    name: sellerProfile?.display_name || sellerProfile?.username || "Ligam Store",
+    verified: sellerProfile?.is_verified || false,
+    avatar: sellerProfile?.avatar_url || null,
   };
 
-  // Mock rating - in real app this would come from product.rating
-  const rating = 4.5;
-  const reviewCount = 128;
+  // Mock sold count - in real app this would come from orders
+  const soldCount = 128;
 
   if (viewMode === "list") {
     return (
@@ -73,7 +76,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-center gap-1">
                 <Package className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">{reviewCount} sold</span>
+                <span className="text-sm font-medium text-foreground">{soldCount} sold</span>
               </div>
             </div>
           </div>
@@ -170,12 +173,15 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
       <div className="p-4">
         {/* Seller Info */}
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-            <span className="text-xs font-bold text-primary">L</span>
-          </div>
-          <span className="text-xs text-muted-foreground">{seller.name}</span>
+          <Avatar className="w-5 h-5">
+            <AvatarImage src={seller.avatar || undefined} />
+            <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
+              {seller.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <span className="text-xs text-muted-foreground truncate">{seller.name}</span>
           {seller.verified && (
-            <CheckCircle className="w-3 h-3 text-primary" />
+            <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
           )}
         </div>
 
@@ -190,7 +196,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
         {/* Sales count */}
         <div className="flex items-center gap-1.5 mt-2">
           <Package className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs text-muted-foreground">{reviewCount} sold</span>
+          <span className="text-xs text-muted-foreground">{soldCount} sold</span>
         </div>
 
         {/* Price */}
