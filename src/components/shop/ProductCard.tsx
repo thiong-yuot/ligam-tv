@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Eye, CheckCircle, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,15 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardProps) => {
+  const navigate = useNavigate();
   const { data: sellerProfile } = useSellerProfile(product.seller_id || undefined);
+  
+  const handleSellerClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (sellerProfile?.username) {
+      navigate(`/@${sellerProfile.username}`);
+    }
+  };
   
   const hasDiscount = product.sale_price !== null && product.sale_price < product.price;
   const discountPercent = hasDiscount
@@ -175,37 +183,23 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
       {/* Content */}
       <div className="p-4">
         {/* Seller Info */}
-        {sellerProfile?.username ? (
-          <Link 
-            to={`/@${sellerProfile.username}`}
-            className="flex items-center gap-2 mb-2 hover:opacity-80 transition-opacity"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Avatar className="w-5 h-5">
-              <AvatarImage src={seller.avatar || undefined} />
-              <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
-                {seller.name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-xs text-muted-foreground truncate hover:text-primary">{seller.name}</span>
-            {seller.verified && (
-              <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
-            )}
-          </Link>
-        ) : (
-          <div className="flex items-center gap-2 mb-2">
-            <Avatar className="w-5 h-5">
-              <AvatarImage src={seller.avatar || undefined} />
-              <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
-                {seller.name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-xs text-muted-foreground truncate">{seller.name}</span>
-            {seller.verified && (
-              <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
-            )}
-          </div>
-        )}
+        <div 
+          className={`flex items-center gap-2 mb-2 ${sellerProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
+          onClick={sellerProfile?.username ? handleSellerClick : undefined}
+        >
+          <Avatar className="w-5 h-5">
+            <AvatarImage src={seller.avatar || undefined} />
+            <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
+              {seller.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <span className={`text-xs text-muted-foreground truncate ${sellerProfile?.username ? 'hover:text-primary' : ''}`}>
+            {seller.name}
+          </span>
+          {seller.verified && (
+            <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
+          )}
+        </div>
 
         {/* Category */}
         <p className="text-xs text-muted-foreground mb-1">{product.category}</p>
