@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const tokens = [
-  { icon: Flame, name: "Flame", price: "$1", color: "text-muted-foreground" },
-  { icon: Star, name: "Star", price: "$5", color: "text-foreground" },
-  { icon: Gem, name: "Diamond", price: "$10", color: "text-muted-foreground" },
-  { icon: Zap, name: "Lightning", price: "$20", color: "text-foreground" },
+  { icon: Flame, name: "Flame", price: "$1", color: "text-orange-500" },
+  { icon: Star, name: "Star", price: "$5", color: "text-yellow-500" },
+  { icon: Gem, name: "Diamond", price: "$10", color: "text-cyan-400" },
+  { icon: Zap, name: "Lightning", price: "$20", color: "text-primary" },
 ];
 
 const CreatorTokens = () => {
