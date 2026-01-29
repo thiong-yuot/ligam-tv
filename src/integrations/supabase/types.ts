@@ -2070,6 +2070,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_course_enrollments: {
+        Args: { course_id_param: string }
+        Returns: undefined
+      }
       increment_viewer_count: {
         Args: { stream_id: string }
         Returns: undefined
