@@ -90,12 +90,12 @@ const Freelance = () => {
       <Navbar />
 
       {/* Hero Banner */}
-      <section className="pt-24 pb-8 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-primary/5 to-background border-b border-border">
+      <section className="pt-24 pb-8 px-4 md:px-6 lg:px-8 bg-background border-b border-border">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-                <Sparkles className="w-4 h-4" />
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted border border-border text-foreground text-sm font-medium mb-4">
+                <Sparkles className="w-4 h-4 text-primary" />
                 Creator Marketplace
               </div>
               <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
@@ -216,11 +216,11 @@ const Freelance = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-t from-primary/5 to-background border-t border-border">
+      <section className="py-16 px-4 md:px-6 lg:px-8 bg-muted/30 border-t border-border">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              <Sparkles className="w-4 h-4" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted border border-border text-foreground text-sm font-medium mb-4">
+              <Sparkles className="w-4 h-4 text-primary" />
               Join Our Community
             </div>
             <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-4">
