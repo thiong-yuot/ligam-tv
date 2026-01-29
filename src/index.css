@@ -16,7 +16,7 @@
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 100%;
     
-    --primary: 50 100% 50%;
+    --primary: 0 0% 100%;
     --primary-foreground: 0 0% 0%;
     
     --secondary: 0 0% 12%;
@@ -25,7 +25,7 @@
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
     
-    --accent: 50 100% 50%;
+    --accent: 0 0% 100%;
     --accent-foreground: 0 0% 0%;
     
     --destructive: 0 62.8% 45%;
@@ -33,16 +33,16 @@
     
     --border: 0 0% 18%;
     --input: 0 0% 18%;
-    --ring: 50 100% 50%;
+    --ring: 0 0% 100%;
 
     --radius: 0.5rem;
 
-    /* Custom Ligam colors - Pure Black/Yellow/White Theme */
-    --ligam-gold: 50 100% 50%;
-    --ligam-gold-glow: 50 100% 60%;
-    --ligam-amber: 45 100% 50%;
-    --ligam-yellow: 50 100% 55%;
-    --ligam-yellow-glow: 50 100% 65%;
+    /* Custom Ligam colors - Pure Black/White Theme */
+    --ligam-gold: 0 0% 100%;
+    --ligam-gold-glow: 0 0% 90%;
+    --ligam-amber: 0 0% 95%;
+    --ligam-yellow: 0 0% 100%;
+    --ligam-yellow-glow: 0 0% 90%;
     --ligam-dark: 0 0% 4%;
     --ligam-card: 0 0% 8%;
     --ligam-surface: 0 0% 12%;
@@ -58,14 +58,14 @@
     --shadow-glow-yellow: none;
     --shadow-card: none;
 
-    --sidebar-background: 220 20% 10%;
+    --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 45 100% 50%;
-    --sidebar-primary-foreground: 220 20% 10%;
-    --sidebar-accent: 220 15% 18%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 220 15% 20%;
-    --sidebar-ring: 45 100% 50%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 0 0% 100%;
   }
 
   /* Dark class kept for compatibility, same as :root */
@@ -76,31 +76,31 @@
     --card-foreground: 0 0% 100%;
     --popover: 0 0% 8%;
     --popover-foreground: 0 0% 100%;
-    --primary: 50 100% 50%;
+    --primary: 0 0% 100%;
     --primary-foreground: 0 0% 0%;
     --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 15%;
     --muted-foreground: 0 0% 65%;
-    --accent: 50 100% 50%;
+    --accent: 0 0% 100%;
     --accent-foreground: 0 0% 0%;
     --destructive: 0 62.8% 45%;
     --destructive-foreground: 0 0% 100%;
     --border: 0 0% 18%;
     --input: 0 0% 18%;
-    --ring: 50 100% 50%;
+    --ring: 0 0% 100%;
     --ligam-card: 0 0% 8%;
     --ligam-surface: 0 0% 12%;
     --ligam-dark: 0 0% 4%;
     --shadow-card: none;
     --sidebar-background: 0 0% 6%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 50 100% 50%;
+    --sidebar-primary: 0 0% 100%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 12%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 50 100% 50%;
+    --sidebar-ring: 0 0% 100%;
   }
 }
 
