@@ -52,6 +52,7 @@ import StreamSetup from "./pages/StreamSetup";
 import Affiliates from "./pages/Affiliates";
 import Discovery from "./pages/Discovery";
 import Reels from "./pages/Reels";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const App = () => (
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/eelai" element={<Discovery />} />
                 <Route path="/reels" element={<Reels />} />
+                <Route path="/@:username" element={<UserProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
