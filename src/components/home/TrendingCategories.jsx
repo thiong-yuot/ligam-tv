@@ -10,10 +10,10 @@ const TrendingCategories = ({ categories, isLoading }) => {
   };
 
   return (
-    <section className="py-16 px-4 md:px-6 lg:px-8">
+    <section className="py-10 md:py-16 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <div className="flex items-center gap-3 md:gap-4">
             <TrendingUp className="w-6 h-6 text-primary" />
             <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
               Trending Categories
