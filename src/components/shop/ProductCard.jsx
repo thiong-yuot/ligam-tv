@@ -117,7 +117,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }) => {
   return (
     <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden">
         {product.image_url ? (
           <img
             src={product.image_url}
@@ -126,41 +126,41 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }) => {
           />
         ) : (
           <div className="w-full h-full bg-muted flex items-center justify-center">
-            <ShoppingCart className="w-12 h-12 text-muted-foreground" />
+            <ShoppingCart className="w-8 h-8 text-muted-foreground" />
           </div>
         )}
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
+        <div className="absolute top-2 left-2 flex flex-col gap-1.5">
           {hasDiscount && (
-            <Badge className="bg-destructive text-destructive-foreground">
+            <Badge className="bg-destructive text-destructive-foreground text-xs">
               -{discountPercent}%
             </Badge>
           )}
           {isLowStock && (
-            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-warning text-warning">
+            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-warning text-warning text-xs">
               Low Stock
             </Badge>
           )}
           {isOutOfStock && (
-            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm">
+            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm text-xs">
               Out of Stock
             </Badge>
           )}
         </div>
 
         {/* Quick Actions */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="w-9 h-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background hover:text-primary transition-colors">
-            <Heart className="w-4 h-4" />
+        <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button className="w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background hover:text-primary transition-colors">
+            <Heart className="w-3.5 h-3.5" />
           </button>
-          <button className="w-9 h-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background hover:text-primary transition-colors">
-            <Eye className="w-4 h-4" />
+          <button className="w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background hover:text-primary transition-colors">
+            <Eye className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* Quick Add Button */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-0 left-0 right-0 p-2 bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             className="w-full"
             size="sm"
@@ -174,15 +174,15 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }) => {
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-3">
         {/* Seller Info */}
         <div 
-          className={`flex items-center gap-2 mb-2 ${sellerProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
+          className={`flex items-center gap-1.5 mb-1.5 ${sellerProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
           onClick={sellerProfile?.username ? handleSellerClick : undefined}
         >
-          <Avatar className="w-5 h-5">
+          <Avatar className="w-4 h-4">
             <AvatarImage src={seller.avatar || undefined} />
-            <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
+            <AvatarFallback className="bg-primary/20 text-primary text-[10px] font-bold">
               {seller.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -194,30 +194,27 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }) => {
           )}
         </div>
 
-        {/* Category */}
-        <p className="text-xs text-muted-foreground mb-1">{product.category}</p>
-
         {/* Title */}
-        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[2.5rem]">
+        <h3 className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[2.5rem]">
           {product.name}
         </h3>
 
-        {/* Sales count */}
-        <div className="flex items-center gap-1.5 mt-2">
-          <Package className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs text-muted-foreground">{soldCount} sold</span>
-        </div>
-
         {/* Price */}
-        <div className="flex items-center gap-2 mt-3">
-          <span className="text-lg font-bold text-primary">
+        <div className="flex items-center gap-2 mt-2">
+          <span className="text-base font-bold text-primary">
             ${displayPrice.toFixed(2)}
           </span>
           {hasDiscount && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span className="text-xs text-muted-foreground line-through">
               ${product.price.toFixed(2)}
             </span>
           )}
+        </div>
+
+        {/* Sales count */}
+        <div className="flex items-center gap-1 mt-1.5">
+          <Package className="w-3 h-3 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">{soldCount} sold</span>
         </div>
       </div>
     </div>
