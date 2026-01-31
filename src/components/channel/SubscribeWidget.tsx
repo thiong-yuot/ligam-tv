@@ -23,7 +23,6 @@ const SubscribeWidget = ({
       name: 'Creator',
       price: SUBSCRIPTION_TIERS.creator.price,
       icon: Sparkles,
-      color: 'from-primary to-amber-400',
       features: ['HD Streams', 'Custom Emotes', 'No Ads'],
     },
     {
@@ -31,7 +30,6 @@ const SubscribeWidget = ({
       name: 'Pro',
       price: SUBSCRIPTION_TIERS.pro.price,
       icon: Crown,
-      color: 'from-amber-500 to-orange-500',
       features: ['4K Streams', 'All Features', '+10% Revenue'],
     },
   ];
@@ -59,8 +57,8 @@ const SubscribeWidget = ({
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${tier.color} flex items-center justify-center`}>
-                    <TierIcon className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <TierIcon className="w-4 h-4 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground text-sm">{tier.name}</p>

@@ -47,10 +47,7 @@
     --ligam-card: 0 0% 8%;
     --ligam-surface: 0 0% 12%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-amber)));
-    --gradient-glow: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-yellow-glow)));
-    --gradient-gold: linear-gradient(135deg, hsl(var(--ligam-gold)), hsl(var(--ligam-yellow)));
+    /* Gradients - removed for clean look */
 
     /* Shadows - removed for clean look */
     --shadow-glow: none;
@@ -121,32 +118,31 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-primary);
+    @apply text-primary;
   }
 
   .bg-gradient-primary {
-    background-image: var(--gradient-primary);
+    @apply bg-primary;
   }
 
   .glow {
-    box-shadow: none;
+    /* No glow effect */
   }
 
   .glow-lg {
-    box-shadow: none;
+    /* No glow effect */
   }
 
   .glow-sm {
-    box-shadow: none;
+    /* No glow effect */
   }
 
   .card-shadow {
-    box-shadow: var(--shadow-card);
+    /* No shadow */
   }
 
   .border-glow {
-    border-color: hsl(var(--ligam-gold) / 0.3);
+    @apply border-border;
   }
 
   /* Hide scrollbar utility */

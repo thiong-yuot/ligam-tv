@@ -43,7 +43,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
 
   return (
     <Card 
-      className="group h-full overflow-hidden bg-card border-border hover:border-primary/50 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      className="group h-full overflow-hidden bg-card border-border hover:border-muted-foreground/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
       onClick={handleCardClick}
     >
         {/* Thumbnail */}
@@ -55,8 +55,8 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-              <PlayCircle className="w-12 h-12 text-primary/50" />
+            <div className="w-full h-full bg-muted flex items-center justify-center">
+              <PlayCircle className="w-12 h-12 text-muted-foreground" />
             </div>
           )}
           
