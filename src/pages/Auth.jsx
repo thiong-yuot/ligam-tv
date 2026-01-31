@@ -8,11 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, User, ArrowLeft, Loader2, AtSign } from "lucide-react";
 import LigamLogo from "@/components/LigamLogo";
 
-interface AuthProps {
-  mode: "login" | "signup";
-}
-
-const Auth = ({ mode }: AuthProps) => {
+const Auth = ({ mode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,7 +39,7 @@ const Auth = ({ mode }: AuthProps) => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -59,7 +55,7 @@ const Auth = ({ mode }: AuthProps) => {
         description: "Check your email for a password reset link.",
       });
       setResetMode(false);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
@@ -70,13 +66,12 @@ const Auth = ({ mode }: AuthProps) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
       if (mode === "signup") {
-        // Validate confirm password
         if (password !== confirmPassword) {
           toast({
             variant: "destructive",
@@ -87,7 +82,6 @@ const Auth = ({ mode }: AuthProps) => {
           return;
         }
 
-        // Validate username
         if (!username.trim()) {
           toast({
             variant: "destructive",
@@ -123,7 +117,6 @@ const Auth = ({ mode }: AuthProps) => {
             throw error;
           }
         } else {
-          // If referral code exists, create the referral record
           if (referralCode && signUpData.user) {
             const { data: affiliate } = await supabase
               .from("affiliates")
@@ -169,7 +162,7 @@ const Auth = ({ mode }: AuthProps) => {
           });
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
@@ -249,7 +242,6 @@ const Auth = ({ mode }: AuthProps) => {
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        {/* Back to home */}
         <Link 
           to="/" 
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors"
@@ -258,7 +250,6 @@ const Auth = ({ mode }: AuthProps) => {
           Back to home
         </Link>
 
-        {/* Logo */}
         <div className="flex items-center gap-3 mb-8">
           <LigamLogo className="w-10 h-10" />
           <span className="text-2xl font-display font-bold text-foreground">
@@ -266,7 +257,6 @@ const Auth = ({ mode }: AuthProps) => {
           </span>
         </div>
 
-        {/* Form Card */}
         <div className="p-8 rounded-2xl bg-card border border-border">
           <h1 className="text-2xl font-display font-bold text-foreground mb-2">
             {mode === "login" ? "Welcome back" : "Get started"}
@@ -419,7 +409,6 @@ const Auth = ({ mode }: AuthProps) => {
           </div>
         </div>
 
-        {/* Footer text */}
         <p className="text-center text-sm text-muted-foreground mt-8">
           By continuing, you agree to our{" "}
           <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>

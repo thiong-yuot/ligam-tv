@@ -28,21 +28,15 @@ import {
 import { useWithdrawals } from "@/hooks/useWithdrawals";
 import { useIdentityVerification } from "@/hooks/useIdentityVerification";
 
-interface WithdrawalDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  availableBalance: number;
-}
-
-const WithdrawalDialog = ({ open, onOpenChange, availableBalance }: WithdrawalDialogProps) => {
+const WithdrawalDialog = ({ open, onOpenChange, availableBalance }) => {
   const { isVerified } = useIdentityVerification();
   const { withdrawalMethods, defaultMethod, requestWithdrawal, isRequesting, addMethod, isAddingMethod } = useWithdrawals();
   
-  const [step, setStep] = useState<"amount" | "method" | "add-method" | "confirm">("amount");
+  const [step, setStep] = useState("amount");
   const [amount, setAmount] = useState("");
   const [selectedMethodId, setSelectedMethodId] = useState(defaultMethod?.id || "");
-  const [newMethodType, setNewMethodType] = useState<"bank_account" | "paypal" | "crypto_wallet">("bank_account");
-  const [newMethodDetails, setNewMethodDetails] = useState<Record<string, string>>({});
+  const [newMethodType, setNewMethodType] = useState("bank_account");
+  const [newMethodDetails, setNewMethodDetails] = useState({});
 
   const minWithdrawal = 50;
   const fee = Math.max(parseFloat(amount || "0") * 0.02, 1);
@@ -234,7 +228,7 @@ const WithdrawalDialog = ({ open, onOpenChange, availableBalance }: WithdrawalDi
           <div className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label>Method Type</Label>
-              <Select value={newMethodType} onValueChange={(v: any) => setNewMethodType(v)}>
+              <Select value={newMethodType} onValueChange={(v) => setNewMethodType(v)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

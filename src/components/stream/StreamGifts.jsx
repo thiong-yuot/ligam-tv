@@ -8,20 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Gift } from "lucide-react";
 
-interface StreamGiftsProps {
-  streamId: string;
-  recipientId: string;
-  onGiftSent?: (gift: { 
-    giftName: string; 
-    giftIcon: string; 
-    amount: number; 
-    message?: string;
-    senderName: string;
-  }) => void;
-}
-
-const StreamGifts = ({ streamId, recipientId, onGiftSent }: StreamGiftsProps) => {
-  const [selectedGift, setSelectedGift] = useState<string | null>(null);
+const StreamGifts = ({ streamId, recipientId, onGiftSent }) => {
+  const [selectedGift, setSelectedGift] = useState(null);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   

@@ -51,7 +51,7 @@ const IdentityVerificationCard = () => {
     id_type: verification?.id_type || "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     await submitVerification(formData);
     setOpen(false);
@@ -141,22 +141,7 @@ const IdentityVerificationCard = () => {
   );
 };
 
-interface FormDataType {
-  full_name: string;
-  date_of_birth: string;
-  country: string;
-  address: string;
-  id_type: string;
-}
-
-interface VerificationFormProps {
-  formData: FormDataType;
-  setFormData: React.Dispatch<React.SetStateAction<FormDataType>>;
-  onSubmit: (e: React.FormEvent) => Promise<void>;
-  isSubmitting: boolean;
-}
-
-const VerificationForm = ({ formData, setFormData, onSubmit, isSubmitting }: VerificationFormProps) => {
+const VerificationForm = ({ formData, setFormData, onSubmit, isSubmitting }) => {
   return (
     <DialogContent className="sm:max-w-lg">
       <DialogHeader>
