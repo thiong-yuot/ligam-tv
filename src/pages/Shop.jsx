@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Loader2, Store, Users, TrendingUp } from "lucide-react";
-import { useProducts, Product } from "@/hooks/useProducts";
+import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import BecomeSellerDialog from "@/components/BecomeSellerDialog";
@@ -16,19 +16,16 @@ import FeaturedCarousel from "@/components/shop/FeaturedCarousel";
 import ShopHeader from "@/components/shop/ShopHeader";
 import MobileFilters from "@/components/shop/MobileFilters";
 
-type SortOption = "newest" | "price-low" | "price-high" | "popular" | "rating";
-type ViewMode = "grid" | "list";
-
 const Shop = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState("grid");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   
@@ -80,7 +77,6 @@ const Shop = () => {
           new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
         );
         break;
-      // popular and rating would need real data
       default:
         break;
     }
@@ -88,7 +84,7 @@ const Shop = () => {
     return result;
   }, [products, activeCategory, searchQuery, priceRange, onSaleOnly, inStockOnly, sortBy]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product) => {
     addToCart(product);
     toast.success(`${product.name} added to cart`);
   };
@@ -97,7 +93,7 @@ const Shop = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Banner - Matching Courses Style */}
+      {/* Hero Banner */}
       <section className="pt-24 pb-8 px-4 md:px-6 lg:px-8 bg-background border-b border-border">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -124,7 +120,6 @@ const Shop = () => {
               </Button>
             </div>
           </div>
-
         </div>
       </section>
 

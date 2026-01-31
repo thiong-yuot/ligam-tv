@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import LigamLogo from "@/components/LigamLogo";
+
 const StreamSetup = () => {
   const steps = [
     {

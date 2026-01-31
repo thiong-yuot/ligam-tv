@@ -46,7 +46,7 @@ const creatorPlans = [
     ],
     cta: "Subscribe Now",
     popular: true,
-    tier: "creator" as const,
+    tier: "creator",
     priceId: SUBSCRIPTION_TIERS.creator.price_id,
   },
   {
@@ -69,7 +69,7 @@ const creatorPlans = [
     ],
     cta: "Subscribe Now",
     popular: false,
-    tier: "pro" as const,
+    tier: "pro",
     priceId: SUBSCRIPTION_TIERS.pro.price_id,
   },
 ];
@@ -86,7 +86,7 @@ const viewerPlan = {
     "Support your favorite creators",
   ],
   cta: "Go Ad-Free",
-  tier: "adfree" as const,
+  tier: "adfree",
   priceId: SUBSCRIPTION_TIERS.adfree.price_id,
 };
 
@@ -113,9 +113,8 @@ const Pricing = () => {
     }
   }, [searchParams, toast, checkSubscription]);
 
-  const handleSubscribe = async (priceId: string | null) => {
+  const handleSubscribe = async (priceId) => {
     if (!priceId) {
-      // Free plan - just redirect to auth if not logged in
       if (!user) {
         navigate("/login");
       }
@@ -143,7 +142,7 @@ const Pricing = () => {
     }
   };
 
-  const isCurrentPlan = (planTier: string | null) => {
+  const isCurrentPlan = (planTier) => {
     if (!subscribed && planTier === null) return true;
     return currentTier === planTier;
   };

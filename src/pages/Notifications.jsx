@@ -28,7 +28,7 @@ import {
 } from "@/hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
 
-const getNotificationIcon = (type: string) => {
+const getNotificationIcon = (type) => {
   switch (type) {
     case "gift":
       return <Gift className="h-5 w-5 text-pink-500" />;
@@ -55,14 +55,13 @@ const Notifications = () => {
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/auth");
     }
   }, [user, authLoading, navigate]);
 
-  const handleNotificationClick = (notification: typeof notifications[0]) => {
+  const handleNotificationClick = (notification) => {
     if (!notification.is_read) {
       markAsRead.mutate(notification.id);
     }

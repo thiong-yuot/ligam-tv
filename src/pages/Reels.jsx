@@ -24,9 +24,9 @@ const Reels = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
-  const [likes, setLikes] = useState<Record<string, boolean>>({});
-  const [saved, setSaved] = useState<Record<string, boolean>>({});
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [likes, setLikes] = useState({});
+  const [saved, setSaved] = useState({});
+  const containerRef = useRef(null);
 
   const videos = allContent?.filter(c => c.content_type === 'video') || [];
 
@@ -42,17 +42,16 @@ const Reels = () => {
     }
   };
 
-  const toggleLike = (id: string) => {
+  const toggleLike = (id) => {
     setLikes(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const toggleSave = (id: string) => {
+  const toggleSave = (id) => {
     setSaved(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  // Keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (e) => {
       if (e.key === "ArrowUp") {
         e.preventDefault();
         goToPrev();
@@ -71,17 +70,16 @@ const Reels = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex, videos.length]);
 
-  // Touch/swipe handling
   useEffect(() => {
     let startY = 0;
     const container = containerRef.current;
     if (!container) return;
 
-    const handleTouchStart = (e: TouchEvent) => {
+    const handleTouchStart = (e) => {
       startY = e.touches[0].clientY;
     };
 
-    const handleTouchEnd = (e: TouchEvent) => {
+    const handleTouchEnd = (e) => {
       const endY = e.changedTouches[0].clientY;
       const diff = startY - endY;
       if (Math.abs(diff) > 50) {
