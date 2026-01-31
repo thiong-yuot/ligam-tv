@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreatorProfile } from "@/hooks/useCreatorProfile";
-import { useFollowers } from "@/hooks/useFollowers";
+import { useIsFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useFollowers";
 import { useStreams } from "@/hooks/useStreams";
 import StreamCard from "@/components/StreamCard";
 import { Users, Video, Heart, MessageCircle, CheckCircle, ExternalLink } from "lucide-react";
@@ -18,9 +18,22 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { profile, isLoading } = useCreatorProfile(username);
-  const { isFollowing, toggleFollow, followersCount } = useFollowers(profile?.user_id);
+  const { data: isFollowing } = useIsFollowing(profile?.user_id);
+  const followMutation = useFollowUser();
+  const unfollowMutation = useUnfollowUser();
   const { streams } = useStreams({ userId: profile?.user_id });
   const [activeTab, setActiveTab] = useState("streams");
+
+  const toggleFollow = () => {
+    if (!profile?.user_id) return;
+    if (isFollowing) {
+      unfollowMutation.mutate(profile.user_id);
+    } else {
+      followMutation.mutate(profile.user_id);
+    }
+  };
+
+  const followersCount = profile?.follower_count || 0;
 
   if (isLoading) {
     return (
