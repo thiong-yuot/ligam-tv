@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
-import { useChat } from "@/hooks/useChat";
+import { useChatMessages, useSendMessage } from "@/hooks/useChat";
 import { supabase } from "@/integrations/supabase/client";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import TipDialog from "@/components/TipDialog";
@@ -29,7 +29,8 @@ const StreamView = () => {
   const [newMessage, setNewMessage] = useState("");
   const [tipDialogOpen, setTipDialogOpen] = useState(false);
 
-  const { messages, sendMessage, isConnected } = useChat(id, user?.id);
+  const messages = useChatMessages(id);
+  const { mutate: sendMessageMutation } = useSendMessage();
 
   useEffect(() => {
     const fetchStream = async () => {
@@ -103,11 +104,11 @@ const StreamView = () => {
     checkAccess();
   }, [stream, user, id]);
 
-  const handleSendMessage = async (e) => {
+  const handleSendMessage = (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !user) return;
 
-    await sendMessage(newMessage);
+    sendMessageMutation({ streamId: id, message: newMessage });
     setNewMessage("");
   };
 
@@ -251,9 +252,6 @@ const StreamView = () => {
             <Card className="h-[600px] flex flex-col">
               <div className="p-4 border-b">
                 <h2 className="font-semibold">Live Chat</h2>
-                {!isConnected && (
-                  <p className="text-xs text-muted-foreground">Connecting...</p>
-                )}
               </div>
               <ScrollArea className="flex-1 p-4">
                 <div className="space-y-3">
