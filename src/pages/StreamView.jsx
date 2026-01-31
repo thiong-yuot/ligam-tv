@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
 import { useChat } from "@/hooks/useChat";
 import { useStreams } from "@/hooks/useStreams";
-import { useStreamAccess } from "@/hooks/useStreamAccess";
+import { useCheckStreamAccess, useCreateStreamCheckout } from "@/hooks/useStreamAccess";
 import StreamGifts from "@/components/stream/StreamGifts";
 import TipDialog from "@/components/TipDialog";
 import { Heart, Users, Send, Lock, Gift, MessageCircle } from "lucide-react";
@@ -22,10 +22,13 @@ const StreamView = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { stream, isLoading: streamLoading } = useStreams(id);
-  const { hasAccess, isLoading: accessLoading, purchaseAccess } = useStreamAccess(id);
-  const { messages, sendMessage, isLoading: chatLoading } = useChat(id);
+  const { data: accessData, isLoading: accessLoading } = useCheckStreamAccess(id);
+  const createCheckout = useCreateStreamCheckout();
+  const { messages, sendMessage } = useChat(id);
   const [newMessage, setNewMessage] = useState("");
   const [showTipDialog, setShowTipDialog] = useState(false);
+
+  const hasAccess = accessData?.hasAccess ?? false;
 
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
@@ -42,7 +45,14 @@ const StreamView = () => {
       navigate("/login");
       return;
     }
-    await purchaseAccess();
+    try {
+      const result = await createCheckout.mutateAsync(id);
+      if (result?.url) {
+        window.location.href = result.url;
+      }
+    } catch (error) {
+      toast.error("Failed to start checkout");
+    }
   };
 
   if (streamLoading || accessLoading) {
