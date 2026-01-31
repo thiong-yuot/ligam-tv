@@ -23,7 +23,7 @@ const FAQ = () => {
     }
     acc[category].push(faq);
     return acc;
-  }, {} as Record<string, typeof faqs>);
+  }, {});
 
   return (
     <div className="min-h-screen bg-background">
