@@ -1,16 +1,8 @@
-import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 
-interface LayoutProps {
-  children: ReactNode;
-  showSidebar?: boolean;
-  showFooter?: boolean;
-  showNavbar?: boolean;
-}
-
-const Layout = ({ children, showSidebar = true, showFooter = true, showNavbar = true }: LayoutProps) => {
+const Layout = ({ children, showSidebar = true, showFooter = true, showNavbar = true }) => {
   return (
     <div className="min-h-screen bg-background">
       {showNavbar && <Navbar />}

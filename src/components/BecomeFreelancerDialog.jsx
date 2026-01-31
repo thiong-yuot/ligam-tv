@@ -17,12 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, X, Plus } from "lucide-react";
 import { toast } from "sonner";
 
-interface BecomeFreelancerDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogProps) => {
+const BecomeFreelancerDialog = ({ open, onOpenChange }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const createProfile = useCreateFreelancerProfile();
@@ -33,7 +28,7 @@ const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogPr
   const [hourlyRate, setHourlyRate] = useState("");
   const [portfolioUrl, setPortfolioUrl] = useState("");
   const [skillInput, setSkillInput] = useState("");
-  const [skills, setSkills] = useState<string[]>([]);
+  const [skills, setSkills] = useState([]);
 
   const addSkill = () => {
     if (skillInput.trim() && !skills.includes(skillInput.trim())) {
@@ -42,11 +37,11 @@ const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogPr
     }
   };
 
-  const removeSkill = (skill: string) => {
+  const removeSkill = (skill) => {
     setSkills(skills.filter((s) => s !== skill));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user) {
@@ -73,7 +68,7 @@ const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogPr
       toast.success("Welcome to the freelance marketplace!");
       onOpenChange(false);
       navigate("/freelance/dashboard");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to create profile");
     }
   };

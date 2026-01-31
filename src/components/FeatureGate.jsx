@@ -1,23 +1,15 @@
-import { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { useFeatureAccess, Feature } from "@/hooks/useFeatureAccess";
+import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Lock, Crown, Sparkles } from "lucide-react";
-
-interface FeatureGateProps {
-  feature: Feature;
-  children: ReactNode;
-  fallback?: ReactNode;
-  showUpgradePrompt?: boolean;
-}
 
 export const FeatureGate = ({ 
   feature, 
   children, 
   fallback,
   showUpgradePrompt = true 
-}: FeatureGateProps) => {
+}) => {
   const { hasAccess, getRequiredTier, getFeatureLabel, isLoading } = useFeatureAccess();
 
   if (isLoading) {
@@ -64,12 +56,7 @@ export const FeatureGate = ({
   );
 };
 
-interface FeatureLockedOverlayProps {
-  feature: Feature;
-  children: ReactNode;
-}
-
-export const FeatureLockedOverlay = ({ feature, children }: FeatureLockedOverlayProps) => {
+export const FeatureLockedOverlay = ({ feature, children }) => {
   const { hasAccess, getRequiredTier, getFeatureLabel, isLoading } = useFeatureAccess();
 
   if (isLoading || hasAccess(feature)) {

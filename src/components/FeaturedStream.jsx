@@ -2,17 +2,6 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Eye, Play, Heart } from "lucide-react";
 
-interface FeaturedStreamProps {
-  id: string;
-  title: string;
-  streamer: string;
-  category: string;
-  thumbnail: string;
-  avatar: string;
-  viewers: number;
-  description: string;
-}
-
 const FeaturedStream = ({
   id,
   title,
@@ -22,8 +11,8 @@ const FeaturedStream = ({
   avatar,
   viewers,
   description,
-}: FeaturedStreamProps) => {
-  const formatViewers = (count: number) => {
+}) => {
+  const formatViewers = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();

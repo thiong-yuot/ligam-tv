@@ -27,9 +27,9 @@ const Sidebar = () => {
     { name: "StreamQueen", avatar: streamer3, isLive: false, viewers: 0 },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
-  const formatViewers = (count: number) => {
+  const formatViewers = (count) => {
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
   };

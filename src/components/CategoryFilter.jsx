@@ -1,13 +1,6 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-interface CategoryFilterProps {
-  categories: string[];
-  activeCategory: string;
-  onCategoryChange: (category: string) => void;
-}
-
-const CategoryFilter = ({ categories, activeCategory, onCategoryChange }: CategoryFilterProps) => {
+const CategoryFilter = ({ categories, activeCategory, onCategoryChange }) => {
   return (
     <div className="flex flex-wrap gap-2 justify-center">
       {categories.map((category) => (
