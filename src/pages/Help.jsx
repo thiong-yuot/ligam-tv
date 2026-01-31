@@ -15,13 +15,11 @@ import {
   Settings,
   Users,
   MessageSquare,
-  ArrowRight,
-  LucideIcon
+  ArrowRight
 } from "lucide-react";
 import { useHelpCategories, usePopularArticles } from "@/hooks/useHelp";
 
-// Map icon names to actual icons
-const iconMap: Record<string, LucideIcon> = {
+const iconMap = {
   Video,
   DollarSign,
   Shield,
@@ -36,7 +34,6 @@ const Help = () => {
   const { data: categories, isLoading: categoriesLoading } = useHelpCategories();
   const { data: popularArticles, isLoading: articlesLoading } = usePopularArticles();
 
-  // Filter categories and articles based on search
   const filteredCategories = useMemo(() => {
     if (!categories || !searchQuery) return categories;
     const query = searchQuery.toLowerCase();
@@ -59,7 +56,6 @@ const Help = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 bg-gradient-to-b from-primary/5 to-transparent">
         <div className="container mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -73,7 +69,6 @@ const Help = () => {
             Search our knowledge base or browse categories below
           </p>
 
-          {/* Search */}
           <div className="max-w-2xl mx-auto relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
@@ -87,7 +82,6 @@ const Help = () => {
         </div>
       </section>
 
-      {/* Categories */}
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <h2 className="text-2xl font-display font-bold text-foreground mb-8">
@@ -130,7 +124,6 @@ const Help = () => {
         </div>
       </section>
 
-      {/* Popular Articles */}
       <section className="py-20 px-4 bg-card/30 border-y border-border">
         <div className="container mx-auto">
           <h2 className="text-2xl font-display font-bold text-foreground mb-8">
@@ -166,7 +159,6 @@ const Help = () => {
         </div>
       </section>
 
-      {/* Contact CTA */}
       <section className="py-20 px-4">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-display font-bold text-foreground mb-6">

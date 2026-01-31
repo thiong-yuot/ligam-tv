@@ -6,7 +6,6 @@ import {
   Heart, 
   Shield,
   Ban,
-  AlertTriangle,
   CheckCircle2,
   XCircle
 } from "lucide-react";
@@ -53,7 +52,6 @@ const Guidelines = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="container mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -69,7 +67,6 @@ const Guidelines = () => {
         </div>
       </section>
 
-      {/* Principles */}
       <section className="py-16 px-4 bg-card/30 border-y border-border">
         <div className="container mx-auto">
           <h2 className="text-2xl font-display font-bold text-foreground text-center mb-12">
@@ -93,11 +90,9 @@ const Guidelines = () => {
         </div>
       </section>
 
-      {/* Allowed & Prohibited */}
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Allowed */}
             <Card className="p-8 bg-card border-border">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -117,7 +112,6 @@ const Guidelines = () => {
               </ul>
             </Card>
 
-            {/* Prohibited */}
             <Card className="p-8 bg-card border-border">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
@@ -140,7 +134,6 @@ const Guidelines = () => {
         </div>
       </section>
 
-      {/* Enforcement */}
       <section className="py-20 px-4 bg-card/30 border-t border-border">
         <div className="container mx-auto max-w-3xl text-center">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
