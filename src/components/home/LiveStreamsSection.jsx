@@ -89,16 +89,16 @@ const LiveStreamsSection = () => {
     : DEMO_STREAMS;
 
   return (
-    <section className="py-16 bg-background">
+    <section className="py-10 md:py-16 bg-background">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">Live Now</h2>
-            <p className="text-muted-foreground mt-1">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Live Now</h2>
+            <p className="text-sm md:text-base text-muted-foreground mt-1">
               Watch your favorite creators streaming live
             </p>
           </div>
-          <Button variant="ghost" asChild className="gap-2">
+          <Button variant="ghost" asChild className="gap-2 text-sm">
             <Link to="/browse">
               View All <ArrowRight className="w-4 h-4" />
             </Link>

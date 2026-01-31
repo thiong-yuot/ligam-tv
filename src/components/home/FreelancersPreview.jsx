@@ -20,9 +20,9 @@ const FreelancersPreview = () => {
   };
 
   return (
-    <section className="py-20 px-4 md:px-6 lg:px-8 bg-card/30">
+    <section className="py-12 md:py-20 px-4 md:px-6 lg:px-8 bg-card/30">
       <div className="w-full max-w-[1920px] mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Left - Freelancers Cards */}
           <div className="order-2 lg:order-1">
             <div className="grid grid-cols-2 gap-4">
@@ -90,17 +90,17 @@ const FreelancersPreview = () => {
           </div>
 
           {/* Right Content */}
-          <div className="order-1 lg:order-2 space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary">
+          <div className="order-1 lg:order-2 space-y-4 md:space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-primary/10 text-primary">
               <Users className="w-4 h-4" />
-              <span className="text-sm font-medium">Freelance Hub</span>
+              <span className="text-xs md:text-sm font-medium">Freelance Hub</span>
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-foreground">
               Monetize Your Skills
             </h2>
             
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
               Offer video editing, design, coaching, or consulting. Set your rates, accept projects, and get paid — all in one place.
             </p>
 

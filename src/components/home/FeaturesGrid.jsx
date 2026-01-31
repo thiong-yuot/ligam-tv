@@ -30,14 +30,14 @@ const features = [
 
 const FeaturesGrid = () => {
   return (
-    <section className="py-20 px-4 md:px-6 lg:px-8 bg-muted/30">
+    <section className="py-12 md:py-20 px-4 md:px-6 lg:px-8 bg-muted/30">
       <div className="w-full max-w-[1920px] mx-auto">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-16">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-foreground mb-3 md:mb-4">
             Built for All Creators
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base md:text-lg text-muted-foreground px-4">
             Streamers, teachers, sellers, freelancers, and viewers—Ligam.tv 
             welcomes everyone with tools that work for you
           </p>
