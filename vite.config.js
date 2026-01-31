@@ -15,10 +15,25 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // Force single React instance
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
-    dedupe: ["react", "react-dom"],
+    dedupe: [
+      "react", 
+      "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+    ],
   },
   optimizeDeps: {
-    include: ["react", "react-dom", "@tanstack/react-query"],
+    include: [
+      "react", 
+      "react-dom", 
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "@tanstack/react-query",
+    ],
+    force: true,
   },
 }));
