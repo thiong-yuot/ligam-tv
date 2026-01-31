@@ -10,17 +10,6 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-interface FreelanceHeaderProps {
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  sortBy: string;
-  onSortChange: (sort: string) => void;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
-  totalResults: number;
-  onOpenMobileFilters: () => void;
-}
-
 const FreelanceHeader = ({
   searchQuery,
   onSearchChange,
@@ -30,7 +19,7 @@ const FreelanceHeader = ({
   onViewModeChange,
   totalResults,
   onOpenMobileFilters,
-}: FreelanceHeaderProps) => {
+}) => {
   return (
     <div className="space-y-4 mb-6">
       {/* Search Bar */}

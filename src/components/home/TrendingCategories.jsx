@@ -2,22 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2, TrendingUp, Users } from "lucide-react";
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  viewer_count: number | null;
-  image_url: string | null;
-  tags: string[] | null;
-}
-
-interface TrendingCategoriesProps {
-  categories: Category[];
-  isLoading: boolean;
-}
-
-const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) => {
-  const formatViewers = (count: number) => {
+const TrendingCategories = ({ categories, isLoading }) => {
+  const formatViewers = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
@@ -26,7 +12,6 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
   return (
     <section className="py-16 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">
-        {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <TrendingUp className="w-6 h-6 text-primary" />
@@ -42,7 +27,6 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
           </Link>
         </div>
 
-        {/* Categories Grid */}
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -56,26 +40,15 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
                 className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-muted-foreground/30 transition-all animate-fade-in"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                {/* Background Image or Gradient */}
                 <div className="aspect-[4/3] relative">
                   {category.image_url ? (
-                    <img
-                      src={category.image_url}
-                      alt={category.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
+                    <img src={category.image_url} alt={category.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
                   ) : (
                     <div className="w-full h-full bg-muted" />
                   )}
-                  
-                  {/* Overlay */}
                   <div className="absolute inset-0 bg-background/60" />
-                  
-                  {/* Content */}
                   <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <h3 className="font-medium text-foreground text-sm truncate group-hover:text-primary transition-colors">
-                      {category.name}
-                    </h3>
+                    <h3 className="font-medium text-foreground text-sm truncate group-hover:text-primary transition-colors">{category.name}</h3>
                     <p className="text-xs text-muted-foreground flex items-center gap-1">
                       <Users className="w-3 h-3" />
                       {formatViewers(category.viewer_count || 0)} viewers

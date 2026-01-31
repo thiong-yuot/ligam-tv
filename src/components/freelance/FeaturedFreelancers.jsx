@@ -3,22 +3,17 @@ import { ChevronLeft, ChevronRight, CheckCircle, TrendingUp, Briefcase } from "l
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import type { Freelancer } from "@/hooks/useFreelancers";
 
-interface FeaturedFreelancersProps {
-  freelancers: Freelancer[];
-}
-
-const FeaturedFreelancers = ({ freelancers }: FeaturedFreelancersProps) => {
+const FeaturedFreelancers = ({ freelancers }) => {
   const navigate = useNavigate();
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef(null);
 
   // Get top rated freelancers
   const topFreelancers = [...freelancers]
     .sort((a, b) => (b.rating || 0) - (a.rating || 0))
     .slice(0, 6);
 
-  const scroll = (direction: "left" | "right") => {
+  const scroll = (direction) => {
     if (scrollRef.current) {
       const scrollAmount = 320;
       scrollRef.current.scrollBy({

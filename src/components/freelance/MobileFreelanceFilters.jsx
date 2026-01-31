@@ -1,4 +1,4 @@
-import { X, Star, Video, Palette, Music, Mic, Clapperboard, Box, Users, Sparkles } from "lucide-react";
+import { Star, Video, Palette, Music, Mic, Clapperboard, Box, Users, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
@@ -9,17 +9,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-
-interface MobileFreelanceFiltersProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  activeCategory: string;
-  onCategoryChange: (category: string) => void;
-  priceRange: [number, number];
-  onPriceRangeChange: (range: [number, number]) => void;
-  minRating: number;
-  onMinRatingChange: (rating: number) => void;
-}
 
 const categories = [
   { name: "All", icon: Sparkles },
@@ -41,8 +30,8 @@ const MobileFreelanceFilters = ({
   onPriceRangeChange,
   minRating,
   onMinRatingChange,
-}: MobileFreelanceFiltersProps) => {
-  const handleCategorySelect = (category: string) => {
+}) => {
+  const handleCategorySelect = (category) => {
     onCategoryChange(category);
   };
 
@@ -105,7 +94,7 @@ const MobileFreelanceFilters = ({
             </p>
             <Slider
               value={priceRange}
-              onValueChange={(value) => onPriceRangeChange(value as [number, number])}
+              onValueChange={(value) => onPriceRangeChange(value)}
               max={200}
               min={0}
               step={10}

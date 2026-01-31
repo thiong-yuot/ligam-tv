@@ -10,31 +10,16 @@ import { X, Plus, Upload, Image, Link as LinkIcon } from "lucide-react";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useAuth } from "@/hooks/useAuth";
 
-interface FreelancerProfileFormProps {
-  initialData?: {
-    name: string;
-    title: string;
-    bio: string;
-    skills: string[];
-    portfolio_url: string;
-    avatar_url: string;
-    thumbnail_url: string;
-    portfolio_images: string[];
-  };
-  onSubmit: (data: any) => void;
-  isLoading?: boolean;
-}
-
 export const FreelancerProfileForm = ({
   initialData,
   onSubmit,
   isLoading,
-}: FreelancerProfileFormProps) => {
+}) => {
   const { user } = useAuth();
   const { uploadFile, uploadMultipleFiles, uploading } = useFileUpload();
-  const avatarInputRef = useRef<HTMLInputElement>(null);
-  const thumbnailInputRef = useRef<HTMLInputElement>(null);
-  const portfolioInputRef = useRef<HTMLInputElement>(null);
+  const avatarInputRef = useRef(null);
+  const thumbnailInputRef = useRef(null);
+  const portfolioInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: initialData?.name || "",
@@ -49,21 +34,21 @@ export const FreelancerProfileForm = ({
 
   const [newSkill, setNewSkill] = useState("");
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     const url = await uploadFile(file, "freelancer-portfolios", user.id);
     if (url) setFormData((prev) => ({ ...prev, avatar_url: url }));
   };
 
-  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     const url = await uploadFile(file, "freelancer-portfolios", user.id);
     if (url) setFormData((prev) => ({ ...prev, thumbnail_url: url }));
   };
 
-  const handlePortfolioUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePortfolioUpload = async (e) => {
     const files = e.target.files;
     if (!files || !user) return;
     const urls = await uploadMultipleFiles(
@@ -77,7 +62,7 @@ export const FreelancerProfileForm = ({
     }));
   };
 
-  const removePortfolioImage = (index: number) => {
+  const removePortfolioImage = (index) => {
     setFormData((prev) => ({
       ...prev,
       portfolio_images: prev.portfolio_images.filter((_, i) => i !== index),
@@ -94,14 +79,14 @@ export const FreelancerProfileForm = ({
     }
   };
 
-  const removeSkill = (skill: string) => {
+  const removeSkill = (skill) => {
     setFormData((prev) => ({
       ...prev,
       skills: prev.skills.filter((s) => s !== skill),
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
   };

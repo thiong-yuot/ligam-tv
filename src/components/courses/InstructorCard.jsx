@@ -4,17 +4,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Users, Eye, MessageCircle, Briefcase } from "lucide-react";
-import { CreatorProfile } from "@/hooks/useCreatorProfile";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface InstructorCardProps {
-  creator: CreatorProfile | null;
-  isLoading?: boolean;
-  totalStudents?: number;
-  totalCourses?: number;
-}
-
-const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 0 }: InstructorCardProps) => {
+const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 0 }) => {
   if (isLoading) {
     return (
       <Card className="bg-card border-border">
