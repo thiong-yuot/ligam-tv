@@ -11,8 +11,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const HelpArticle = () => {
-  const { id } = useParams<{ id: string }>();
-  const [helpful, setHelpful] = useState<boolean | null>(null);
+  const { id } = useParams();
+  const [helpful, setHelpful] = useState(null);
 
   const { data: article, isLoading } = useQuery({
     queryKey: ["help-article", id],
@@ -29,7 +29,7 @@ const HelpArticle = () => {
     enabled: !!id,
   });
 
-  const handleHelpful = (isHelpful: boolean) => {
+  const handleHelpful = (isHelpful) => {
     setHelpful(isHelpful);
     toast.success("Thank you for your feedback!");
   };
@@ -40,7 +40,6 @@ const HelpArticle = () => {
 
       <main className="pt-24 pb-20 px-4">
         <div className="container mx-auto max-w-3xl">
-          {/* Back button */}
           <Link 
             to={article?.help_categories ? `/help/${article.help_categories.slug}` : "/help"} 
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
@@ -61,7 +60,6 @@ const HelpArticle = () => {
             </div>
           ) : article ? (
             <>
-              {/* Article Header */}
               <div className="mb-8">
                 <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
                   {article.title}
@@ -73,7 +71,6 @@ const HelpArticle = () => {
                 )}
               </div>
 
-              {/* Article Content */}
               <Card className="p-8 bg-card border-border mb-8">
                 <div className="prose prose-invert max-w-none">
                   <p className="text-foreground leading-relaxed whitespace-pre-wrap">
@@ -82,7 +79,6 @@ const HelpArticle = () => {
                 </div>
               </Card>
 
-              {/* Feedback */}
               <Card className="p-6 bg-card border-border">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                   <p className="text-foreground font-medium">Was this article helpful?</p>
@@ -109,7 +105,6 @@ const HelpArticle = () => {
                 </div>
               </Card>
 
-              {/* Contact CTA */}
               <div className="mt-12 text-center p-8 bg-card/50 border border-border rounded-xl">
                 <h3 className="text-xl font-display font-bold text-foreground mb-2">
                   Still need help?

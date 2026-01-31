@@ -13,8 +13,8 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { FeatureGate, FeatureLockedOverlay } from "@/components/FeatureGate";
-import { useUserStream, useCreateMuxStream, useStreamStatus, useStreamCredentials, useUpdateStream } from "@/hooks/useStreams";
-import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
+import { useUserStream, useCreateMuxStream, useStreamStatus, useStreamCredentials } from "@/hooks/useStreams";
+import { useSubscription } from "@/hooks/useSubscription";
 import { 
   Video, 
   Copy, 
@@ -36,19 +36,18 @@ import {
   AlertCircle,
   RefreshCw,
   DollarSign,
-  Upload,
   Play
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const GoLive = () => {
   const [checking, setChecking] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState(null);
   const [showStreamKey, setShowStreamKey] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("Gaming");
-  const [streamQuality, setStreamQuality] = useState<"720p" | "1080p" | "4k">("720p");
+  const [streamQuality, setStreamQuality] = useState("720p");
   const [enableOverlay, setEnableOverlay] = useState(false);
   const [isPaidStream, setIsPaidStream] = useState(false);
   const [accessPrice, setAccessPrice] = useState("");
@@ -63,7 +62,6 @@ const GoLive = () => {
   const { data: streamStatus, isLoading: statusLoading } = useStreamStatus();
   const createMuxStream = useCreateMuxStream();
 
-  // Mux RTMP URL
   const rtmpUrl = "rtmps://global-live.mux.com:443/app";
 
   useEffect(() => {
@@ -79,7 +77,7 @@ const GoLive = () => {
     checkAuth();
   }, [navigate]);
 
-  const copyToClipboard = (text: string, label: string) => {
+  const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text);
     toast({
       title: "Copied!",
@@ -171,7 +169,6 @@ const GoLive = () => {
 
       <section className="pt-28 pb-12 px-4">
         <div className="container mx-auto max-w-4xl">
-          {/* Header */}
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <Radio className="w-4 h-4" />
@@ -187,7 +184,6 @@ const GoLive = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Stream Setup */}
             <Card className="p-6 bg-card border-border">
               <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                 <MonitorPlay className="w-5 h-5 text-primary" />
@@ -232,7 +228,6 @@ const GoLive = () => {
                   </div>
                 </div>
 
-                {/* Paid Streaming Section - Pro Only */}
                 {tier === 'pro' && (
                   <div className="space-y-4 p-4 rounded-xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
                     <div className="flex items-center gap-2">
@@ -338,7 +333,6 @@ const GoLive = () => {
               </div>
             </Card>
 
-            {/* Stream Key */}
             <Card className="p-6 bg-card border-border">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
@@ -459,7 +453,6 @@ const GoLive = () => {
               </div>
             </Card>
 
-            {/* Stream Quality - Feature Gated */}
             <Card className="p-6 bg-card border-border lg:col-span-2">
               <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                 <Tv className="w-5 h-5 text-primary" />
@@ -467,7 +460,6 @@ const GoLive = () => {
               </h2>
 
               <div className="grid sm:grid-cols-3 gap-4">
-                {/* 720p - Always available */}
                 <button
                   onClick={() => setStreamQuality("720p")}
                   className={`p-4 rounded-xl border-2 transition-all ${
@@ -481,7 +473,6 @@ const GoLive = () => {
                   <Badge variant="secondary" className="mt-2">Free</Badge>
                 </button>
 
-                {/* 1080p - Creator tier */}
                 <button
                   onClick={() => hasAccess("hd_streaming") && setStreamQuality("1080p")}
                   className={`p-4 rounded-xl border-2 transition-all relative ${
@@ -503,7 +494,6 @@ const GoLive = () => {
                   </Badge>
                 </button>
 
-                {/* 4K - Pro tier */}
                 <button
                   onClick={() => hasAccess("4k_streaming") && setStreamQuality("4k")}
                   className={`p-4 rounded-xl border-2 transition-all relative ${
@@ -533,7 +523,6 @@ const GoLive = () => {
               )}
             </Card>
 
-            {/* Custom Overlays - Pro Feature */}
             <Card className="p-6 bg-card border-border lg:col-span-2">
               <h2 className="text-xl font-semibold text-foreground mb-6 flex items-center gap-2">
                 <Palette className="w-5 h-5 text-primary" />

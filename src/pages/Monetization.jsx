@@ -11,7 +11,6 @@ import {
   Gift, 
   Users, 
   TrendingUp, 
-  CreditCard,
   Wallet,
   ArrowUpRight,
   CheckCircle2,
@@ -55,7 +54,6 @@ const Monetization = () => {
     );
   }
 
-  // Calculate total available balance (mock for now, would come from real earnings)
   const availableBalance = earnings.totalThisMonth || 245.00;
 
   const earningStreams = [
@@ -115,7 +113,6 @@ const Monetization = () => {
 
       <section className="pt-28 pb-12 px-4">
         <div className="container mx-auto">
-          {/* Header */}
           <div className="mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <DollarSign className="w-4 h-4" />
@@ -129,12 +126,10 @@ const Monetization = () => {
             </p>
           </div>
 
-          {/* Identity Verification Card */}
           <div className="mb-8">
             <IdentityVerificationCard />
           </div>
 
-          {/* Balance Card */}
           <Card className="p-8 bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30 mb-8">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
@@ -173,7 +168,6 @@ const Monetization = () => {
             )}
           </Card>
 
-          {/* Payout Progress */}
           <Card className="p-6 bg-card border-border mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-foreground">Next Payout</h2>
@@ -187,7 +181,6 @@ const Monetization = () => {
           </Card>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Earning Streams */}
             <Card className="p-6 bg-card border-border">
               <h2 className="text-xl font-semibold text-foreground mb-6">Revenue Streams</h2>
               <div className="space-y-4">
@@ -214,7 +207,6 @@ const Monetization = () => {
               </div>
             </Card>
 
-            {/* Payout History */}
             <Card className="p-6 bg-card border-border">
               <h2 className="text-xl font-semibold text-foreground mb-6">Payout History</h2>
               <div className="space-y-4">
@@ -242,7 +234,6 @@ const Monetization = () => {
             </Card>
           </div>
 
-          {/* Requirements */}
           <Card className="p-6 bg-card border-border mt-8">
             <h2 className="text-xl font-semibold text-foreground mb-6">Monetization Requirements</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -27,7 +27,6 @@ const Press = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="container mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -43,7 +42,6 @@ const Press = () => {
         </div>
       </section>
 
-      {/* Media Kit */}
       <section className="py-16 px-4 bg-card/30 border-y border-border">
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -77,7 +75,6 @@ const Press = () => {
         </div>
       </section>
 
-      {/* Press Releases */}
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <h2 className="text-3xl font-display font-bold text-foreground mb-8">
@@ -123,7 +120,6 @@ const Press = () => {
         </div>
       </section>
 
-      {/* Contact */}
       <section className="py-20 px-4 bg-card/30 border-t border-border">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-display font-bold text-foreground mb-6">

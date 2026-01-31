@@ -9,7 +9,6 @@ import {
   AlertTriangle,
   UserX,
   Flag,
-  Heart,
   CheckCircle2
 } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -51,7 +50,6 @@ const Safety = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="container mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -67,7 +65,6 @@ const Safety = () => {
         </div>
       </section>
 
-      {/* Safety Features */}
       <section className="py-20 px-4 bg-card/30 border-y border-border">
         <div className="container mx-auto">
           <h2 className="text-3xl font-display font-bold text-foreground mb-12 text-center">
@@ -94,7 +91,6 @@ const Safety = () => {
         </div>
       </section>
 
-      {/* Safety Tips */}
       <section className="py-20 px-4">
         <div className="container mx-auto max-w-3xl">
           <h2 className="text-3xl font-display font-bold text-foreground mb-8 text-center">
@@ -113,7 +109,6 @@ const Safety = () => {
         </div>
       </section>
 
-      {/* Report Section */}
       <section className="py-20 px-4 bg-card/30 border-t border-border">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center">
