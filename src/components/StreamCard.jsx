@@ -1,17 +1,6 @@
 import { Link } from "react-router-dom";
 import { Eye } from "lucide-react";
 
-interface StreamCardProps {
-  id: string;
-  title: string;
-  streamer: string;
-  category: string;
-  thumbnail: string;
-  avatar: string;
-  viewers: number;
-  isLive?: boolean;
-}
-
 const StreamCard = ({
   id,
   title,
@@ -21,8 +10,8 @@ const StreamCard = ({
   avatar,
   viewers,
   isLive = true,
-}: StreamCardProps) => {
-  const formatViewers = (count: number) => {
+}) => {
+  const formatViewers = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();

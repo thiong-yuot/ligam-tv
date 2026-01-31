@@ -1,16 +1,8 @@
 import { Link } from "react-router-dom";
 import { Users } from "lucide-react";
 
-interface CategoryCardProps {
-  id: string;
-  name: string;
-  image: string;
-  viewers: number;
-  tags?: string[];
-}
-
-const CategoryCard = ({ id, name, image, viewers, tags = [] }: CategoryCardProps) => {
-  const formatViewers = (count: number) => {
+const CategoryCard = ({ id, name, image, viewers, tags = [] }) => {
+  const formatViewers = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();

@@ -16,6 +16,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import LigamLogo from "./LigamLogo";
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -69,7 +70,7 @@ const Navbar = () => {
     { name: "Pricing", path: "/pricing" },
   ];
 
-  const handleNavClick = (link: { path: string; requiresAuth?: boolean }) => {
+  const handleNavClick = (link) => {
     if (link.requiresAuth && !user) {
       navigate("/login");
       return;
@@ -86,7 +87,7 @@ const Navbar = () => {
 
   const allNavLinks = [...mainLinks, ...moreLinks];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path) => location.pathname === path;
 
   const handleSignOut = async () => {
     await signOut();

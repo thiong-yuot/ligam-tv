@@ -39,11 +39,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface AddProductDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
 const categories = [
   { id: "overlays", name: "Overlays", icon: Layers, color: "bg-primary/20 text-primary border-primary/30" },
   { id: "emotes", name: "Emotes", icon: Sparkles, color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30" },
@@ -57,12 +52,12 @@ const categories = [
   { id: "other", name: "Other", icon: MoreHorizontal, color: "bg-gray-500/20 text-gray-400 border-gray-500/30" },
 ];
 
-const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
+const AddProductDialog = ({ open, onOpenChange }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { canAddProduct, getMaxProducts, getCurrentProductCount, getRemainingProducts, tier, getUpgradeMessage, isLoading: featureLoading } = useFeatureAccess();
   const queryClient = useQueryClient();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -72,13 +67,12 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const [salePrice, setSalePrice] = useState("");
   const [category, setCategory] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [stockQuantity, setStockQuantity] = useState("999");
 
   const maxProducts = getMaxProducts();
   const currentCount = getCurrentProductCount();
   const remainingSlots = getRemainingProducts();
-  // Allow adding if feature access is still loading (assume can add) or if canAddProduct returns true
   const canAdd = featureLoading ? true : canAddProduct();
 
   const resetForm = () => {
@@ -92,17 +86,15 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     setStockQuantity("999");
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       toast.error("Please upload an image file");
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Image must be less than 5MB");
       return;
@@ -111,12 +103,10 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     setIsUploading(true);
 
     try {
-      // Create a preview
       const reader = new FileReader();
-      reader.onload = (e) => setImagePreview(e.target?.result as string);
+      reader.onload = (e) => setImagePreview(e.target?.result);
       reader.readAsDataURL(file);
 
-      // Upload to Supabase Storage
       const fileExt = file.name.split(".").pop();
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
 
@@ -126,16 +116,15 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
 
       if (error) throw error;
 
-      // Get signed URL (bucket is now private)
       const { data: urlData, error: signedUrlError } = await supabase.storage
         .from("product-images")
-        .createSignedUrl(data.path, 60 * 60 * 24 * 365); // 1 year expiry
+        .createSignedUrl(data.path, 60 * 60 * 24 * 365);
 
       if (signedUrlError) throw signedUrlError;
 
       setImageUrl(urlData.signedUrl);
       toast.success("Image uploaded successfully");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to upload image");
       setImagePreview(null);
     } finally {
@@ -151,7 +140,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user) {
@@ -159,7 +148,6 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
       return;
     }
 
-    // Check tier limit
     if (!canAdd) {
       toast.error(`You've reached the maximum of ${maxProducts} products for your plan. Upgrade to add more!`);
       return;
@@ -178,7 +166,6 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     setIsLoading(true);
 
     try {
-      // Validate all input
       const validated = validateOrThrow(productSchema, {
         name: name.trim(),
         description: description.trim() || null,
@@ -213,7 +200,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
       queryClient.invalidateQueries({ queryKey: ["my-products"] });
       onOpenChange(false);
       resetForm();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to add product");
     } finally {
       setIsLoading(false);
@@ -235,7 +222,6 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Show tier limit info */}
         {maxProducts !== Infinity && (
           <div className="flex items-center justify-between text-sm bg-muted/50 rounded-lg p-3 border">
             <div className="flex items-center gap-2">
@@ -258,7 +244,6 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
           </div>
         )}
 
-        {/* Show upgrade warning if at limit */}
         {!canAdd && (
           <Alert variant="destructive" className="border-yellow-500/50 bg-yellow-500/10">
             <AlertTriangle className="h-4 w-4" />
@@ -276,7 +261,6 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
 
         <ScrollArea className="flex-1 pr-4 -mr-4">
           <form id="add-product-form" onSubmit={handleSubmit} className="space-y-5 pr-4">
-            {/* Image Upload */}
             <div className="space-y-2">
               <Label>Product Image</Label>
               <div
@@ -337,7 +321,6 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
               </div>
             </div>
 
-            {/* Category Selection */}
             <div className="space-y-2">
               <Label>Category *</Label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -440,7 +423,6 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
           </form>
         </ScrollArea>
 
-        {/* Submit buttons - outside ScrollArea so always visible */}
         <div className="flex gap-3 pt-4 border-t border-border mt-4">
           <Button
             type="button"

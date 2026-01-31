@@ -9,7 +9,7 @@ const tokens = [
   { icon: Zap, name: "Lightning", price: "$20", color: "text-primary" },
 ];
 
-const CreatorTokens = () => {
+const VirtualGifts = () => {
   return (
     <section id="creator-tokens" className="py-20 px-4">
       <div className="container mx-auto">
@@ -69,4 +69,4 @@ const CreatorTokens = () => {
   );
 };
 
-export default CreatorTokens;
+export default VirtualGifts;
