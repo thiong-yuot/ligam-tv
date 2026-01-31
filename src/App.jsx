@@ -1,4 +1,3 @@
-import { Toaster } from "@/components/ui/toaster.jsx";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -62,7 +61,6 @@ const App = () => (
       <AuthProvider>
         <CartProvider>
           <TooltipProvider>
-            <Toaster />
             <Sonner />
             <BrowserRouter>
               <ScrollToTop />
