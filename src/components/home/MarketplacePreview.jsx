@@ -82,16 +82,16 @@ const MarketplacePreview = () => {
     : DEMO_PRODUCTS;
 
   return (
-    <section className="py-10 md:py-16 bg-muted/30">
+    <section className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-6 md:mb-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Shop</h2>
-            <p className="text-sm md:text-base text-muted-foreground mt-1">
+            <h2 className="text-3xl font-bold text-foreground">Shop</h2>
+            <p className="text-muted-foreground mt-1">
               Digital assets for your streaming setup
             </p>
           </div>
-          <Button variant="ghost" asChild className="gap-2 text-sm">
+          <Button variant="ghost" asChild className="gap-2">
             <Link to="/shop">
               View All <ArrowRight className="w-4 h-4" />
             </Link>

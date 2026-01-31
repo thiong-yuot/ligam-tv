@@ -16,7 +16,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative py-12 md:py-20 lg:py-28 flex items-center overflow-hidden">
+    <section className="relative py-20 md:py-28 flex items-center overflow-hidden">
       {/* Clean Background */}
       <div className="absolute inset-0 bg-background" />
       
@@ -27,27 +27,27 @@ const HeroSection = () => {
         <div className="max-w-[1920px] mx-auto">
           {/* Centered Content */}
           <div className="flex flex-col items-center text-center">
-            {/* Headline - Responsive sizing */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold leading-tight mb-4 md:mb-6">
+            {/* Headline - Horizontal Layout */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-display font-bold leading-tight mb-6">
               <span className="text-foreground">Create.</span>
-              <span className="text-primary mx-2 md:mx-4">Watch.</span>
+              <span className="text-primary mx-4">Watch.</span>
               <span className="text-foreground">Thrive.</span>
             </h1>
 
-            <p className="text-base md:text-lg lg:text-xl text-muted-foreground max-w-xl leading-relaxed mb-6 md:mb-10 px-4">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-10">
               Stream, teach, sell, or discover. Your platform, your way.
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <Link to="/browse">
-                <Button size="lg" className="glow group">
-                  <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
+                <Button size="xl" className="glow group">
+                  <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
                   Watch Live
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" onClick={handleStartCreating}>
+              <Button variant="outline" size="xl" onClick={handleStartCreating}>
                 Start Creating
               </Button>
             </div>

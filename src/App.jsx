@@ -1,23 +1,24 @@
-import { Toaster as Sonner } from "@/components/ui/sonner.jsx";
-import { TooltipProvider } from "@/components/ui/tooltip.jsx";
+import { Toaster } from "@/components/ui/toaster.jsx";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { ThemeProvider } from "@/hooks/useTheme";
 import ScrollToTop from "@/components/ScrollToTop";
-import Index from "./pages/Index.jsx";
+import Index from "./pages/Index";
 import Browse from "./pages/Browse.jsx";
 import Categories from "./pages/Categories.jsx";
-import StreamView from "./pages/StreamView.jsx";
-import Pricing from "./pages/Pricing.jsx";
+import StreamView from "./pages/StreamView";
+import Pricing from "./pages/Pricing";
 import FAQ from "./pages/FAQ.jsx";
 import About from "./pages/About.jsx";
-import Freelance from "./pages/Freelance.jsx";
+import Freelance from "./pages/Freelance";
 import FreelancerDashboard from "./pages/FreelancerDashboard.jsx";
 import FreelancerProfile from "./pages/FreelancerProfile.jsx";
-import Technology from "./pages/Technology.jsx";
-import Shop from "./pages/Shop.jsx";
+import Technology from "./pages/Technology";
+import Shop from "./pages/Shop";
 import Auth from "./pages/Auth.jsx";
 import CreateProfile from "./pages/CreateProfile.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -33,25 +34,25 @@ import HelpCategory from "./pages/HelpCategory.jsx";
 import HelpArticle from "./pages/HelpArticle.jsx";
 import Safety from "./pages/Safety.jsx";
 import Guidelines from "./pages/Guidelines.jsx";
-import Terms from "./pages/Terms.jsx";
-import Privacy from "./pages/Privacy.jsx";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies.jsx";
-import NotFound from "./pages/NotFound.jsx";
+import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin.jsx";
-import ApiAccess from "./pages/ApiAccess.jsx";
-import Messages from "./pages/Messages.jsx";
-import Notifications from "./pages/Notifications.jsx";
-import SellerDashboard from "./pages/SellerDashboard.jsx";
+import ApiAccess from "./pages/ApiAccess";
+import Messages from "./pages/Messages";
+import Notifications from "./pages/Notifications";
+import SellerDashboard from "./pages/SellerDashboard";
 import Courses from "./pages/Courses.jsx";
 import CourseDetail from "./pages/CourseDetail.jsx";
-import LearnCourse from "./pages/LearnCourse.jsx";
+import LearnCourse from "./pages/LearnCourse";
 import CreatorCourses from "./pages/CreatorCourses.jsx";
-import MyLearning from "./pages/MyLearning.jsx";
-import StreamSetup from "./pages/StreamSetup.jsx";
+import MyLearning from "./pages/MyLearning";
+import StreamSetup from "./pages/StreamSetup";
 import Affiliates from "./pages/Affiliates.jsx";
 import Discovery from "./pages/Discovery.jsx";
-import Reels from "./pages/Reels.jsx";
-import UserProfile from "./pages/UserProfile.jsx";
+import Reels from "./pages/Reels";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,7 @@ const App = () => (
       <AuthProvider>
         <CartProvider>
           <TooltipProvider>
+            <Toaster />
             <Sonner />
             <BrowserRouter>
               <ScrollToTop />

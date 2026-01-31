@@ -50,21 +50,3 @@ verify_jwt = false
 
 [functions.eelai-company]
 verify_jwt = false
-
-[functions.ai-recommendations]
-verify_jwt = false
-
-[functions.ai-image-generate]
-verify_jwt = false
-
-[functions.ai-text-analyze]
-verify_jwt = false
-
-[functions.send-notification-email]
-verify_jwt = false
-
-[functions.analytics-dashboard]
-verify_jwt = false
-
-[functions.upload-file]
-verify_jwt = false
