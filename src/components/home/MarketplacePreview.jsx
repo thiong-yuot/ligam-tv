@@ -38,8 +38,8 @@ const DEMO_PRODUCTS = [
 const ProductCard = ({ id, name, price, image_url, category }) => {
   return (
     <Link to={`/shop`} className="group block">
-      <div className="relative rounded-xl overflow-hidden bg-card border border-border hover-lift">
-        <div className="relative aspect-square overflow-hidden">
+      <div className="relative rounded-xl overflow-hidden bg-card border border-border hover:border-muted-foreground/30 transition-all duration-300">
+        <div className="relative aspect-[4/3] overflow-hidden">
           <img
             src={image_url || "/placeholder.svg"}
             alt={name}
@@ -51,17 +51,17 @@ const ProductCard = ({ id, name, price, image_url, category }) => {
               View
             </Button>
           </div>
-          <div className="absolute top-3 left-3">
-            <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-medium rounded">
+          <div className="absolute top-2 left-2">
+            <span className="px-2 py-0.5 bg-primary text-primary-foreground text-xs font-medium rounded">
               {category}
             </span>
           </div>
         </div>
-        <div className="p-4">
-          <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+        <div className="p-3">
+          <h3 className="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
             {name}
           </h3>
-          <p className="text-lg font-bold text-primary mt-1">${price}</p>
+          <p className="text-base font-bold text-primary mt-1">${price}</p>
         </div>
       </div>
     </Link>
@@ -99,17 +99,17 @@ const MarketplacePreview = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="space-y-3">
-                <Skeleton className="aspect-square w-full rounded-xl" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="aspect-[4/3] w-full rounded-xl" />
                 <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-5 w-1/3" />
+                <Skeleton className="h-4 w-1/3" />
               </div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
             {displayProducts.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
