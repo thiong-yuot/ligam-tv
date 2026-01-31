@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import TipDialog from "@/components/TipDialog";
 import StreamGifts from "@/components/stream/StreamGifts";
+import StreamerServices from "@/components/stream/StreamerServices";
 import { Heart, Share2, Users, Send, Crown, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -245,6 +246,12 @@ const StreamView = () => {
 
             {/* Gifts */}
             {hasAccess && <StreamGifts streamId={id} streamerId={stream.user_id} />}
+
+            {/* Streamer's Services */}
+            <StreamerServices 
+              streamerId={stream.user_id} 
+              streamerUsername={streamer?.username}
+            />
           </div>
 
           {/* Chat */}
