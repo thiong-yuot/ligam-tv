@@ -1,4 +1,6 @@
 import { useStreams } from "@/hooks/useStreams";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import StreamCard from "@/components/StreamCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,17 +53,39 @@ const DEMO_STREAMS = [
 const LiveStreamsSection = () => {
   const { data: streams, isLoading } = useStreams(undefined, true);
 
+  // Fetch profiles for stream creators
+  const userIds = streams?.map(s => s.user_id).filter(Boolean) || [];
+  const { data: profiles } = useQuery({
+    queryKey: ["stream-creator-profiles", userIds],
+    queryFn: async () => {
+      if (userIds.length === 0) return {};
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url, username")
+        .in("user_id", userIds);
+      if (error) throw error;
+      return (data || []).reduce((acc, p) => {
+        acc[p.user_id] = p;
+        return acc;
+      }, {});
+    },
+    enabled: userIds.length > 0,
+  });
+
   const displayStreams = streams?.length > 0 
-    ? streams.slice(0, 4).map(stream => ({
-        id: stream.id,
-        title: stream.title,
-        streamer: stream.user_id,
-        category: "Live",
-        thumbnail: stream.thumbnail_url || "/placeholder.svg",
-        avatar: "/placeholder.svg",
-        viewers: stream.viewer_count || 0,
-        isLive: stream.is_live,
-      }))
+    ? streams.slice(0, 4).map(stream => {
+        const profile = profiles?.[stream.user_id];
+        return {
+          id: stream.id,
+          title: stream.title,
+          streamer: profile?.display_name || profile?.username || "Creator",
+          category: "Live",
+          thumbnail: stream.thumbnail_url || "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=800&h=450&fit=crop",
+          avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+          viewers: stream.viewer_count || 0,
+          isLive: stream.is_live,
+        };
+      })
     : DEMO_STREAMS;
 
   return (
