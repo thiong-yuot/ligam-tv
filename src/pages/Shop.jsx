@@ -167,7 +167,7 @@ const Shop = () => {
 
                 {isLoading && (
                   <div className={viewMode === "grid" 
-                    ? "grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
+                    ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
                     : "space-y-4"
                   }>
                     {[...Array(8)].map((_, i) => (
@@ -186,7 +186,7 @@ const Shop = () => {
 
                 {!isLoading && !error && filteredProducts.length > 0 && (
                   <div className={viewMode === "grid" 
-                    ? "grid sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
+                    ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
                     : "space-y-4"
                   }>
                     {filteredProducts.map((product) => (
