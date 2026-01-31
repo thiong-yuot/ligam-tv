@@ -85,6 +85,37 @@ export const useUpdateOrderStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
       queryClient.invalidateQueries({ queryKey: ["order"] });
+      queryClient.invalidateQueries({ queryKey: ["seller-orders"] });
     },
+  });
+};
+
+export const useSellerOrders = (sellerId) => {
+  return useQuery({
+    queryKey: ["seller-orders", sellerId],
+    queryFn: async () => {
+      if (!sellerId) return [];
+      
+      // Get seller's products first
+      const { data: products, error: productsError } = await supabase
+        .from("products")
+        .select("id")
+        .eq("seller_id", sellerId);
+      
+      if (productsError) throw productsError;
+      if (!products?.length) return [];
+      
+      const productIds = products.map(p => p.id);
+      
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*, products(id, name, image_url, price)")
+        .in("product_id", productIds)
+        .order("created_at", { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!sellerId,
   });
 };
