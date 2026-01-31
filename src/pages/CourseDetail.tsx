@@ -98,7 +98,7 @@ const CourseDetail = () => {
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-12 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
+        <div className="absolute inset-0 bg-background" />
         
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">

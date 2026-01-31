@@ -46,7 +46,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
 
   if (viewMode === "list") {
     return (
-      <div className="group flex gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300">
+      <div className="group flex gap-4 p-4 rounded-xl bg-card border border-border hover:border-muted-foreground/30 transition-all duration-300">
         {/* Image */}
         <div className="relative w-48 h-36 flex-shrink-0 rounded-lg overflow-hidden">
           {product.image_url ? (
@@ -122,7 +122,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   }
 
   return (
-    <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-primary/30 transition-all duration-300">
+    <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden">
         {product.image_url ? (
@@ -167,7 +167,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
         </div>
 
         {/* Quick Add Button */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-0 left-0 right-0 p-3 bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             className="w-full"
             size="sm"

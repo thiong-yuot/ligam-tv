@@ -39,9 +39,8 @@ const FeaturedStream = ({
           className="w-full h-full object-cover"
         />
         
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-background/70" />
 
         {/* Content */}
         <div className="absolute inset-0 flex items-center">

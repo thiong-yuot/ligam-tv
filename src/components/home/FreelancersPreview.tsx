@@ -44,7 +44,7 @@ const FreelancersPreview = () => {
                   <Link
                     key={freelancer.id}
                     to={`/freelance/${freelancer.id}`}
-                    className="group bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-all hover:-translate-y-1 animate-fade-in"
+                    className="group bg-card border border-border rounded-xl p-4 hover:border-muted-foreground/30 transition-all hover:-translate-y-1 animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="flex items-center gap-3 mb-3">

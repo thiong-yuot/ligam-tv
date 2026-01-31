@@ -40,7 +40,7 @@ const StreamCard = ({
           />
           
           {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Live Badge & Viewers */}
           <div className="absolute top-3 left-3 flex items-center gap-2">

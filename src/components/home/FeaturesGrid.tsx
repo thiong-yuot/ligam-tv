@@ -48,23 +48,18 @@ const FeaturesGrid = () => {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className="group relative p-6 bg-card border border-border rounded-2xl hover:border-primary/50 transition-all hover:-translate-y-1 animate-fade-in"
+              className="p-6 bg-card border border-border rounded-2xl hover:border-muted-foreground/30 transition-all hover:-translate-y-1 animate-fade-in"
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              {/* Gradient Background */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-              
-              <div className="relative">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <feature.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="font-display font-bold text-foreground text-lg mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">
-                  {feature.description}
-                </p>
+              <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-4">
+                <feature.icon className="w-6 h-6 text-primary" />
               </div>
+              <h3 className="font-display font-bold text-foreground text-lg mb-2">
+                {feature.title}
+              </h3>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                {feature.description}
+              </p>
             </div>
           ))}
         </div>
