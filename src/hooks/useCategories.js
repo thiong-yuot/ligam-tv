@@ -1,18 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  image_url: string | null;
-  viewer_count: number;
-  tags: string[];
-  is_featured: boolean;
-  sort_order: number;
-}
-
 export const useCategories = () => {
   return useQuery({
     queryKey: ["categories"],
@@ -23,12 +11,12 @@ export const useCategories = () => {
         .order("sort_order");
       
       if (error) throw error;
-      return data as Category[];
+      return data;
     },
   });
 };
 
-export const useCategory = (slug: string) => {
+export const useCategory = (slug) => {
   return useQuery({
     queryKey: ["category", slug],
     queryFn: async () => {
@@ -39,7 +27,7 @@ export const useCategory = (slug: string) => {
         .maybeSingle();
       
       if (error) throw error;
-      return data as Category | null;
+      return data;
     },
     enabled: !!slug,
   });

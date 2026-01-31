@@ -3,12 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const useSubmitContact = () => {
   return useMutation({
-    mutationFn: async (data: {
-      name: string;
-      email: string;
-      subject: string;
-      message: string;
-    }) => {
+    mutationFn: async (data) => {
       const { error } = await supabase
         .from("contact_submissions")
         .insert(data);
