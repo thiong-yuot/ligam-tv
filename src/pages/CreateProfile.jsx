@@ -54,7 +54,7 @@ const CreateProfile = () => {
 
   const progress = step === 1 ? 33 : step === 2 ? 66 : 100;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (step < 3) {
@@ -85,7 +85,7 @@ const CreateProfile = () => {
         description: "Your profile is ready. Start streaming now!",
       });
       navigate("/dashboard");
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update profile";
       toast({
         variant: "destructive",

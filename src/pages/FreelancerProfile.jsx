@@ -40,11 +40,11 @@ import { useToast } from "@/hooks/use-toast";
 import ContactFreelancerDialog from "@/components/ContactFreelancerDialog";
 
 const FreelancerProfile = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState(null);
   const [requirements, setRequirements] = useState("");
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
   
@@ -53,7 +53,7 @@ const FreelancerProfile = () => {
   const { data: packages = [], isLoading: packagesLoading } = useFreelancerPackages(id || "");
   const { checkout, loading: checkoutLoading } = useFreelancerCheckout();
 
-  const handleOrderPackage = async (packageId: string) => {
+  const handleOrderPackage = async (packageId) => {
     if (!user) {
       toast({
         title: "Sign in required",

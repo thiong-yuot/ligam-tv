@@ -52,8 +52,8 @@ const featuredInstructors = [
 
 const Courses = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedLevel, setSelectedLevel] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedLevel, setSelectedLevel] = useState("");
   const [priceRange, setPriceRange] = useState([0, 500]);
   const [showFreeOnly, setShowFreeOnly] = useState(false);
   const [sortBy, setSortBy] = useState("popular");
