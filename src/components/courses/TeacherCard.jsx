@@ -4,25 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface Teacher {
-  id: string;
-  name: string;
-  avatar: string;
-  title: string;
-  students: number;
-  courses: number;
-  rating: number;
-  bio?: string;
-  specialties?: string[];
-  isVerified?: boolean;
-}
-
-interface TeacherCardProps {
-  teacher: Teacher;
-  viewMode?: "grid" | "list";
-}
-
-const TeacherCard = ({ teacher, viewMode = "grid" }: TeacherCardProps) => {
+const TeacherCard = ({ teacher, viewMode = "grid" }) => {
   const navigate = useNavigate();
 
   if (viewMode === "list") {

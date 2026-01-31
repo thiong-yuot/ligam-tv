@@ -1,28 +1,13 @@
 import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ShoppingBag, Star, ExternalLink } from "lucide-react";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  sale_price?: number | null;
-  image_url?: string | null;
-}
-
-interface FeaturedProductsWidgetProps {
-  products: Product[];
-  creatorUsername?: string;
-  maxItems?: number;
-}
+import { ShoppingBag, ExternalLink } from "lucide-react";
 
 const FeaturedProductsWidget = ({ 
   products, 
   creatorUsername,
   maxItems = 3 
-}: FeaturedProductsWidgetProps) => {
+}) => {
   const displayProducts = products.slice(0, maxItems);
 
   if (displayProducts.length === 0) return null;

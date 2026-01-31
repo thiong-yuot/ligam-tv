@@ -17,15 +17,6 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
-interface FreelanceSidebarProps {
-  activeCategory: string;
-  onCategoryChange: (category: string) => void;
-  priceRange: [number, number];
-  onPriceRangeChange: (range: [number, number]) => void;
-  minRating: number;
-  onMinRatingChange: (rating: number) => void;
-}
-
 const categories = [
   { name: "All", icon: Sparkles, count: null },
   { name: "Video Editing", icon: Video, count: 24 },
@@ -44,7 +35,7 @@ const FreelanceSidebar = ({
   onPriceRangeChange,
   minRating,
   onMinRatingChange,
-}: FreelanceSidebarProps) => {
+}) => {
   const [showFilters, setShowFilters] = useState(true);
 
   return (
@@ -110,7 +101,7 @@ const FreelanceSidebar = ({
                 </label>
                 <Slider
                   value={priceRange}
-                  onValueChange={(value) => onPriceRangeChange(value as [number, number])}
+                  onValueChange={(value) => onPriceRangeChange(value)}
                   max={200}
                   min={0}
                   step={10}

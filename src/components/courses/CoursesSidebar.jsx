@@ -1,24 +1,7 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
 import { Users, X } from "lucide-react";
 import { COURSE_CATEGORIES, COURSE_LEVELS } from "@/hooks/useCourses";
-
-interface CoursesSidebarProps {
-  selectedCategory: string;
-  onCategoryChange: (category: string) => void;
-  selectedLevel: string;
-  onLevelChange: (level: string) => void;
-  priceRange: number[];
-  onPriceRangeChange: (range: number[]) => void;
-  showFreeOnly: boolean;
-  onFreeOnlyChange: (value: boolean) => void;
-  minRating: number;
-  onMinRatingChange: (rating: number) => void;
-  onClearFilters: () => void;
-  hasActiveFilters: boolean;
-}
 
 const CoursesSidebar = ({
   selectedCategory,
@@ -33,7 +16,7 @@ const CoursesSidebar = ({
   onMinRatingChange,
   onClearFilters,
   hasActiveFilters,
-}: CoursesSidebarProps) => {
+}) => {
   return (
     <aside className="hidden lg:block w-64 shrink-0 space-y-6">
       {/* Category Section */}
