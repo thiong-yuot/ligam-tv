@@ -131,7 +131,13 @@ export const useSubscription = () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        setState(prev => ({ ...prev, isLoading: false }));
+        setState({
+          subscribed: false,
+          productId: null,
+          subscriptionEnd: null,
+          tier: null,
+          isLoading: false,
+        });
         return;
       }
 
