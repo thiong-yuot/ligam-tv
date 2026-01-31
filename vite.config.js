@@ -16,25 +16,8 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    dedupe: [
-      "react", 
-      "react-dom",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "@tanstack/react-query",
-    ],
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          "react-vendor": ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
-        },
-      },
-    },
   },
   optimizeDeps: {
-    force: true,
     include: [
       "react", 
       "react-dom", 
@@ -42,9 +25,7 @@ export default defineConfig(({ mode }) => ({
       "react/jsx-dev-runtime",
       "@tanstack/react-query",
       "@supabase/supabase-js",
+      "react-router-dom",
     ],
-    esbuildOptions: {
-      jsx: "automatic",
-    },
   },
 }));
