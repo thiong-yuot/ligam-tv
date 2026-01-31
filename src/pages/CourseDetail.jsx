@@ -408,14 +408,12 @@ const CourseDetail = () => {
 
               {/* Instructor Card - Desktop */}
               <div className="hidden lg:block mt-8 lg:mt-0">
-                {creatorProfile && (
-                  <InstructorCard 
-                    instructor={{
-                      ...creatorProfile,
-                      courseCount: creatorCourseCount
-                    }} 
-                  />
-                )}
+                <InstructorCard 
+                  creator={creatorProfile}
+                  isLoading={creatorLoading}
+                  totalCourses={creatorCourseCount}
+                  totalStudents={course.total_enrollments || 0}
+                />
               </div>
             </div>
           </div>
