@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
@@ -15,8 +17,10 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
     },
-    dedupe: ["react", "react-dom"],
+    dedupe: ["react", "react-dom", "@tanstack/react-query"],
   },
   optimizeDeps: {
     force: true,
@@ -27,5 +31,14 @@ export default defineConfig(({ mode }) => ({
       "react/jsx-dev-runtime",
       "@tanstack/react-query",
     ],
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+        },
+      },
+    },
   },
 }));
