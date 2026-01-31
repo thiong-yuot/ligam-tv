@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Loader2, Store, Users, TrendingUp } from "lucide-react";
-import { useProducts, Product } from "@/hooks/useProducts";
+import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import BecomeSellerDialog from "@/components/BecomeSellerDialog";
@@ -16,39 +16,33 @@ import FeaturedCarousel from "@/components/shop/FeaturedCarousel";
 import ShopHeader from "@/components/shop/ShopHeader";
 import MobileFilters from "@/components/shop/MobileFilters";
 
-type SortOption = "newest" | "price-low" | "price-high" | "popular" | "rating";
-type ViewMode = "grid" | "list";
-
 const Shop = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState("grid");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   
   const { data: products, isLoading, error } = useProducts();
   const { addToCart, totalItems } = useCart();
 
-  // Calculate max price from products
   const maxPrice = useMemo(() => {
     if (!products || products.length === 0) return 1000;
     return Math.ceil(Math.max(...products.map((p) => p.price)));
   }, [products]);
 
-  // Extract unique categories from products
   const categories = useMemo(() => {
     if (!products) return ["All"];
     const uniqueCategories = [...new Set(products.map((p) => p.category).filter(Boolean))];
     return ["All", ...uniqueCategories];
   }, [products]);
 
-  // Filter and sort products
   const filteredProducts = useMemo(() => {
     if (!products) return [];
     
@@ -63,7 +57,6 @@ const Shop = () => {
       return matchesCategory && matchesSearch && matchesPrice && matchesSale && matchesStock;
     });
 
-    // Sort
     switch (sortBy) {
       case "price-low":
         result = [...result].sort((a, b) => 
@@ -80,7 +73,6 @@ const Shop = () => {
           new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
         );
         break;
-      // popular and rating would need real data
       default:
         break;
     }
@@ -88,7 +80,7 @@ const Shop = () => {
     return result;
   }, [products, activeCategory, searchQuery, priceRange, onSaleOnly, inStockOnly, sortBy]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product) => {
     addToCart(product);
     toast.success(`${product.name} added to cart`);
   };
@@ -97,7 +89,6 @@ const Shop = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Banner - Matching Courses Style */}
       <section className="pt-24 pb-8 px-4 md:px-6 lg:px-8 bg-background border-b border-border">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -124,14 +115,11 @@ const Shop = () => {
               </Button>
             </div>
           </div>
-
         </div>
       </section>
 
-      {/* Main Content */}
       <main className="py-8 pb-12">
         <div className="w-full max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8">
-          {/* Header with Search and Controls */}
           <ShopHeader
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
@@ -145,7 +133,6 @@ const Shop = () => {
           />
 
           <div className="flex gap-8 mt-6">
-            {/* Sidebar */}
             <ShopSidebar
               categories={categories}
               activeCategory={activeCategory}
@@ -159,12 +146,9 @@ const Shop = () => {
               onInStockOnlyChange={setInStockOnly}
             />
 
-            {/* Main Content Area */}
             <div className="flex-1 min-w-0">
-              {/* Featured Carousel */}
               <FeaturedCarousel />
 
-              {/* Products Section */}
               <section className="mt-8">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-display font-bold text-foreground">
@@ -244,7 +228,6 @@ const Shop = () => {
         </div>
       </main>
 
-      {/* CTA Section */}
       <section className="py-16 px-4 md:px-6 lg:px-8 bg-muted/30 border-t border-border">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
@@ -275,7 +258,6 @@ const Shop = () => {
         </div>
       </section>
 
-      {/* Mobile Filters Sheet */}
       <MobileFilters
         open={mobileFiltersOpen}
         onOpenChange={setMobileFiltersOpen}

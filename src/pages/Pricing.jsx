@@ -46,7 +46,7 @@ const creatorPlans = [
     ],
     cta: "Subscribe Now",
     popular: true,
-    tier: "creator" as const,
+    tier: "creator",
     priceId: SUBSCRIPTION_TIERS.creator.price_id,
   },
   {
@@ -69,7 +69,7 @@ const creatorPlans = [
     ],
     cta: "Subscribe Now",
     popular: false,
-    tier: "pro" as const,
+    tier: "pro",
     priceId: SUBSCRIPTION_TIERS.pro.price_id,
   },
 ];
@@ -86,7 +86,7 @@ const viewerPlan = {
     "Support your favorite creators",
   ],
   cta: "Go Ad-Free",
-  tier: "adfree" as const,
+  tier: "adfree",
   priceId: SUBSCRIPTION_TIERS.adfree.price_id,
 };
 
@@ -113,9 +113,8 @@ const Pricing = () => {
     }
   }, [searchParams, toast, checkSubscription]);
 
-  const handleSubscribe = async (priceId: string | null) => {
+  const handleSubscribe = async (priceId) => {
     if (!priceId) {
-      // Free plan - just redirect to auth if not logged in
       if (!user) {
         navigate("/login");
       }
@@ -143,7 +142,7 @@ const Pricing = () => {
     }
   };
 
-  const isCurrentPlan = (planTier: string | null) => {
+  const isCurrentPlan = (planTier) => {
     if (!subscribed && planTier === null) return true;
     return currentTier === planTier;
   };
@@ -154,7 +153,6 @@ const Pricing = () => {
       
       <main className="pt-24 pb-20 px-4 md:px-6 lg:px-8">
         <div className="w-full max-w-[1920px] mx-auto">
-          {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
               Simple, Transparent Pricing
@@ -164,7 +162,6 @@ const Pricing = () => {
             </p>
           </div>
 
-          {/* Viewer Ad-Free Plan */}
           <div className="max-w-md mx-auto mb-16">
             <div className="text-center mb-6">
               <h2 className="text-2xl font-display font-bold text-foreground flex items-center justify-center gap-2">
@@ -239,13 +236,11 @@ const Pricing = () => {
             </div>
           </div>
 
-          {/* Creator Plans Header */}
           <div className="text-center mb-8">
             <h2 className="text-2xl font-display font-bold text-foreground">For Creators</h2>
             <p className="text-muted-foreground">Build your streaming business with powerful tools</p>
           </div>
 
-          {/* Creator Pricing Cards */}
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {creatorPlans.map((plan, index) => {
               const isCurrent = isCurrentPlan(plan.tier);
@@ -330,7 +325,6 @@ const Pricing = () => {
             })}
           </div>
 
-          {/* FAQ CTA */}
           <div className="text-center mt-16">
             <p className="text-muted-foreground mb-4">
               Have questions about our plans?

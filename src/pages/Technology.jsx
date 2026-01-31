@@ -61,7 +61,6 @@ const Technology = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent" />
         <div className="container mx-auto text-center relative z-10">
@@ -92,7 +91,6 @@ const Technology = () => {
         </div>
       </section>
 
-      {/* Features Grid */}
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -127,7 +125,6 @@ const Technology = () => {
         </div>
       </section>
 
-      {/* Tech Stack */}
       <section className="py-20 px-4 bg-card/30 border-y border-border">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -153,7 +150,6 @@ const Technology = () => {
         </div>
       </section>
 
-      {/* Architecture Diagram */}
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -179,7 +175,6 @@ const Technology = () => {
                 </p>
               </div>
 
-              {/* Animated dots */}
               <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-primary rounded-full animate-ping" />
               <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-primary rounded-full animate-ping animation-delay-500" />
               <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-primary rounded-full animate-ping animation-delay-1000" />
@@ -189,7 +184,6 @@ const Technology = () => {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-20 px-4 bg-card/30 border-t border-border">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
