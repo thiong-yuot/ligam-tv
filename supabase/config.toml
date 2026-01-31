@@ -59,3 +59,12 @@ verify_jwt = false
 
 [functions.ai-text-analyze]
 verify_jwt = false
+
+[functions.send-notification-email]
+verify_jwt = false
+
+[functions.analytics-dashboard]
+verify_jwt = false
+
+[functions.upload-file]
+verify_jwt = false
