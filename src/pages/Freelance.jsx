@@ -20,8 +20,8 @@ const Freelance = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState("rating");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
+  const [viewMode, setViewMode] = useState("grid");
+  const [priceRange, setPriceRange] = useState([0, 200]);
   const [minRating, setMinRating] = useState(0);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [becomeFreelancerOpen, setBecomeFreelancerOpen] = useState(false);
@@ -31,27 +31,22 @@ const Freelance = () => {
 
   const filteredFreelancers = useMemo(() => {
     let filtered = freelancers.filter((f) => {
-      // Category filter
       const matchesCategory = activeCategory === "All" || (f.skills && f.skills.some(skill => 
         skill.toLowerCase().includes(activeCategory.toLowerCase())
       ));
       
-      // Search filter
       const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         f.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (f.bio && f.bio.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      // Price filter
       const matchesPrice = !f.hourly_rate || 
         (f.hourly_rate >= priceRange[0] && f.hourly_rate <= priceRange[1]);
       
-      // Rating filter
       const matchesRating = (f.rating || 0) >= minRating;
       
       return matchesCategory && matchesSearch && matchesPrice && matchesRating;
     });
 
-    // Sort
     switch (sortBy) {
       case "rating":
         filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -66,7 +61,6 @@ const Freelance = () => {
         filtered.sort((a, b) => (b.total_jobs || 0) - (a.total_jobs || 0));
         break;
       case "newest":
-        // Already sorted by created_at in hook
         break;
     }
 

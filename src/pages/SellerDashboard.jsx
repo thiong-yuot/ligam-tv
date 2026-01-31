@@ -43,7 +43,7 @@ const SellerDashboard = () => {
   
   const [addProductOpen, setAddProductOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   const maxProducts = getMaxProducts();
   const currentProductCount = getCurrentProductCount();
@@ -79,7 +79,7 @@ const SellerDashboard = () => {
     try {
       await deleteProduct.mutateAsync(productToDelete);
       toast.success("Product deleted successfully");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to delete product");
     } finally {
       setDeleteDialogOpen(false);
@@ -87,7 +87,7 @@ const SellerDashboard = () => {
     }
   };
 
-  const confirmDelete = (productId: string) => {
+  const confirmDelete = (productId) => {
     setProductToDelete(productId);
     setDeleteDialogOpen(true);
   };

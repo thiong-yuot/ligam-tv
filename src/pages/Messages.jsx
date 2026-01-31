@@ -15,7 +15,7 @@ import {
   CheckCheck, Check, Clock, Star, Briefcase
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useMessages, useConversation, useSendMessage, useMarkAsRead, Message } from "@/hooks/useMessages";
+import { useMessages, useConversation, useSendMessage, useMarkAsRead } from "@/hooks/useMessages";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -25,16 +25,15 @@ const Messages = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { messages, isLoading } = useMessages();
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef(null);
   
   const { data: conversation = [], refetch: refetchConversation } = useConversation(selectedUserId || "");
   const sendMessage = useSendMessage();
   const markAsRead = useMarkAsRead();
 
-  // Handle URL parameter for direct user selection
   useEffect(() => {
     const userId = searchParams.get('user');
     if (userId) {
@@ -42,14 +41,12 @@ const Messages = () => {
     }
   }, [searchParams]);
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!authLoading && !user) {
       navigate("/auth");
     }
   }, [user, authLoading, navigate]);
 
-  // Get unique conversations
   const conversations = messages.reduce((acc, message) => {
     const otherUserId = message.sender_id === user?.id ? message.recipient_id : message.sender_id;
     const otherProfile = message.sender_id === user?.id ? message.recipient_profile : message.sender_profile;
@@ -67,21 +64,14 @@ const Messages = () => {
       });
     }
     return acc;
-  }, [] as Array<{
-    otherUserId: string;
-    otherProfile?: Message["sender_profile"];
-    lastMessage: Message;
-    unreadCount: number;
-  }>);
+  }, []);
 
-  // Filter conversations by search
   const filteredConversations = conversations.filter(c => {
     if (!searchQuery) return true;
     const name = c.otherProfile?.display_name || c.otherProfile?.username || "";
     return name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
-  // Mark messages as read when conversation is selected
   useEffect(() => {
     if (selectedUserId && conversation.length > 0) {
       conversation.forEach(msg => {
@@ -92,12 +82,11 @@ const Messages = () => {
     }
   }, [selectedUserId, conversation, user?.id, markAsRead]);
 
-  // Scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedUserId) return;
 
@@ -113,7 +102,7 @@ const Messages = () => {
     }
   };
 
-  const formatMessageTime = (dateStr: string) => {
+  const formatMessageTime = (dateStr) => {
     const date = new Date(dateStr);
     if (isToday(date)) {
       return format(date, "h:mm a");
@@ -124,7 +113,7 @@ const Messages = () => {
     return format(date, "MMM d, h:mm a");
   };
 
-  const formatConversationTime = (dateStr: string) => {
+  const formatConversationTime = (dateStr) => {
     const date = new Date(dateStr);
     if (isToday(date)) {
       return format(date, "h:mm a");
@@ -150,7 +139,6 @@ const Messages = () => {
       <Navbar />
       
       <main className="flex-1 container mx-auto px-4 pt-24 pb-8">
-        {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-display font-bold text-foreground mb-2">Messages</h1>
           <p className="text-muted-foreground">Communicate with freelancers and clients</p>
@@ -162,7 +150,6 @@ const Messages = () => {
             "flex flex-col border-r border-border bg-card",
             selectedUserId && "hidden lg:flex"
           )}>
-            {/* Search */}
             <div className="p-4 border-b border-border">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -175,7 +162,6 @@ const Messages = () => {
               </div>
             </div>
 
-            {/* Conversations List */}
             <ScrollArea className="flex-1">
               {filteredConversations.length === 0 ? (
                 <div className="p-6 text-center text-muted-foreground">
@@ -208,7 +194,6 @@ const Messages = () => {
                           {otherProfile?.display_name?.[0] || otherProfile?.username?.[0] || <User className="h-5 w-5" />}
                         </AvatarFallback>
                       </Avatar>
-                      {/* Online indicator placeholder */}
                       <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-card" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -253,7 +238,6 @@ const Messages = () => {
           )}>
             {selectedUserId ? (
               <>
-                {/* Chat Header */}
                 <div className="flex items-center gap-3 p-4 border-b border-border bg-card">
                   <Button
                     variant="ghost"
@@ -285,7 +269,6 @@ const Messages = () => {
                   </Button>
                 </div>
 
-                {/* Messages */}
                 <ScrollArea className="flex-1 p-4">
                   <div className="space-y-4 max-w-3xl mx-auto">
                     {conversation.length === 0 ? (
@@ -357,7 +340,6 @@ const Messages = () => {
                   </div>
                 </ScrollArea>
 
-                {/* Message Input */}
                 <div className="p-4 border-t border-border bg-card">
                   <form onSubmit={handleSendMessage} className="flex items-end gap-2">
                     <div className="flex-1 relative">
@@ -411,7 +393,6 @@ const Messages = () => {
           </div>
         </div>
       </main>
-      
       <Footer />
     </div>
   );
