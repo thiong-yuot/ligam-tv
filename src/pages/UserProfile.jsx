@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { useFollowers } from "@/hooks/useFollowers";
+import { useIsFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useFollowers";
 import { supabase } from "@/integrations/supabase/client";
 import StreamCard from "@/components/StreamCard";
 import { Users, Video, CheckCircle, ExternalLink } from "lucide-react";
@@ -20,9 +20,9 @@ const UserProfile = () => {
   const [streams, setStreams] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const { isFollowing, followersCount, toggleFollow, isLoading: followLoading } = useFollowers(
-    profile?.user_id
-  );
+  const { data: isFollowing = false, isLoading: followLoading } = useIsFollowing(profile?.user_id);
+  const { mutate: followUser } = useFollowUser();
+  const { mutate: unfollowUser } = useUnfollowUser();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -114,7 +114,7 @@ const UserProfile = () => {
 
                 <div className="flex items-center justify-center md:justify-start gap-6 mb-4">
                   <div className="text-center">
-                    <p className="text-xl font-bold">{followersCount}</p>
+                    <p className="text-xl font-bold">{profile.follower_count || 0}</p>
                     <p className="text-sm text-muted-foreground">Followers</p>
                   </div>
                   <div className="text-center">
@@ -134,7 +134,7 @@ const UserProfile = () => {
                     </Button>
                   ) : (
                     <Button
-                      onClick={toggleFollow}
+                      onClick={() => isFollowing ? unfollowUser(profile.user_id) : followUser(profile.user_id)}
                       disabled={followLoading || !user}
                       variant={isFollowing ? "outline" : "default"}
                     >
