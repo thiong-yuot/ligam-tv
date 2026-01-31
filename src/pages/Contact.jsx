@@ -27,7 +27,7 @@ const Contact = () => {
   const { toast } = useToast();
   const submitContact = useSubmitContact();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     try {
