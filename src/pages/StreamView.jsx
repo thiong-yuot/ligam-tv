@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
-import { useChat } from "@/hooks/useChat";
+import { useChatMessages, useSendMessage } from "@/hooks/useChat";
 import { useStreams } from "@/hooks/useStreams";
 import { useCheckStreamAccess, useCreateStreamCheckout } from "@/hooks/useStreamAccess";
 import StreamGifts from "@/components/stream/StreamGifts";
@@ -24,7 +24,8 @@ const StreamView = () => {
   const { stream, isLoading: streamLoading } = useStreams(id);
   const { data: accessData, isLoading: accessLoading } = useCheckStreamAccess(id);
   const createCheckout = useCreateStreamCheckout();
-  const { messages, sendMessage } = useChat(id);
+  const messages = useChatMessages(id);
+  const sendMessageMutation = useSendMessage();
   const [newMessage, setNewMessage] = useState("");
   const [showTipDialog, setShowTipDialog] = useState(false);
 
@@ -36,7 +37,7 @@ const StreamView = () => {
       toast.error("Please sign in to chat");
       return;
     }
-    await sendMessage(newMessage);
+    await sendMessageMutation.mutateAsync({ streamId: id, message: newMessage });
     setNewMessage("");
   };
 
