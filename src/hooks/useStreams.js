@@ -2,48 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { streamSchema, validateOrThrow } from "@/lib/validation";
 
-export interface Stream {
-  id: string;
-  user_id: string;
-  title: string;
-  description: string | null;
-  category_id: string | null;
-  thumbnail_url: string | null;
-  is_live: boolean;
-  viewer_count: number;
-  peak_viewers: number;
-  total_views: number;
-  duration_seconds: number;
-  tags: string[];
-  is_featured: boolean;
-  started_at: string | null;
-  ended_at: string | null;
-  created_at: string;
-  mux_stream_id?: string | null;
-  mux_playback_id?: string | null;
-  hls_url?: string | null;
-  profiles?: {
-    display_name: string | null;
-    username: string | null;
-    avatar_url: string | null;
-    is_verified: boolean;
-    follower_count: number;
-  };
-  categories?: {
-    name: string;
-    slug: string;
-  };
-}
-
-export interface StreamCredentials {
-  id: string;
-  stream_id: string;
-  stream_key: string;
-  rtmp_url: string;
-  created_at: string;
-}
-
-export const useStreams = (categorySlug?: string, isLive?: boolean) => {
+export const useStreams = (categorySlug, isLive) => {
   return useQuery({
     queryKey: ["streams", categorySlug, isLive],
     queryFn: async () => {
@@ -58,21 +17,19 @@ export const useStreams = (categorySlug?: string, isLive?: boolean) => {
       
       const { data, error } = await query;
       if (error) throw error;
-      return data as unknown as Stream[];
+      return data;
     },
   });
 };
 
-export const useStream = (id: string) => {
+export const useStream = (id) => {
   return useQuery({
     queryKey: ["stream", id],
     queryFn: async () => {
-      // Skip demo IDs - they don't exist in database
       if (id.startsWith('demo-') || id.startsWith('sample-')) {
         return null;
       }
       
-      // Fetch stream data
       const { data: stream, error: streamError } = await supabase
         .from("streams")
         .select("*")
@@ -82,14 +39,12 @@ export const useStream = (id: string) => {
       if (streamError) throw streamError;
       if (!stream) return null;
 
-      // Fetch profile data separately (no FK relationship)
       const { data: profile } = await supabase
         .from("profiles")
         .select("display_name, username, avatar_url, is_verified, follower_count")
         .eq("user_id", stream.user_id)
         .maybeSingle();
 
-      // Fetch category data if category_id exists
       let category = null;
       if (stream.category_id) {
         const { data: categoryData } = await supabase
@@ -104,13 +59,13 @@ export const useStream = (id: string) => {
         ...stream,
         profiles: profile,
         categories: category,
-      } as unknown as Stream;
+      };
     },
     enabled: !!id && !id.startsWith('demo-') && !id.startsWith('sample-'),
   });
 };
 
-export const useUserStream = (userId: string) => {
+export const useUserStream = (userId) => {
   return useQuery({
     queryKey: ["userStream", userId],
     queryFn: async () => {
@@ -121,14 +76,13 @@ export const useUserStream = (userId: string) => {
         .maybeSingle();
       
       if (error && error.code !== "PGRST116") throw error;
-      return data as unknown as Stream | null;
+      return data;
     },
     enabled: !!userId,
   });
 };
 
-// New hook to fetch stream credentials (only for stream owner)
-export const useStreamCredentials = (streamId: string) => {
+export const useStreamCredentials = (streamId) => {
   return useQuery({
     queryKey: ["streamCredentials", streamId],
     queryFn: async () => {
@@ -139,7 +93,7 @@ export const useStreamCredentials = (streamId: string) => {
         .maybeSingle();
       
       if (error && error.code !== "PGRST116") throw error;
-      return data as StreamCredentials | null;
+      return data;
     },
     enabled: !!streamId,
   });
@@ -149,8 +103,7 @@ export const useCreateMuxStream = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data: { title: string; description?: string; category_id?: string; tags?: string[] }) => {
-      // Validate input
+    mutationFn: async (data) => {
       const validated = validateOrThrow(streamSchema, data);
 
       const { data: session } = await supabase.auth.getSession();
@@ -198,8 +151,7 @@ export const useCreateStream = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data: { title: string; description?: string; category_id?: string; tags?: string[] }) => {
-      // Validate input
+    mutationFn: async (data) => {
       const validated = validateOrThrow(streamSchema, data);
 
       const { data: session } = await supabase.auth.getSession();
@@ -231,7 +183,7 @@ export const useUpdateStream = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, ...data }: Partial<Stream> & { id: string }) => {
+    mutationFn: async ({ id, ...data }) => {
       const { error } = await supabase
         .from("streams")
         .update(data)

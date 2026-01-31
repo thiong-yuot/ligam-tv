@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-// Chat message validation
 export const chatMessageSchema = z.object({
   message: z
     .string()
@@ -9,7 +8,6 @@ export const chatMessageSchema = z.object({
     .max(500, "Message must be 500 characters or less"),
 });
 
-// Stream validation
 export const streamSchema = z.object({
   title: z
     .string()
@@ -26,7 +24,6 @@ export const streamSchema = z.object({
   tags: z.array(z.string().max(50)).max(10).optional(),
 });
 
-// Message validation
 export const messageSchema = z.object({
   recipient_id: z.string().uuid("Invalid recipient"),
   freelancer_id: z.string().uuid().optional().nullable(),
@@ -43,7 +40,6 @@ export const messageSchema = z.object({
     .max(2000, "Message must be 2000 characters or less"),
 });
 
-// Product validation
 export const productSchema = z.object({
   name: z
     .string()
@@ -63,11 +59,7 @@ export const productSchema = z.object({
   stock_quantity: z.number().int().min(0).max(999999).optional(),
 });
 
-// Helper function to validate and throw on error
-export function validateOrThrow<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown
-): T {
+export function validateOrThrow(schema, data) {
   const result = schema.safeParse(data);
   if (!result.success) {
     const firstError = result.error.errors[0];
@@ -76,11 +68,7 @@ export function validateOrThrow<T>(
   return result.data;
 }
 
-// Helper function to validate and return result
-export function validateInput<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown
-): { success: true; data: T } | { success: false; error: string } {
+export function validateInput(schema, data) {
   const result = schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };

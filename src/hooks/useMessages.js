@@ -4,27 +4,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { messageSchema, validateOrThrow } from "@/lib/validation";
 
-export interface Message {
-  id: string;
-  sender_id: string;
-  recipient_id: string;
-  freelancer_id: string | null;
-  subject: string | null;
-  content: string;
-  is_read: boolean;
-  created_at: string;
-  sender_profile?: {
-    display_name: string | null;
-    avatar_url: string | null;
-    username: string | null;
-  };
-  recipient_profile?: {
-    display_name: string | null;
-    avatar_url: string | null;
-    username: string | null;
-  };
-}
-
 export const useMessages = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -42,7 +21,6 @@ export const useMessages = () => {
 
       if (error) throw error;
       
-      // Fetch sender and recipient profiles
       const userIds = [...new Set(data.flatMap(m => [m.sender_id, m.recipient_id]))];
       const { data: profiles } = await supabase
         .from("profiles")
@@ -55,12 +33,11 @@ export const useMessages = () => {
         ...message,
         sender_profile: profileMap.get(message.sender_id),
         recipient_profile: profileMap.get(message.recipient_id),
-      })) as Message[];
+      }));
     },
     enabled: !!user,
   });
 
-  // Subscribe to realtime updates
   useEffect(() => {
     if (!user) return;
 
@@ -109,7 +86,7 @@ export const useUnreadCount = () => {
   });
 };
 
-export const useSendMessage = () => {
+export const useSendMessageHook = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -119,15 +96,9 @@ export const useSendMessage = () => {
       freelancer_id,
       subject,
       content,
-    }: {
-      recipient_id: string;
-      freelancer_id?: string;
-      subject?: string;
-      content: string;
     }) => {
       if (!user) throw new Error("Must be logged in to send messages");
 
-      // Validate input
       const validated = validateOrThrow(messageSchema, {
         recipient_id,
         freelancer_id: freelancer_id || null,
@@ -161,7 +132,7 @@ export const useMarkAsRead = () => {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async (messageId: string) => {
+    mutationFn: async (messageId) => {
       if (!user) throw new Error("Must be logged in");
 
       const { error } = await supabase
@@ -179,7 +150,7 @@ export const useMarkAsRead = () => {
   });
 };
 
-export const useConversation = (otherUserId: string) => {
+export const useConversation = (otherUserId) => {
   const { user } = useAuth();
 
   return useQuery({
@@ -197,7 +168,6 @@ export const useConversation = (otherUserId: string) => {
 
       if (error) throw error;
 
-      // Fetch profiles
       const userIds = [user.id, otherUserId];
       const { data: profiles } = await supabase
         .from("profiles")
@@ -210,7 +180,7 @@ export const useConversation = (otherUserId: string) => {
         ...message,
         sender_profile: profileMap.get(message.sender_id),
         recipient_profile: profileMap.get(message.recipient_id),
-      })) as Message[];
+      }));
     },
     enabled: !!user && !!otherUserId,
   });
