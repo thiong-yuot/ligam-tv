@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
-import { useCreatorCourses, useUpdateCourse, useDeleteCourse, Course } from "@/hooks/useCourses";
+import { useCreatorCourses, useUpdateCourse, useDeleteCourse } from "@/hooks/useCourses";
 import { useSubscription } from "@/hooks/useSubscription";
 import AddCourseDialog from "@/components/courses/AddCourseDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,7 +28,7 @@ const CreatorCourses = () => {
 
   const courseLimits = { free: 1, creator: 3, pro: Infinity };
   const currentTier = tier || 'free';
-  const courseLimit = courseLimits[currentTier as keyof typeof courseLimits] || 1;
+  const courseLimit = courseLimits[currentTier] || 1;
   const coursesUsed = courses.length;
   const canAddCourse = coursesUsed < courseLimit;
   const usagePercentage = courseLimit === Infinity ? 0 : (coursesUsed / courseLimit) * 100;
@@ -55,11 +55,11 @@ const CreatorCourses = () => {
     );
   }
 
-  const handleTogglePublish = async (course: Course) => {
+  const handleTogglePublish = async (course) => {
     await updateCourse.mutateAsync({ id: course.id, is_published: !course.is_published });
   };
 
-  const handleDelete = async (courseId: string) => {
+  const handleDelete = async (courseId) => {
     if (confirm("Are you sure you want to delete this course? This action cannot be undone.")) {
       await deleteCourse.mutateAsync(courseId);
     }

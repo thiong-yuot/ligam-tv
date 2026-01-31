@@ -43,11 +43,11 @@ const CourseDetail = () => {
 
     if (course?.price === 0) {
       // Free course - enroll directly
-      await enrollMutation.mutateAsync({ courseId: courseId!, amountPaid: 0 });
+      await enrollMutation.mutateAsync({ courseId: courseId, amountPaid: 0 });
       navigate(`/learn/${courseId}`);
     } else {
       // Paid course - use Stripe checkout
-      await checkout(courseId!);
+      await checkout(courseId);
     }
   };
 
@@ -370,39 +370,32 @@ const CourseDetail = () => {
                       <Card className="bg-card border-border">
                         <CardContent className="py-12 text-center">
                           <Star className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                          <h3 className="font-semibold text-foreground mb-2">No reviews yet</h3>
-                          <p className="text-muted-foreground">
-                            Be the first to review this course after enrolling!
-                          </p>
+                          <p className="text-muted-foreground">No reviews yet</p>
                         </CardContent>
                       </Card>
                     ) : (
                       reviews.map((review) => (
                         <Card key={review.id} className="bg-card border-border">
-                          <CardContent className="p-6">
+                          <CardContent className="pt-6">
                             <div className="flex items-start gap-4">
-                              <Avatar className="w-10 h-10">
-                                <AvatarFallback className="bg-primary/10 text-primary">
-                                  U
-                                </AvatarFallback>
+                              <Avatar>
+                                <AvatarFallback>U</AvatarFallback>
                               </Avatar>
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-2">
-                                  {[...Array(5)].map((_, i) => (
-                                    <Star
-                                      key={i}
-                                      className={`w-4 h-4 ${
-                                        i < review.rating
-                                          ? "text-yellow-500 fill-yellow-500"
-                                          : "text-muted-foreground"
-                                      }`}
-                                    />
-                                  ))}
-                                  <span className="text-sm text-muted-foreground ml-2">
+                                  <div className="flex">
+                                    {[...Array(5)].map((_, i) => (
+                                      <Star 
+                                        key={i} 
+                                        className={`w-4 h-4 ${i < review.rating ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`} 
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-sm text-muted-foreground">
                                     {new Date(review.created_at).toLocaleDateString()}
                                   </span>
                                 </div>
-                                <p className="text-foreground">{review.review_text}</p>
+                                <p className="text-muted-foreground">{review.review_text}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -411,26 +404,18 @@ const CourseDetail = () => {
                     )}
                   </TabsContent>
                 </Tabs>
-
-                {/* Mobile Instructor Card - Visible only on mobile */}
-                <div className="lg:hidden mt-8">
-                  <InstructorCard 
-                    creator={creatorProfile} 
-                    isLoading={creatorLoading}
-                    totalStudents={course.total_enrollments}
-                    totalCourses={creatorCourseCount}
-                  />
-                </div>
               </div>
 
-              {/* Sidebar - Instructor Info */}
-              <div className="hidden lg:block space-y-6">
-                <InstructorCard 
-                  creator={creatorProfile} 
-                  isLoading={creatorLoading}
-                  totalStudents={course.total_enrollments}
-                  totalCourses={creatorCourseCount}
-                />
+              {/* Instructor Card - Desktop */}
+              <div className="hidden lg:block mt-8 lg:mt-0">
+                {creatorProfile && (
+                  <InstructorCard 
+                    instructor={{
+                      ...creatorProfile,
+                      courseCount: creatorCourseCount
+                    }} 
+                  />
+                )}
               </div>
             </div>
           </div>
