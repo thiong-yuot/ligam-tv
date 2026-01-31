@@ -20,8 +20,8 @@ const Freelance = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState("rating");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
+  const [viewMode, setViewMode] = useState("grid");
+  const [priceRange, setPriceRange] = useState([0, 200]);
   const [minRating, setMinRating] = useState(0);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [becomeFreelancerOpen, setBecomeFreelancerOpen] = useState(false);
@@ -31,27 +31,22 @@ const Freelance = () => {
 
   const filteredFreelancers = useMemo(() => {
     let filtered = freelancers.filter((f) => {
-      // Category filter
       const matchesCategory = activeCategory === "All" || (f.skills && f.skills.some(skill => 
         skill.toLowerCase().includes(activeCategory.toLowerCase())
       ));
       
-      // Search filter
       const matchesSearch = f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         f.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (f.bio && f.bio.toLowerCase().includes(searchQuery.toLowerCase()));
       
-      // Price filter
       const matchesPrice = !f.hourly_rate || 
         (f.hourly_rate >= priceRange[0] && f.hourly_rate <= priceRange[1]);
       
-      // Rating filter
       const matchesRating = (f.rating || 0) >= minRating;
       
       return matchesCategory && matchesSearch && matchesPrice && matchesRating;
     });
 
-    // Sort
     switch (sortBy) {
       case "rating":
         filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -66,7 +61,6 @@ const Freelance = () => {
         filtered.sort((a, b) => (b.total_jobs || 0) - (a.total_jobs || 0));
         break;
       case "newest":
-        // Already sorted by created_at in hook
         break;
     }
 
@@ -89,7 +83,6 @@ const Freelance = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Banner */}
       <section className="pt-24 pb-8 px-4 md:px-6 lg:px-8 bg-background border-b border-border">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -121,7 +114,6 @@ const Freelance = () => {
             </div>
           </div>
 
-          {/* Quick Features */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
             {[
               { icon: Award, label: "Vetted Talent", value: "Quality" },
@@ -139,11 +131,9 @@ const Freelance = () => {
         </div>
       </section>
 
-      {/* Main Content */}
       <section className="py-8 px-4 md:px-6 lg:px-8">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="flex gap-8">
-            {/* Sidebar */}
             <FreelanceSidebar
               activeCategory={activeCategory}
               onCategoryChange={setActiveCategory}
@@ -153,14 +143,11 @@ const Freelance = () => {
               onMinRatingChange={setMinRating}
             />
 
-            {/* Main Content Area */}
             <div className="flex-1 min-w-0">
-              {/* Featured Freelancers */}
               {!searchQuery && activeCategory === "All" && (
                 <FeaturedFreelancers freelancers={freelancers} />
               )}
 
-              {/* Header with Search & Controls */}
               <FreelanceHeader
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}
@@ -172,7 +159,6 @@ const Freelance = () => {
                 onOpenMobileFilters={() => setMobileFiltersOpen(true)}
               />
 
-              {/* Freelancers Grid/List */}
               {isLoading ? (
                 <div className="flex items-center justify-center py-20">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -215,7 +201,6 @@ const Freelance = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-16 px-4 md:px-6 lg:px-8 bg-muted/30 border-t border-border">
         <div className="w-full max-w-[1920px] mx-auto">
           <div className="bg-card rounded-2xl border border-border p-8 md:p-12 text-center">
@@ -246,7 +231,6 @@ const Freelance = () => {
         </div>
       </section>
 
-      {/* Mobile Filters */}
       <MobileFreelanceFilters
         open={mobileFiltersOpen}
         onOpenChange={setMobileFiltersOpen}
