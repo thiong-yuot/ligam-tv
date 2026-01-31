@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/useAuth";
 import { useProducts } from "@/hooks/useProducts";
-import { useOrders } from "@/hooks/useOrders";
+import { useSellerOrders } from "@/hooks/useOrders";
 import AddProductDialog from "@/components/AddProductDialog";
 import { Package, DollarSign, ShoppingCart, TrendingUp, Plus, Edit, Trash2 } from "lucide-react";
 import { Navigate } from "react-router-dom";
@@ -15,7 +15,7 @@ import { formatDistanceToNow } from "date-fns";
 const SellerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const { products, isLoading: productsLoading, deleteProduct } = useProducts({ sellerId: user?.id });
-  const { orders, isLoading: ordersLoading } = useOrders({ sellerId: user?.id });
+  const { data: orders, isLoading: ordersLoading } = useSellerOrders(user?.id);
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
