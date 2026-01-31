@@ -11,22 +11,7 @@ import {
 import CartSheet from "@/components/CartSheet";
 import { cn } from "@/lib/utils";
 
-type SortOption = "newest" | "price-low" | "price-high" | "popular" | "rating";
-type ViewMode = "grid" | "list";
-
-interface ShopHeaderProps {
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  totalItems: number;
-  productCount: number;
-  sortBy: SortOption;
-  onSortChange: (sort: SortOption) => void;
-  viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
-  onMobileFilterClick: () => void;
-}
-
-const sortOptions: { value: SortOption; label: string }[] = [
+const sortOptions = [
   { value: "newest", label: "Newest First" },
   { value: "popular", label: "Most Popular" },
   { value: "rating", label: "Top Rated" },
@@ -44,7 +29,7 @@ const ShopHeader = ({
   viewMode,
   onViewModeChange,
   onMobileFilterClick,
-}: ShopHeaderProps) => {
+}) => {
   const currentSort = sortOptions.find((o) => o.value === sortBy);
 
   return (
