@@ -1,60 +1,71 @@
 
-# JavaScript Conversion Plan - Remaining Files
+# Fix React Duplicate Instance Errors
 
-## Overview
-Continue converting the remaining TypeScript (.tsx/.ts) files to JavaScript (.jsx/.js). This will complete the migration started earlier.
+## Problem
+The console shows "Invalid hook call" errors with the message "Cannot read properties of null (reading 'useState')" and "Cannot read properties of null (reading 'useContext')". This is caused by **duplicate React instances** in the build.
 
-## Files to Convert
+The stack trace references line 36:69 in Index.jsx, but that file only has 34 lines - this indicates stale cached files from the TypeScript to JavaScript conversion are causing conflicts.
 
-### Phase 1: UI Components (48 files)
-The `src/components/ui/` folder contains all Shadcn UI components. These need careful handling as they contain TypeScript type definitions.
+## Root Cause
+After converting many files from `.tsx` to `.jsx`, Vite's dependency cache has become stale and is loading multiple copies of React. The current `vite.config.js` is minimal and lacks the necessary configuration to:
+1. Force re-optimization of dependencies
+2. Ensure a single React instance is used across all modules
 
-Files: accordion, alert-dialog, alert, aspect-ratio, avatar, badge, breadcrumb, button, calendar, card, carousel, chart, checkbox, collapsible, command, context-menu, dialog, drawer, dropdown-menu, form, hover-card, input-otp, input, label, menubar, navigation-menu, pagination, popover, progress, radio-group, resizable, scroll-area, select, separator, sheet, sidebar, skeleton, slider, sonner, switch, table, tabs, textarea, toast, toaster, toggle-group, toggle, tooltip, use-toast
+## Solution
+Update the Vite configuration to enforce React deduplication and force cache invalidation:
 
-### Phase 2: Feature Components (25 files)
-Root level and subdirectory components:
+### File: vite.config.js
+Add the following configuration:
 
-**Root components (14):**
-- AddProductDialog, AddServiceDialog, BecomeFreelancerDialog, BecomeSellerDialog
-- CartSheet, CategoryCard, CategoryFilter, ContactFreelancerDialog
-- FeatureGate, FeaturedStream, GetFeatured, HLSVideoPlayer
-- HighlightedTip, LigamLogo, NavLink, StatsBar, StreamCard
-- TipDialog, VirtualGifts, WhyChooseLigam
+```javascript
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import path from "path";
 
-**Channel (4):** FeaturedCoursesWidget, FeaturedGigsWidget, FeaturedProductsWidget, SubscribeWidget
+export default defineConfig(({ mode }) => ({
+  server: {
+    host: "::",
+    port: 8080,
+  },
+  plugins: [react()].filter(Boolean),
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      // Enforce single React instance
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
+      "react/jsx-runtime": path.resolve(__dirname, "./node_modules/react/jsx-runtime"),
+      "react/jsx-dev-runtime": path.resolve(__dirname, "./node_modules/react/jsx-dev-runtime"),
+    },
+  },
+  optimizeDeps: {
+    // Force re-optimization to clear stale cache
+    force: true,
+    include: ["react", "react-dom", "@tanstack/react-query"],
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Bundle React into a single chunk
+        manualChunks: {
+          "react-vendor": ["react", "react-dom"],
+        },
+      },
+    },
+  },
+}));
+```
 
-**Courses (6):** AddCourseDialog, CourseCard, CourseForm, CoursesSidebar, InstructorCard, TeacherCard
+## Changes Summary
+| Setting | Purpose |
+|---------|---------|
+| `resolve.alias` for React | Forces all imports to use the same React instance |
+| `optimizeDeps.force: true` | Clears stale Vite cache from the TS to JS conversion |
+| `optimizeDeps.include` | Pre-bundles React and related packages |
+| `manualChunks` | Ensures React is bundled once for production builds |
 
-**Freelance (7):** FeaturedFreelancers, FreelanceHeader, FreelanceSidebar, FreelancerCard, FreelancerProfileForm, MobileFreelanceFilters, PackageForm
-
-**Shop (5):** FeaturedCarousel, MobileFilters, ProductCard, ShopHeader, ShopSidebar
-
-**Stream (1):** StreamGifts
-
-**Monetization (2):** IdentityVerificationCard, WithdrawalDialog
-
-### Phase 3: Pages (45 files)
-All page files except Index.jsx (already done):
-
-About, Admin, Affiliates, Analytics, ApiAccess, Auth, Browse, Careers, Categories, Contact, Cookies, CourseDetail, Courses, CreateProfile, CreatorCourses, Dashboard, Discovery, FAQ, Freelance, FreelancerDashboard, FreelancerProfile, GoLive, Guidelines, Help, HelpArticle, HelpCategory, LearnCourse, Messages, Monetization, MyLearning, NotFound, Notifications, Premium, Press, Pricing, Privacy, Reels, Safety, SellerDashboard, Shop, StreamSetup, StreamView, Technology, Terms, UserProfile
-
-## Conversion Process
-For each file:
-1. Remove TypeScript interfaces/types
-2. Remove type annotations from function parameters and return types
-3. Remove generic type parameters
-4. Change file extension from .tsx to .jsx (or .ts to .js)
-5. Delete the original TypeScript file
-
-## Technical Notes
-- The `src/integrations/supabase/` files (client.ts, types.ts) will remain as TypeScript since they are auto-generated
-- UI components use React.forwardRef with generics - these will be simplified
-- Some components use ComponentPropsWithoutRef - will use basic prop spreading instead
-
-## Execution Order
-Due to the large number of files, I'll process them in batches:
-1. **Batch 1:** UI components (most foundational)
-2. **Batch 2:** Feature components 
-3. **Batch 3:** Pages
-
-Each batch will include file creation and deletion of old TypeScript versions.
+## Expected Result
+After this fix:
+- The "Invalid hook call" errors will be resolved
+- All hooks (useState, useContext, useQuery) will work correctly
+- The app will render without crashing
