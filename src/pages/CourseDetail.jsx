@@ -2,7 +2,7 @@ import React from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useCourse, useCourseSections } from "@/hooks/useCourses";
+import { useCourse } from "@/hooks/useCourses";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,7 +29,7 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: course, isLoading } = useCourse(courseId);
-  const { data: sections = [] } = useCourseSections(courseId);
+  const sections = course?.sections || [];
 
   if (isLoading) {
     return (
