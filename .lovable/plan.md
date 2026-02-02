@@ -1,53 +1,114 @@
 
-# Fix: Blank Page Due to Missing Module Files
+# Add Products Under Live Streams Section
 
-## Problem Identified
-The application shows a blank page because Vite's module resolver is trying to load 19 `.js` hook files that were deleted in a previous change. The corresponding `.tsx` versions exist, but Vite's cache hasn't been updated.
+## Overview
+Enhance the Live Streams section on the homepage to display each streamer's products directly below their stream card, creating an integrated "Streamer's Shop" experience. This implements the "Integrated Service Buffet" feature that connects live streams to a creator's store.
 
-## Root Cause
-When duplicate hook files (`.js` versions) were deleted while `.tsx` versions remained, Vite's Hot Module Replacement (HMR) system retained references to the old `.js` file paths. This causes 404 errors when the browser tries to load these modules, breaking the entire application.
+## Current State
+- LiveStreamsSection displays 4 stream cards in a grid
+- Each StreamCard shows: thumbnail, title, streamer name, viewer count, category
+- Products exist in the database linked to sellers via `seller_id`
+- All demo streams and products are linked to the same user (Jordan Rivera)
 
-## Missing Files (All Return 404)
+## Implementation Approach
+
+### Design Pattern
+Create an enhanced stream card component that includes:
+1. The existing stream preview (thumbnail, live badge, viewer count)
+2. A compact product showcase (2-3 products) beneath each stream
+3. A "View Store" link to the creator's full store
+
 ```text
-useSubscription.js      useFreelancerPackages.js   useFAQs.js
-useFreelancerProfile.js useStripeCheckout.js       useEarnings.js
-useWithdrawals.js       useIdentityVerification.js useFreelancers.js
-useAffiliate.js         useHelp.js                 useFeatureAccess.js
-useNotifications.js     useProducts.js             useOrders.js
-useCreatorProfile.js    useJobs.js                 usePress.js
-useDiscoveryContent.js
+┌─────────────────────────────────┐
+│     [Stream Thumbnail]          │
+│  🔴 LIVE    👁 12.5K            │
+│     [Gaming]                    │
+├─────────────────────────────────┤
+│ 👤 GamerPro                     │
+│ Late Night Gaming Session       │
+├─────────────────────────────────┤
+│ 🛒 Shop Products                │
+│ ┌─────┐ ┌─────┐                 │
+│ │ 📦  │ │ 📦  │  View Store →   │
+│ │$29  │ │$49  │                 │
+│ └─────┘ └─────┘                 │
+└─────────────────────────────────┘
 ```
 
-## Solution
-Force a clean rebuild by making a trivial change to the main entry file. This will invalidate Vite's module cache and force it to re-resolve all imports to the correct `.tsx` files.
+## Files to Create/Modify
 
-## Implementation Steps
+### 1. Create New Component: `src/components/home/StreamCardWithProducts.jsx`
+A new component that combines the stream card with a product showcase:
+- Accepts stream data including `user_id` (seller)
+- Fetches products for that seller using `useProducts({ sellerId })`
+- Displays 2 compact product thumbnails with prices
+- Links to the creator's store page
 
-### Step 1: Trigger Module Cache Invalidation
-Add a comment to `src/main.jsx` to force Vite to rebuild its dependency graph:
+### 2. Modify: `src/components/home/LiveStreamsSection.jsx`
+- Replace `StreamCard` with `StreamCardWithProducts`
+- Pass `user_id` to enable product fetching
+- Update demo streams to include `userId` for product lookups
 
+### 3. Update Demo Data
+Ensure demo streams include `userId` that maps to existing products:
 ```javascript
-// src/main.jsx
-import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
-
-// Force module cache refresh
-createRoot(document.getElementById("root")).render(<App />);
+const DEMO_STREAMS = [
+  {
+    id: "demo-1",
+    title: "Late Night Gaming Session",
+    streamer: "GamerPro",
+    userId: "dd046583-99ec-4673-bb90-e7cc90dee21f", // Links to Jordan Rivera's products
+    // ... other fields
+  }
+];
 ```
-
-### Step 2: Verify Application Loads
-After the change, the application should:
-- Load without 404 errors for hook files
-- Display the homepage with all sections (Hero, Live Streams, Categories, etc.)
-- Show the navigation bar and footer
 
 ## Technical Details
-- **Vite Module Resolution**: Vite caches resolved module paths during development. When files are deleted, these cached paths can become stale.
-- **Why `.tsx` Works**: TypeScript/TSX files are resolved with higher priority by Vite when no explicit extension is provided.
-- **The Fix**: Any file change triggers a full re-resolution of the module graph, clearing stale cache entries.
+
+### Product Fetching Strategy
+- Use the existing `useProducts({ sellerId })` hook
+- Limit display to 2 products per stream card
+- Show skeleton loaders while fetching
+- Gracefully handle empty product lists (hide section)
+
+### Component Structure
+```javascript
+const StreamCardWithProducts = ({ 
+  id, title, streamer, userId, thumbnail, viewers, category, isLive 
+}) => {
+  const { products, isLoading } = useProducts({ sellerId: userId });
+  const displayProducts = products?.slice(0, 2) || [];
+  
+  return (
+    <div className="stream-card-wrapper">
+      {/* Existing stream card content */}
+      <StreamThumbnail ... />
+      
+      {/* New products section */}
+      {displayProducts.length > 0 && (
+        <ProductsShowcase products={displayProducts} />
+      )}
+    </div>
+  );
+};
+```
+
+### Responsive Design
+- On mobile: Stack products vertically under stream
+- On tablet+: Side-by-side product thumbnails
+- Product images: 48x48px thumbnails with price overlay
+
+## Data Flow
+```text
+LiveStreamsSection
+  └── useStreams() → fetch streams with user_id
+       └── StreamCardWithProducts (for each stream)
+            └── useProducts({ sellerId: stream.user_id })
+                 └── Display 2 products inline
+```
 
 ## Expected Outcome
-- Homepage renders correctly with all components
-- No more 404 errors for hook files
-- All features (Shop, Courses, Freelance, Streaming) accessible
+- Each live stream card shows 2 featured products from that streamer
+- Users can click products to view details or click "View Store" for full catalog
+- Products only show if the streamer has them listed
+- Demo data works out-of-the-box with existing products
