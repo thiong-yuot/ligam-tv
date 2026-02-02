@@ -11,22 +11,6 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }) => {
     return (
       <div className="group bg-card border border-border rounded-xl p-4 hover:border-muted-foreground/30 transition-all duration-300">
         <div className="flex items-start gap-4">
-          {/* Avatar */}
-          <div className="relative flex-shrink-0">
-            <img
-              src={freelancer.avatar_url || "/placeholder.svg"}
-              alt={freelancer.name}
-              className="w-20 h-20 rounded-xl object-cover"
-            />
-            {freelancer.is_available && (
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card" />
-            )}
-            {freelancer.is_verified && (
-              <div className="absolute -top-1 -right-1">
-                <CheckCircle className="w-5 h-5 text-primary fill-primary" />
-              </div>
-            )}
-          </div>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
@@ -90,19 +74,9 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }) => {
 
   return (
     <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
-      {/* Header with Avatar */}
+      {/* Header */}
       <div className="relative p-4 pb-0">
         <div className="flex items-start gap-3">
-          <div className="relative">
-            <img
-              src={freelancer.avatar_url || "/placeholder.svg"}
-              alt={freelancer.name}
-              className="w-14 h-14 rounded-xl object-cover ring-2 ring-border group-hover:ring-primary/50 transition-all"
-            />
-            {freelancer.is_available && (
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card" />
-            )}
-          </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
@@ -110,6 +84,9 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }) => {
               </h3>
               {freelancer.is_verified && (
                 <CheckCircle className="w-4 h-4 text-primary fill-primary flex-shrink-0" />
+              )}
+              {freelancer.is_available && (
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
               )}
             </div>
             <p className="text-sm text-muted-foreground truncate">{freelancer.title}</p>

@@ -50,24 +50,11 @@ const StreamCard = ({
         </div>
 
         <div className="p-4">
-          <div className="flex gap-3">
-            <div className="relative flex-shrink-0">
-              <img
-                src={avatar}
-                alt={streamer}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-border group-hover:ring-primary transition-all duration-300"
-              />
-              {isLive && (
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-primary rounded-full border-2 border-card" />
-              )}
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                {title}
-              </h3>
-              <p className="text-sm text-muted-foreground truncate">{streamer}</p>
-            </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+              {title}
+            </h3>
+            <p className="text-sm text-muted-foreground truncate">{streamer}</p>
           </div>
         </div>
       </div>

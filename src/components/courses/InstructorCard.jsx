@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Users, Eye, MessageCircle, Briefcase } from "lucide-react";
@@ -46,35 +45,26 @@ const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16 border-2 border-primary/20">
-            <AvatarImage src={creator.avatar_url || undefined} alt={displayName} />
-            <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-semibold text-foreground truncate">{displayName}</h3>
-              {creator.is_verified && (
-                <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
-              )}
-            </div>
-            
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-semibold text-foreground truncate">{displayName}</h3>
             {creator.is_verified && (
-              <Badge variant="secondary" className="text-xs mb-2">
-                <CheckCircle className="w-3 h-3 mr-1" />
-                Verified Pro
-              </Badge>
-            )}
-            
-            {creator.bio && (
-              <p className="text-sm text-muted-foreground line-clamp-2">
-                {creator.bio}
-              </p>
+              <CheckCircle className="w-4 h-4 text-primary flex-shrink-0" />
             )}
           </div>
+          
+          {creator.is_verified && (
+            <Badge variant="secondary" className="text-xs mb-2">
+              <CheckCircle className="w-3 h-3 mr-1" />
+              Verified Pro
+            </Badge>
+          )}
+          
+          {creator.bio && (
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {creator.bio}
+            </p>
+          )}
         </div>
 
         {/* Stats */}
