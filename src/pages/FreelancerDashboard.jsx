@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Link, useNavigate } from "react-router-dom";
 import { Briefcase, Package, Settings, Plus, DollarSign, Clock, Star } from "lucide-react";
-import FreelancerProfileForm from "@/components/freelance/FreelancerProfileForm";
+import { FreelancerProfileForm } from "@/components/freelance/FreelancerProfileForm";
 import PackageForm from "@/components/freelance/PackageForm";
 
 const FreelancerDashboard = () => {
