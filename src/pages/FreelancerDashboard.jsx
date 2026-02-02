@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link, useNavigate } from "react-router-dom";
 import { Briefcase, Package, Settings, Plus, DollarSign, Clock, Star } from "lucide-react";
 import { FreelancerProfileForm } from "@/components/freelance/FreelancerProfileForm";
-import PackageForm from "@/components/freelance/PackageForm";
+import { PackageForm } from "@/components/freelance/PackageForm";
 
 const FreelancerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
