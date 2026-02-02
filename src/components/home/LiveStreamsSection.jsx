@@ -49,7 +49,7 @@ const DEMO_STREAMS = [
 ];
 
 const LiveStreamsSection = () => {
-  const { data: streams, isLoading } = useStreams(undefined, true);
+  const { streams, isLoading } = useStreams(undefined, true);
 
   const displayStreams = streams?.length > 0 
     ? streams.slice(0, 4).map(stream => ({

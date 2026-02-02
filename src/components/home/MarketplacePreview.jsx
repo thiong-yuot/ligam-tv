@@ -69,7 +69,7 @@ const ProductCard = ({ id, name, price, image_url, category }) => {
 };
 
 const MarketplacePreview = () => {
-  const { data: products, isLoading } = useProducts();
+  const { products, isLoading } = useProducts();
 
   const displayProducts = products?.length > 0 
     ? products.slice(0, 4).map(product => ({

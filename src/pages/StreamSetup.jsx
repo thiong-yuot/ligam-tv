@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
-import { useStreams } from "@/hooks/useStreams";
+import { useUserStream, useStreamCredentials, useCreateStream } from "@/hooks/useStreams";
 import { Copy, Video, Settings, Key, ExternalLink, CheckCircle } from "lucide-react";
 import { Navigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -18,7 +18,9 @@ import { toast } from "sonner";
 const StreamSetup = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { streamCredentials, createStream, isLoading } = useStreams();
+  const { data: userStream } = useUserStream(user?.id);
+  const { data: streamCredentials } = useStreamCredentials(userStream?.id);
+  const createStream = useCreateStream();
   const [streamSettings, setStreamSettings] = useState({
     title: "",
     description: "",
@@ -53,8 +55,12 @@ const StreamSetup = () => {
       toast.error("Please enter a stream title");
       return;
     }
-    await createStream(streamSettings);
-    toast.success("Stream created! You can now start broadcasting.");
+    try {
+      await createStream.mutateAsync(streamSettings);
+      toast.success("Stream created! You can now start broadcasting.");
+    } catch (error) {
+      toast.error("Failed to create stream");
+    }
   };
 
   return (

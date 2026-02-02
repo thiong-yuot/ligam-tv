@@ -48,7 +48,7 @@ const Dashboard = () => {
     serviceEarnings,
     platformFees 
   } = useEarningsSummary();
-  const { data: allStreams = [] } = useStreams();
+  const { streams: allStreams = [] } = useStreams();
 
   // Get user's streams
   const userStreams = allStreams.filter(s => s.user_id === userId);
