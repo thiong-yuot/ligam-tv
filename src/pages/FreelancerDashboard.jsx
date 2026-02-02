@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/hooks/useAuth";
-import { useFreelancerProfile } from "@/hooks/useFreelancerProfile";
+import { useMyFreelancerProfile } from "@/hooks/useFreelancerProfile";
 import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,7 +16,7 @@ import PackageForm from "@/components/freelance/PackageForm";
 const FreelancerDashboard = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { profile, isLoading: profileLoading } = useFreelancerProfile();
+  const { data: profile, isLoading: profileLoading } = useMyFreelancerProfile();
   const { packages, isLoading: packagesLoading } = useFreelancerPackages();
 
   if (authLoading) {
