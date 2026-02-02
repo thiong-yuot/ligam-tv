@@ -10,53 +10,14 @@ import {
   Briefcase, 
   Eye, 
   ArrowRight,
-  Radio,
-  Loader2
+  Radio
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface StreamWithServices {
-  id: string;
-  user_id: string;
-  title: string;
-  thumbnail_url: string | null;
-  viewer_count: number | null;
-  is_live: boolean | null;
-  profile: {
-    display_name: string | null;
-    username: string | null;
-    avatar_url: string | null;
-  } | null;
-  category: {
-    name: string;
-  } | null;
-  products: {
-    id: string;
-    name: string;
-    price: number;
-    image_url: string | null;
-  }[];
-  courses: {
-    id: string;
-    title: string;
-    price: number;
-    thumbnail_url: string | null;
-  }[];
-  freelancer: {
-    id: string;
-    title: string;
-    hourly_rate: number | null;
-  } | null;
-}
-
-// No more sample data - using real database data only
-
-// Hook to fetch streams with their associated services
 const useLiveStreamsWithServices = () => {
   return useQuery({
     queryKey: ["live-streams-with-services"],
     queryFn: async () => {
-      // Fetch live streams
       const { data: streams, error: streamsError } = await supabase
         .from("streams")
         .select(`
@@ -74,16 +35,13 @@ const useLiveStreamsWithServices = () => {
       
       if (streamsError) throw streamsError;
       
-      // If no live streams, return empty array
       if (!streams || streams.length === 0) {
         return [];
       }
       
-      // Get unique user_ids and category_ids
       const userIds = [...new Set(streams.map(s => s.user_id))];
       const categoryIds = [...new Set(streams.map(s => s.category_id).filter(Boolean))];
       
-      // Fetch all related data in parallel
       const [profilesRes, categoriesRes, productsRes, coursesRes, freelancersRes] = await Promise.all([
         supabase
           .from("profiles")
@@ -114,8 +72,7 @@ const useLiveStreamsWithServices = () => {
       const courses = coursesRes.data || [];
       const freelancers = freelancersRes.data || [];
       
-      // Combine data
-      const streamsWithServices: StreamWithServices[] = streams.map(stream => {
+      const streamsWithServices = streams.map(stream => {
         const userProfile = profiles.find(p => p.user_id === stream.user_id);
         const category = categories.find(c => c.id === stream.category_id);
         
@@ -142,9 +99,9 @@ const useLiveStreamsWithServices = () => {
             .map(c => ({ id: c.id, title: c.title, price: c.price, thumbnail_url: c.thumbnail_url })),
           freelancer: freelancers.find(f => f.user_id === stream.user_id) 
             ? { 
-                id: freelancers.find(f => f.user_id === stream.user_id)!.id,
-                title: freelancers.find(f => f.user_id === stream.user_id)!.title,
-                hourly_rate: freelancers.find(f => f.user_id === stream.user_id)!.hourly_rate
+                id: freelancers.find(f => f.user_id === stream.user_id).id,
+                title: freelancers.find(f => f.user_id === stream.user_id).title,
+                hourly_rate: freelancers.find(f => f.user_id === stream.user_id).hourly_rate
               }
             : null
         };
@@ -152,24 +109,22 @@ const useLiveStreamsWithServices = () => {
       
       return streamsWithServices;
     },
-    staleTime: 30000, // Cache for 30 seconds
+    staleTime: 30000,
   });
 };
 
-const formatViewers = (count: number) => {
+const formatViewers = (count) => {
   if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
   return count.toString();
 };
 
-const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices; index: number }) => {
-  // Show different service combinations based on stream index
+const StreamCardWithServices = ({ stream, index }) => {
   const showProducts = index === 0 || index === 2;
   const showCourses = index === 0 || index === 1;
   const showFreelancer = index === 1 || index === 2;
   
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
-      {/* Stream Preview */}
       <Link to={`/stream/${stream.id}`} className="block relative">
         <div className="aspect-video relative overflow-hidden">
           <img
@@ -179,7 +134,6 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
           />
           <div className="absolute inset-0 bg-background/60" />
           
-          {/* Live Badge */}
           {stream.is_live && (
             <div className="absolute top-3 left-3 flex items-center gap-2">
               <span className="px-2 py-1 bg-destructive text-destructive-foreground text-xs font-bold rounded flex items-center gap-1">
@@ -193,7 +147,6 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
             </div>
           )}
           
-          {/* Category Tag */}
           {stream.category && (
             <div className="absolute top-3 right-3">
               <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-medium rounded">
@@ -202,14 +155,12 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
             </div>
           )}
           
-          {/* Play Button */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
             <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center backdrop-blur-sm">
               <Play className="w-8 h-8 text-primary-foreground fill-primary-foreground ml-1" />
             </div>
           </div>
           
-          {/* Creator Info Overlay */}
           <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3">
             <img
               src={stream.profile?.avatar_url || "/placeholder.svg"}
@@ -226,9 +177,7 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
         </div>
       </Link>
       
-      {/* Creator Services - Show different combinations per card */}
       <div className="p-4 space-y-3">
-        {/* Store Products - Only show for some cards */}
         {showProducts && stream.products.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -256,7 +205,6 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
           </div>
         )}
         
-        {/* Courses - Only show for some cards */}
         {showCourses && stream.courses.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -284,7 +232,6 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
           </div>
         )}
         
-        {/* Freelance Gig - Only show for some cards */}
         {showFreelancer && stream.freelancer && (
           <Link
             to={`/freelance/${stream.freelancer.id}`}
@@ -303,7 +250,6 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
           </Link>
         )}
         
-        {/* Empty State - Only if nothing shown for this card */}
         {!showProducts && !showCourses && !showFreelancer && (
           <p className="text-xs text-muted-foreground text-center py-2">
             Watching stream...
@@ -335,7 +281,6 @@ const LiveStreamsSection = () => {
   return (
     <section className="py-16 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">
-        {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
@@ -356,7 +301,6 @@ const LiveStreamsSection = () => {
           </Link>
         </div>
 
-        {/* Streams Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(3)].map((_, i) => (
