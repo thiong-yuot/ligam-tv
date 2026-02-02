@@ -1,15 +1,19 @@
 import { useStreams } from "@/hooks/useStreams";
-import StreamCard from "@/components/StreamCard";
+import StreamCardWithProducts from "@/components/home/StreamCardWithProducts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+
+// Demo seller ID that has products in the database
+const DEMO_SELLER_ID = "dd046583-99ec-4673-bb90-e7cc90dee21f";
 
 const DEMO_STREAMS = [
   {
     id: "demo-1",
     title: "Late Night Gaming Session",
     streamer: "GamerPro",
+    userId: DEMO_SELLER_ID,
     category: "Gaming",
     thumbnail: "/placeholder.svg",
     avatar: "/placeholder.svg",
@@ -20,6 +24,7 @@ const DEMO_STREAMS = [
     id: "demo-2",
     title: "Music Production Live",
     streamer: "BeatMaker",
+    userId: DEMO_SELLER_ID,
     category: "Music",
     thumbnail: "/placeholder.svg",
     avatar: "/placeholder.svg",
@@ -30,6 +35,7 @@ const DEMO_STREAMS = [
     id: "demo-3",
     title: "Creative Art Stream",
     streamer: "ArtistX",
+    userId: DEMO_SELLER_ID,
     category: "Art",
     thumbnail: "/placeholder.svg",
     avatar: "/placeholder.svg",
@@ -40,6 +46,7 @@ const DEMO_STREAMS = [
     id: "demo-4",
     title: "Coding Tutorial",
     streamer: "DevGuru",
+    userId: DEMO_SELLER_ID,
     category: "Education",
     thumbnail: "/placeholder.svg",
     avatar: "/placeholder.svg",
@@ -56,6 +63,7 @@ const LiveStreamsSection = () => {
         id: stream.id,
         title: stream.title,
         streamer: stream.user_id,
+        userId: stream.user_id,
         category: "Live",
         thumbnail: stream.thumbnail_url || "/placeholder.svg",
         avatar: "/placeholder.svg",
@@ -93,13 +101,14 @@ const LiveStreamsSection = () => {
                     <Skeleton className="h-3 w-2/3" />
                   </div>
                 </div>
+                <Skeleton className="h-16 w-full rounded-lg" />
               </div>
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {displayStreams.map((stream) => (
-              <StreamCard key={stream.id} {...stream} />
+              <StreamCardWithProducts key={stream.id} {...stream} />
             ))}
           </div>
         )}
