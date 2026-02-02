@@ -20,8 +20,8 @@ const Freelance = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState("rating");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200]);
+  const [viewMode, setViewMode] = useState("grid");
+  const [priceRange, setPriceRange] = useState([0, 200]);
   const [minRating, setMinRating] = useState(0);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [becomeFreelancerOpen, setBecomeFreelancerOpen] = useState(false);

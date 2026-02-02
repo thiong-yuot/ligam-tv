@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Loader2, Store, Users, TrendingUp } from "lucide-react";
-import { useProducts, Product } from "@/hooks/useProducts";
+import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import BecomeSellerDialog from "@/components/BecomeSellerDialog";
@@ -16,19 +16,16 @@ import FeaturedCarousel from "@/components/shop/FeaturedCarousel";
 import ShopHeader from "@/components/shop/ShopHeader";
 import MobileFilters from "@/components/shop/MobileFilters";
 
-type SortOption = "newest" | "price-low" | "price-high" | "popular" | "rating";
-type ViewMode = "grid" | "list";
-
 const Shop = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState("grid");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   
@@ -88,7 +85,7 @@ const Shop = () => {
     return result;
   }, [products, activeCategory, searchQuery, priceRange, onSaleOnly, inStockOnly, sortBy]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product) => {
     addToCart(product);
     toast.success(`${product.name} added to cart`);
   };

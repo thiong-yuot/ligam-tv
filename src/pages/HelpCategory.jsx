@@ -13,12 +13,11 @@ import {
   Shield,
   Settings,
   Users,
-  MessageSquare,
-  LucideIcon
+  MessageSquare
 } from "lucide-react";
 import { useHelpArticles, useHelpCategories } from "@/hooks/useHelp";
 
-const iconMap: Record<string, LucideIcon> = {
+const iconMap = {
   Video,
   DollarSign,
   Shield,
@@ -29,7 +28,7 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 const HelpCategory = () => {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug } = useParams();
   const { data: categories } = useHelpCategories();
   const { data: articles, isLoading } = useHelpArticles(slug);
 
@@ -42,13 +41,11 @@ const HelpCategory = () => {
 
       <main className="pt-24 pb-20 px-4">
         <div className="container mx-auto max-w-4xl">
-          {/* Back button */}
           <Link to="/help" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8">
             <ArrowLeft className="w-4 h-4" />
             Back to Help Center
           </Link>
 
-          {/* Category Header */}
           {category && (
             <div className="flex items-center gap-4 mb-8">
               <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -63,7 +60,6 @@ const HelpCategory = () => {
             </div>
           )}
 
-          {/* Articles List */}
           <div className="space-y-4">
             {isLoading ? (
               Array.from({ length: 5 }).map((_, index) => (
@@ -100,7 +96,6 @@ const HelpCategory = () => {
             )}
           </div>
 
-          {/* Contact CTA */}
           <div className="mt-12 text-center p-8 bg-card border border-border rounded-xl">
             <h3 className="text-xl font-display font-bold text-foreground mb-2">
               Can't find what you're looking for?

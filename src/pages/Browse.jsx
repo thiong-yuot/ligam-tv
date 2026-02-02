@@ -11,7 +11,7 @@ import { useCategories } from "@/hooks/useCategories";
 
 const Browse = () => {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
+  const [viewMode, setViewMode] = useState("grid");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: categoriesData } = useCategories();
