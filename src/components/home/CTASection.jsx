@@ -7,7 +7,7 @@ const CTASection = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleAuthLink = (path: string) => {
+  const handleAuthLink = (path) => {
     if (!user) {
       navigate("/login");
     } else {

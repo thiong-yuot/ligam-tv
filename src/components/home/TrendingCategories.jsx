@@ -2,22 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2, TrendingUp, Users } from "lucide-react";
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  viewer_count: number | null;
-  image_url: string | null;
-  tags: string[] | null;
-}
-
-interface TrendingCategoriesProps {
-  categories: Category[];
-  isLoading: boolean;
-}
-
-const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) => {
-  const formatViewers = (count: number) => {
+const TrendingCategories = ({ categories, isLoading }) => {
+  const formatViewers = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
