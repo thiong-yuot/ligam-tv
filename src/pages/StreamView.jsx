@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/hooks/useAuth";
 import { useChatMessages, useSendMessage } from "@/hooks/useChat";
-import { useStreams } from "@/hooks/useStreams";
+import { useStream } from "@/hooks/useStreams";
 import { useCheckStreamAccess, useCreateStreamCheckout } from "@/hooks/useStreamAccess";
 import StreamGifts from "@/components/stream/StreamGifts";
 import TipDialog from "@/components/TipDialog";
@@ -21,7 +21,7 @@ const StreamView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { stream, isLoading: streamLoading } = useStreams(id);
+  const { data: stream, isLoading: streamLoading } = useStream(id);
   const { data: accessData, isLoading: accessLoading } = useCheckStreamAccess(id);
   const createCheckout = useCreateStreamCheckout();
   const messages = useChatMessages(id);

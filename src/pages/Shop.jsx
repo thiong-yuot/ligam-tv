@@ -29,7 +29,7 @@ const Shop = () => {
   const [onSaleOnly, setOnSaleOnly] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   
-  const { data: products, isLoading, error } = useProducts();
+  const { products, isLoading, error } = useProducts();
   const { addToCart, totalItems } = useCart();
 
   const maxPrice = useMemo(() => {

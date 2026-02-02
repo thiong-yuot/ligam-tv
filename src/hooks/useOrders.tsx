@@ -117,6 +117,38 @@ export const useUpdateOrderStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
       queryClient.invalidateQueries({ queryKey: ["order"] });
+      queryClient.invalidateQueries({ queryKey: ["seller-orders"] });
     },
+  });
+};
+
+export const useSellerOrders = (sellerId?: string) => {
+  return useQuery({
+    queryKey: ["seller-orders", sellerId],
+    queryFn: async () => {
+      if (!sellerId) return [];
+      
+      // Get products owned by this seller
+      const { data: products, error: productsError } = await supabase
+        .from("products")
+        .select("id")
+        .eq("seller_id", sellerId);
+      
+      if (productsError) throw productsError;
+      if (!products || products.length === 0) return [];
+      
+      const productIds = products.map(p => p.id);
+      
+      // Get orders for these products
+      const { data: orders, error: ordersError } = await supabase
+        .from("orders")
+        .select("*, products(id, name, image_url, price)")
+        .in("product_id", productIds)
+        .order("created_at", { ascending: false });
+      
+      if (ordersError) throw ordersError;
+      return orders as Order[];
+    },
+    enabled: !!sellerId,
   });
 };

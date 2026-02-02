@@ -15,8 +15,8 @@ const Browse = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: categoriesData } = useCategories();
-  const { data: streams, isLoading } = useStreams(
-    activeCategory !== "All" ? activeCategory.toLowerCase() : undefined,
+  const { streams, isLoading } = useStreams(
+    activeCategory !== "All" ? { categorySlug: activeCategory.toLowerCase() } : undefined,
     true
   );
 
