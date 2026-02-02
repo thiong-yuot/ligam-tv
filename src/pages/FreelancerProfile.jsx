@@ -2,7 +2,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useFreelancer } from "@/hooks/useFreelancers";
+import { useFreelancerById } from "@/hooks/useFreelancerProfile";
 import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +13,7 @@ import ContactFreelancerDialog from "@/components/ContactFreelancerDialog";
 
 const FreelancerProfile = () => {
   const { id } = useParams();
-  const { data: freelancer, isLoading } = useFreelancer(id);
+  const { data: freelancer, isLoading } = useFreelancerById(id);
   const { packages } = useFreelancerPackages(id);
 
   if (isLoading) {
