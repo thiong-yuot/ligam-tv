@@ -3,19 +3,7 @@ import { ChevronLeft, ChevronRight, Sparkles, TrendingUp, Tag } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-interface FeaturedSlide {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  image: string | null;
-  cta: string;
-  badge: string;
-  badgeIcon: React.ElementType;
-  gradient: string;
-}
-
-const slides: FeaturedSlide[] = [
+const slides = [
   {
     id: "1",
     title: "New Arrivals",
@@ -63,7 +51,7 @@ const FeaturedCarousel = () => {
     return () => clearInterval(interval);
   }, [isAutoPlaying]);
 
-  const goToSlide = (index: number) => {
+  const goToSlide = (index) => {
     setCurrentSlide(index);
     setIsAutoPlaying(false);
     setTimeout(() => setIsAutoPlaying(true), 10000);

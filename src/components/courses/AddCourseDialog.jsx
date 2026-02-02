@@ -13,16 +13,11 @@ import { useFeatureAccess } from "@/hooks/useFeatureAccess";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useAuth } from "@/hooks/useAuth";
 
-interface AddCourseDialogProps {
-  disabled?: boolean;
-  children?: React.ReactNode;
-}
-
-const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
+const AddCourseDialog = ({ disabled, children }) => {
   const { user } = useAuth();
   const { uploadFile, uploading } = useFileUpload();
-  const thumbnailInputRef = useRef<HTMLInputElement>(null);
-  const videoInputRef = useRef<HTMLInputElement>(null);
+  const thumbnailInputRef = useRef(null);
+  const videoInputRef = useRef(null);
   
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
@@ -42,21 +37,21 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
   const remainingSlots = getRemainingCourses();
   const canAdd = canAddCourse();
 
-  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     const url = await uploadFile(file, "course-content", user.id);
     if (url) setThumbnailUrl(url);
   };
 
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     const url = await uploadFile(file, "course-content", user.id);
     if (url) setPreviewVideoUrl(url);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!canAdd) {

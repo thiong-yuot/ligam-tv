@@ -15,7 +15,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-const categoryIcons: Record<string, React.ElementType> = {
+const categoryIcons = {
   "Phones & Tablets": Smartphone,
   "Computers": Monitor,
   "Audio": Headphones,
@@ -32,19 +32,6 @@ const categoryIcons: Record<string, React.ElementType> = {
   "Gifts": Gift,
 };
 
-interface ShopSidebarProps {
-  categories: string[];
-  activeCategory: string;
-  onCategoryChange: (category: string) => void;
-  priceRange: [number, number];
-  onPriceRangeChange: (range: [number, number]) => void;
-  maxPrice: number;
-  onSaleOnly: boolean;
-  onSaleOnlyChange: (checked: boolean) => void;
-  inStockOnly: boolean;
-  onInStockOnlyChange: (checked: boolean) => void;
-}
-
 const ShopSidebar = ({
   categories,
   activeCategory,
@@ -56,7 +43,7 @@ const ShopSidebar = ({
   onSaleOnlyChange,
   inStockOnly,
   onInStockOnlyChange,
-}: ShopSidebarProps) => {
+}) => {
   const [categoriesOpen, setCategoriesOpen] = useState(true);
   const [priceOpen, setPriceOpen] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(true);
@@ -140,7 +127,7 @@ const ShopSidebar = ({
               <CollapsibleContent className="mt-4 space-y-4">
                 <Slider
                   value={priceRange}
-                  onValueChange={(value) => onPriceRangeChange(value as [number, number])}
+                  onValueChange={(value) => onPriceRangeChange(value)}
                   max={maxPrice}
                   min={0}
                   step={1}
@@ -176,14 +163,14 @@ const ShopSidebar = ({
                 <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
                     checked={onSaleOnly}
-                    onCheckedChange={(checked) => onSaleOnlyChange(checked as boolean)}
+                    onCheckedChange={(checked) => onSaleOnlyChange(checked)}
                   />
                   <span className="text-sm text-foreground">On Sale</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer">
                   <Checkbox
                     checked={inStockOnly}
-                    onCheckedChange={(checked) => onInStockOnlyChange(checked as boolean)}
+                    onCheckedChange={(checked) => onInStockOnlyChange(checked)}
                   />
                   <span className="text-sm text-foreground">In Stock Only</span>
                 </label>

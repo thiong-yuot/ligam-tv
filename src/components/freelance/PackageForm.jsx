@@ -8,29 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { X, Plus } from "lucide-react";
 
-interface PackageFormProps {
-  initialData?: {
-    name: string;
-    description: string;
-    price: number;
-    delivery_days: number;
-    revisions: number;
-    features: string[];
-    is_popular: boolean;
-  };
-  onSubmit: (data: any) => void;
-  onCancel: () => void;
-  isLoading?: boolean;
-  tier?: "basic" | "standard" | "premium";
-}
-
 export const PackageForm = ({
   initialData,
   onSubmit,
   onCancel,
   isLoading,
   tier = "basic",
-}: PackageFormProps) => {
+}) => {
   const [formData, setFormData] = useState({
     name: initialData?.name || (tier === "basic" ? "Basic" : tier === "standard" ? "Standard" : "Premium"),
     description: initialData?.description || "",
@@ -53,14 +37,14 @@ export const PackageForm = ({
     }
   };
 
-  const removeFeature = (feature: string) => {
+  const removeFeature = (feature) => {
     setFormData((prev) => ({
       ...prev,
       features: prev.features.filter((f) => f !== feature),
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
   };

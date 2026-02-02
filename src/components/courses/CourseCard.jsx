@@ -3,15 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Clock, PlayCircle, CheckCircle, TrendingUp } from "lucide-react";
-import { Course } from "@/hooks/useCourses";
 import { useCreatorProfile } from "@/hooks/useCreatorProfile";
 
-interface CourseCardProps {
-  course: Course;
-  showInstructor?: boolean;
-}
-
-const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
+const CourseCard = ({ course, showInstructor = true }) => {
   const navigate = useNavigate();
   const { data: creatorProfile } = useCreatorProfile(course.creator_id);
   
@@ -22,7 +16,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
     isVerified: creatorProfile?.is_verified || false,
   };
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (price) => {
     if (price === 0) return "Free";
     return `$${price.toFixed(2)}`;
   };
@@ -34,7 +28,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
     navigate(`/courses/${course.id}`);
   };
 
-  const handleInstructorClick = (e: React.MouseEvent) => {
+  const handleInstructorClick = (e) => {
     e.stopPropagation();
     if (creatorProfile?.username) {
       navigate(`/@${creatorProfile.username}`);

@@ -10,21 +10,6 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-interface MobileFiltersProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  categories: string[];
-  activeCategory: string;
-  onCategoryChange: (category: string) => void;
-  priceRange: [number, number];
-  onPriceRangeChange: (range: [number, number]) => void;
-  maxPrice: number;
-  onSaleOnly: boolean;
-  onSaleOnlyChange: (checked: boolean) => void;
-  inStockOnly: boolean;
-  onInStockOnlyChange: (checked: boolean) => void;
-}
-
 const MobileFilters = ({
   open,
   onOpenChange,
@@ -38,8 +23,8 @@ const MobileFilters = ({
   onSaleOnlyChange,
   inStockOnly,
   onInStockOnlyChange,
-}: MobileFiltersProps) => {
-  const handleCategoryClick = (category: string) => {
+}) => {
+  const handleCategoryClick = (category) => {
     onCategoryChange(category);
     onOpenChange(false);
   };
@@ -99,7 +84,7 @@ const MobileFilters = ({
               </h3>
               <Slider
                 value={priceRange}
-                onValueChange={(value) => onPriceRangeChange(value as [number, number])}
+                onValueChange={(value) => onPriceRangeChange(value)}
                 max={maxPrice}
                 min={0}
                 step={1}
@@ -126,14 +111,14 @@ const MobileFilters = ({
               <label className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   checked={onSaleOnly}
-                  onCheckedChange={(checked) => onSaleOnlyChange(checked as boolean)}
+                  onCheckedChange={(checked) => onSaleOnlyChange(checked)}
                 />
                 <span className="text-sm text-foreground">On Sale</span>
               </label>
               <label className="flex items-center gap-3 cursor-pointer">
                 <Checkbox
                   checked={inStockOnly}
-                  onCheckedChange={(checked) => onInStockOnlyChange(checked as boolean)}
+                  onCheckedChange={(checked) => onInStockOnlyChange(checked)}
                 />
                 <span className="text-sm text-foreground">In Stock Only</span>
               </label>
