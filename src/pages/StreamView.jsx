@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { 
   Heart, 
   Share2, 
@@ -31,7 +32,8 @@ import {
   Play,
   DollarSign,
   CheckCircle,
-  Coins
+  Coins,
+  ChevronUp
 } from "lucide-react";
 import { useStream } from "@/hooks/useStreams";
 import { useChatMessages, useSendMessage } from "@/hooks/useChat";
@@ -44,21 +46,17 @@ import { useCourses } from "@/hooks/useCourses";
 import { useCheckStreamAccess, useCreateStreamCheckout, useVerifyStreamAccess } from "@/hooks/useStreamAccess";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const StreamView = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
-  const [highlightedTips, setHighlightedTips] = useState<Array<{
-    id: string;
-    senderName: string;
-    giftName: string;
-    giftIcon: string;
-    amount: number;
-    message?: string;
-  }>>([]);
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [highlightedTips, setHighlightedTips] = useState([]);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
   const { user } = useAuth();
   const { tier, createSubscriptionCheckout } = useSubscription();
@@ -161,7 +159,7 @@ const StreamView = () => {
     }
 
     try {
-      const result = await createStreamCheckout.mutateAsync(id!);
+      const result = await createStreamCheckout.mutateAsync(id);
       if (result.url) {
         window.location.href = result.url;
       }
@@ -198,7 +196,7 @@ const StreamView = () => {
     }
   };
 
-  const formatViewers = (count: number) => {
+  const formatViewers = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
@@ -216,8 +214,8 @@ const StreamView = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="pt-24 text-center">
-          <h1 className="text-2xl font-bold text-foreground mb-4">Stream Not Found</h1>
+        <div className="pt-24 text-center px-4">
+          <h1 className="text-xl md:text-2xl font-bold text-foreground mb-4">Stream Not Found</h1>
           <p className="text-muted-foreground mb-6">This stream doesn't exist or has ended.</p>
           <Link to="/browse">
             <Button>Browse Streams</Button>
@@ -251,23 +249,23 @@ const StreamView = () => {
       ) : null}
       
       {/* Paywall Overlay */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-        <Card className="max-w-md mx-4 p-6 text-center bg-card/95 border-primary/20">
-          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
-            <Lock className="w-8 h-8 text-primary" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <Card className="max-w-md w-full p-4 md:p-6 text-center bg-card/95 border-primary/20">
+          <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <Lock className="w-6 h-6 md:w-8 md:h-8 text-primary" />
           </div>
-          <Badge className="bg-primary text-primary-foreground border-0 mb-4">
+          <Badge className="bg-primary text-primary-foreground border-0 mb-3 md:mb-4">
             <Crown className="w-3 h-3 mr-1" />
             Premium Stream
           </Badge>
-          <h2 className="text-xl font-bold text-foreground mb-2">{stream.title}</h2>
-          <p className="text-muted-foreground mb-4">
+          <h2 className="text-lg md:text-xl font-bold text-foreground mb-2 line-clamp-2">{stream.title}</h2>
+          <p className="text-sm text-muted-foreground mb-4">
             This is a paid live stream. Purchase access to watch the full content.
           </p>
           
           {accessInfo?.previewUrl && (
-            <div className="mb-4 p-3 rounded-lg bg-secondary/50 border border-border">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="mb-4 p-2 md:p-3 rounded-lg bg-secondary/50 border border-border">
+              <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Play className="w-4 h-4" />
                 <span>Free preview available above</span>
               </div>
@@ -275,8 +273,8 @@ const StreamView = () => {
           )}
           
           <div className="space-y-3">
-            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-foreground">
-              <DollarSign className="w-6 h-6 text-primary" />
+            <div className="flex items-center justify-center gap-2 text-xl md:text-2xl font-bold text-foreground">
+              <DollarSign className="w-5 h-5 md:w-6 md:h-6 text-primary" />
               <span>{streamPrice.toFixed(2)}</span>
             </div>
             <p className="text-xs text-muted-foreground">One-time payment • Lifetime access</p>
@@ -306,6 +304,179 @@ const StreamView = () => {
     </div>
   );
 
+  // Sidebar content shared between desktop and mobile
+  const SidebarContent = ({ inSheet = false }) => (
+    <Tabs defaultValue="chat" className="flex flex-col h-full">
+      <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0 shrink-0">
+        <TabsTrigger 
+          value="chat" 
+          className="flex-1 gap-1 md:gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary text-xs md:text-sm py-2 md:py-3"
+        >
+          <MessageCircle className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          <span className="hidden xs:inline">Chat</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="shop" 
+          className="flex-1 gap-1 md:gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary text-xs md:text-sm py-2 md:py-3"
+        >
+          <ShoppingBag className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          <span className="hidden xs:inline">Shop</span>
+        </TabsTrigger>
+        <TabsTrigger 
+          value="services" 
+          className="flex-1 gap-1 md:gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary text-xs md:text-sm py-2 md:py-3"
+        >
+          <Briefcase className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          <span className="hidden xs:inline">Services</span>
+        </TabsTrigger>
+      </TabsList>
+
+      {/* Chat Tab */}
+      <TabsContent value="chat" className="flex-1 flex flex-col m-0 overflow-hidden">
+        <div className={`flex-1 overflow-y-auto p-3 md:p-4 space-y-3 ${inSheet ? 'min-h-[200px] max-h-[40vh]' : 'min-h-[200px] lg:min-h-0'}`}>
+          {/* Highlighted Tips */}
+          {highlightedTips.map((tip) => (
+            <HighlightedTip
+              key={tip.id}
+              senderName={tip.senderName}
+              giftName={tip.giftName}
+              giftIcon={tip.giftIcon}
+              amount={tip.amount}
+              message={tip.message}
+            />
+          ))}
+          
+          {messages.length === 0 && highlightedTips.length === 0 ? (
+            <div className="text-center text-muted-foreground py-6 md:py-8">
+              <MessageCircle className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 opacity-50" />
+              <p className="text-sm">No messages yet</p>
+              <p className="text-xs">Be the first to say something!</p>
+            </div>
+          ) : (
+            messages.map((msg) => (
+              <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
+                {tier && (
+                  <Crown className={`w-4 h-4 flex-shrink-0 ${
+                    tier === 'pro' ? 'text-amber-500' : 'text-primary'
+                  }`} />
+                )}
+                <span className="font-semibold text-primary">
+                  User:
+                </span>
+                <span className="text-foreground">{msg.message}</span>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Gifts Panel */}
+        {stream?.user_id && (
+          <div className="px-3 md:px-4 pb-2">
+            <StreamGifts
+              streamId={stream.id}
+              recipientId={stream.user_id}
+              onGiftSent={(gift) => {
+                setHighlightedTips(prev => [...prev, {
+                  id: crypto.randomUUID(),
+                  senderName: gift.senderName,
+                  giftName: gift.giftName,
+                  giftIcon: gift.giftIcon,
+                  amount: gift.amount,
+                  message: gift.message,
+                }]);
+              }}
+            />
+          </div>
+        )}
+
+        <div className="p-3 md:p-4 border-t border-border">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Input
+                type="text"
+                placeholder={user ? "Send a message" : "Login to chat"}
+                value={chatMessage}
+                onChange={(e) => setChatMessage(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                className="pr-10 bg-secondary text-sm"
+                disabled={!user}
+              />
+              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                <Button variant="ghost" size="icon" className="h-6 w-6 md:h-7 md:w-7">
+                  <Smile className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                </Button>
+              </div>
+            </div>
+            <Button 
+              variant="default" 
+              size="icon"
+              className="h-9 w-9 md:h-10 md:w-10"
+              onClick={handleSendMessage}
+              disabled={!chatMessage.trim() || !user || sendMessage.isPending}
+            >
+              {sendMessage.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
+            </Button>
+          </div>
+        </div>
+      </TabsContent>
+
+      {/* Shop Tab */}
+      <TabsContent value="shop" className={`flex-1 overflow-y-auto p-3 md:p-4 m-0 space-y-4 ${inSheet ? 'max-h-[50vh]' : ''}`}>
+        <SubscribeWidget
+          creatorName="Streamer"
+          currentTier={tier}
+          onSubscribe={(tierKey) => {
+            const priceId = SUBSCRIPTION_TIERS[tierKey].price_id;
+            if (priceId) createSubscriptionCheckout(priceId);
+          }}
+        />
+        
+        {streamerProducts.length > 0 && (
+          <FeaturedProductsWidget
+            products={streamerProducts}
+            maxItems={4}
+          />
+        )}
+        
+        {streamerProducts.length === 0 && (
+          <div className="text-center py-6 md:py-8 text-muted-foreground">
+            <ShoppingBag className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No products available</p>
+          </div>
+        )}
+      </TabsContent>
+
+      {/* Services Tab (Gigs + Courses) */}
+      <TabsContent value="services" className={`flex-1 overflow-y-auto p-3 md:p-4 m-0 space-y-4 ${inSheet ? 'max-h-[50vh]' : ''}`}>
+        {streamerFreelancer && streamerPackages.length > 0 && (
+          <FeaturedGigsWidget
+            freelancer={streamerFreelancer}
+            packages={streamerPackages}
+            maxItems={3}
+          />
+        )}
+        
+        {stream?.user_id && (
+          <FeaturedCoursesWidget
+            creatorId={stream.user_id}
+          />
+        )}
+        
+        {(!streamerFreelancer || streamerPackages.length === 0) && streamerCourses.length === 0 && (
+          <div className="text-center py-6 md:py-8 text-muted-foreground">
+            <Briefcase className="w-6 h-6 md:w-8 md:h-8 mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No services available</p>
+            <p className="text-xs">This streamer hasn't set up any gigs or courses yet</p>
+          </div>
+        )}
+      </TabsContent>
+    </Tabs>
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -333,20 +504,21 @@ const StreamView = () => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="text-center">
-                  <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-lg font-medium text-foreground">Stream Offline</p>
-                  <p className="text-sm text-muted-foreground">Check back later when the streamer is live</p>
+                <div className="text-center px-4">
+                  <Users className="w-12 h-12 md:w-16 md:h-16 text-muted-foreground mx-auto mb-3 md:mb-4" />
+                  <p className="text-base md:text-lg font-medium text-foreground">Stream Offline</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">Check back later when the streamer is live</p>
                 </div>
               )}
             </div>
           )}
 
           {/* Stream Info */}
-          <div className="p-4 md:p-6 border-b border-border">
-            <div className="flex flex-col md:flex-row gap-4 md:items-start justify-between">
-              <div className="flex gap-4">
-                <div className="w-14 h-14 rounded-full ring-2 ring-primary bg-secondary overflow-hidden">
+          <div className="p-3 md:p-4 lg:p-6 border-b border-border">
+            <div className="flex flex-col gap-3 md:gap-4">
+              {/* Streamer info row */}
+              <div className="flex gap-3 md:gap-4">
+                <div className="w-10 h-10 md:w-14 md:h-14 rounded-full ring-2 ring-primary bg-secondary overflow-hidden flex-shrink-0">
                   {stream.profiles?.avatar_url ? (
                     <img 
                       src={stream.profiles.avatar_url} 
@@ -355,62 +527,70 @@ const StreamView = () => {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <Users className="w-6 h-6 text-muted-foreground" />
+                      <Users className="w-4 h-4 md:w-6 md:h-6 text-muted-foreground" />
                     </div>
                   )}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h1 className="text-xl font-display font-bold text-foreground">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start gap-2 mb-1 flex-wrap">
+                    <h1 className="text-base md:text-xl font-display font-bold text-foreground line-clamp-2">
                       {stream.title}
                     </h1>
                     {isPaidStream && (
-                      <Badge className="bg-primary text-primary-foreground border-0">
+                      <Badge className="bg-primary text-primary-foreground border-0 text-xs shrink-0">
                         <DollarSign className="w-3 h-3 mr-1" />
                         ${streamPrice}
                       </Badge>
                     )}
                     {hasAccess && isPaidStream && (
-                      <Badge variant="secondary" className="border-green-500/50 text-green-500">
+                      <Badge variant="secondary" className="border-green-500/50 text-green-500 text-xs shrink-0">
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Access Granted
                       </Badge>
                     )}
                   </div>
-                  <p className="text-primary font-semibold">
+                  <p className="text-primary font-semibold text-sm md:text-base">
                     {stream.profiles?.display_name || stream.profiles?.username || "Streamer"}
                     {stream.profiles?.is_verified && (
                       <Badge variant="secondary" className="ml-2 text-xs">Verified</Badge>
                     )}
                   </p>
-                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-muted-foreground">
                     <span>{formatViewers(stream.viewer_count || 0)} viewers</span>
                     {stream.profiles?.follower_count && (
-                      <span>{formatViewers(stream.profiles.follower_count)} followers</span>
+                      <span className="hidden sm:inline">{formatViewers(stream.profiles.follower_count)} followers</span>
                     )}
                   </div>
                   {stream.tags && stream.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {stream.tags.map((tag) => (
+                    <div className="flex flex-wrap gap-1.5 md:gap-2 mt-2">
+                      {stream.tags.slice(0, isMobile ? 3 : stream.tags.length).map((tag) => (
                         <span
                           key={tag}
-                          className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full"
+                          className="px-1.5 md:px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full"
                         >
                           {tag}
                         </span>
                       ))}
+                      {isMobile && stream.tags.length > 3 && (
+                        <span className="px-1.5 py-0.5 text-muted-foreground text-xs">
+                          +{stream.tags.length - 3}
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Action buttons row */}
+              <div className="flex items-center gap-2 flex-wrap">
                 <Button
                   variant={isFollowing ? "secondary" : "default"}
                   onClick={() => setIsFollowing(!isFollowing)}
+                  size="sm"
+                  className="text-xs md:text-sm"
                 >
-                  <Heart className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`} />
-                  {isFollowing ? "Following" : "Follow"}
+                  <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isFollowing ? "fill-current" : ""}`} />
+                  <span className="hidden xs:inline ml-1">{isFollowing ? "Following" : "Follow"}</span>
                 </Button>
                 
                 {/* Tip/Donate Button */}
@@ -431,194 +611,55 @@ const StreamView = () => {
                   />
                 )}
                 
-                <Button variant="outline">
-                  <Crown className="w-4 h-4" />
-                  Subscribe
+                <Button variant="outline" size="sm" className="text-xs md:text-sm">
+                  <Crown className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span className="hidden xs:inline ml-1">Subscribe</span>
                 </Button>
-                <Button variant="ghost" size="icon">
-                  <Share2 className="w-4 h-4" />
+                <Button variant="ghost" size="icon" className="h-8 w-8 md:h-9 md:w-9">
+                  <Share2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
                 </Button>
               </div>
             </div>
           </div>
 
           {/* Description */}
-          <div className="p-4 md:p-6">
-            <h3 className="font-semibold text-foreground mb-2">About this stream</h3>
-            <p className="text-muted-foreground">{stream.description || "No description provided."}</p>
+          <div className="p-3 md:p-4 lg:p-6">
+            <h3 className="font-semibold text-foreground mb-2 text-sm md:text-base">About this stream</h3>
+            <p className="text-muted-foreground text-sm">{stream.description || "No description provided."}</p>
           </div>
+
+          {/* Mobile Sidebar Sheet Trigger - Fixed at bottom on mobile */}
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-card p-2">
+            <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
+              <SheetTrigger asChild>
+                <Button variant="secondary" className="w-full gap-2">
+                  <ChevronUp className="w-4 h-4" />
+                  <MessageCircle className="w-4 h-4" />
+                  Chat & Shop
+                  {messages.length > 0 && (
+                    <Badge variant="default" className="ml-1 h-5 min-w-5 text-xs">
+                      {messages.length}
+                    </Badge>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="h-[70vh] p-0 rounded-t-xl">
+                <div className="h-full flex flex-col">
+                  <div className="flex-1 overflow-hidden">
+                    <SidebarContent inSheet={true} />
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+
+          {/* Add padding at bottom on mobile to account for fixed button */}
+          <div className="lg:hidden h-16" />
         </div>
 
-        {/* Sidebar with Tabs */}
-        <div className="w-full lg:w-96 border-l border-border flex flex-col bg-card">
-          <Tabs defaultValue="chat" className="flex flex-col h-full">
-            <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0">
-              <TabsTrigger 
-                value="chat" 
-                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-              >
-                <MessageCircle className="w-4 h-4" />
-                Chat
-              </TabsTrigger>
-              <TabsTrigger 
-                value="shop" 
-                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                Shop
-              </TabsTrigger>
-              <TabsTrigger 
-                value="services" 
-                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
-              >
-                <Briefcase className="w-4 h-4" />
-                Services
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Chat Tab */}
-            <TabsContent value="chat" className="flex-1 flex flex-col m-0 overflow-hidden">
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] lg:min-h-0">
-                {/* Highlighted Tips */}
-                {highlightedTips.map((tip) => (
-                  <HighlightedTip
-                    key={tip.id}
-                    senderName={tip.senderName}
-                    giftName={tip.giftName}
-                    giftIcon={tip.giftIcon}
-                    amount={tip.amount}
-                    message={tip.message}
-                  />
-                ))}
-                
-                {messages.length === 0 && highlightedTips.length === 0 ? (
-                  <div className="text-center text-muted-foreground py-8">
-                    <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">No messages yet</p>
-                    <p className="text-xs">Be the first to say something!</p>
-                  </div>
-                ) : (
-                  messages.map((msg) => (
-                    <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
-                      {tier && (
-                        <Crown className={`w-4 h-4 flex-shrink-0 ${
-                          tier === 'pro' ? 'text-amber-500' : 'text-primary'
-                        }`} />
-                      )}
-                      <span className="font-semibold text-primary">
-                        User:
-                      </span>
-                      <span className="text-foreground">{msg.message}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* Gifts Panel */}
-              {stream?.user_id && (
-                <div className="px-4 pb-2">
-                  <StreamGifts
-                    streamId={stream.id}
-                    recipientId={stream.user_id}
-                    onGiftSent={(gift) => {
-                      setHighlightedTips(prev => [...prev, {
-                        id: crypto.randomUUID(),
-                        senderName: gift.senderName,
-                        giftName: gift.giftName,
-                        giftIcon: gift.giftIcon,
-                        amount: gift.amount,
-                        message: gift.message,
-                      }]);
-                    }}
-                  />
-                </div>
-              )}
-
-              <div className="p-4 border-t border-border">
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Input
-                      type="text"
-                      placeholder={user ? "Send a message" : "Login to chat"}
-                      value={chatMessage}
-                      onChange={(e) => setChatMessage(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                      className="pr-10 bg-secondary"
-                      disabled={!user}
-                    />
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
-                        <Smile className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  <Button 
-                    variant="default" 
-                    size="icon"
-                    onClick={handleSendMessage}
-                    disabled={!chatMessage.trim() || !user || sendMessage.isPending}
-                  >
-                    {sendMessage.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Send className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Shop Tab */}
-            <TabsContent value="shop" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
-              <SubscribeWidget
-                creatorName="Streamer"
-                currentTier={tier}
-                onSubscribe={(tierKey) => {
-                  const priceId = SUBSCRIPTION_TIERS[tierKey].price_id;
-                  if (priceId) createSubscriptionCheckout(priceId);
-                }}
-              />
-              
-              {streamerProducts.length > 0 && (
-                <FeaturedProductsWidget
-                  products={streamerProducts}
-                  maxItems={4}
-                />
-              )}
-              
-              {streamerProducts.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <ShoppingBag className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No products available</p>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Services Tab (Gigs + Courses) */}
-            <TabsContent value="services" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
-              {streamerFreelancer && streamerPackages.length > 0 && (
-                <FeaturedGigsWidget
-                  freelancer={streamerFreelancer}
-                  packages={streamerPackages}
-                  maxItems={3}
-                />
-              )}
-              
-              {stream?.user_id && (
-                <FeaturedCoursesWidget
-                  creatorId={stream.user_id}
-                />
-              )}
-              
-              {(!streamerFreelancer || streamerPackages.length === 0) && streamerCourses.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                  <p className="text-sm">No services available</p>
-                  <p className="text-xs">This streamer hasn't set up any gigs or courses yet</p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:flex w-80 xl:w-96 border-l border-border flex-col bg-card">
+          <SidebarContent />
         </div>
       </div>
     </div>
