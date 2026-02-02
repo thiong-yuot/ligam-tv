@@ -21,12 +21,6 @@ import {
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-interface AddServiceDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  freelancerId: string;
-}
-
 const categories = [
   "Video Editing",
   "Graphic Design",
@@ -40,7 +34,7 @@ const categories = [
   "Other",
 ];
 
-const AddServiceDialog = ({ open, onOpenChange, freelancerId }: AddServiceDialogProps) => {
+const AddServiceDialog = ({ open, onOpenChange, freelancerId }) => {
   const createService = useCreateService();
 
   const [title, setTitle] = useState("");
@@ -49,7 +43,7 @@ const AddServiceDialog = ({ open, onOpenChange, freelancerId }: AddServiceDialog
   const [deliveryDays, setDeliveryDays] = useState("7");
   const [category, setCategory] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title.trim() || !price) {
@@ -70,7 +64,7 @@ const AddServiceDialog = ({ open, onOpenChange, freelancerId }: AddServiceDialog
       toast.success("Service added successfully!");
       onOpenChange(false);
       resetForm();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to add service");
     }
   };

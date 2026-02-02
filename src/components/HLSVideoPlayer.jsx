@@ -10,27 +10,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Slider } from "@/components/ui/slider";
 
-interface HLSVideoPlayerProps {
-  src: string;
-  poster?: string;
-  isLive?: boolean;
-  onViewerJoin?: () => void;
-  onViewerLeave?: () => void;
-}
-
-const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HLSVideoPlayerProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const hlsRef = useRef<Hls | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }) => {
+  const videoRef = useRef(null);
+  const hlsRef = useRef(null);
+  const containerRef = useRef(null);
   
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [showControls, setShowControls] = useState(true);
-  const [qualities, setQualities] = useState<{ height: number; level: number }[]>([]);
-  const [currentQuality, setCurrentQuality] = useState(-1); // -1 = auto
+  const [qualities, setQualities] = useState([]);
+  const [currentQuality, setCurrentQuality] = useState(-1);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -56,11 +48,8 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
           }));
           setQualities(availableQualities);
           
-          // Auto-play for live streams
           if (isLive) {
-            video.play().catch(() => {
-              // Autoplay blocked, user needs to interact
-            });
+            video.play().catch(() => {});
           }
         });
 
@@ -88,7 +77,6 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
         });
 
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-        // Native HLS support (Safari)
         video.src = src;
         video.addEventListener("loadedmetadata", () => {
           setIsLoading(false);
@@ -113,9 +101,8 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
     };
   }, [src, isLive, onViewerJoin, onViewerLeave]);
 
-  // Auto-hide controls
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout;
     if (isPlaying && showControls) {
       timeout = setTimeout(() => setShowControls(false), 3000);
     }
@@ -143,7 +130,7 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
     setIsMuted(video.muted);
   };
 
-  const handleVolumeChange = (value: number[]) => {
+  const handleVolumeChange = (value) => {
     const video = videoRef.current;
     if (!video) return;
 
@@ -164,7 +151,7 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
     }
   };
 
-  const setQuality = (level: number) => {
+  const setQuality = (level) => {
     if (hlsRef.current) {
       hlsRef.current.currentLevel = level;
       setCurrentQuality(level);
@@ -200,14 +187,12 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
         onClick={togglePlay}
       />
 
-      {/* Loading Overlay */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50">
           <Loader2 className="w-12 h-12 text-primary animate-spin" />
         </div>
       )}
 
-      {/* Error Overlay */}
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80">
           <div className="text-center">
@@ -219,7 +204,6 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
         </div>
       )}
 
-      {/* Play Button Overlay (when paused) */}
       {!isPlaying && !isLoading && !error && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer" onClick={togglePlay}>
           <div className="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center hover:bg-primary transition-colors">
@@ -228,7 +212,6 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
         </div>
       )}
 
-      {/* Controls */}
       <div
         className={`absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 ${
           showControls ? "opacity-100" : "opacity-0"
@@ -278,7 +261,6 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Quality Selector */}
             {qualities.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

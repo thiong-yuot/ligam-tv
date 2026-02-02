@@ -8,7 +8,6 @@ const GetFeatured = () => {
       <div className="w-full max-w-[1920px] mx-auto">
         <div className="bg-card border border-border rounded-2xl p-8 md:p-12">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
-            {/* Left Content */}
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-6 h-6 text-primary" />
@@ -43,7 +42,6 @@ const GetFeatured = () => {
               </Link>
             </div>
 
-            {/* Right - Decorative */}
             <div className="hidden lg:flex items-center justify-center">
               <div className="relative">
                 <div className="w-32 h-32 rounded-xl bg-muted flex items-center justify-center">

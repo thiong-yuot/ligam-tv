@@ -10,19 +10,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
-interface ContactFreelancerDialogProps {
-  freelancerId: string;
-  freelancerUserId: string;
-  freelancerName: string;
-  children?: React.ReactNode;
-}
-
 const ContactFreelancerDialog = ({
   freelancerId,
   freelancerUserId,
   freelancerName,
   children,
-}: ContactFreelancerDialogProps) => {
+}) => {
   const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
@@ -32,7 +25,7 @@ const ContactFreelancerDialog = ({
   const navigate = useNavigate();
   const sendMessage = useSendMessage();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user) {

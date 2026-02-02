@@ -4,31 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Clock, ExternalLink } from "lucide-react";
 
-interface ServicePackage {
-  id: string;
-  name: string;
-  price: number;
-  delivery_days: number;
-}
-
-interface Freelancer {
-  id: string;
-  name: string;
-  title: string;
-  rating?: number | null;
-}
-
-interface FeaturedServicesWidgetProps {
-  freelancer: Freelancer | null;
-  packages: ServicePackage[];
-  maxItems?: number;
-}
-
 const FeaturedServicesWidget = ({ 
   freelancer, 
   packages,
   maxItems = 3 
-}: FeaturedServicesWidgetProps) => {
+}) => {
   const displayPackages = packages.slice(0, maxItems);
 
   if (!freelancer || displayPackages.length === 0) return null;
@@ -48,7 +28,6 @@ const FeaturedServicesWidget = ({
         </Link>
       </div>
       
-      {/* Freelancer Info */}
       <div className="mb-4 p-2 rounded-lg bg-secondary/30">
         <p className="text-sm font-medium text-foreground">{freelancer.name}</p>
         <p className="text-xs text-muted-foreground">{freelancer.title}</p>

@@ -1,32 +1,25 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Check, Sparkles, Zap } from "lucide-react";
+import { Crown, Check, Sparkles } from "lucide-react";
 import { SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
-
-interface SubscribeWidgetProps {
-  creatorName: string;
-  onSubscribe?: (tier: 'creator' | 'pro') => void;
-  isSubscribed?: boolean;
-  currentTier?: string | null;
-}
 
 const SubscribeWidget = ({ 
   creatorName, 
   onSubscribe,
   isSubscribed,
   currentTier
-}: SubscribeWidgetProps) => {
+}) => {
   const tiers = [
     {
-      key: 'creator' as const,
+      key: 'creator',
       name: 'Creator',
       price: SUBSCRIPTION_TIERS.creator.price,
       icon: Sparkles,
       features: ['HD Streams', 'Custom Emotes', 'No Ads'],
     },
     {
-      key: 'pro' as const,
+      key: 'pro',
       name: 'Pro',
       price: SUBSCRIPTION_TIERS.pro.price,
       icon: Crown,

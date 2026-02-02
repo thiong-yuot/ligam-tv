@@ -10,17 +10,6 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
-interface FreelanceHeaderProps {
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  sortBy: string;
-  onSortChange: (sort: string) => void;
-  viewMode: "grid" | "list";
-  onViewModeChange: (mode: "grid" | "list") => void;
-  totalResults: number;
-  onOpenMobileFilters: () => void;
-}
-
 const FreelanceHeader = ({
   searchQuery,
   onSearchChange,
@@ -30,10 +19,9 @@ const FreelanceHeader = ({
   onViewModeChange,
   totalResults,
   onOpenMobileFilters,
-}: FreelanceHeaderProps) => {
+}) => {
   return (
     <div className="space-y-4 mb-6">
-      {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
         <Input
@@ -45,10 +33,8 @@ const FreelanceHeader = ({
         />
       </div>
 
-      {/* Controls Bar */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          {/* Mobile Filters Button */}
           <Button
             variant="outline"
             size="sm"
@@ -59,14 +45,12 @@ const FreelanceHeader = ({
             Filters
           </Button>
 
-          {/* Results Count */}
           <span className="text-sm text-muted-foreground">
             <span className="font-semibold text-foreground">{totalResults}</span> freelancers found
           </span>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Sort Dropdown */}
           <Select value={sortBy} onValueChange={onSortChange}>
             <SelectTrigger className="w-[180px] bg-card">
               <ArrowUpDown className="w-4 h-4 mr-2" />
@@ -81,7 +65,6 @@ const FreelanceHeader = ({
             </SelectContent>
           </Select>
 
-          {/* View Mode Toggle */}
           <div className="hidden sm:flex items-center border border-border rounded-lg bg-card p-1">
             <Button
               variant="ghost"
