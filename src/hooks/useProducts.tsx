@@ -16,62 +16,25 @@ export interface Product {
   created_at?: string | null;
 }
 
-interface UseProductsOptions {
-  category?: string;
-  sellerId?: string;
-}
-
-export const useProducts = (options?: string | UseProductsOptions) => {
-  const queryClient = useQueryClient();
-  
-  // Support both old pattern (category string) and new pattern (options object)
-  const category = typeof options === 'string' ? options : options?.category;
-  const sellerId = typeof options === 'object' ? options?.sellerId : undefined;
-  
-  const query = useQuery({
-    queryKey: ["products", category, sellerId],
+export const useProducts = (category?: string) => {
+  return useQuery({
+    queryKey: ["products", category],
     queryFn: async () => {
-      let q = supabase
+      let query = supabase
         .from("products")
         .select("*")
+        .eq("is_active", true)
         .order("created_at", { ascending: false });
       
-      if (sellerId) {
-        q = q.eq("seller_id", sellerId);
-      } else {
-        q = q.eq("is_active", true);
-      }
-      
       if (category) {
-        q = q.eq("category", category);
+        query = query.eq("category", category);
       }
       
-      const { data, error } = await q;
+      const { data, error } = await query;
       if (error) throw error;
       return data as Product[];
     },
   });
-
-  const deleteProductMutation = useMutation({
-    mutationFn: async (productId: string) => {
-      const { error } = await supabase
-        .from("products")
-        .delete()
-        .eq("id", productId);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["my-products"] });
-    },
-  });
-
-  return {
-    ...query,
-    products: query.data,
-    deleteProduct: deleteProductMutation.mutate,
-  };
 };
 
 export const useMyProducts = () => {

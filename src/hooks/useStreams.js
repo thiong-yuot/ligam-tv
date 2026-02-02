@@ -2,51 +2,24 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { streamSchema, validateOrThrow } from "@/lib/validation";
 
-export const useStreams = (options, isLive) => {
-  // Support both old pattern (categorySlug string) and new pattern (options object)
-  const categorySlug = typeof options === 'string' ? options : options?.categorySlug;
-  const userId = typeof options === 'object' ? options?.userId : undefined;
-
-  const query = useQuery({
-    queryKey: ["streams", categorySlug, userId, isLive],
+export const useStreams = (categorySlug, isLive) => {
+  return useQuery({
+    queryKey: ["streams", categorySlug, isLive],
     queryFn: async () => {
-      let q = supabase
+      let query = supabase
         .from("streams")
-        .select("*, categories(name, slug)")
+        .select("*")
         .order("viewer_count", { ascending: false });
       
       if (isLive !== undefined) {
-        q = q.eq("is_live", isLive);
-      }
-
-      // Filter by user if provided
-      if (userId) {
-        q = q.eq("user_id", userId);
+        query = query.eq("is_live", isLive);
       }
       
-      // Filter by category if provided
-      if (categorySlug) {
-        const { data: category } = await supabase
-          .from("categories")
-          .select("id")
-          .eq("slug", categorySlug)
-          .maybeSingle();
-        
-        if (category) {
-          q = q.eq("category_id", category.id);
-        }
-      }
-      
-      const { data, error } = await q;
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
   });
-
-  return {
-    ...query,
-    streams: query.data,
-  };
 };
 
 export const useStream = (id) => {

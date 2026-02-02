@@ -86,7 +86,7 @@ export const useUnreadCount = () => {
   });
 };
 
-export const useSendMessage = () => {
+export const useSendMessageHook = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
 

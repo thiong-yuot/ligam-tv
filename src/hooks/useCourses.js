@@ -2,19 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-export const COURSE_CATEGORIES = [
-  "Programming",
-  "Design",
-  "Business",
-  "Marketing",
-  "Music",
-  "Photography",
-  "Health & Fitness",
-  "Personal Development",
-];
-
-export const COURSE_LEVELS = ["beginner", "intermediate", "advanced", "all-levels"];
-
 export const useCourses = (category) => {
   return useQuery({
     queryKey: ["courses", category],
