@@ -8,15 +8,9 @@ import { useVirtualGifts } from "@/hooks/useVirtualGifts";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-interface TipDialogProps {
-  streamId: string;
-  recipientId: string;
-  onTipSent?: (tip: { amount: number; message: string; giftName: string; giftIcon: string }) => void;
-}
-
-const TipDialog = ({ streamId, recipientId, onTipSent }: TipDialogProps) => {
+const TipDialog = ({ streamId, recipientId, onTipSent }) => {
   const [open, setOpen] = useState(false);
-  const [selectedGift, setSelectedGift] = useState<string | null>(null);
+  const [selectedGift, setSelectedGift] = useState(null);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
   
@@ -32,7 +26,6 @@ const TipDialog = ({ streamId, recipientId, onTipSent }: TipDialogProps) => {
       const gift = gifts.find(g => g.id === selectedGift);
       if (!gift) throw new Error("Gift not found");
 
-      // Insert gift transaction
       const { error } = await supabase
         .from("gift_transactions")
         .insert({
@@ -46,12 +39,11 @@ const TipDialog = ({ streamId, recipientId, onTipSent }: TipDialogProps) => {
 
       if (error) throw error;
 
-      // Also add to earnings table
       await supabase
         .from("earnings")
         .insert({
           user_id: recipientId,
-          amount: gift.price * 0.8, // 80% goes to creator
+          amount: gift.price * 0.8,
           type: "tip",
           source_id: streamId,
           status: "completed",
@@ -103,7 +95,6 @@ const TipDialog = ({ streamId, recipientId, onTipSent }: TipDialogProps) => {
         </DialogHeader>
         
         <div className="space-y-4">
-          {/* Gift Selection */}
           <div>
             <p className="text-sm text-muted-foreground mb-3">Choose a gift:</p>
             <div className="grid grid-cols-4 gap-2">
@@ -129,7 +120,6 @@ const TipDialog = ({ streamId, recipientId, onTipSent }: TipDialogProps) => {
             </div>
           </div>
 
-          {/* Message Input */}
           <div>
             <p className="text-sm text-muted-foreground mb-2">
               Add a message (optional):
@@ -146,7 +136,6 @@ const TipDialog = ({ streamId, recipientId, onTipSent }: TipDialogProps) => {
             </p>
           </div>
 
-          {/* Send Button */}
           <Button
             onClick={handleSendTip}
             disabled={!selectedGift || sending || !user}

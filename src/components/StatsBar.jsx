@@ -1,11 +1,6 @@
-import { Video, Grid3X3, Users } from "lucide-react";
+import { Video, Grid3X3 } from "lucide-react";
 
-interface StatsBarProps {
-  liveStreams?: number;
-  categories?: number;
-}
-
-const StatsBar = ({ liveStreams = 0, categories = 0 }: StatsBarProps) => {
+const StatsBar = ({ liveStreams = 0, categories = 0 }) => {
   const stats = [
     { icon: Video, value: liveStreams.toString(), label: "Live Streams" },
     { icon: Grid3X3, value: categories.toString(), label: "Categories" },

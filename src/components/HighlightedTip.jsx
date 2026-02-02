@@ -1,12 +1,4 @@
-interface HighlightedTipProps {
-  senderName: string;
-  giftName: string;
-  giftIcon: string;
-  amount: number;
-  message?: string;
-}
-
-const HighlightedTip = ({ senderName, giftName, giftIcon, amount, message }: HighlightedTipProps) => {
+const HighlightedTip = ({ senderName, giftName, giftIcon, amount, message }) => {
   return (
     <div className="p-3 rounded-lg bg-gradient-to-r from-primary/20 to-amber-500/20 border border-primary/50 animate-slideIn">
       <div className="flex items-center gap-2 mb-1">

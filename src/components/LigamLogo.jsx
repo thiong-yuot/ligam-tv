@@ -1,6 +1,6 @@
 import ligamLogo from "@/assets/ligam-logo-new.png";
 
-const LigamLogo = ({ className = "w-8 h-8" }: { className?: string }) => {
+const LigamLogo = ({ className = "w-8 h-8" }) => {
   return (
     <div className={`${className} overflow-hidden flex items-center justify-center bg-transparent`}>
       <img

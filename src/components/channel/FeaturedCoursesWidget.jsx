@@ -2,16 +2,11 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen, Users, ArrowRight } from "lucide-react";
-import { useCourses, Course } from "@/hooks/useCourses";
+import { useCourses } from "@/hooks/useCourses";
 
-interface FeaturedCoursesWidgetProps {
-  creatorId?: string;
-}
-
-const FeaturedCoursesWidget = ({ creatorId }: FeaturedCoursesWidgetProps) => {
+const FeaturedCoursesWidget = ({ creatorId }) => {
   const { data: courses = [] } = useCourses();
   
-  // Filter by creator if creatorId provided
   const filteredCourses = creatorId 
     ? courses.filter(c => c.creator_id === creatorId).slice(0, 3)
     : courses.slice(0, 3);

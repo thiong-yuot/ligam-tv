@@ -14,7 +14,6 @@ const CreatorTokens = () => {
     <section id="creator-tokens" className="py-20 px-4">
       <div className="container mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
           <div>
             <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
               Support Your Favorite Creators
@@ -45,7 +44,6 @@ const CreatorTokens = () => {
             </Link>
           </div>
 
-          {/* Right - Token Cards */}
           <div className="grid grid-cols-2 gap-4">
             {tokens.map((token, index) => (
               <div

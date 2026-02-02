@@ -1,16 +1,8 @@
 import { Link } from "react-router-dom";
 import { Users } from "lucide-react";
 
-interface CategoryCardProps {
-  id: string;
-  name: string;
-  image: string;
-  viewers: number;
-  tags?: string[];
-}
-
-const CategoryCard = ({ id, name, image, viewers, tags = [] }: CategoryCardProps) => {
-  const formatViewers = (count: number) => {
+const CategoryCard = ({ id, name, image, viewers, tags = [] }) => {
+  const formatViewers = (count) => {
     if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
     if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
     return count.toString();
@@ -19,7 +11,6 @@ const CategoryCard = ({ id, name, image, viewers, tags = [] }: CategoryCardProps
   return (
     <Link to={`/browse?category=${encodeURIComponent(name)}`} className="group block">
       <div className="relative rounded-xl overflow-hidden bg-card card-shadow hover-lift">
-        {/* Image */}
         <div className="relative aspect-[3/4] overflow-hidden">
           <img
             src={image}
@@ -27,10 +18,8 @@ const CategoryCard = ({ id, name, image, viewers, tags = [] }: CategoryCardProps
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
           
-          {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
-          {/* Content */}
           <div className="absolute bottom-0 left-0 right-0 p-4">
             <h3 className="font-display font-bold text-foreground text-lg mb-1 group-hover:text-primary transition-colors">
               {name}
@@ -40,7 +29,6 @@ const CategoryCard = ({ id, name, image, viewers, tags = [] }: CategoryCardProps
               {formatViewers(viewers)} viewers
             </p>
             
-            {/* Tags */}
             {tags.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
                 {tags.slice(0, 2).map((tag) => (

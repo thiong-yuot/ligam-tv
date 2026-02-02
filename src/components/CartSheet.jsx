@@ -9,19 +9,14 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  SheetFooter,
 } from "@/components/ui/sheet";
-import { ShoppingCart, Plus, Minus, Trash2, X, Loader2 } from "lucide-react";
+import { ShoppingCart, Plus, Minus, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-interface CartSheetProps {
-  trigger?: React.ReactNode;
-}
-
-const CartSheet = ({ trigger }: CartSheetProps) => {
+const CartSheet = ({ trigger }) => {
   const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
   const { createCheckoutSession } = useCheckout();
   const { user } = useAuth();
@@ -178,7 +173,6 @@ const CartSheet = ({ trigger }: CartSheetProps) => {
 
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={clearCart}>
-                  <Trash2 className="w-4 h-4 mr-2" />
                   Clear
                 </Button>
                 <Button className="flex-1" onClick={handleCheckout} disabled={isCheckingOut}>

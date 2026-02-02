@@ -10,17 +10,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Store, Package, DollarSign } from "lucide-react";
 
-interface BecomeSellerDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-const BecomeSellerDialog = ({ open, onOpenChange }: BecomeSellerDialogProps) => {
+const BecomeSellerDialog = ({ open, onOpenChange }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
