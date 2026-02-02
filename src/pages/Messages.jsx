@@ -15,7 +15,7 @@ import {
   CheckCheck, Check, Clock, Star, Briefcase
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useMessages, useConversation, useSendMessage, useMarkAsRead, Message } from "@/hooks/useMessages";
+import { useMessages, useConversation, useSendMessage, useMarkAsRead } from "@/hooks/useMessages";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { formatDistanceToNow, format, isToday, isYesterday } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -25,10 +25,10 @@ const Messages = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { messages, isLoading } = useMessages();
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef(null);
   
   const { data: conversation = [], refetch: refetchConversation } = useConversation(selectedUserId || "");
   const sendMessage = useSendMessage();
@@ -67,12 +67,7 @@ const Messages = () => {
       });
     }
     return acc;
-  }, [] as Array<{
-    otherUserId: string;
-    otherProfile?: Message["sender_profile"];
-    lastMessage: Message;
-    unreadCount: number;
-  }>);
+  }, []);
 
   // Filter conversations by search
   const filteredConversations = conversations.filter(c => {
@@ -97,7 +92,7 @@ const Messages = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [conversation]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedUserId) return;
 
@@ -113,7 +108,7 @@ const Messages = () => {
     }
   };
 
-  const formatMessageTime = (dateStr: string) => {
+  const formatMessageTime = (dateStr) => {
     const date = new Date(dateStr);
     if (isToday(date)) {
       return format(date, "h:mm a");
@@ -124,7 +119,7 @@ const Messages = () => {
     return format(date, "MMM d, h:mm a");
   };
 
-  const formatConversationTime = (dateStr: string) => {
+  const formatConversationTime = (dateStr) => {
     const date = new Date(dateStr);
     if (isToday(date)) {
       return format(date, "h:mm a");

@@ -8,11 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, User, ArrowLeft, Loader2, AtSign } from "lucide-react";
 import LigamLogo from "@/components/LigamLogo";
 
-interface AuthProps {
-  mode: "login" | "signup";
-}
-
-const Auth = ({ mode }: AuthProps) => {
+const Auth = ({ mode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -43,7 +39,7 @@ const Auth = ({ mode }: AuthProps) => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -59,7 +55,7 @@ const Auth = ({ mode }: AuthProps) => {
         description: "Check your email for a password reset link.",
       });
       setResetMode(false);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
@@ -70,7 +66,7 @@ const Auth = ({ mode }: AuthProps) => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -169,7 +165,7 @@ const Auth = ({ mode }: AuthProps) => {
           });
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
