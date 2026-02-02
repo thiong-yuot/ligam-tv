@@ -11,34 +11,16 @@ import { useFileUpload } from "@/hooks/useFileUpload";
 import { useAuth } from "@/hooks/useAuth";
 import { COURSE_CATEGORIES, COURSE_LEVELS } from "@/hooks/useCourses";
 
-interface CourseFormProps {
-  initialData?: {
-    title: string;
-    description: string;
-    short_description: string;
-    price: number;
-    category: string;
-    level: string;
-    language: string;
-    thumbnail_url: string;
-    preview_video_url: string;
-    is_published: boolean;
-  };
-  onSubmit: (data: any) => void;
-  onCancel?: () => void;
-  isLoading?: boolean;
-}
-
 export const CourseForm = ({
   initialData,
   onSubmit,
   onCancel,
   isLoading,
-}: CourseFormProps) => {
+}) => {
   const { user } = useAuth();
   const { uploadFile, uploading } = useFileUpload();
-  const thumbnailInputRef = useRef<HTMLInputElement>(null);
-  const videoInputRef = useRef<HTMLInputElement>(null);
+  const thumbnailInputRef = useRef(null);
+  const videoInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
@@ -53,21 +35,21 @@ export const CourseForm = ({
     is_published: initialData?.is_published || false,
   });
 
-  const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     const url = await uploadFile(file, "course-content", user.id);
     if (url) setFormData((prev) => ({ ...prev, thumbnail_url: url }));
   };
 
-  const handleVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file || !user) return;
     const url = await uploadFile(file, "course-content", user.id);
     if (url) setFormData((prev) => ({ ...prev, preview_video_url: url }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
   };

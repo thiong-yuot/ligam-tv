@@ -4,20 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { Product } from "@/hooks/useProducts";
 import { useSellerProfile } from "@/hooks/useCreatorProfile";
 
-interface ProductCardProps {
-  product: Product;
-  onAddToCart: (product: Product) => void;
-  viewMode?: "grid" | "list";
-}
-
-const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardProps) => {
+const ProductCard = ({ product, onAddToCart, viewMode = "grid" }) => {
   const navigate = useNavigate();
   const { data: sellerProfile } = useSellerProfile(product.seller_id || undefined);
   
-  const handleSellerClick = (e: React.MouseEvent) => {
+  const handleSellerClick = (e) => {
     e.stopPropagation();
     if (sellerProfile?.username) {
       navigate(`/@${sellerProfile.username}`);
@@ -26,7 +19,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   
   const hasDiscount = product.sale_price !== null && product.sale_price < product.price;
   const discountPercent = hasDiscount
-    ? Math.round(((product.price - product.sale_price!) / product.price) * 100)
+    ? Math.round(((product.price - product.sale_price) / product.price) * 100)
     : 0;
   const displayPrice = product.sale_price ?? product.price;
   // -1 means unlimited stock (digital products), null also means available
