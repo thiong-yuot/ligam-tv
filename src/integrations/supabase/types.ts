@@ -1551,6 +1551,7 @@ export type Database = {
           follower_count: number | null
           following_count: number | null
           id: string
+          is_public: boolean
           is_verified: boolean | null
           total_views: number | null
           updated_at: string | null
@@ -1566,6 +1567,7 @@ export type Database = {
           follower_count?: number | null
           following_count?: number | null
           id?: string
+          is_public?: boolean
           is_verified?: boolean | null
           total_views?: number | null
           updated_at?: string | null
@@ -1581,6 +1583,7 @@ export type Database = {
           follower_count?: number | null
           following_count?: number | null
           id?: string
+          is_public?: boolean
           is_verified?: boolean | null
           total_views?: number | null
           updated_at?: string | null
