@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import LigamLogo from "./LigamLogo";
 
@@ -93,6 +94,16 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const getInitials = () => {
+    if (profile?.display_name) {
+      return profile.display_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+    }
+    if (user?.email) {
+      return user.email[0].toUpperCase();
+    }
+    return "U";
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="w-full px-4 md:px-6 lg:px-8">
@@ -148,13 +159,23 @@ const Navbar = () => {
                 {user ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="gap-2">
-                        <User className="w-4 h-4" />
-                        <span className="hidden sm:inline">{profile?.display_name || "Account"}</span>
+                      <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.display_name || "User"} />
+                          <AvatarFallback className="bg-primary text-primary-foreground">
+                            {getInitials()}
+                          </AvatarFallback>
+                        </Avatar>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                       <div className="flex items-center gap-2 p-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={profile?.avatar_url || undefined} />
+                          <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                            {getInitials()}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="flex flex-col space-y-0.5">
                           <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
                         </div>
@@ -269,12 +290,20 @@ const Navbar = () => {
               </div>
 
               {/* User Section */}
-                {user ? (
+              {user ? (
                 <div className="space-y-2">
                   <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Account</p>
                   <div className="flex items-center justify-between px-3 py-2 bg-secondary/50 rounded-md">
-                    <div>
-                      <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={profile?.avatar_url || undefined} />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          {getInitials()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium">{profile?.display_name || "User"}</p>
+                      </div>
                     </div>
                     {getPlanBadge()}
                   </div>

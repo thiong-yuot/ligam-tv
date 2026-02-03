@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Users, CheckCircle, BookOpen, MessageCircle, Heart, GraduationCap, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const TeacherCard = ({ teacher, viewMode = "grid" }) => {
   const navigate = useNavigate();
@@ -10,6 +11,20 @@ const TeacherCard = ({ teacher, viewMode = "grid" }) => {
     return (
       <div className="group bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-all duration-300">
         <div className="flex items-start gap-4">
+          {/* Avatar */}
+          <div className="relative flex-shrink-0">
+            <Avatar className="w-20 h-20 rounded-xl">
+              <AvatarImage src={teacher.avatar} className="object-cover" />
+              <AvatarFallback className="text-lg bg-primary/10 text-primary rounded-xl">
+                {teacher.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+            {teacher.isVerified && (
+              <div className="absolute -top-1 -right-1">
+                <CheckCircle className="w-5 h-5 text-primary fill-primary" />
+              </div>
+            )}
+          </div>
 
           {/* Info */}
           <div className="flex-1 min-w-0">
@@ -74,9 +89,17 @@ const TeacherCard = ({ teacher, viewMode = "grid" }) => {
 
   return (
     <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300">
-      {/* Header */}
+      {/* Header with Avatar */}
       <div className="relative p-4 pb-0">
         <div className="flex items-start gap-3">
+          <div className="relative">
+            <Avatar className="w-14 h-14 rounded-xl ring-2 ring-border group-hover:ring-primary/50 transition-all">
+              <AvatarImage src={teacher.avatar} className="object-cover" />
+              <AvatarFallback className="bg-primary/10 text-primary rounded-xl">
+                {teacher.name.split(' ').map(n => n[0]).join('')}
+              </AvatarFallback>
+            </Avatar>
+          </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">

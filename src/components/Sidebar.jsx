@@ -1,5 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Compass, Heart, Clock, Settings, Users, Gamepad2, Music, Palette, Trophy } from "lucide-react";
+import streamer1 from "@/assets/streamer-1.jpg";
+import streamer2 from "@/assets/streamer-2.jpg";
+import streamer3 from "@/assets/streamer-3.jpg";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -19,9 +22,9 @@ const Sidebar = () => {
   ];
 
   const recommendedStreamers = [
-    { name: "NightOwl", isLive: true, viewers: 15420 },
-    { name: "GameMaster", isLive: true, viewers: 8930 },
-    { name: "StreamQueen", isLive: false, viewers: 0 },
+    { name: "NightOwl", avatar: streamer1, isLive: true, viewers: 15420 },
+    { name: "GameMaster", avatar: streamer2, isLive: true, viewers: 8930 },
+    { name: "StreamQueen", avatar: streamer3, isLive: false, viewers: 0 },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -93,6 +96,16 @@ const Sidebar = () => {
                 to={`/channel/${streamer.name.toLowerCase()}`}
                 className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-sidebar-accent transition-all duration-200"
               >
+                <div className="relative">
+                  <img
+                    src={streamer.avatar}
+                    alt={streamer.name}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  {streamer.isLive && (
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-destructive rounded-full border-2 border-sidebar" />
+                  )}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sidebar-foreground truncate">
                     {streamer.name}
@@ -103,9 +116,6 @@ const Sidebar = () => {
                     </p>
                   )}
                 </div>
-                {streamer.isLive && (
-                  <span className="w-2 h-2 bg-destructive rounded-full" />
-                )}
               </Link>
             ))}
           </div>

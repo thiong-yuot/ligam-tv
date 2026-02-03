@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Eye, CheckCircle, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useSellerProfile } from "@/hooks/useCreatorProfile";
 
@@ -179,6 +180,12 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }) => {
           className={`flex items-center gap-2 mb-2 ${sellerProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
           onClick={sellerProfile?.username ? handleSellerClick : undefined}
         >
+          <Avatar className="w-5 h-5">
+            <AvatarImage src={seller.avatar || undefined} />
+            <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
+              {seller.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           <span className={`text-xs text-muted-foreground truncate ${sellerProfile?.username ? 'hover:text-primary' : ''}`}>
             {seller.name}
           </span>

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Clock, PlayCircle, CheckCircle, TrendingUp } from "lucide-react";
 import { useCreatorProfile } from "@/hooks/useCreatorProfile";
 
@@ -93,6 +94,12 @@ const CourseCard = ({ course, showInstructor = true }) => {
               className={`flex items-center gap-2 ${creatorProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
               onClick={creatorProfile?.username ? handleInstructorClick : undefined}
             >
+              <Avatar className="w-6 h-6">
+                <AvatarImage src={instructor.avatar} />
+                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                  {instructor.name.split(' ').map(n => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
               <span className={`text-xs text-muted-foreground truncate ${creatorProfile?.username ? 'hover:text-primary' : ''}`}>
                 {instructor.name}
               </span>
