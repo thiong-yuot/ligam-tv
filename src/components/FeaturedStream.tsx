@@ -63,9 +63,11 @@ const FeaturedStream = ({
 
             {/* Streamer Info */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full ring-2 ring-primary bg-muted flex items-center justify-center">
-                <span className="text-sm font-medium text-muted-foreground">{streamer.charAt(0).toUpperCase()}</span>
-              </div>
+              <img
+                src={avatar}
+                alt={streamer}
+                className="w-10 h-10 rounded-full ring-2 ring-primary"
+              />
               <div>
                 <p className="font-semibold text-foreground">{streamer}</p>
                 <p className="text-sm text-muted-foreground flex items-center gap-1">

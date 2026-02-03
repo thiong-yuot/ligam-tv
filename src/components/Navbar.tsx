@@ -160,6 +160,7 @@ const Navbar = () => {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                         <Avatar className="h-9 w-9">
+                          <AvatarImage src={profile?.avatar_url || undefined} alt={profile?.display_name || "User"} />
                           <AvatarFallback className="bg-primary text-primary-foreground">
                             {getInitials()}
                           </AvatarFallback>
@@ -169,6 +170,7 @@ const Navbar = () => {
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                       <div className="flex items-center gap-2 p-2">
                         <Avatar className="h-8 w-8">
+                          <AvatarImage src={profile?.avatar_url || undefined} />
                           <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                             {getInitials()}
                           </AvatarFallback>
@@ -293,6 +295,7 @@ const Navbar = () => {
                   <div className="flex items-center justify-between px-3 py-2 bg-secondary/50 rounded-md">
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
+                        <AvatarImage src={profile?.avatar_url || undefined} />
                         <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           {getInitials()}
                         </AvatarFallback>

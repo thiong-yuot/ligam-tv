@@ -113,12 +113,31 @@ export const FreelancerProfileForm = ({
           <CardTitle>Profile Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Avatar Display (upload disabled) */}
+          {/* Avatar Upload */}
           <div className="flex items-center gap-4">
             <Avatar className="h-20 w-20">
-              <AvatarFallback className="text-2xl">{formData.name.charAt(0) || "?"}</AvatarFallback>
+              <AvatarImage src={formData.avatar_url} />
+              <AvatarFallback>{formData.name.charAt(0) || "?"}</AvatarFallback>
             </Avatar>
-            <p className="text-sm text-muted-foreground">Profile picture display is disabled</p>
+            <div>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarUpload}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={uploading}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                {uploading ? "Uploading..." : "Upload Avatar"}
+              </Button>
+            </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, ArrowRight, Briefcase, CheckCircle } from "lucide-react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFreelancers } from "@/hooks/useFreelancers";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -49,6 +49,7 @@ const FreelancersPreview = () => {
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <Avatar className="w-12 h-12 ring-2 ring-primary/20">
+                        <AvatarImage src={freelancer.avatar_url || undefined} alt={freelancer.name} />
                         <AvatarFallback>{freelancer.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">

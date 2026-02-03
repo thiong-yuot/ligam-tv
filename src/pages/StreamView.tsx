@@ -346,10 +346,18 @@ const StreamView = () => {
           <div className="p-4 md:p-6 border-b border-border">
             <div className="flex flex-col md:flex-row gap-4 md:items-start justify-between">
               <div className="flex gap-4">
-                <div className="w-14 h-14 rounded-full ring-2 ring-primary bg-muted flex items-center justify-center">
-                  <span className="text-lg font-medium text-muted-foreground">
-                    {(stream.profiles?.display_name || stream.profiles?.username || "S").charAt(0).toUpperCase()}
-                  </span>
+                <div className="w-14 h-14 rounded-full ring-2 ring-primary bg-secondary overflow-hidden">
+                  {stream.profiles?.avatar_url ? (
+                    <img 
+                      src={stream.profiles.avatar_url} 
+                      alt={stream.profiles.display_name || "Streamer"}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Users className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                  )}
                 </div>
                 <div>
                   <div className="flex items-center gap-2 mb-1">

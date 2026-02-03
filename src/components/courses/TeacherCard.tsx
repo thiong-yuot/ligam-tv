@@ -32,6 +32,7 @@ const TeacherCard = ({ teacher, viewMode = "grid" }: TeacherCardProps) => {
           {/* Avatar */}
           <div className="relative flex-shrink-0">
             <Avatar className="w-20 h-20 rounded-xl">
+              <AvatarImage src={teacher.avatar} className="object-cover" />
               <AvatarFallback className="text-lg bg-primary/10 text-primary rounded-xl">
                 {teacher.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>
@@ -111,6 +112,7 @@ const TeacherCard = ({ teacher, viewMode = "grid" }: TeacherCardProps) => {
         <div className="flex items-start gap-3">
           <div className="relative">
             <Avatar className="w-14 h-14 rounded-xl ring-2 ring-border group-hover:ring-primary/50 transition-all">
+              <AvatarImage src={teacher.avatar} className="object-cover" />
               <AvatarFallback className="bg-primary/10 text-primary rounded-xl">
                 {teacher.name.split(' ').map(n => n[0]).join('')}
               </AvatarFallback>

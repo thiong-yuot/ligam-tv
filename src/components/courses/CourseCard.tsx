@@ -101,6 +101,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
               onClick={creatorProfile?.username ? handleInstructorClick : undefined}
             >
               <Avatar className="w-6 h-6">
+                <AvatarImage src={instructor.avatar} />
                 <AvatarFallback className="text-xs bg-primary/10 text-primary">
                   {instructor.name.split(' ').map(n => n[0]).join('')}
                 </AvatarFallback>

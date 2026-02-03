@@ -188,6 +188,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
           onClick={sellerProfile?.username ? handleSellerClick : undefined}
         >
           <Avatar className="w-5 h-5">
+            <AvatarImage src={seller.avatar || undefined} />
             <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
               {seller.name.charAt(0).toUpperCase()}
             </AvatarFallback>

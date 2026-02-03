@@ -211,11 +211,11 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
           
           {/* Creator Info Overlay */}
           <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full border-2 border-primary bg-muted flex items-center justify-center">
-              <span className="text-sm font-medium text-muted-foreground">
-                {(stream.profile?.display_name || stream.profile?.username || "C").charAt(0).toUpperCase()}
-              </span>
-            </div>
+            <img
+              src={stream.profile?.avatar_url || "/placeholder.svg"}
+              alt={stream.profile?.display_name || "Creator"}
+              className="w-10 h-10 rounded-full border-2 border-primary object-cover"
+            />
             <div className="flex-1 min-w-0">
               <h3 className="text-white font-semibold truncate text-sm">
                 {stream.profile?.display_name || stream.profile?.username || "Creator"}
