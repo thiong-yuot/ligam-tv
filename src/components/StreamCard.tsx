@@ -69,11 +69,9 @@ const StreamCard = ({
           <div className="flex gap-3">
             {/* Avatar */}
             <div className="relative flex-shrink-0">
-              <img
-                src={avatar}
-                alt={streamer}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-border group-hover:ring-primary transition-all duration-300"
-              />
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center ring-2 ring-border group-hover:ring-primary transition-all duration-300">
+                <span className="text-sm font-medium text-muted-foreground">{streamer.charAt(0).toUpperCase()}</span>
+              </div>
               {isLive && (
                 <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-primary rounded-full border-2 border-card" />
               )}

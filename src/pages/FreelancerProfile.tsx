@@ -111,11 +111,9 @@ const FreelancerProfile = () => {
                 <CardContent className="pt-6">
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="relative">
-                      <img
-                        src={freelancer.avatar_url || "/placeholder.svg"}
-                        alt={freelancer.name}
-                        className="w-32 h-32 rounded-2xl object-cover"
-                      />
+                      <div className="w-32 h-32 rounded-2xl bg-muted flex items-center justify-center">
+                        <span className="text-4xl font-medium text-muted-foreground">{freelancer.name.charAt(0).toUpperCase()}</span>
+                      </div>
                       {freelancer.is_available && (
                         <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-primary rounded-full border-4 border-card flex items-center justify-center">
                           <CheckCircle className="w-4 h-4 text-primary-foreground" />

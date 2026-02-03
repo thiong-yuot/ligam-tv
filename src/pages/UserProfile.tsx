@@ -154,7 +154,6 @@ const UserProfile = () => {
           {/* Profile Header */}
           <div className="flex flex-col md:flex-row items-start gap-6 mb-8">
             <Avatar className="w-32 h-32 border-4 border-primary/20">
-              <AvatarImage src={profile.avatar_url || undefined} alt={displayName} />
               <AvatarFallback className="text-3xl font-bold bg-primary/10 text-primary">
                 {initials}
               </AvatarFallback>

@@ -19,11 +19,9 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
         <div className="flex items-start gap-4">
           {/* Avatar */}
           <div className="relative flex-shrink-0">
-            <img
-              src={freelancer.avatar_url || "/placeholder.svg"}
-              alt={freelancer.name}
-              className="w-20 h-20 rounded-xl object-cover"
-            />
+            <div className="w-20 h-20 rounded-xl bg-muted flex items-center justify-center">
+              <span className="text-2xl font-medium text-muted-foreground">{freelancer.name.charAt(0).toUpperCase()}</span>
+            </div>
             {freelancer.is_available && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card" />
             )}
@@ -100,11 +98,9 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
       <div className="relative p-4 pb-0">
         <div className="flex items-start gap-3">
           <div className="relative">
-            <img
-              src={freelancer.avatar_url || "/placeholder.svg"}
-              alt={freelancer.name}
-              className="w-14 h-14 rounded-xl object-cover ring-2 ring-border group-hover:ring-primary/50 transition-all"
-            />
+            <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center ring-2 ring-border group-hover:ring-primary/50 transition-all">
+              <span className="text-lg font-medium text-muted-foreground">{freelancer.name.charAt(0).toUpperCase()}</span>
+            </div>
             {freelancer.is_available && (
               <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card" />
             )}

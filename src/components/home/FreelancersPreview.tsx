@@ -49,7 +49,6 @@ const FreelancersPreview = () => {
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <Avatar className="w-12 h-12 ring-2 ring-primary/20">
-                        <AvatarImage src={freelancer.avatar_url || undefined} alt={freelancer.name} />
                         <AvatarFallback>{freelancer.name.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
