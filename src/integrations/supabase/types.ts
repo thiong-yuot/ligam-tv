@@ -923,6 +923,54 @@ export type Database = {
           },
         ]
       }
+      freelancer_reviews: {
+        Row: {
+          created_at: string
+          freelancer_id: string
+          id: string
+          order_id: string | null
+          rating: number
+          review_text: string | null
+          reviewer_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          freelancer_id: string
+          id?: string
+          order_id?: string | null
+          rating: number
+          review_text?: string | null
+          reviewer_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          freelancer_id?: string
+          id?: string
+          order_id?: string | null
+          rating?: number
+          review_text?: string | null
+          reviewer_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "freelancer_reviews_freelancer_id_fkey"
+            columns: ["freelancer_id"]
+            isOneToOne: false
+            referencedRelation: "freelancers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "freelancer_reviews_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "freelancer_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       freelancers: {
         Row: {
           avatar_url: string | null
