@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Users, CheckCircle, BookOpen, MessageCircle, Heart, GraduationCap, Briefcase } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Teacher {
   id: string;

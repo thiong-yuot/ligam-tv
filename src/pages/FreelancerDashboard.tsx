@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -802,6 +802,7 @@ const FreelancerDashboard = () => {
                       {/* Avatar Upload */}
                       <div className="flex items-center gap-4">
                         <Avatar className="h-20 w-20">
+                          <AvatarImage src={editForm.avatar_url} />
                           <AvatarFallback>{editForm.name.charAt(0) || "?"}</AvatarFallback>
                         </Avatar>
                         <div>
