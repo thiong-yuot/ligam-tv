@@ -2,81 +2,22 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-export interface Course {
-  id: string;
-  creator_id: string;
-  title: string;
-  description: string | null;
-  short_description: string | null;
-  thumbnail_url: string | null;
-  preview_video_url: string | null;
-  price: number;
-  category: string | null;
-  level: string;
-  language: string;
-  is_published: boolean;
-  is_featured: boolean;
-  total_duration_minutes: number;
-  total_lessons: number;
-  total_enrollments: number;
-  average_rating: number;
-  total_reviews: number;
-  created_at: string;
-  updated_at: string;
-}
+export const COURSE_CATEGORIES = [
+  "Development",
+  "Business",
+  "Design",
+  "Marketing",
+  "Music",
+  "Photography",
+  "Gaming",
+  "Lifestyle",
+  "Health",
+  "Finance",
+];
 
-export interface CourseSection {
-  id: string;
-  course_id: string;
-  title: string;
-  description: string | null;
-  sort_order: number;
-  created_at: string;
-  lessons?: CourseLesson[];
-}
+export const COURSE_LEVELS = ["beginner", "intermediate", "advanced", "all-levels"];
 
-export interface CourseLesson {
-  id: string;
-  section_id: string;
-  title: string;
-  description: string | null;
-  video_url: string | null;
-  duration_minutes: number;
-  is_preview: boolean;
-  sort_order: number;
-  content_type: string;
-  resources: any[];
-  created_at: string;
-}
-
-export interface Enrollment {
-  id: string;
-  user_id: string;
-  course_id: string;
-  stripe_payment_intent_id: string | null;
-  amount_paid: number;
-  progress_percentage: number;
-  completed_lessons: string[];
-  is_completed: boolean;
-  completed_at: string | null;
-  enrolled_at: string;
-  last_accessed_at: string;
-  course?: Course;
-}
-
-export interface CourseReview {
-  id: string;
-  course_id: string;
-  user_id: string;
-  rating: number;
-  review_text: string | null;
-  is_verified: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-// Fetch all published courses
-export const useCourses = (category?: string) => {
+export const useCourses = (category) => {
   return useQuery({
     queryKey: ["courses", category],
     queryFn: async () => {
@@ -92,12 +33,11 @@ export const useCourses = (category?: string) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Course[];
+      return data;
     },
   });
 };
 
-// Fetch featured courses
 export const useFeaturedCourses = () => {
   return useQuery({
     queryKey: ["courses", "featured"],
@@ -111,13 +51,12 @@ export const useFeaturedCourses = () => {
         .limit(6);
 
       if (error) throw error;
-      return data as Course[];
+      return data;
     },
   });
 };
 
-// Fetch course by ID with sections and lessons
-export const useCourse = (courseId: string | undefined) => {
+export const useCourse = (courseId) => {
   return useQuery({
     queryKey: ["course", courseId],
     queryFn: async () => {
@@ -139,7 +78,6 @@ export const useCourse = (courseId: string | undefined) => {
 
       if (sectionsError) throw sectionsError;
 
-      // Fetch lessons for each section
       const sectionsWithLessons = await Promise.all(
         (sections || []).map(async (section) => {
           const { data: lessons } = await supabase
@@ -148,17 +86,16 @@ export const useCourse = (courseId: string | undefined) => {
             .eq("section_id", section.id)
             .order("sort_order", { ascending: true });
 
-          return { ...section, lessons: lessons || [] } as CourseSection;
+          return { ...section, lessons: lessons || [] };
         })
       );
 
-      return { ...course, sections: sectionsWithLessons } as Course & { sections: CourseSection[] };
+      return { ...course, sections: sectionsWithLessons };
     },
     enabled: !!courseId,
   });
 };
 
-// Fetch creator's courses
 export const useCreatorCourses = () => {
   return useQuery({
     queryKey: ["creator-courses"],
@@ -173,18 +110,17 @@ export const useCreatorCourses = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Course[];
+      return data;
     },
   });
 };
 
-// Create course
 export const useCreateCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (course: Omit<Partial<Course>, 'creator_id'> & { title: string }) => {
+    mutationFn: async (course) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
@@ -206,7 +142,7 @@ export const useCreateCourse = () => {
         .single();
 
       if (error) throw error;
-      return data as Course;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["creator-courses"] });
@@ -218,13 +154,12 @@ export const useCreateCourse = () => {
   });
 };
 
-// Update course
 export const useUpdateCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: Partial<Course> & { id: string }) => {
+    mutationFn: async ({ id, ...updates }) => {
       const { data, error } = await supabase
         .from("courses")
         .update(updates)
@@ -233,7 +168,7 @@ export const useUpdateCourse = () => {
         .single();
 
       if (error) throw error;
-      return data as Course;
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["creator-courses"] });
@@ -246,13 +181,12 @@ export const useUpdateCourse = () => {
   });
 };
 
-// Delete course
 export const useDeleteCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (courseId: string) => {
+    mutationFn: async (courseId) => {
       const { error } = await supabase.from("courses").delete().eq("id", courseId);
       if (error) throw error;
     },
@@ -266,12 +200,11 @@ export const useDeleteCourse = () => {
   });
 };
 
-// Create section
 export const useCreateSection = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (section: { course_id: string; title: string; description?: string; sort_order?: number }) => {
+    mutationFn: async (section) => {
       const { data, error } = await supabase
         .from("course_sections")
         .insert({
@@ -284,7 +217,7 @@ export const useCreateSection = () => {
         .single();
 
       if (error) throw error;
-      return data as CourseSection;
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["course", data.course_id] });
@@ -292,12 +225,11 @@ export const useCreateSection = () => {
   });
 };
 
-// Create lesson
 export const useCreateLesson = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (lesson: { section_id: string; title: string; description?: string; video_url?: string; duration_minutes?: number; is_preview?: boolean; sort_order?: number }) => {
+    mutationFn: async (lesson) => {
       const { data, error } = await supabase
         .from("course_lessons")
         .insert({
@@ -313,7 +245,7 @@ export const useCreateLesson = () => {
         .single();
 
       if (error) throw error;
-      return data as CourseLesson;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["course"] });
@@ -321,7 +253,6 @@ export const useCreateLesson = () => {
   });
 };
 
-// User enrollments
 export const useUserEnrollments = () => {
   return useQuery({
     queryKey: ["enrollments"],
@@ -337,7 +268,6 @@ export const useUserEnrollments = () => {
 
       if (error) throw error;
 
-      // Fetch course details for each enrollment
       const enrollmentsWithCourses = await Promise.all(
         (enrollments || []).map(async (enrollment) => {
           const { data: course } = await supabase
@@ -346,7 +276,7 @@ export const useUserEnrollments = () => {
             .eq("id", enrollment.course_id)
             .single();
 
-          return { ...enrollment, course } as Enrollment;
+          return { ...enrollment, course };
         })
       );
 
@@ -355,8 +285,7 @@ export const useUserEnrollments = () => {
   });
 };
 
-// Check enrollment
-export const useCheckEnrollment = (courseId: string | undefined) => {
+export const useCheckEnrollment = (courseId) => {
   return useQuery({
     queryKey: ["enrollment", courseId],
     queryFn: async () => {
@@ -373,19 +302,18 @@ export const useCheckEnrollment = (courseId: string | undefined) => {
         .maybeSingle();
 
       if (error) throw error;
-      return data as Enrollment | null;
+      return data;
     },
     enabled: !!courseId,
   });
 };
 
-// Enroll in course
 export const useEnrollCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ courseId, amountPaid = 0 }: { courseId: string; amountPaid?: number }) => {
+    mutationFn: async ({ courseId, amountPaid = 0 }) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
@@ -400,7 +328,7 @@ export const useEnrollCourse = () => {
         .single();
 
       if (error) throw error;
-      return data as Enrollment;
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["enrollments"] });
@@ -413,22 +341,11 @@ export const useEnrollCourse = () => {
   });
 };
 
-// Update lesson progress
 export const useUpdateProgress = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ 
-      enrollmentId, 
-      lessonId, 
-      completedLessons,
-      progressPercentage 
-    }: { 
-      enrollmentId: string; 
-      lessonId: string;
-      completedLessons: string[];
-      progressPercentage: number;
-    }) => {
+    mutationFn: async ({ enrollmentId, lessonId, completedLessons, progressPercentage }) => {
       const { data, error } = await supabase
         .from("enrollments")
         .update({
@@ -443,7 +360,7 @@ export const useUpdateProgress = () => {
         .single();
 
       if (error) throw error;
-      return data as Enrollment;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["enrollments"] });
@@ -452,8 +369,7 @@ export const useUpdateProgress = () => {
   });
 };
 
-// Course reviews
-export const useCourseReviews = (courseId: string | undefined) => {
+export const useCourseReviews = (courseId) => {
   return useQuery({
     queryKey: ["course-reviews", courseId],
     queryFn: async () => {
@@ -466,19 +382,18 @@ export const useCourseReviews = (courseId: string | undefined) => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as CourseReview[];
+      return data;
     },
     enabled: !!courseId,
   });
 };
 
-// Create review
 export const useCreateReview = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (review: { course_id: string; rating: number; review_text?: string }) => {
+    mutationFn: async (review) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
@@ -494,7 +409,7 @@ export const useCreateReview = () => {
         .single();
 
       if (error) throw error;
-      return data as CourseReview;
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["course-reviews", data.course_id] });
@@ -505,19 +420,3 @@ export const useCreateReview = () => {
     },
   });
 };
-
-// Course categories
-export const COURSE_CATEGORIES = [
-  "Development",
-  "Business",
-  "Design",
-  "Marketing",
-  "Music",
-  "Photography",
-  "Gaming",
-  "Lifestyle",
-  "Health",
-  "Finance",
-];
-
-export const COURSE_LEVELS = ["beginner", "intermediate", "advanced", "all-levels"];

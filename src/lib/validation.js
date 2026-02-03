@@ -64,10 +64,7 @@ export const productSchema = z.object({
 });
 
 // Helper function to validate and throw on error
-export function validateOrThrow<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown
-): T {
+export function validateOrThrow(schema, data) {
   const result = schema.safeParse(data);
   if (!result.success) {
     const firstError = result.error.errors[0];
@@ -77,10 +74,7 @@ export function validateOrThrow<T>(
 }
 
 // Helper function to validate and return result
-export function validateInput<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown
-): { success: true; data: T } | { success: false; error: string } {
+export function validateInput(schema, data) {
   const result = schema.safeParse(data);
   if (result.success) {
     return { success: true, data: result.data };
