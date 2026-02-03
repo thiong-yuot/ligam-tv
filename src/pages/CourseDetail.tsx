@@ -2,10 +2,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useCourse, useCourseReviews, useCheckEnrollment, useEnrollCourse, useCourses } from "@/hooks/useCourses";
+import { useCourse, useCourseReviews, useCheckEnrollment, useEnrollCourse } from "@/hooks/useCourses";
 import { useAuth } from "@/hooks/useAuth";
 import { useCourseCheckout } from "@/hooks/useStripeCheckout";
-import { useCreatorProfile } from "@/hooks/useCreatorProfile";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +12,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import InstructorCard from "@/components/courses/InstructorCard";
 import { 
   Star, Clock, Users, BookOpen, PlayCircle, CheckCircle, 
   Lock, Video, FileText, Loader2, ArrowLeft, Calendar,
@@ -27,13 +25,8 @@ const CourseDetail = () => {
   const { data: course, isLoading } = useCourse(courseId);
   const { data: reviews = [] } = useCourseReviews(courseId);
   const { data: enrollment } = useCheckEnrollment(courseId);
-  const { data: allCourses } = useCourses();
-  const { data: creatorProfile, isLoading: creatorLoading } = useCreatorProfile(course?.creator_id);
   const enrollMutation = useEnrollCourse();
   const { checkout, loading: checkoutLoading } = useCourseCheckout();
-
-  // Count courses by the same creator
-  const creatorCourseCount = allCourses?.filter(c => c.creator_id === course?.creator_id).length || 0;
 
   const handleEnroll = async () => {
     if (!user) {
@@ -98,7 +91,7 @@ const CourseDetail = () => {
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-12 overflow-hidden">
-        <div className="absolute inset-0 bg-background" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
         
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
@@ -411,26 +404,11 @@ const CourseDetail = () => {
                     )}
                   </TabsContent>
                 </Tabs>
-
-                {/* Mobile Instructor Card - Visible only on mobile */}
-                <div className="lg:hidden mt-8">
-                  <InstructorCard 
-                    creator={creatorProfile} 
-                    isLoading={creatorLoading}
-                    totalStudents={course.total_enrollments}
-                    totalCourses={creatorCourseCount}
-                  />
-                </div>
               </div>
 
-              {/* Sidebar - Instructor Info */}
-              <div className="hidden lg:block space-y-6">
-                <InstructorCard 
-                  creator={creatorProfile} 
-                  isLoading={creatorLoading}
-                  totalStudents={course.total_enrollments}
-                  totalCourses={creatorCourseCount}
-                />
+              {/* Sidebar - Hidden on mobile, visible on desktop */}
+              <div className="hidden lg:block">
+                {/* Additional sidebar content could go here */}
               </div>
             </div>
           </div>

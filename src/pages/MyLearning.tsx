@@ -60,7 +60,7 @@ const MyLearning = () => {
 
       {/* Hero Section */}
       <section className="relative pt-20 pb-12 overflow-hidden">
-        <div className="absolute inset-0 bg-background" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
         
         <div className="relative w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
@@ -248,8 +248,8 @@ const EnrollmentCard = ({ enrollment }: { enrollment: Enrollment }) => {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         ) : (
-          <div className="w-full h-full bg-muted flex items-center justify-center">
-            <Video className="w-12 h-12 text-muted-foreground" />
+          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+            <Video className="w-12 h-12 text-primary/50" />
           </div>
         )}
         {enrollment.is_completed && (

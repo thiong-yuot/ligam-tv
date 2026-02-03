@@ -233,7 +233,7 @@ const StreamView = () => {
 
   // Paid Stream Paywall Component
   const PaidStreamPaywall = () => (
-    <div className="relative aspect-video bg-secondary flex items-center justify-center">
+    <div className="relative aspect-video bg-gradient-to-br from-secondary via-secondary/80 to-secondary flex items-center justify-center">
       {/* Preview Video or Thumbnail */}
       {accessInfo?.previewUrl ? (
         <video
@@ -256,7 +256,7 @@ const StreamView = () => {
           <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-8 h-8 text-primary" />
           </div>
-          <Badge className="bg-primary text-primary-foreground border-0 mb-4">
+          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 mb-4">
             <Crown className="w-3 h-3 mr-1" />
             Premium Stream
           </Badge>
@@ -284,7 +284,7 @@ const StreamView = () => {
             <Button 
               onClick={handlePurchaseAccess}
               disabled={createStreamCheckout.isPending}
-              className="w-full"
+              className="w-full bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-600"
               size="lg"
             >
               {createStreamCheckout.isPending ? (
@@ -365,7 +365,7 @@ const StreamView = () => {
                       {stream.title}
                     </h1>
                     {isPaidStream && (
-                      <Badge className="bg-primary text-primary-foreground border-0">
+                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
                         <DollarSign className="w-3 h-3 mr-1" />
                         ${streamPrice}
                       </Badge>
