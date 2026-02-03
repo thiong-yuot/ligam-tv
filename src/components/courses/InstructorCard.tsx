@@ -56,7 +56,6 @@ const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 
       <CardContent className="space-y-4">
         <div className="flex items-start gap-4">
           <Avatar className="w-16 h-16 border-2 border-primary/20">
-            <AvatarImage src={creator.avatar_url || undefined} alt={displayName} />
             <AvatarFallback className="bg-primary/10 text-primary text-lg font-semibold">
               {initials}
             </AvatarFallback>

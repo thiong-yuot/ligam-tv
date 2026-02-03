@@ -97,11 +97,9 @@ const Sidebar = () => {
                 className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm hover:bg-sidebar-accent transition-all duration-200"
               >
                 <div className="relative">
-                  <img
-                    src={streamer.avatar}
-                    alt={streamer.name}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <span className="text-xs font-medium text-muted-foreground">{streamer.name.charAt(0).toUpperCase()}</span>
+                  </div>
                   {streamer.isLive && (
                     <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-destructive rounded-full border-2 border-sidebar" />
                   )}

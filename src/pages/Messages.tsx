@@ -203,7 +203,6 @@ const Messages = () => {
                   >
                     <div className="relative">
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={otherProfile?.avatar_url || undefined} />
                         <AvatarFallback className="bg-primary/10 text-primary">
                           {otherProfile?.display_name?.[0] || otherProfile?.username?.[0] || <User className="h-5 w-5" />}
                         </AvatarFallback>
@@ -264,7 +263,6 @@ const Messages = () => {
                     <ArrowLeft className="h-5 w-5" />
                   </Button>
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src={selectedConversation?.otherProfile?.avatar_url || undefined} />
                     <AvatarFallback className="bg-primary/10 text-primary">
                       {selectedConversation?.otherProfile?.display_name?.[0] || <User className="h-4 w-4" />}
                     </AvatarFallback>
@@ -310,7 +308,6 @@ const Messages = () => {
                           >
                             {!isOwn && showAvatar && (
                               <Avatar className="h-8 w-8 shrink-0">
-                                <AvatarImage src={msg.sender_profile?.avatar_url || undefined} />
                                 <AvatarFallback className="text-xs bg-primary/10 text-primary">
                                   {msg.sender_profile?.display_name?.[0] || <User className="h-3 w-3" />}
                                 </AvatarFallback>
