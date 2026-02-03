@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, ArrowRight, Briefcase, CheckCircle } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useFreelancers } from "@/hooks/useFreelancers";
 import { useAuth } from "@/hooks/useAuth";
 
