@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const useIsFollowing = (userId?: string) => {
+export const useIsFollowing = (userId: string) => {
   return useQuery({
     queryKey: ["isFollowing", userId],
     queryFn: async () => {
@@ -12,7 +12,7 @@ export const useIsFollowing = (userId?: string) => {
         .from("followers")
         .select("id")
         .eq("follower_id", session.session.user.id)
-        .eq("following_id", userId!)
+        .eq("following_id", userId)
         .maybeSingle();
       
       if (error) throw error;

@@ -1,14 +1,31 @@
-import { useSubscription, getTierLimits } from "./useSubscription";
+import { useSubscription, SubscriptionTier, SUBSCRIPTION_TIERS, getTierLimits } from "./useSubscription";
 import { useMyProducts } from "./useProducts";
 import { useCreatorCourses } from "./useCourses";
 
 export type Feature = 
-  | "hd_streaming" | "4k_streaming" | "custom_reactions" | "priority_support"
-  | "no_ads" | "api_access" | "custom_overlays" | "featured_placement"
-  | "dedicated_support" | "stream_analytics" | "unlimited_products"
-  | "limited_products" | "full_service_access" | "revenue_boost" | "unlimited_courses";
+  | "hd_streaming"
+  | "4k_streaming"
+  | "custom_reactions"
+  | "priority_support"
+  | "no_ads"
+  | "api_access"
+  | "custom_overlays"
+  | "featured_placement"
+  | "dedicated_support"
+  | "stream_analytics"
+  | "unlimited_products"
+  | "limited_products"
+  | "full_service_access"
+  | "revenue_boost"
+  | "unlimited_courses";
 
-const featureAccess: Record<string, string[]> = {
+type FeatureAccess = {
+  [key in Feature]: SubscriptionTier[];
+};
+
+// Define which tiers have access to each feature
+// Note: full_service_access is available to ALL tiers (including free)
+const featureAccess: FeatureAccess = {
   hd_streaming: ["creator", "pro"],
   "4k_streaming": ["pro"],
   custom_reactions: ["creator", "pro"],
@@ -21,12 +38,12 @@ const featureAccess: Record<string, string[]> = {
   stream_analytics: ["creator", "pro"],
   unlimited_products: ["pro"],
   limited_products: ["creator", "pro"],
-  full_service_access: [],
+  full_service_access: [], // All tiers have this - handled separately
   revenue_boost: ["pro"],
   unlimited_courses: ["pro"],
 };
 
-const featureLabels: Record<string, string> = {
+const featureLabels: Record<Feature, string> = {
   hd_streaming: "HD Streaming (1080p)",
   "4k_streaming": "4K Streaming",
   custom_reactions: "Custom Reactions",
@@ -44,7 +61,7 @@ const featureLabels: Record<string, string> = {
   unlimited_courses: "Unlimited Courses",
 };
 
-const featureRequiredTier: Record<string, string> = {
+const featureRequiredTier: Record<Feature, string> = {
   hd_streaming: "Creator",
   "4k_streaming": "Pro",
   custom_reactions: "Creator",
@@ -67,75 +84,87 @@ export const useFeatureAccess = () => {
   const { data: myProducts = [], isLoading: productsLoading } = useMyProducts();
   const { data: myCourses = [], isLoading: coursesLoading } = useCreatorCourses();
 
-  const hasAccess = (feature: string) => {
+  const hasAccess = (feature: Feature): boolean => {
     if (!tier) return false;
-    return featureAccess[feature]?.includes(tier) ?? false;
+    return featureAccess[feature].includes(tier);
   };
 
-  const getRequiredTier = (feature: string) => {
+  const getRequiredTier = (feature: Feature): string => {
     return featureRequiredTier[feature];
   };
 
-  const getFeatureLabel = (feature: string) => {
+  const getFeatureLabel = (feature: Feature): string => {
     return featureLabels[feature];
   };
 
-  const checkMultipleFeatures = (features: string[]) => {
+  const checkMultipleFeatures = (features: Feature[]): Record<Feature, boolean> => {
     return features.reduce((acc, feature) => {
       acc[feature] = hasAccess(feature);
       return acc;
-    }, {} as Record<string, boolean>);
+    }, {} as Record<Feature, boolean>);
   };
 
+  // Get tier limits based on current subscription
   const getTierInfo = () => {
     return getTierLimits(tier);
   };
 
-  const getMaxProducts = () => {
+  // Get maximum products allowed based on tier
+  const getMaxProducts = (): number => {
     const limits = getTierLimits(tier);
     return limits.maxProducts;
   };
 
-  const getMaxCourses = () => {
+  // Get maximum courses allowed based on tier
+  const getMaxCourses = (): number => {
     const limits = getTierLimits(tier);
     return limits.maxCourses;
   };
 
-  const getMaxServices = () => {
+  // Get maximum services allowed based on tier
+  const getMaxServices = (): number => {
     const limits = getTierLimits(tier);
     return limits.maxGigs;
   };
 
-  const canFulfillServices = () => {
-    return true;
+  // Check if user can fulfill services (accept and complete jobs)
+  // All tiers have full freelance access
+  const canFulfillServices = (): boolean => {
+    return true; // All tiers can post and fulfill services
   };
 
-  const canAddProduct = () => {
+  // Check if user can add more products
+  const canAddProduct = (): boolean => {
     const maxProducts = getMaxProducts();
     return myProducts.length < maxProducts;
   };
 
-  const canAddCourse = () => {
+  // Check if user can add more courses
+  const canAddCourse = (): boolean => {
     const maxCourses = getMaxCourses();
     return myCourses.length < maxCourses;
   };
 
-  const getRemainingProducts = () => {
+  // Get remaining product slots
+  const getRemainingProducts = (): number => {
     const maxProducts = getMaxProducts();
     if (maxProducts === Infinity) return Infinity;
     return Math.max(0, maxProducts - myProducts.length);
   };
 
-  const getRemainingCourses = () => {
+  // Get remaining course slots
+  const getRemainingCourses = (): number => {
     const maxCourses = getMaxCourses();
     if (maxCourses === Infinity) return Infinity;
     return Math.max(0, maxCourses - myCourses.length);
   };
 
-  const getCurrentProductCount = () => myProducts.length;
-  const getCurrentCourseCount = () => myCourses.length;
+  // Get current counts
+  const getCurrentProductCount = (): number => myProducts.length;
+  const getCurrentCourseCount = (): number => myCourses.length;
 
-  const getUpgradeMessage = (action: string) => {
+  // Get upgrade message based on what the user is trying to do
+  const getUpgradeMessage = (action: "product" | "course" | "service"): string => {
     if (action === "product") {
       if (tier === null) {
         return "You can only add 1 product on the Free tier. Upgrade to Creator for up to 3 products, or Pro for unlimited.";
@@ -154,8 +183,9 @@ export const useFeatureAccess = () => {
       }
     }
     
+    // Freelance is available to all tiers - no upgrade needed
     if (action === "service") {
-      return "";
+      return ""; // All tiers have full freelance access
     }
     
     return "";

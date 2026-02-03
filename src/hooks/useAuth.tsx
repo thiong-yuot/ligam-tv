@@ -1,22 +1,18 @@
-import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect, createContext, useContext, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Profile {
   id: string;
   user_id: string;
-  display_name: string | null;
   username: string | null;
+  display_name: string | null;
   avatar_url: string | null;
   bio: string | null;
-  is_public: boolean;
-  is_verified: boolean | null;
-  follower_count: number | null;
-  following_count: number | null;
-  total_views: number | null;
-  website: string | null;
-  created_at: string | null;
-  updated_at: string | null;
+  is_verified: boolean;
+  follower_count: number;
+  following_count: number;
+  total_views: number;
 }
 
 interface AuthContextType {
@@ -44,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .maybeSingle();
     
     if (data) {
-      setProfile(data);
+      setProfile(data as Profile);
     }
   };
 

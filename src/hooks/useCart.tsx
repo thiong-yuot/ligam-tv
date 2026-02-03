@@ -1,15 +1,7 @@
-import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
+import { useState, useEffect, createContext, useContext, ReactNode } from "react";
+import { Product } from "./useProducts";
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  sale_price?: number | null;
-  image_url?: string | null;
-  [key: string]: any;
-}
-
-interface CartItem {
+export interface CartItem {
   product: Product;
   quantity: number;
 }
@@ -41,7 +33,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (product: Product, quantity = 1) => {
+  const addToCart = (product: Product, quantity: number = 1) => {
     setItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {

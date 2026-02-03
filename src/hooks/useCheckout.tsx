@@ -2,17 +2,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { useToast } from "./use-toast";
 
-interface CheckoutItem {
+interface CartItem {
   id: string;
-  quantity: number;
+  name: string;
   price: number;
+  quantity: number;
+  image?: string;
 }
 
 export const useCheckout = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const createCheckoutSession = async (items: CheckoutItem[], mode = "payment") => {
+  const createCheckoutSession = async (
+    items: CartItem[],
+    mode: "payment" | "subscription" = "payment"
+  ) => {
     if (!user) {
       toast({
         title: "Please sign in",
@@ -41,7 +46,7 @@ export const useCheckout = () => {
       }
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Checkout error:", error);
       toast({
         title: "Checkout failed",
@@ -81,7 +86,7 @@ export const useCheckout = () => {
       }
 
       return response.data;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Subscription error:", error);
       toast({
         title: "Subscription failed",
@@ -119,7 +124,7 @@ export const useCheckout = () => {
       if (response.data?.url) {
         window.location.href = response.data.url;
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Portal error:", error);
       toast({
         title: "Unable to open billing portal",

@@ -6,7 +6,11 @@ export const useFileUpload = () => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
-  const uploadFile = async (file: File, bucket: string, folder: string) => {
+  const uploadFile = async (
+    file: File,
+    bucket: string,
+    folder: string
+  ): Promise<string | null> => {
     setUploading(true);
     try {
       const fileExt = file.name.split(".").pop();
@@ -32,7 +36,11 @@ export const useFileUpload = () => {
     }
   };
 
-  const uploadMultipleFiles = async (files: File[], bucket: string, folder: string) => {
+  const uploadMultipleFiles = async (
+    files: File[],
+    bucket: string,
+    folder: string
+  ): Promise<string[]> => {
     const urls: string[] = [];
     for (const file of files) {
       const url = await uploadFile(file, bucket, folder);

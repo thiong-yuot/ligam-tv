@@ -1,13 +1,15 @@
-import React, { createContext, useContext, useEffect, ReactNode } from "react";
+import { createContext, useContext, useEffect, ReactNode } from "react";
 
+// Dark mode only - no theme switching
 interface ThemeContextType {
-  theme: string;
+  theme: "dark";
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
+    // Always ensure dark mode is set
     const root = document.documentElement;
     root.classList.add("dark");
     localStorage.setItem("ligam-theme", "dark");

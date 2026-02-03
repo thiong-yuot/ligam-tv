@@ -3,20 +3,20 @@ import { supabase } from "@/integrations/supabase/client";
 
 export interface Freelancer {
   id: string;
-  user_id?: string | null;
+  user_id: string | null;
   name: string;
   title: string;
-  bio?: string | null;
-  avatar_url?: string | null;
-  skills?: string[] | null;
-  hourly_rate?: number | null;
-  rating?: number | null;
-  total_jobs?: number | null;
-  is_verified?: boolean | null;
-  is_available?: boolean | null;
-  portfolio_url?: string | null;
-  portfolio_images?: string[] | null;
-  thumbnail_url?: string | null;
+  avatar_url: string | null;
+  thumbnail_url: string | null;
+  portfolio_images: string[] | null;
+  skills: string[];
+  hourly_rate: number | null;
+  rating: number;
+  total_jobs: number;
+  bio: string | null;
+  portfolio_url: string | null;
+  is_verified: boolean;
+  is_available: boolean;
 }
 
 export const useFreelancers = () => {
@@ -30,7 +30,7 @@ export const useFreelancers = () => {
         .order("rating", { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as Freelancer[];
     },
   });
 };

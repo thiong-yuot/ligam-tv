@@ -4,33 +4,34 @@ import { useToast } from "@/hooks/use-toast";
 
 export interface Course {
   id: string;
-  title: string;
-  description?: string | null;
-  short_description?: string | null;
-  thumbnail_url?: string | null;
-  preview_video_url?: string | null;
-  price: number;
-  category?: string | null;
-  level?: string | null;
-  language?: string | null;
   creator_id: string;
-  is_published?: boolean | null;
-  is_featured?: boolean | null;
-  total_enrollments?: number | null;
-  average_rating?: number | null;
-  total_reviews?: number | null;
-  total_lessons?: number | null;
-  total_duration_minutes?: number | null;
-  created_at?: string | null;
-  updated_at?: string | null;
+  title: string;
+  description: string | null;
+  short_description: string | null;
+  thumbnail_url: string | null;
+  preview_video_url: string | null;
+  price: number;
+  category: string | null;
+  level: string;
+  language: string;
+  is_published: boolean;
+  is_featured: boolean;
+  total_duration_minutes: number;
+  total_lessons: number;
+  total_enrollments: number;
+  average_rating: number;
+  total_reviews: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CourseSection {
   id: string;
   course_id: string;
   title: string;
-  description?: string | null;
-  sort_order?: number | null;
+  description: string | null;
+  sort_order: number;
+  created_at: string;
   lessons?: CourseLesson[];
 }
 
@@ -38,39 +39,43 @@ export interface CourseLesson {
   id: string;
   section_id: string;
   title: string;
-  description?: string | null;
-  video_url?: string | null;
-  duration_minutes?: number | null;
-  is_preview?: boolean | null;
-  sort_order?: number | null;
+  description: string | null;
+  video_url: string | null;
+  duration_minutes: number;
+  is_preview: boolean;
+  sort_order: number;
+  content_type: string;
+  resources: any[];
+  created_at: string;
 }
 
 export interface Enrollment {
   id: string;
   user_id: string;
   course_id: string;
-  progress_percentage?: number | null;
-  completed_lessons?: string[] | null;
-  is_completed?: boolean | null;
-  enrolled_at?: string | null;
-  course?: Course | null;
+  stripe_payment_intent_id: string | null;
+  amount_paid: number;
+  progress_percentage: number;
+  completed_lessons: string[];
+  is_completed: boolean;
+  completed_at: string | null;
+  enrolled_at: string;
+  last_accessed_at: string;
+  course?: Course;
 }
 
-export const COURSE_CATEGORIES = [
-  "Development",
-  "Business",
-  "Design",
-  "Marketing",
-  "Music",
-  "Photography",
-  "Gaming",
-  "Lifestyle",
-  "Health",
-  "Finance",
-];
+export interface CourseReview {
+  id: string;
+  course_id: string;
+  user_id: string;
+  rating: number;
+  review_text: string | null;
+  is_verified: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-export const COURSE_LEVELS = ["beginner", "intermediate", "advanced", "all-levels"];
-
+// Fetch all published courses
 export const useCourses = (category?: string) => {
   return useQuery({
     queryKey: ["courses", category],
@@ -87,11 +92,12 @@ export const useCourses = (category?: string) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      return data as Course[];
     },
   });
 };
 
+// Fetch featured courses
 export const useFeaturedCourses = () => {
   return useQuery({
     queryKey: ["courses", "featured"],
@@ -105,12 +111,13 @@ export const useFeaturedCourses = () => {
         .limit(6);
 
       if (error) throw error;
-      return data;
+      return data as Course[];
     },
   });
 };
 
-export const useCourse = (courseId?: string) => {
+// Fetch course by ID with sections and lessons
+export const useCourse = (courseId: string | undefined) => {
   return useQuery({
     queryKey: ["course", courseId],
     queryFn: async () => {
@@ -132,6 +139,7 @@ export const useCourse = (courseId?: string) => {
 
       if (sectionsError) throw sectionsError;
 
+      // Fetch lessons for each section
       const sectionsWithLessons = await Promise.all(
         (sections || []).map(async (section) => {
           const { data: lessons } = await supabase
@@ -140,16 +148,17 @@ export const useCourse = (courseId?: string) => {
             .eq("section_id", section.id)
             .order("sort_order", { ascending: true });
 
-          return { ...section, lessons: lessons || [] };
+          return { ...section, lessons: lessons || [] } as CourseSection;
         })
       );
 
-      return { ...course, sections: sectionsWithLessons };
+      return { ...course, sections: sectionsWithLessons } as Course & { sections: CourseSection[] };
     },
     enabled: !!courseId,
   });
 };
 
+// Fetch creator's courses
 export const useCreatorCourses = () => {
   return useQuery({
     queryKey: ["creator-courses"],
@@ -164,29 +173,18 @@ export const useCreatorCourses = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Course[];
     },
   });
 };
 
-interface CourseData {
-  title: string;
-  description?: string;
-  short_description?: string;
-  thumbnail_url?: string;
-  preview_video_url?: string;
-  price?: number;
-  category?: string;
-  level?: string;
-  language?: string;
-}
-
+// Create course
 export const useCreateCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (course: CourseData) => {
+    mutationFn: async (course: Omit<Partial<Course>, 'creator_id'> & { title: string }) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
@@ -208,24 +206,25 @@ export const useCreateCourse = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Course;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["creator-courses"] });
       toast({ title: "Course created successfully" });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({ title: "Failed to create course", description: error.message, variant: "destructive" });
     },
   });
 };
 
+// Update course
 export const useUpdateCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string } & Partial<CourseData>) => {
+    mutationFn: async ({ id, ...updates }: Partial<Course> & { id: string }) => {
       const { data, error } = await supabase
         .from("courses")
         .update(updates)
@@ -234,19 +233,20 @@ export const useUpdateCourse = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Course;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["creator-courses"] });
       queryClient.invalidateQueries({ queryKey: ["course", data.id] });
       toast({ title: "Course updated successfully" });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({ title: "Failed to update course", description: error.message, variant: "destructive" });
     },
   });
 };
 
+// Delete course
 export const useDeleteCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -260,24 +260,18 @@ export const useDeleteCourse = () => {
       queryClient.invalidateQueries({ queryKey: ["creator-courses"] });
       toast({ title: "Course deleted successfully" });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({ title: "Failed to delete course", description: error.message, variant: "destructive" });
     },
   });
 };
 
-interface SectionData {
-  course_id: string;
-  title: string;
-  description?: string;
-  sort_order?: number;
-}
-
+// Create section
 export const useCreateSection = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (section: SectionData) => {
+    mutationFn: async (section: { course_id: string; title: string; description?: string; sort_order?: number }) => {
       const { data, error } = await supabase
         .from("course_sections")
         .insert({
@@ -290,7 +284,7 @@ export const useCreateSection = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as CourseSection;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["course", data.course_id] });
@@ -298,21 +292,12 @@ export const useCreateSection = () => {
   });
 };
 
-interface LessonData {
-  section_id: string;
-  title: string;
-  description?: string;
-  video_url?: string;
-  duration_minutes?: number;
-  is_preview?: boolean;
-  sort_order?: number;
-}
-
+// Create lesson
 export const useCreateLesson = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (lesson: LessonData) => {
+    mutationFn: async (lesson: { section_id: string; title: string; description?: string; video_url?: string; duration_minutes?: number; is_preview?: boolean; sort_order?: number }) => {
       const { data, error } = await supabase
         .from("course_lessons")
         .insert({
@@ -328,7 +313,7 @@ export const useCreateLesson = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as CourseLesson;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["course"] });
@@ -336,6 +321,7 @@ export const useCreateLesson = () => {
   });
 };
 
+// User enrollments
 export const useUserEnrollments = () => {
   return useQuery({
     queryKey: ["enrollments"],
@@ -351,6 +337,7 @@ export const useUserEnrollments = () => {
 
       if (error) throw error;
 
+      // Fetch course details for each enrollment
       const enrollmentsWithCourses = await Promise.all(
         (enrollments || []).map(async (enrollment) => {
           const { data: course } = await supabase
@@ -359,7 +346,7 @@ export const useUserEnrollments = () => {
             .eq("id", enrollment.course_id)
             .single();
 
-          return { ...enrollment, course };
+          return { ...enrollment, course } as Enrollment;
         })
       );
 
@@ -368,7 +355,8 @@ export const useUserEnrollments = () => {
   });
 };
 
-export const useCheckEnrollment = (courseId?: string) => {
+// Check enrollment
+export const useCheckEnrollment = (courseId: string | undefined) => {
   return useQuery({
     queryKey: ["enrollment", courseId],
     queryFn: async () => {
@@ -385,12 +373,13 @@ export const useCheckEnrollment = (courseId?: string) => {
         .maybeSingle();
 
       if (error) throw error;
-      return data;
+      return data as Enrollment | null;
     },
     enabled: !!courseId,
   });
 };
 
+// Enroll in course
 export const useEnrollCourse = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -411,31 +400,35 @@ export const useEnrollCourse = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Enrollment;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["enrollments"] });
       queryClient.invalidateQueries({ queryKey: ["enrollment", data.course_id] });
       toast({ title: "Successfully enrolled in course!" });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({ title: "Failed to enroll", description: error.message, variant: "destructive" });
     },
   });
 };
 
-interface ProgressData {
-  enrollmentId: string;
-  lessonId: string;
-  completedLessons: string[];
-  progressPercentage: number;
-}
-
+// Update lesson progress
 export const useUpdateProgress = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ enrollmentId, completedLessons, progressPercentage }: ProgressData) => {
+    mutationFn: async ({ 
+      enrollmentId, 
+      lessonId, 
+      completedLessons,
+      progressPercentage 
+    }: { 
+      enrollmentId: string; 
+      lessonId: string;
+      completedLessons: string[];
+      progressPercentage: number;
+    }) => {
       const { data, error } = await supabase
         .from("enrollments")
         .update({
@@ -450,7 +443,7 @@ export const useUpdateProgress = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as Enrollment;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["enrollments"] });
@@ -459,7 +452,8 @@ export const useUpdateProgress = () => {
   });
 };
 
-export const useCourseReviews = (courseId?: string) => {
+// Course reviews
+export const useCourseReviews = (courseId: string | undefined) => {
   return useQuery({
     queryKey: ["course-reviews", courseId],
     queryFn: async () => {
@@ -472,24 +466,19 @@ export const useCourseReviews = (courseId?: string) => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as CourseReview[];
     },
     enabled: !!courseId,
   });
 };
 
-interface ReviewData {
-  course_id: string;
-  rating: number;
-  review_text?: string;
-}
-
+// Create review
 export const useCreateReview = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (review: ReviewData) => {
+    mutationFn: async (review: { course_id: string; rating: number; review_text?: string }) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
@@ -505,14 +494,30 @@ export const useCreateReview = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      return data as CourseReview;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["course-reviews", data.course_id] });
       toast({ title: "Review submitted successfully" });
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({ title: "Failed to submit review", description: error.message, variant: "destructive" });
     },
   });
 };
+
+// Course categories
+export const COURSE_CATEGORIES = [
+  "Development",
+  "Business",
+  "Design",
+  "Marketing",
+  "Music",
+  "Photography",
+  "Gaming",
+  "Lifestyle",
+  "Health",
+  "Finance",
+];
+
+export const COURSE_LEVELS = ["beginner", "intermediate", "advanced", "all-levels"];

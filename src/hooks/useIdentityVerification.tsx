@@ -3,12 +3,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 
-interface VerificationData {
+type VerificationStatus = "pending" | "submitted" | "approved" | "rejected";
+
+interface IdentityVerification {
+  id: string;
+  user_id: string;
   full_name: string;
   date_of_birth: string;
   country: string;
+  address: string | null;
   id_type: string;
+  id_document_url: string | null;
+  selfie_url: string | null;
+  status: VerificationStatus;
+  rejection_reason: string | null;
+  submitted_at: string | null;
+  created_at: string;
+}
+
+interface SubmitVerificationData {
+  full_name: string;
+  date_of_birth: string;
+  country: string;
   address?: string;
+  id_type: string;
   id_document_url?: string;
   selfie_url?: string;
 }
@@ -30,15 +48,16 @@ export const useIdentityVerification = () => {
         .maybeSingle();
       
       if (error) throw error;
-      return data;
+      return data as IdentityVerification | null;
     },
     enabled: !!user,
   });
 
   const submitVerificationMutation = useMutation({
-    mutationFn: async (data: VerificationData) => {
+    mutationFn: async (data: SubmitVerificationData) => {
       if (!user) throw new Error("Must be logged in");
 
+      // Check if verification already exists
       const { data: existing } = await supabase
         .from("identity_verifications")
         .select("id, status")
@@ -46,11 +65,12 @@ export const useIdentityVerification = () => {
         .maybeSingle();
 
       if (existing) {
+        // Update existing verification
         const { data: updated, error } = await supabase
           .from("identity_verifications")
           .update({
             ...data,
-            status: "submitted" as const,
+            status: "submitted" as VerificationStatus,
             submitted_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           })
@@ -61,12 +81,13 @@ export const useIdentityVerification = () => {
         if (error) throw error;
         return updated;
       } else {
+        // Create new verification
         const { data: created, error } = await supabase
           .from("identity_verifications")
           .insert({
             user_id: user.id,
             ...data,
-            status: "submitted" as const,
+            status: "submitted" as VerificationStatus,
             submitted_at: new Date().toISOString(),
           })
           .select()
@@ -83,7 +104,7 @@ export const useIdentityVerification = () => {
         description: "We'll review your documents within 1-3 business days.",
       });
     },
-    onError: (error: Error) => {
+    onError: (error: any) => {
       toast({
         title: "Submission failed",
         description: error.message || "Please try again later.",

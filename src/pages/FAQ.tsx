@@ -16,7 +16,7 @@ const FAQ = () => {
   const { data: faqs, isLoading } = useFAQs();
 
   // Group FAQs by category
-  const groupedFaqs = faqs?.reduce((acc: Record<string, typeof faqs>, faq) => {
+  const groupedFaqs = faqs?.reduce((acc, faq) => {
     const category = faq.category || "General";
     if (!acc[category]) {
       acc[category] = [];
