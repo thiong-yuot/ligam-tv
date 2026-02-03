@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useCourse, useCourseSections } from "@/hooks/useCourses";
+import { useCourse } from "@/hooks/useCourses";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -19,7 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const LearnCourse = () => {
   const { courseId } = useParams();
   const { data: course, isLoading } = useCourse(courseId);
-  const { data: sections = [] } = useCourseSections(courseId);
+  const sections = course?.sections || [];
   const [currentLessonId, setCurrentLessonId] = useState(null);
   const [completedLessons, setCompletedLessons] = useState([]);
   const isMobile = useIsMobile();
