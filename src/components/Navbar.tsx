@@ -31,7 +31,7 @@ const Navbar = () => {
     if (tier === "pro") {
       return (
         <Link to="/pricing">
-          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 gap-1 hover:from-amber-600 hover:to-orange-600 cursor-pointer">
+          <Badge className="bg-primary text-primary-foreground border-0 gap-1 hover:bg-primary/90 cursor-pointer">
             <Crown className="h-3 w-3" />
             Pro
           </Badge>
@@ -42,7 +42,7 @@ const Navbar = () => {
     if (tier === "creator") {
       return (
         <Link to="/pricing">
-          <Badge className="bg-gradient-to-r from-primary to-amber-400 text-primary-foreground border-0 gap-1 hover:from-primary/90 hover:to-amber-500 cursor-pointer">
+          <Badge className="bg-secondary text-secondary-foreground border border-border gap-1 hover:bg-secondary/80 cursor-pointer">
             <Sparkles className="h-3 w-3" />
             Creator
           </Badge>

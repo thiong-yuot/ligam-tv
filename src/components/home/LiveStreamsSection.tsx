@@ -168,7 +168,7 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
   const showFreelancer = index === 1 || index === 2;
   
   return (
-    <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-all duration-300 group">
+    <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
       {/* Stream Preview */}
       <Link to={`/stream/${stream.id}`} className="block relative">
         <div className="aspect-video relative overflow-hidden">
@@ -177,7 +177,7 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
             alt={stream.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-background/60" />
           
           {/* Live Badge */}
           {stream.is_live && (

@@ -15,7 +15,7 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
 
   if (viewMode === "list") {
     return (
-      <div className="group bg-card border border-border rounded-xl p-4 hover:border-primary/50 transition-all duration-300">
+      <div className="group bg-card border border-border rounded-xl p-4 hover:border-muted-foreground/30 transition-all duration-300">
         <div className="flex items-start gap-4">
           {/* Avatar */}
           <div className="relative flex-shrink-0">
@@ -95,7 +95,7 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
   }
 
   return (
-    <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300">
+    <div className="group bg-card border border-border rounded-xl overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
       {/* Header with Avatar */}
       <div className="relative p-4 pb-0">
         <div className="flex items-start gap-3">

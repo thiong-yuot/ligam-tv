@@ -6,7 +6,7 @@ const GetFeatured = () => {
   return (
     <section id="get-featured" className="py-20 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">
-        <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border border-border rounded-2xl p-8 md:p-12">
+        <div className="bg-card border border-border rounded-2xl p-8 md:p-12">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             {/* Left Content */}
             <div>
@@ -46,9 +46,8 @@ const GetFeatured = () => {
             {/* Right - Decorative */}
             <div className="hidden lg:flex items-center justify-center">
               <div className="relative">
-                <div className="w-64 h-64 rounded-full bg-primary/20 animate-float" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Sparkles className="w-24 h-24 text-primary" />
+                <div className="w-32 h-32 rounded-xl bg-muted flex items-center justify-center">
+                  <Sparkles className="w-16 h-16 text-muted-foreground" />
                 </div>
               </div>
             </div>

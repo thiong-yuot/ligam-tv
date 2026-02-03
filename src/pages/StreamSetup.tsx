@@ -143,25 +143,23 @@ const StreamSetup = () => {
 
       {/* Hero Section */}
       <section className="relative py-16 lg:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-amber-900/10" />
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-background" />
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge className="bg-primary/20 text-primary border-primary/30 mb-4">
+            <Badge className="bg-muted text-foreground border-border mb-4">
               <Video className="w-3 h-3 mr-1" />
               Streaming Guide
             </Badge>
             <h1 className="text-4xl lg:text-5xl font-bold mb-6">
-              How to Set Up Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-amber-400">Live Stream</span>
+              How to Set Up Your <span className="text-primary">Live Stream</span>
             </h1>
             <p className="text-lg text-muted-foreground mb-8">
               Follow this step-by-step guide to start streaming on Ligam.tv. From getting your stream key to going live, we'll walk you through everything.
             </p>
             <div className="flex gap-4 justify-center">
               <Link to="/go-live">
-                <Button className="bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-600">
+                <Button>
                   Go to Dashboard
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -199,7 +197,7 @@ const StreamSetup = () => {
               >
                 <CardHeader className="pb-4">
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-amber-500/20 flex items-center justify-center border border-primary/30">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-muted flex items-center justify-center border border-border">
                       <step.icon className="w-6 h-6 text-primary" />
                     </div>
                     <div className="flex-1">
@@ -248,7 +246,7 @@ const StreamSetup = () => {
       </section>
 
       {/* Tips Section */}
-      <section className="py-16 bg-gradient-to-br from-primary/10 via-background to-blue-900/10">
+      <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold text-center mb-8">Pro Tips for Better Streams</h2>
@@ -276,7 +274,7 @@ const StreamSetup = () => {
       {/* CTA Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <Card className="bg-gradient-to-r from-primary/30 to-amber-900/30 border-primary/30">
+          <Card className="bg-card border-border">
             <CardContent className="p-8 lg:p-12 text-center">
               <h2 className="text-2xl lg:text-3xl font-bold mb-4">
                 Ready to Start Streaming?
@@ -286,13 +284,13 @@ const StreamSetup = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/go-live">
-                  <Button size="lg" className="bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-600">
+                  <Button size="lg">
                     <Video className="w-4 h-4 mr-2" />
                     Start Streaming
                   </Button>
                 </Link>
                 <Link to="/help">
-                  <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10">
+                  <Button size="lg" variant="outline">
                     Need More Help?
                   </Button>
                 </Link>

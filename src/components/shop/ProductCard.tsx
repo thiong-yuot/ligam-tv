@@ -1,8 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { Heart, ShoppingCart, Eye, CheckCircle, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Product } from "@/hooks/useProducts";
+import { useSellerProfile } from "@/hooks/useCreatorProfile";
 
 interface ProductCardProps {
   product: Product;
@@ -11,28 +14,39 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardProps) => {
+  const navigate = useNavigate();
+  const { data: sellerProfile } = useSellerProfile(product.seller_id || undefined);
+  
+  const handleSellerClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (sellerProfile?.username) {
+      navigate(`/@${sellerProfile.username}`);
+    }
+  };
+  
   const hasDiscount = product.sale_price !== null && product.sale_price < product.price;
   const discountPercent = hasDiscount
     ? Math.round(((product.price - product.sale_price!) / product.price) * 100)
     : 0;
   const displayPrice = product.sale_price ?? product.price;
-  const isOutOfStock = product.stock_quantity === 0;
-  const isLowStock = product.stock_quantity > 0 && product.stock_quantity <= 5;
+  // -1 means unlimited stock (digital products), null also means available
+  const isDigitalOrUnlimited = product.stock_quantity === null || product.stock_quantity < 0;
+  const isOutOfStock = !isDigitalOrUnlimited && product.stock_quantity === 0;
+  const isLowStock = !isDigitalOrUnlimited && product.stock_quantity > 0 && product.stock_quantity <= 5;
 
-  // Mock seller data - in real app this would come from product.seller
+  // Use real seller data from profile or fallback
   const seller = {
-    name: "Ligam Store",
-    verified: true,
-    avatar: null,
+    name: sellerProfile?.display_name || sellerProfile?.username || "Ligam Store",
+    verified: sellerProfile?.is_verified || false,
+    avatar: sellerProfile?.avatar_url || null,
   };
 
-  // Mock rating - in real app this would come from product.rating
-  const rating = 4.5;
-  const reviewCount = 128;
+  // Mock sold count - in real app this would come from orders
+  const soldCount = 128;
 
   if (viewMode === "list") {
     return (
-      <div className="group flex gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 transition-all duration-300">
+      <div className="group flex gap-4 p-4 rounded-xl bg-card border border-border hover:border-muted-foreground/30 transition-all duration-300">
         {/* Image */}
         <div className="relative w-48 h-36 flex-shrink-0 rounded-lg overflow-hidden">
           {product.image_url ? (
@@ -73,7 +87,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-center gap-1">
                 <Package className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-foreground">{reviewCount} sold</span>
+                <span className="text-sm font-medium text-foreground">{soldCount} sold</span>
               </div>
             </div>
           </div>
@@ -108,7 +122,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   }
 
   return (
-    <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-primary/30 transition-all duration-300">
+    <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
       {/* Image Container */}
       <div className="relative aspect-square overflow-hidden">
         {product.image_url ? (
@@ -153,7 +167,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
         </div>
 
         {/* Quick Add Button */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-0 left-0 right-0 p-3 bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             className="w-full"
             size="sm"
@@ -169,13 +183,21 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
       {/* Content */}
       <div className="p-4">
         {/* Seller Info */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-            <span className="text-xs font-bold text-primary">L</span>
-          </div>
-          <span className="text-xs text-muted-foreground">{seller.name}</span>
+        <div 
+          className={`flex items-center gap-2 mb-2 ${sellerProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
+          onClick={sellerProfile?.username ? handleSellerClick : undefined}
+        >
+          <Avatar className="w-5 h-5">
+            <AvatarImage src={seller.avatar || undefined} />
+            <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
+              {seller.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <span className={`text-xs text-muted-foreground truncate ${sellerProfile?.username ? 'hover:text-primary' : ''}`}>
+            {seller.name}
+          </span>
           {seller.verified && (
-            <CheckCircle className="w-3 h-3 text-primary" />
+            <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
           )}
         </div>
 
@@ -190,7 +212,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
         {/* Sales count */}
         <div className="flex items-center gap-1.5 mt-2">
           <Package className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs text-muted-foreground">{reviewCount} sold</span>
+          <span className="text-xs text-muted-foreground">{soldCount} sold</span>
         </div>
 
         {/* Price */}

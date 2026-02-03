@@ -150,7 +150,7 @@ const TipDialog = ({ streamId, recipientId, onTipSent }: TipDialogProps) => {
           <Button
             onClick={handleSendTip}
             disabled={!selectedGift || sending || !user}
-            className="w-full bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-600"
+            className="w-full"
             size="lg"
           >
             {sending ? (
