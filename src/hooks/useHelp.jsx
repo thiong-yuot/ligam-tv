@@ -1,27 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface HelpCategory {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  icon: string;
-  article_count: number;
-  sort_order: number;
-}
-
-export interface HelpArticle {
-  id: string;
-  title: string;
-  content: string;
-  summary: string | null;
-  category_id: string | null;
-  is_popular: boolean;
-  view_count: number;
-  sort_order: number;
-}
-
 export const useHelpCategories = () => {
   return useQuery({
     queryKey: ["help-categories"],
@@ -33,12 +12,12 @@ export const useHelpCategories = () => {
         .order("sort_order");
       
       if (error) throw error;
-      return data as HelpCategory[];
+      return data;
     },
   });
 };
 
-export const useHelpArticles = (categorySlug?: string) => {
+export const useHelpArticles = (categorySlug) => {
   return useQuery({
     queryKey: ["help-articles", categorySlug],
     queryFn: async () => {
@@ -62,7 +41,7 @@ export const useHelpArticles = (categorySlug?: string) => {
       
       const { data, error } = await query;
       if (error) throw error;
-      return data as HelpArticle[];
+      return data;
     },
   });
 };
@@ -80,7 +59,7 @@ export const usePopularArticles = () => {
         .limit(5);
       
       if (error) throw error;
-      return data as HelpArticle[];
+      return data;
     },
   });
 };

@@ -2,36 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-export interface CreatorAvailability {
-  id: string;
-  creator_id: string;
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
-  is_available: boolean;
-  created_at: string;
-}
+export const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export interface Booking {
-  id: string;
-  creator_id: string;
-  learner_id: string;
-  course_id: string | null;
-  title: string;
-  description: string | null;
-  scheduled_at: string;
-  duration_minutes: number;
-  meeting_url: string | null;
-  status: string;
-  price: number;
-  stripe_payment_intent_id: string | null;
-  notes: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-// Fetch creator availability
-export const useCreatorAvailability = (creatorId: string | undefined) => {
+export const useCreatorAvailability = (creatorId) => {
   return useQuery({
     queryKey: ["availability", creatorId],
     queryFn: async () => {
@@ -45,13 +18,12 @@ export const useCreatorAvailability = (creatorId: string | undefined) => {
         .order("day_of_week", { ascending: true });
 
       if (error) throw error;
-      return data as CreatorAvailability[];
+      return data;
     },
     enabled: !!creatorId,
   });
 };
 
-// Fetch own availability (for creator)
 export const useOwnAvailability = () => {
   return useQuery({
     queryKey: ["own-availability"],
@@ -66,22 +38,20 @@ export const useOwnAvailability = () => {
         .order("day_of_week", { ascending: true });
 
       if (error) throw error;
-      return data as CreatorAvailability[];
+      return data;
     },
   });
 };
 
-// Set availability
 export const useSetAvailability = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (slots: { day_of_week: number; start_time: string; end_time: string; is_available?: boolean }[]) => {
+    mutationFn: async (slots) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
-      // Delete existing availability
       await supabase
         .from("creator_availability")
         .delete()
@@ -89,7 +59,6 @@ export const useSetAvailability = () => {
 
       if (slots.length === 0) return [];
 
-      // Insert new availability
       const { data, error } = await supabase
         .from("creator_availability")
         .insert(
@@ -104,7 +73,7 @@ export const useSetAvailability = () => {
         .select();
 
       if (error) throw error;
-      return data as CreatorAvailability[];
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["own-availability"] });
@@ -116,7 +85,6 @@ export const useSetAvailability = () => {
   });
 };
 
-// Fetch user bookings (as learner)
 export const useUserBookings = () => {
   return useQuery({
     queryKey: ["user-bookings"],
@@ -131,12 +99,11 @@ export const useUserBookings = () => {
         .order("scheduled_at", { ascending: true });
 
       if (error) throw error;
-      return data as Booking[];
+      return data;
     },
   });
 };
 
-// Fetch creator bookings
 export const useCreatorBookings = () => {
   return useQuery({
     queryKey: ["creator-bookings"],
@@ -151,18 +118,17 @@ export const useCreatorBookings = () => {
         .order("scheduled_at", { ascending: true });
 
       if (error) throw error;
-      return data as Booking[];
+      return data;
     },
   });
 };
 
-// Create booking
 export const useCreateBooking = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (booking: { creator_id: string; title: string; scheduled_at: string; description?: string; course_id?: string; duration_minutes?: number; price?: number }) => {
+    mutationFn: async (booking) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
 
@@ -182,7 +148,7 @@ export const useCreateBooking = () => {
         .single();
 
       if (error) throw error;
-      return data as Booking;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-bookings"] });
@@ -194,14 +160,13 @@ export const useCreateBooking = () => {
   });
 };
 
-// Update booking status
 export const useUpdateBookingStatus = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async ({ bookingId, status, meetingUrl }: { bookingId: string; status: string; meetingUrl?: string }) => {
-      const updates: Partial<Booking> = { status };
+    mutationFn: async ({ bookingId, status, meetingUrl }) => {
+      const updates = { status };
       if (meetingUrl) updates.meeting_url = meetingUrl;
 
       const { data, error } = await supabase
@@ -212,7 +177,7 @@ export const useUpdateBookingStatus = () => {
         .single();
 
       if (error) throw error;
-      return data as Booking;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-bookings"] });
@@ -225,13 +190,12 @@ export const useUpdateBookingStatus = () => {
   });
 };
 
-// Cancel booking
 export const useCancelBooking = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (bookingId: string) => {
+    mutationFn: async (bookingId) => {
       const { data, error } = await supabase
         .from("bookings")
         .update({ status: "cancelled" })
@@ -240,7 +204,7 @@ export const useCancelBooking = () => {
         .single();
 
       if (error) throw error;
-      return data as Booking;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-bookings"] });
@@ -252,5 +216,3 @@ export const useCancelBooking = () => {
     },
   });
 };
-
-export const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

@@ -1,37 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface FreelancerPackage {
-  id: string;
-  freelancer_id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  delivery_days: number;
-  revisions: number;
-  features: string[];
-  is_popular: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface FreelancerOrder {
-  id: string;
-  client_id: string;
-  freelancer_id: string;
-  package_id: string | null;
-  status: string;
-  total_amount: number;
-  requirements: string | null;
-  deliverables: string[] | null;
-  due_date: string | null;
-  completed_at: string | null;
-  created_at: string;
-  updated_at: string;
-  package?: FreelancerPackage;
-}
-
-export const useFreelancerPackages = (freelancerId: string) => {
+export const useFreelancerPackages = (freelancerId) => {
   return useQuery({
     queryKey: ["freelancer-packages", freelancerId],
     queryFn: async () => {
@@ -42,7 +12,7 @@ export const useFreelancerPackages = (freelancerId: string) => {
         .order("price", { ascending: true });
       
       if (error) throw error;
-      return data as FreelancerPackage[];
+      return data;
     },
     enabled: !!freelancerId,
   });
@@ -52,7 +22,7 @@ export const useCreatePackage = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data: Omit<FreelancerPackage, "id" | "created_at" | "updated_at">) => {
+    mutationFn: async (data) => {
       const { data: result, error } = await supabase
         .from("freelancer_packages")
         .insert(data)
@@ -72,7 +42,7 @@ export const useUpdatePackage = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, ...data }: Partial<FreelancerPackage> & { id: string }) => {
+    mutationFn: async ({ id, ...data }) => {
       const { error } = await supabase
         .from("freelancer_packages")
         .update(data)
@@ -90,7 +60,7 @@ export const useDeletePackage = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id) => {
       const { error } = await supabase
         .from("freelancer_packages")
         .delete()
@@ -118,12 +88,12 @@ export const useMyFreelancerOrders = () => {
         .order("created_at", { ascending: false });
       
       if (error) throw error;
-      return data as FreelancerOrder[];
+      return data;
     },
   });
 };
 
-export const useFreelancerIncomingOrders = (freelancerId: string) => {
+export const useFreelancerIncomingOrders = (freelancerId) => {
   return useQuery({
     queryKey: ["freelancer-incoming-orders", freelancerId],
     queryFn: async () => {
@@ -134,7 +104,7 @@ export const useFreelancerIncomingOrders = (freelancerId: string) => {
         .order("created_at", { ascending: false });
       
       if (error) throw error;
-      return data as FreelancerOrder[];
+      return data;
     },
     enabled: !!freelancerId,
   });
@@ -144,12 +114,7 @@ export const useCreateFreelancerOrder = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (data: {
-      freelancer_id: string;
-      package_id: string;
-      total_amount: number;
-      requirements?: string;
-    }) => {
+    mutationFn: async (data) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
       
@@ -180,7 +145,7 @@ export const useUpdateFreelancerOrder = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, ...data }: { id: string; status?: string; deliverables?: string[]; completed_at?: string }) => {
+    mutationFn: async ({ id, ...data }) => {
       const { error } = await supabase
         .from("freelancer_orders")
         .update(data)

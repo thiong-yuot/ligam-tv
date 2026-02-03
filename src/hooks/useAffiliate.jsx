@@ -1,41 +1,7 @@
-import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-
-interface Affiliate {
-  id: string;
-  user_id: string;
-  referral_code: string;
-  total_referrals: number;
-  total_earnings: number;
-  pending_earnings: number;
-  is_active: boolean;
-  created_at: string;
-}
-
-interface Referral {
-  id: string;
-  affiliate_id: string;
-  referred_user_id: string;
-  status: string;
-  commission_rate: number;
-  total_commission_earned: number;
-  months_active: number;
-  created_at: string;
-}
-
-interface AffiliateEarning {
-  id: string;
-  affiliate_id: string;
-  referral_id: string;
-  amount: number;
-  commission_rate: number;
-  subscription_month: number;
-  status: string;
-  created_at: string;
-}
 
 export const useAffiliate = () => {
   const { user } = useAuth();
@@ -54,7 +20,7 @@ export const useAffiliate = () => {
         .maybeSingle();
       
       if (error) throw error;
-      return data as Affiliate | null;
+      return data;
     },
     enabled: !!user,
   });
@@ -71,7 +37,7 @@ export const useAffiliate = () => {
         .order("created_at", { ascending: false });
       
       if (error) throw error;
-      return data as Referral[];
+      return data;
     },
     enabled: !!affiliate,
   });
@@ -88,7 +54,7 @@ export const useAffiliate = () => {
         .order("created_at", { ascending: false });
       
       if (error) throw error;
-      return data as AffiliateEarning[];
+      return data;
     },
     enabled: !!affiliate,
   });
@@ -97,7 +63,6 @@ export const useAffiliate = () => {
     mutationFn: async () => {
       if (!user) throw new Error("Must be logged in");
 
-      // Generate a unique referral code
       const { data: codeData } = await supabase.rpc("generate_referral_code");
       const referralCode = codeData || `LIG${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
@@ -120,7 +85,7 @@ export const useAffiliate = () => {
         description: "Your affiliate link is ready. Start sharing and earning!",
       });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
         title: "Failed to join program",
         description: error.message || "Please try again later.",

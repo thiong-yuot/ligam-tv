@@ -2,22 +2,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { useToast } from "./use-toast";
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-}
-
 export const useCheckout = () => {
   const { user } = useAuth();
   const { toast } = useToast();
 
-  const createCheckoutSession = async (
-    items: CartItem[],
-    mode: "payment" | "subscription" = "payment"
-  ) => {
+  const createCheckoutSession = async (items, mode = "payment") => {
     if (!user) {
       toast({
         title: "Please sign in",
@@ -57,7 +46,7 @@ export const useCheckout = () => {
     }
   };
 
-  const createSubscriptionCheckout = async (priceId: string) => {
+  const createSubscriptionCheckout = async (priceId) => {
     if (!user) {
       toast({
         title: "Please sign in",

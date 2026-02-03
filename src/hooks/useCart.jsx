@@ -1,27 +1,11 @@
-import { useState, useEffect, createContext, useContext, ReactNode } from "react";
-import { Product } from "./useProducts";
+import React, { useState, useEffect, createContext, useContext } from "react";
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
-
-interface CartContextType {
-  items: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  clearCart: () => void;
-  totalItems: number;
-  totalPrice: number;
-}
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
+const CartContext = createContext(undefined);
 
 const CART_STORAGE_KEY = "ligam_cart";
 
-export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, setItems] = useState<CartItem[]>(() => {
+export const CartProvider = ({ children }) => {
+  const [items, setItems] = useState(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
       return stored ? JSON.parse(stored) : [];
@@ -33,7 +17,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (product: Product, quantity: number = 1) => {
+  const addToCart = (product, quantity = 1) => {
     setItems((prev) => {
       const existing = prev.find((item) => item.product.id === product.id);
       if (existing) {
@@ -47,11 +31,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFromCart = (productId: string) => {
+  const removeFromCart = (productId) => {
     setItems((prev) => prev.filter((item) => item.product.id !== productId));
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (productId, quantity) => {
     if (quantity <= 0) {
       removeFromCart(productId);
       return;

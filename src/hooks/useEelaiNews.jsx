@@ -1,21 +1,11 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface NewsItem {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  source: string;
-  content: string;
-  publishedAt: string;
-}
-
 export const useEelaiNews = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
-  const searchNews = async (query?: string, category?: string): Promise<NewsItem[]> => {
+  const searchNews = async (query, category) => {
     setIsLoading(true);
     setError(null);
 

@@ -1,22 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface DiscoveryContent {
-  id: string;
-  title: string;
-  summary: string | null;
-  content: string | null;
-  content_type: string;
-  thumbnail_url: string | null;
-  video_url: string | null;
-  source_name: string | null;
-  source_count: number | null;
-  duration_minutes: number | null;
-  view_count: number | null;
-  is_featured: boolean | null;
-  published_at: string | null;
-}
-
 export const useDiscoveryContent = () => {
   return useQuery({
     queryKey: ["discovery-content"],
@@ -28,7 +12,7 @@ export const useDiscoveryContent = () => {
         .order("published_at", { ascending: false });
 
       if (error) throw error;
-      return data as DiscoveryContent[];
+      return data;
     },
   });
 };
@@ -46,7 +30,7 @@ export const useFeaturedContent = () => {
         .limit(2);
 
       if (error) throw error;
-      return data as DiscoveryContent[];
+      return data;
     },
   });
 };

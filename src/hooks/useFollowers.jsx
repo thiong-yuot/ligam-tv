@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export const useIsFollowing = (userId: string) => {
+export const useIsFollowing = (userId) => {
   return useQuery({
     queryKey: ["isFollowing", userId],
     queryFn: async () => {
@@ -26,7 +26,7 @@ export const useFollowUser = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (userId: string) => {
+    mutationFn: async (userId) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
       
@@ -49,7 +49,7 @@ export const useUnfollowUser = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async (userId: string) => {
+    mutationFn: async (userId) => {
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) throw new Error("Not authenticated");
       

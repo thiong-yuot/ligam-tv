@@ -6,11 +6,7 @@ export const useFileUpload = () => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
-  const uploadFile = async (
-    file: File,
-    bucket: string,
-    folder: string
-  ): Promise<string | null> => {
+  const uploadFile = async (file, bucket, folder) => {
     setUploading(true);
     try {
       const fileExt = file.name.split(".").pop();
@@ -24,7 +20,7 @@ export const useFileUpload = () => {
 
       const { data } = supabase.storage.from(bucket).getPublicUrl(fileName);
       return data.publicUrl;
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Upload failed",
         description: error.message,
@@ -36,12 +32,8 @@ export const useFileUpload = () => {
     }
   };
 
-  const uploadMultipleFiles = async (
-    files: File[],
-    bucket: string,
-    folder: string
-  ): Promise<string[]> => {
-    const urls: string[] = [];
+  const uploadMultipleFiles = async (files, bucket, folder) => {
+    const urls = [];
     for (const file of files) {
       const url = await uploadFile(file, bucket, folder);
       if (url) urls.push(url);
