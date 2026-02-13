@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal, LayoutGrid, List, ArrowUpDown } from "lucide-react";
+import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 
 interface FreelanceHeaderProps {
   searchQuery: string;
@@ -26,88 +25,43 @@ const FreelanceHeader = ({
   onSearchChange,
   sortBy,
   onSortChange,
-  viewMode,
-  onViewModeChange,
   totalResults,
   onOpenMobileFilters,
 }: FreelanceHeaderProps) => {
   return (
-    <div className="space-y-4 mb-6">
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+    <div className="flex items-center gap-3 mb-6">
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Search freelancers by name, skill, or keyword..."
+          placeholder="Search freelancers..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-12 h-12 text-base bg-card border-border"
+          className="pl-10 bg-card border-border"
         />
       </div>
 
-      {/* Controls Bar */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3">
-          {/* Mobile Filters Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="lg:hidden"
-            onClick={onOpenMobileFilters}
-          >
-            <SlidersHorizontal className="w-4 h-4 mr-2" />
-            Filters
-          </Button>
+      <Button
+        variant="outline"
+        size="icon"
+        className="lg:hidden shrink-0"
+        onClick={onOpenMobileFilters}
+      >
+        <SlidersHorizontal className="w-4 h-4" />
+      </Button>
 
-          {/* Results Count */}
-          <span className="text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">{totalResults}</span> freelancers found
-          </span>
-        </div>
-
-        <div className="flex items-center gap-3">
-          {/* Sort Dropdown */}
-          <Select value={sortBy} onValueChange={onSortChange}>
-            <SelectTrigger className="w-[180px] bg-card">
-              <ArrowUpDown className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="rating">Top Rated</SelectItem>
-              <SelectItem value="price-low">Price: Low to High</SelectItem>
-              <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="jobs">Most Jobs</SelectItem>
-              <SelectItem value="newest">Newest</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* View Mode Toggle */}
-          <div className="hidden sm:flex items-center border border-border rounded-lg bg-card p-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "h-8 px-3",
-                viewMode === "grid" && "bg-muted"
-              )}
-              onClick={() => onViewModeChange("grid")}
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className={cn(
-                "h-8 px-3",
-                viewMode === "list" && "bg-muted"
-              )}
-              onClick={() => onViewModeChange("list")}
-            >
-              <List className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <Select value={sortBy} onValueChange={onSortChange}>
+        <SelectTrigger className="w-32 bg-card shrink-0">
+          <SelectValue placeholder="Sort" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="rating">Top Rated</SelectItem>
+          <SelectItem value="jobs">Most Jobs</SelectItem>
+          <SelectItem value="price-low">Price ↑</SelectItem>
+          <SelectItem value="price-high">Price ↓</SelectItem>
+          <SelectItem value="newest">Newest</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 };
