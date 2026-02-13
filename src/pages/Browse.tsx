@@ -9,12 +9,12 @@ import { useStreams } from "@/hooks/useStreams";
 import { useCategories } from "@/hooks/useCategories";
 
 const Browse = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data: categoriesData = [], isLoading: categoriesLoading } = useCategories();
   const { data: streams, isLoading: streamsLoading } = useStreams(
-    selectedCategory?.toLowerCase() || undefined
+    selectedCategory?.id || undefined
   );
 
   const filteredStreams = streams?.filter(stream =>
@@ -48,7 +48,7 @@ const Browse = () => {
                   {categoriesData.map((category) => (
                     <button
                       key={category.id}
-                      onClick={() => setSelectedCategory(category.name)}
+                      onClick={() => setSelectedCategory({ id: category.id, name: category.name })}
                       className="group rounded-lg border border-border bg-card overflow-hidden hover:border-muted-foreground/30 transition-colors text-left"
                     >
                       <div className="aspect-[4/3] relative">
@@ -82,7 +82,7 @@ const Browse = () => {
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setSelectedCategory(null)}>
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
-                <h1 className="text-lg font-display font-bold text-foreground">{selectedCategory}</h1>
+                <h1 className="text-lg font-display font-bold text-foreground">{selectedCategory.name}</h1>
                 <div className="relative w-48 ml-auto">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                   <Input
