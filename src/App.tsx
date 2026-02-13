@@ -39,7 +39,7 @@ import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
-import ApiAccess from "./pages/ApiAccess";
+
 import Messages from "./pages/Messages";
 import Notifications from "./pages/Notifications";
 import SellerDashboard from "./pages/SellerDashboard";
@@ -99,7 +99,7 @@ const App = () => (
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/cookies" element={<Cookies />} />
                 <Route path="/admin" element={<Admin />} />
-                <Route path="/api-access" element={<ApiAccess />} />
+                
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/seller/dashboard" element={<SellerDashboard />} />
