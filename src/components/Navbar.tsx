@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, LayoutDashboard, MessageCircle, Bell } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Menu, X, User, LogOut, LayoutDashboard, MessageCircle, Bell, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadCount } from "@/hooks/useMessages";
 import { useUnreadNotificationsCount } from "@/hooks/useNotifications";
@@ -18,6 +19,7 @@ import LigamLogo from "./LigamLogo";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [search, setSearch] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const { user, profile, signOut, loading } = useAuth();
@@ -71,6 +73,22 @@ const Navbar = () => {
               </Link>
             ))}
           </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (search.trim()) navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+            }}
+            className="hidden md:flex relative max-w-xs flex-1 mx-4"
+          >
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-8 h-8 text-xs bg-card border-border"
+            />
+          </form>
 
           <div className="flex items-center gap-2">
             {!loading && (
