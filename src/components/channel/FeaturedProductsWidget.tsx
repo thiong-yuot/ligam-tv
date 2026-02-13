@@ -37,7 +37,7 @@ const FeaturedProductsWidget = ({
           <h3 className="font-semibold text-foreground">{creatorName ? `${creatorName}'s Products` : "Streamer's Products"}</h3>
         </div>
         {creatorUsername && (
-          <Link to={`/${creatorUsername}/store`}>
+          <Link to="/shop">
             <Button variant="ghost" size="sm" className="gap-1 text-xs">
               View Store
               <ExternalLink className="w-3 h-3" />
@@ -50,7 +50,7 @@ const FeaturedProductsWidget = ({
         {displayProducts.map((product) => (
           <Link 
             key={product.id} 
-            to={`/shop/${product.id}`}
+            to="/shop"
             className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary/50 transition-colors"
           >
             <div className="w-12 h-12 rounded-lg bg-secondary flex-shrink-0 overflow-hidden">
