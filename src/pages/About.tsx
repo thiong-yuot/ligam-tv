@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Users, Shield, Zap, Heart } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const values = [
   { icon: Users, title: "Built for All", description: "Streamers, viewers, teachers, sellers, freelancers—everyone belongs here." },
@@ -12,6 +13,8 @@ const values = [
 ];
 
 const About = () => {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -34,8 +37,8 @@ const About = () => {
           </div>
 
           <div className="text-center">
-            <Link to="/signup">
-              <Button>Get Started</Button>
+            <Link to={user ? "/dashboard" : "/signup"}>
+              <Button>{user ? "Go to Dashboard" : "Get Started"}</Button>
             </Link>
           </div>
         </div>
