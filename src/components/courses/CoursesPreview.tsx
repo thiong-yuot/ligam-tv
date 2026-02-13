@@ -35,7 +35,7 @@ const CoursesPreview = ({ compact }: CoursesPreviewProps) => {
         <div className="grid grid-cols-2 gap-2">
           {featured.map((c) => (
             <Link key={c.id} to={`/courses/${c.id}`} className="bg-card border border-border rounded-lg p-2 hover:border-muted-foreground/30 transition-colors">
-              <div className="aspect-video rounded overflow-hidden mb-1.5 bg-muted">
+              <div className="aspect-[4/3] rounded overflow-hidden mb-1.5 bg-muted">
                 {c.thumbnail_url ? (
                   <img src={c.thumbnail_url} alt={c.title} className="w-full h-full object-cover" />
                 ) : (
