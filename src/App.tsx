@@ -48,7 +48,7 @@ import CourseDetail from "./pages/CourseDetail";
 import LearnCourse from "./pages/LearnCourse";
 import CreatorCourses from "./pages/CreatorCourses";
 import MyLearning from "./pages/MyLearning";
-
+import Search from "./pages/Search";
 import Affiliates from "./pages/Affiliates";
 import UserProfile from "./pages/UserProfile";
 
@@ -108,6 +108,7 @@ const App = () => (
                 <Route path="/creator/courses" element={<CreatorCourses />} />
                 <Route path="/my-learning" element={<MyLearning />} />
                 
+                <Route path="/search" element={<Search />} />
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/@:username" element={<UserProfile />} />
                 <Route path="*" element={<NotFound />} />

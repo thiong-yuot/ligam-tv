@@ -13,7 +13,7 @@ const HeroSection = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!search.trim()) return;
-    navigate(`/browse?q=${encodeURIComponent(search.trim())}`);
+    navigate(`/search?q=${encodeURIComponent(search.trim())}`);
   };
 
   return (
