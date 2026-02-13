@@ -28,7 +28,7 @@ const About = () => {
     {
       icon: Zap,
       title: "Productivity First",
-      description: "Eelai AI, news, weather, and tools that help everyone—whether you create or consume.",
+      description: "Smart tools and features that help everyone—whether you create or consume.",
     },
     {
       icon: Heart,
@@ -84,7 +84,7 @@ const About = () => {
               </p>
               <p className="text-muted-foreground">
                 Stream if you want. Watch if you prefer. Sell products, teach courses, or offer services. 
-                With Eelai AI, a built-in shop, and productivity tools, everyone has what they need to 
+                With a built-in shop and productivity tools, everyone has what they need to 
                 create, discover, and grow.
               </p>
             </div>

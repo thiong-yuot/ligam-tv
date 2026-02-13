@@ -19,7 +19,7 @@ const features = [
   {
     icon: Clock,
     title: "Productivity Built In",
-    description: "Eelai AI, news, weather, and tools that help everyone get things done",
+    description: "Smart tools and features that help everyone get things done",
   },
 ];
 
