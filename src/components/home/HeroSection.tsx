@@ -27,7 +27,7 @@ const HeroSection = () => {
         <form onSubmit={handleSearch} className="relative flex-1 max-w-md w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search streams, shop, freelance, courses..."
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10 h-9 text-sm bg-card border-border"
