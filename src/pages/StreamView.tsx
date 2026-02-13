@@ -8,7 +8,7 @@ import TipDialog from "@/components/TipDialog";
 import FeaturedProductsWidget from "@/components/channel/FeaturedProductsWidget";
 import FeaturedGigsWidget from "@/components/channel/FeaturedGigsWidget";
 import FeaturedCoursesWidget from "@/components/channel/FeaturedCoursesWidget";
-import SubscribeWidget from "@/components/channel/SubscribeWidget";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -37,7 +37,7 @@ import { useStream } from "@/hooks/useStreams";
 import { useChatMessages, useSendMessage } from "@/hooks/useChat";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/useSubscription";
 import { useProducts } from "@/hooks/useProducts";
 import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
 import { useCourses } from "@/hooks/useCourses";
@@ -61,7 +61,7 @@ const StreamView = () => {
   const { toast } = useToast();
 
   const { user } = useAuth();
-  const { tier, createSubscriptionCheckout } = useSubscription();
+  const { tier } = useSubscription();
   const { data: stream, isLoading } = useStream(id || "");
   const { data: accessInfo, isLoading: accessLoading, refetch: refetchAccess } = useCheckStreamAccess(id || "");
   const messages = useChatMessages(id || "");
@@ -570,15 +570,6 @@ const StreamView = () => {
 
             {/* Shop Tab */}
             <TabsContent value="shop" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
-              <SubscribeWidget
-                creatorName={stream.profiles?.display_name || stream.profiles?.username || "Streamer"}
-                currentTier={tier}
-                onSubscribe={(tierKey) => {
-                  const priceId = SUBSCRIPTION_TIERS[tierKey].price_id;
-                  if (priceId) createSubscriptionCheckout(priceId);
-                }}
-              />
-              
               {streamerProducts.length > 0 && (
                 <FeaturedProductsWidget
                   products={streamerProducts}
