@@ -6,7 +6,7 @@ import { useFreelancers } from "@/hooks/useFreelancers";
 
 const FreelancersPreview = () => {
   const { data: freelancers = [], isLoading } = useFreelancers();
-  const featured = freelancers.slice(0, 4);
+  const featured = freelancers.slice(0, 2);
 
   return (
     <section className="py-6 px-4 md:px-6 lg:px-8">

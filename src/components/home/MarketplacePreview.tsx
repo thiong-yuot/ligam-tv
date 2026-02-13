@@ -5,7 +5,7 @@ import { useProducts } from "@/hooks/useProducts";
 
 const MarketplacePreview = () => {
   const { data: products = [], isLoading } = useProducts();
-  const featured = products.slice(0, 4);
+  const featured = products.slice(0, 2);
 
   return (
     <section className="py-6 px-4 md:px-6 lg:px-8">
