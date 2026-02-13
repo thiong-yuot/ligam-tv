@@ -18,23 +18,20 @@ export const useCheckout = () => {
     items: CartItem[],
     mode: "payment" | "subscription" = "payment"
   ) => {
-    if (!user) {
-      toast({
-        title: "Please sign in",
-        description: "You need to be logged in to checkout",
-        variant: "destructive",
-      });
-      return null;
-    }
-
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const headers: Record<string, string> = {};
+
+      // If user is logged in, include auth token
+      if (user) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          headers.Authorization = `Bearer ${session.access_token}`;
+        }
+      }
+
       const response = await supabase.functions.invoke("create-checkout", {
         body: { items, mode },
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-        },
+        headers,
       });
 
       if (response.error) {
