@@ -92,13 +92,13 @@ export const useSendMessage = () => {
       const validated = validateOrThrow(chatMessageSchema, { message });
 
       const { data: session } = await supabase.auth.getSession();
-      if (!session.session) throw new Error("Not authenticated");
+      const userId = session.session?.user?.id || '00000000-0000-0000-0000-000000000000';
 
       const { error } = await supabase
         .from("chat_messages")
         .insert({
           stream_id: streamId,
-          user_id: session.session.user.id,
+          user_id: userId,
           message: validated.message,
         });
 
