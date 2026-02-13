@@ -43,15 +43,19 @@ export interface StreamCredentials {
   created_at: string;
 }
 
-export const useStreams = (categorySlug?: string, isLive?: boolean) => {
+export const useStreams = (categoryId?: string, isLive?: boolean) => {
   return useQuery({
-    queryKey: ["streams", categorySlug, isLive],
+    queryKey: ["streams", categoryId, isLive],
     queryFn: async () => {
       let query = supabase
         .from("streams")
         .select("*")
         .order("viewer_count", { ascending: false });
       
+      if (categoryId) {
+        query = query.eq("category_id", categoryId);
+      }
+
       if (isLive !== undefined) {
         query = query.eq("is_live", isLive);
       }
