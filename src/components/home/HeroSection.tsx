@@ -34,11 +34,6 @@ const HeroSection = () => {
           />
         </form>
         <div className="flex items-center gap-2 shrink-0">
-          <Link to="/browse">
-            <Button size="sm" variant="default">
-              <Play className="w-3 h-3 mr-1" /> Watch Live
-            </Button>
-          </Link>
           <Button variant="outline" size="sm" onClick={() => navigate(user ? "/dashboard" : "/signup")}>
             Start Creating
           </Button>
