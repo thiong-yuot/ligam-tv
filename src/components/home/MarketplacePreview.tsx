@@ -9,7 +9,7 @@ interface MarketplacePreviewProps {
 
 const MarketplacePreview = ({ compact }: MarketplacePreviewProps) => {
   const { data: products = [], isLoading } = useProducts();
-  const featured = products.slice(0, compact ? 4 : 2);
+  const featured = products.slice(0, 2);
 
   const content = (
     <>

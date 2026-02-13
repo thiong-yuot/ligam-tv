@@ -9,7 +9,7 @@ interface CoursesPreviewProps {
 
 const CoursesPreview = ({ compact }: CoursesPreviewProps) => {
   const { data: courses = [], isLoading } = useFeaturedCourses();
-  const featured = courses.slice(0, compact ? 4 : 2);
+  const featured = courses.slice(0, 2);
 
   const content = (
     <>
