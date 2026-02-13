@@ -1,139 +1,49 @@
 import { Link } from "react-router-dom";
-import { Twitter, Instagram, Youtube, Linkedin } from "lucide-react";
 import LigamLogo from "./LigamLogo";
 
 const Footer = () => {
-  const footerLinks = {
-    platform: [
-      { name: "Browse Streams", path: "/browse" },
-      { name: "Categories", path: "/categories" },
-      { name: "Marketplace", path: "/shop" },
-      { name: "Freelancers", path: "/freelance" },
-      { name: "Learn", path: "/courses" },
-      
-      { name: "Pricing", path: "/pricing" },
-      { name: "Get Featured", path: "/premium" },
-      { name: "Affiliates", path: "/affiliates" },
-    ],
-    company: [
-      { name: "About Us", path: "/about" },
-      { name: "Technology", path: "/technology" },
-      { name: "Careers", path: "/careers" },
-      { name: "Press", path: "/press" },
-      { name: "Contact", path: "/contact" },
-    ],
-    support: [
-      { name: "Help Center", path: "/help" },
-      { name: "FAQ", path: "/faq" },
-      { name: "Safety", path: "/safety" },
-      { name: "Community Guidelines", path: "/guidelines" },
-    ],
-  };
-
-  const socialLinks = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Youtube, href: "#", label: "YouTube" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
+  const links = [
+    { name: "Browse", path: "/browse" },
+    { name: "Shop", path: "/shop" },
+    { name: "Freelance", path: "/freelance" },
+    { name: "Learn", path: "/courses" },
+    { name: "Pricing", path: "/pricing" },
+    { name: "About", path: "/about" },
+    { name: "Help", path: "/help" },
+    { name: "Contact", path: "/contact" },
   ];
 
   return (
     <footer className="bg-card border-t border-border">
-      <div className="w-full max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
-          {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <LigamLogo className="h-10 w-10" />
-              <span className="text-xl font-display font-bold text-foreground">
-                Ligam<span className="text-primary">.tv</span>
-              </span>
-            </Link>
-            <p className="text-sm text-muted-foreground mb-6">
-              Stream, Connect & Monetize. The next generation live streaming platform.
-            </p>
-            <div className="flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="w-9 h-9 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
-                >
-                  <social.icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
-          </div>
+      <div className="w-full max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 py-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <Link to="/" className="flex items-center gap-2">
+            <LigamLogo className="h-8 w-8" />
+            <span className="text-lg font-display font-bold text-foreground">
+              Ligam<span className="text-primary">.tv</span>
+            </span>
+          </Link>
 
-          {/* Platform Links */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Platform</h4>
-            <ul className="space-y-3">
-              {footerLinks.platform.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Company</h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support Links */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-4">Support</h4>
-            <ul className="space-y-3">
-              {footerLinks.support.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    to={link.path}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            
-          </div>
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            {links.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-10 pt-6 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Ligam.tv. All rights reserved.
+        <div className="mt-6 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Ligam.tv
           </p>
-          <div className="flex gap-6">
-            <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Terms
-            </Link>
-            <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Privacy
-            </Link>
-            <Link to="/cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Cookies
-            </Link>
+          <div className="flex gap-4">
+            <Link to="/terms" className="text-xs text-muted-foreground hover:text-primary transition-colors">Terms</Link>
+            <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary transition-colors">Privacy</Link>
           </div>
         </div>
       </div>

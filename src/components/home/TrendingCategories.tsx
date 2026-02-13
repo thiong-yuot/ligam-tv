@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader2, TrendingUp, Users } from "lucide-react";
+import { Loader2, Users } from "lucide-react";
 
 interface Category {
   id: string;
@@ -23,74 +23,53 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
     return count.toString();
   };
 
+  if (isLoading) {
+    return (
+      <section className="py-12 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
+      </section>
+    );
+  }
+
+  if (categories.length === 0) return null;
+
   return (
-    <section className="py-16 px-4 md:px-6 lg:px-8">
+    <section className="py-12 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <TrendingUp className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-              Trending Categories
-            </h2>
-          </div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-display font-bold text-foreground">Categories</h2>
           <Link to="/categories">
-            <Button variant="ghost" className="group">
-              View All
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Button variant="ghost" size="sm">View All</Button>
           </Link>
         </div>
 
-        {/* Categories Grid */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : categories.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-            {categories.slice(0, 12).map((category, index) => (
-              <Link
-                key={category.id}
-                to={`/browse?category=${encodeURIComponent(category.name)}`}
-                className="group relative overflow-hidden rounded-xl bg-card border border-border hover:border-muted-foreground/30 transition-all animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                {/* Background Image or Gradient */}
-                <div className="aspect-[4/3] relative">
-                  {category.image_url ? (
-                    <img
-                      src={category.image_url}
-                      alt={category.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-muted" />
-                  )}
-                  
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-background/60" />
-                  
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <h3 className="font-medium text-foreground text-sm truncate group-hover:text-primary transition-colors">
-                      {category.name}
-                    </h3>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Users className="w-3 h-3" />
-                      {formatViewers(category.viewer_count || 0)} viewers
-                    </p>
-                  </div>
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+          {categories.slice(0, 12).map((category) => (
+            <Link
+              key={category.id}
+              to={`/browse?category=${encodeURIComponent(category.name)}`}
+              className="group rounded-lg bg-card border border-border hover:border-primary/50 transition-colors overflow-hidden"
+            >
+              <div className="aspect-[4/3] relative">
+                {category.image_url ? (
+                  <img src={category.image_url} alt={category.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-muted" />
+                )}
+                <div className="absolute inset-0 bg-background/60" />
+                <div className="absolute bottom-0 left-0 right-0 p-2">
+                  <p className="font-medium text-foreground text-xs truncate">{category.name}</p>
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                    <Users className="w-2.5 h-2.5" />
+                    {formatViewers(category.viewer_count || 0)}
+                  </p>
                 </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-card/50 rounded-xl border border-border">
-            <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">No categories available yet</p>
-          </div>
-        )}
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

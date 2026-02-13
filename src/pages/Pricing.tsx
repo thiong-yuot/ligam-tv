@@ -1,7 +1,7 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Check, Loader2, Crown, Eye } from "lucide-react";
+import { Check, Loader2, Crown } from "lucide-react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useSubscription, SUBSCRIPTION_TIERS } from "@/hooks/useSubscription";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,16 +13,7 @@ const creatorPlans = [
     name: "Free",
     price: "$0",
     period: "forever",
-    description: "Perfect for getting started",
-    features: [
-      "Unlimited streaming",
-      "Basic chat features",
-      "Standard video quality",
-      "Community support",
-      "Full service access",
-      "1 store product",
-      "1 course",
-    ],
+    features: ["Unlimited streaming", "Basic chat", "Standard quality", "1 store product", "1 course"],
     cta: "Current Plan",
     popular: false,
     tier: null,
@@ -32,19 +23,8 @@ const creatorPlans = [
     name: "Creator",
     price: "$15.99",
     period: "/month",
-    description: "For growing creators",
-    features: [
-      "Everything in Free",
-      "HD streaming (1080p)",
-      "Custom reactions",
-      "Priority support",
-      "Stream analytics",
-      "No ads for viewers",
-      "Max 3 store products",
-      "Full service access",
-      "Max 3 courses",
-    ],
-    cta: "Subscribe Now",
+    features: ["Everything in Free", "HD streaming", "Priority support", "Analytics", "3 products", "3 courses"],
+    cta: "Subscribe",
     popular: true,
     tier: "creator" as const,
     priceId: SUBSCRIPTION_TIERS.creator.price_id,
@@ -53,21 +33,8 @@ const creatorPlans = [
     name: "Pro",
     price: "$24.99",
     period: "/month",
-    description: "For professional streamers",
-    features: [
-      "Everything in Creator",
-      "Host paid live streams",
-      "4K streaming",
-      "Custom overlays",
-      "API access",
-      "Dedicated support",
-      "Revenue boost (+10%)",
-      "Featured placement",
-      "Unlimited store products",
-      "Full service access",
-      "Unlimited courses",
-    ],
-    cta: "Subscribe Now",
+    features: ["Everything in Creator", "Paid streams", "4K streaming", "API access", "Unlimited products", "Unlimited courses"],
+    cta: "Subscribe",
     popular: false,
     tier: "pro" as const,
     priceId: SUBSCRIPTION_TIERS.pro.price_id,
@@ -78,14 +45,7 @@ const viewerPlan = {
   name: "Ad-Free",
   price: "$13",
   period: "/month",
-  description: "Watch without interruptions",
-  features: [
-    "Ad-free viewing experience",
-    "No ads during live broadcasts",
-    "No ads on all platform content",
-    "Support your favorite creators",
-  ],
-  cta: "Go Ad-Free",
+  features: ["No ads on streams", "No ads on content", "Support creators"],
   tier: "adfree" as const,
   priceId: SUBSCRIPTION_TIERS.adfree.price_id,
 };
@@ -99,48 +59,17 @@ const Pricing = () => {
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
-      toast({
-        title: "Subscription successful!",
-        description: "Welcome to your new plan. Enjoy your premium features!",
-      });
+      toast({ title: "Subscription successful!", description: "Enjoy your premium features!" });
       checkSubscription();
     } else if (searchParams.get("canceled") === "true") {
-      toast({
-        title: "Subscription canceled",
-        description: "Your subscription was not completed.",
-        variant: "destructive",
-      });
+      toast({ title: "Subscription canceled", variant: "destructive" });
     }
   }, [searchParams, toast, checkSubscription]);
 
   const handleSubscribe = async (priceId: string | null) => {
-    if (!priceId) {
-      // Free plan - just redirect to auth if not logged in
-      if (!user) {
-        navigate("/login");
-      }
-      return;
-    }
-
-    if (!user) {
-      toast({
-        title: "Sign in required",
-        description: "Please sign in to subscribe to a plan.",
-        variant: "destructive",
-      });
-      navigate("/login");
-      return;
-    }
-
-    try {
-      await createSubscriptionCheckout(priceId);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to start checkout. Please try again.",
-        variant: "destructive",
-      });
-    }
+    if (!priceId) { if (!user) navigate("/login"); return; }
+    if (!user) { navigate("/login"); return; }
+    try { await createSubscriptionCheckout(priceId); } catch { toast({ title: "Error", description: "Please try again.", variant: "destructive" }); }
   };
 
   const isCurrentPlan = (planTier: string | null) => {
@@ -152,177 +81,73 @@ const Pricing = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <main className="pt-24 pb-20 px-4 md:px-6 lg:px-8">
-        <div className="w-full max-w-[1920px] mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
-              Simple, Transparent Pricing
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Choose the plan that fits your needs. Creator plans for streamers, Ad-Free for viewers.
-            </p>
+      <main className="pt-20 pb-16 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-4xl mx-auto">
+          <div className="mb-10">
+            <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-1">Pricing</h1>
+            <p className="text-muted-foreground text-sm">Simple plans for creators and viewers.</p>
           </div>
 
-          {/* Viewer Ad-Free Plan */}
-          <div className="max-w-md mx-auto mb-16">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-display font-bold text-foreground flex items-center justify-center gap-2">
-                <Eye className="w-6 h-6 text-primary" />
-                For Viewers
-              </h2>
-              <p className="text-muted-foreground">Enjoy an uninterrupted viewing experience</p>
-            </div>
-            
-            <div
-              className={`relative bg-card border rounded-2xl p-8 animate-fadeIn ${
-                isCurrentPlan(viewerPlan.tier)
-                  ? "border-green-500"
-                  : "border-primary glow-sm"
-              }`}
-            >
-              {isCurrentPlan(viewerPlan.tier) && subscribed && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-green-500 text-white text-sm font-bold rounded-full flex items-center gap-1">
-                  <Crown className="w-4 h-4" />
-                  Your Plan
-                </span>
-              )}
-              
-              <div className="text-center mb-8">
-                <h3 className="text-xl font-display font-bold text-foreground mb-2">
-                  {viewerPlan.name}
-                </h3>
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-4xl font-display font-bold text-foreground">
-                    {viewerPlan.price}
-                  </span>
-                  <span className="text-muted-foreground">{viewerPlan.period}</span>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {viewerPlan.description}
-                </p>
+          {/* Viewer Plan */}
+          <div className="mb-10">
+            <h2 className="text-lg font-semibold text-foreground mb-4">For Viewers</h2>
+            <div className={`bg-card border rounded-xl p-6 ${isCurrentPlan(viewerPlan.tier) && subscribed ? "border-green-500" : "border-border"}`}>
+              <div className="flex items-baseline gap-1 mb-4">
+                <span className="text-2xl font-bold text-foreground">{viewerPlan.price}</span>
+                <span className="text-sm text-muted-foreground">{viewerPlan.period}</span>
+                <span className="ml-2 text-sm text-muted-foreground">— {viewerPlan.name}</span>
               </div>
-
-              <ul className="space-y-4 mb-8">
-                {viewerPlan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-3 text-sm text-foreground">
-                    <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                    {feature}
+              <ul className="space-y-2 mb-6">
+                {viewerPlan.features.map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-foreground">
+                    <Check className="w-4 h-4 text-primary shrink-0" /> {f}
                   </li>
                 ))}
               </ul>
-
               {isCurrentPlan(viewerPlan.tier) && subscribed ? (
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  size="lg"
-                  onClick={() => openCustomerPortal()}
-                >
-                  Manage Subscription
-                </Button>
+                <Button variant="outline" size="sm" onClick={() => openCustomerPortal()}>Manage</Button>
               ) : (
-                <Button 
-                  variant="default" 
-                  className="w-full"
-                  size="lg"
-                  onClick={() => handleSubscribe(viewerPlan.priceId)}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    viewerPlan.cta
-                  )}
+                <Button size="sm" onClick={() => handleSubscribe(viewerPlan.priceId)} disabled={isLoading}>
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Subscribe"}
                 </Button>
               )}
             </div>
           </div>
 
-          {/* Creator Plans Header */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-display font-bold text-foreground">For Creators</h2>
-            <p className="text-muted-foreground">Build your streaming business with powerful tools</p>
-          </div>
-
-          {/* Creator Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {creatorPlans.map((plan, index) => {
+          {/* Creator Plans */}
+          <h2 className="text-lg font-semibold text-foreground mb-4">For Creators</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {creatorPlans.map((plan) => {
               const isCurrent = isCurrentPlan(plan.tier);
-              
               return (
                 <div
                   key={plan.name}
-                  className={`relative bg-card border rounded-2xl p-8 animate-fadeIn ${
-                    plan.popular 
-                      ? "border-primary glow-sm" 
-                      : isCurrent 
-                        ? "border-green-500" 
-                        : "border-border"
+                  className={`bg-card border rounded-xl p-6 ${
+                    plan.popular ? "border-primary" : isCurrent && subscribed ? "border-green-500" : "border-border"
                   }`}
-                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  {plan.popular && !isCurrent && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground text-sm font-bold rounded-full">
-                      Most Popular
-                    </span>
-                  )}
-                  
                   {isCurrent && subscribed && (
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-green-500 text-white text-sm font-bold rounded-full flex items-center gap-1">
-                      <Crown className="w-4 h-4" />
-                      Your Plan
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-green-500 mb-2">
+                      <Crown className="w-3 h-3" /> Current
                     </span>
                   )}
-
-                  <div className="text-center mb-8">
-                    <h3 className="text-xl font-display font-bold text-foreground mb-2">
-                      {plan.name}
-                    </h3>
-                    <div className="flex items-baseline justify-center gap-1">
-                      <span className="text-4xl font-display font-bold text-foreground">
-                        {plan.price}
-                      </span>
-                      <span className="text-muted-foreground">{plan.period}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {plan.description}
-                    </p>
+                  <h3 className="font-semibold text-foreground">{plan.name}</h3>
+                  <div className="flex items-baseline gap-1 mt-1 mb-4">
+                    <span className="text-2xl font-bold text-foreground">{plan.price}</span>
+                    <span className="text-sm text-muted-foreground">{plan.period}</span>
                   </div>
-
-                  <ul className="space-y-4 mb-8">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-3 text-sm text-foreground">
-                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                        {feature}
+                  <ul className="space-y-2 mb-6">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-center gap-2 text-sm text-foreground">
+                        <Check className="w-4 h-4 text-primary shrink-0" /> {f}
                       </li>
                     ))}
                   </ul>
-
                   {isCurrent && subscribed ? (
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      size="lg"
-                      onClick={() => openCustomerPortal()}
-                    >
-                      Manage Subscription
-                    </Button>
+                    <Button variant="outline" size="sm" className="w-full" onClick={() => openCustomerPortal()}>Manage</Button>
                   ) : (
-                    <Button 
-                      variant={plan.popular ? "default" : "outline"} 
-                      className="w-full"
-                      size="lg"
-                      onClick={() => handleSubscribe(plan.priceId)}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : isCurrent ? (
-                        "Current Plan"
-                      ) : (
-                        plan.cta
-                      )}
+                    <Button variant={plan.popular ? "default" : "outline"} size="sm" className="w-full" onClick={() => handleSubscribe(plan.priceId)} disabled={isLoading}>
+                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : isCurrent ? "Current" : plan.cta}
                     </Button>
                   )}
                 </div>
@@ -330,16 +155,8 @@ const Pricing = () => {
             })}
           </div>
 
-          {/* FAQ CTA */}
-          <div className="text-center mt-16">
-            <p className="text-muted-foreground mb-4">
-              Have questions about our plans?
-            </p>
-            <Link to="/faq">
-              <Button variant="ghost">
-                View FAQ
-              </Button>
-            </Link>
+          <div className="text-center mt-8">
+            <Link to="/faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">Questions? View FAQ →</Link>
           </div>
         </div>
       </main>
