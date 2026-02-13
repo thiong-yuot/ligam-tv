@@ -16,7 +16,7 @@ import ShopHeader from "@/components/shop/ShopHeader";
 import MobileFilters from "@/components/shop/MobileFilters";
 
 type SortOption = "newest" | "price-low" | "price-high" | "popular" | "rating";
-type ViewMode = "grid" | "list";
+type ViewMode = "grid";
 
 const Shop = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const Shop = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("newest");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const viewMode = "grid" as const;
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [onSaleOnly, setOnSaleOnly] = useState(false);
@@ -118,7 +118,7 @@ const Shop = () => {
             sortBy={sortBy}
             onSortChange={setSortBy}
             viewMode={viewMode}
-            onViewModeChange={setViewMode}
+            onViewModeChange={() => {}}
             onMobileFilterClick={() => setMobileFiltersOpen(true)}
           />
 
