@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Store, Search, Loader2, Package } from "lucide-react";
+import { Store, Search, Loader2, Package, ShoppingBag } from "lucide-react";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -59,13 +59,23 @@ const Shop = () => {
                 className="pl-8 h-8 text-xs bg-card"
               />
             </div>
+            {user && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/my-orders")}
+              >
+                <ShoppingBag className="w-3.5 h-3.5 mr-1" />
+                Orders
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
               onClick={() => user ? navigate("/seller/dashboard") : setBecomeSellerOpen(true)}
             >
               <Store className="w-3.5 h-3.5 mr-1" />
-              {user ? "Sell" : "Sell"}
+              Sell
             </Button>
           </div>
         </div>
