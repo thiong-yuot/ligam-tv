@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import HeroSection from "@/components/home/HeroSection";
 import LiveStreamsSection from "@/components/home/LiveStreamsSection";
 import MarketplacePreview from "@/components/home/MarketplacePreview";
 import FreelancersPreview from "@/components/home/FreelancersPreview";
@@ -10,11 +9,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <HeroSection />
-      <LiveStreamsSection />
-      <MarketplacePreview />
-      <FreelancersPreview />
-      <CoursesPreview />
+      <div className="pt-2">
+        <LiveStreamsSection />
+        <MarketplacePreview />
+        <FreelancersPreview />
+        <CoursesPreview />
+      </div>
       <Footer />
     </div>
   );
