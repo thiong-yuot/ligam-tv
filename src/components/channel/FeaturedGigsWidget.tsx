@@ -40,7 +40,7 @@ const FeaturedServicesWidget = ({
           <Briefcase className="w-5 h-5 text-primary" />
           <h3 className="font-semibold text-foreground">Available Services</h3>
         </div>
-        <Link to={`/freelancers/${freelancer.id}`}>
+        <Link to={`/freelance/${freelancer.id}`}>
           <Button variant="ghost" size="sm" className="gap-1 text-xs">
             View All
             <ExternalLink className="w-3 h-3" />
@@ -64,7 +64,7 @@ const FeaturedServicesWidget = ({
         {displayPackages.map((pkg) => (
           <Link 
             key={pkg.id} 
-            to={`/freelancers/${freelancer.id}`}
+            to={`/freelance/${freelancer.id}`}
             className="block p-3 rounded-lg border border-border hover:border-primary/50 transition-colors"
           >
             <div className="flex items-start justify-between">
