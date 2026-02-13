@@ -48,7 +48,7 @@ import CourseDetail from "./pages/CourseDetail";
 import LearnCourse from "./pages/LearnCourse";
 import CreatorCourses from "./pages/CreatorCourses";
 import MyLearning from "./pages/MyLearning";
-import StreamSetup from "./pages/StreamSetup";
+
 import Affiliates from "./pages/Affiliates";
 import Discovery from "./pages/Discovery";
 import Reels from "./pages/Reels";
@@ -109,7 +109,7 @@ const App = () => (
                 <Route path="/learn/:courseId" element={<LearnCourse />} />
                 <Route path="/creator/courses" element={<CreatorCourses />} />
                 <Route path="/my-learning" element={<MyLearning />} />
-                <Route path="/stream-setup" element={<StreamSetup />} />
+                
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/eelai" element={<Discovery />} />
                 <Route path="/reels" element={<Reels />} />
