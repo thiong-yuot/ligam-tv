@@ -71,7 +71,6 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
             onClick={creatorProfile?.username ? handleInstructorClick : undefined}
           >
             <Avatar className="w-4 h-4">
-              <AvatarImage src={instructor.avatar} />
               <AvatarFallback className="text-[8px] bg-primary/10 text-primary">{instructor.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-[10px] text-muted-foreground truncate">{instructor.name}</span>

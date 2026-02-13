@@ -207,11 +207,11 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
           </div>
           
           <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
-            <img
-              src={stream.profile?.avatar_url || "/placeholder.svg"}
-              alt={stream.profile?.display_name || "Creator"}
-              className="w-6 h-6 rounded-full border border-primary object-cover"
-            />
+            <div className="w-6 h-6 rounded-full border border-primary bg-secondary flex items-center justify-center">
+              <span className="text-[10px] font-bold text-foreground">
+                {(stream.profile?.display_name || stream.profile?.username || "C").charAt(0)}
+              </span>
+            </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-white font-semibold truncate text-xs">
                 {stream.profile?.display_name || stream.profile?.username || "Creator"}
