@@ -29,12 +29,6 @@ const CartSheet = ({ trigger }: CartSheetProps) => {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const handleCheckout = async () => {
-    if (!user) {
-      toast.info("Please sign in to checkout");
-      navigate("/auth");
-      return;
-    }
-
     setIsCheckingOut(true);
     try {
       const checkoutItems = items.map((item) => ({

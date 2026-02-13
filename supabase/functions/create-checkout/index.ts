@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 interface CartItem {
@@ -21,98 +21,89 @@ serve(async (req) => {
   }
 
   try {
-    // Use service role key for database validation to bypass RLS
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Use anon key for auth verification
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
+    // Try to get authenticated user (optional for product purchases)
+    let user = null;
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      throw new Error("No authorization header");
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
-    
-    if (userError || !user) {
-      throw new Error("Invalid user");
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data } = await supabaseClient.auth.getUser(token);
+      user = data.user;
     }
 
     const { items, mode = "payment", priceId, successUrl, cancelUrl } = await req.json();
-    
-    console.log("[CREATE-CHECKOUT] Creating checkout session for user:", user.email);
-    console.log("[CREATE-CHECKOUT] Mode:", mode, "Items:", items?.length || 1);
+
+    // Subscriptions require authentication
+    if (mode === "subscription" && !user?.email) {
+      throw new Error("Authentication required for subscriptions");
+    }
+
+    console.log("[CREATE-CHECKOUT] Creating checkout session. User:", user?.email || "guest", "Mode:", mode);
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-08-27.basil",
     });
 
-    // Check if customer exists
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    let customerId = customers.data[0]?.id;
-
-    if (!customerId) {
-      const customer = await stripe.customers.create({
-        email: user.email,
-        metadata: { supabase_user_id: user.id },
-      });
-      customerId = customer.id;
-      console.log("[CREATE-CHECKOUT] Created new Stripe customer:", customerId);
+    // If authenticated, find or create Stripe customer
+    let customerId: string | undefined;
+    if (user?.email) {
+      const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+      } else {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          metadata: { supabase_user_id: user.id },
+        });
+        customerId = customer.id;
+      }
     }
 
     let lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
     if (priceId) {
-      // Subscription mode with Stripe price ID
       lineItems = [{ price: priceId, quantity: 1 }];
     } else if (items && items.length > 0) {
-      // Validate product prices against the database
-      console.log("[CREATE-CHECKOUT] Validating product prices against database...");
-      
+      console.log("[CREATE-CHECKOUT] Validating product prices...");
+
       const validatedItems: CartItem[] = [];
-      
+
       for (const item of items as CartItem[]) {
-        // Try to find the product by ID first, then by name
         let query = supabaseAdmin
-          .from('products')
-          .select('id, name, price, sale_price, is_active');
-        
+          .from("products")
+          .select("id, name, price, sale_price, is_active");
+
         if (item.id) {
-          query = query.eq('id', item.id);
+          query = query.eq("id", item.id);
         } else {
-          query = query.eq('name', item.name);
+          query = query.eq("name", item.name);
         }
-        
+
         const { data: product, error: productError } = await query.single();
-        
+
         if (productError || !product) {
-          console.error("[CREATE-CHECKOUT] Product not found:", item.name || item.id);
           throw new Error(`Product not found: ${item.name}`);
         }
-        
+
         if (!product.is_active) {
-          console.error("[CREATE-CHECKOUT] Product is not active:", product.name);
           throw new Error(`Product is not available: ${product.name}`);
         }
-        
-        // Use sale_price if available, otherwise use regular price
+
         const actualPrice = product.sale_price ?? product.price;
-        
-        // Compare prices (allow for small floating point differences)
+
         if (Math.abs(actualPrice - item.price) > 0.01) {
-          console.error("[CREATE-CHECKOUT] Price mismatch for product:", product.name, "Expected:", actualPrice, "Received:", item.price);
           throw new Error(`Price mismatch for product: ${product.name}. Please refresh and try again.`);
         }
-        
-        console.log("[CREATE-CHECKOUT] Price validated for:", product.name, "Price:", actualPrice);
-        
+
         validatedItems.push({
           ...item,
           id: product.id,
@@ -120,10 +111,7 @@ serve(async (req) => {
           price: actualPrice,
         });
       }
-      
-      console.log("[CREATE-CHECKOUT] All prices validated successfully");
-      
-      // Create line items with validated prices
+
       lineItems = validatedItems.map((item) => ({
         price_data: {
           currency: "usd",
@@ -139,21 +127,39 @@ serve(async (req) => {
       throw new Error("No items or price ID provided");
     }
 
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: lineItems,
       mode: mode as "payment" | "subscription",
       success_url: successUrl || `${req.headers.get("origin")}/shop?success=true`,
       cancel_url: cancelUrl || `${req.headers.get("origin")}/shop?canceled=true`,
-      shipping_address_collection: mode === "payment" ? {
-        allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'IT', 'ES', 'NL', 'SE', 'NO', 'DK', 'BE', 'CH', 'AT', 'IE', 'NZ', 'JP', 'SG', 'HK', 'MX', 'BR', 'ZA', 'NG', 'KE', 'GH', 'IN', 'PK', 'AE', 'SA'],
-      } : undefined,
       metadata: {
-        supabase_user_id: user.id,
+        ...(user ? { supabase_user_id: user.id } : {}),
       },
-    });
+    };
 
-    console.log("[CREATE-CHECKOUT] Checkout session created:", session.id);
+    // Attach customer if authenticated, otherwise let Stripe collect email
+    if (customerId) {
+      sessionParams.customer = customerId;
+    }
+
+    // For product purchases, collect shipping address and allow guest email entry
+    if (mode === "payment") {
+      sessionParams.shipping_address_collection = {
+        allowed_countries: [
+          "US", "CA", "GB", "AU", "DE", "FR", "IT", "ES", "NL", "SE",
+          "NO", "DK", "BE", "CH", "AT", "IE", "NZ", "JP", "SG", "HK",
+          "MX", "BR", "ZA", "NG", "KE", "GH", "IN", "PK", "AE", "SA",
+        ],
+      };
+      // For guest users, let Stripe collect their email
+      if (!customerId) {
+        sessionParams.customer_creation = "always";
+      }
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
+
+    console.log("[CREATE-CHECKOUT] Session created:", session.id);
 
     return new Response(JSON.stringify({ url: session.url, sessionId: session.id }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -161,7 +167,7 @@ serve(async (req) => {
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("[CREATE-CHECKOUT] Error creating checkout session:", errorMessage);
+    console.error("[CREATE-CHECKOUT] Error:", errorMessage);
     return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
