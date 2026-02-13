@@ -4,7 +4,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Store, Search, Loader2, Package, ShoppingBag } from "lucide-react";
+import { Store, Search, Loader2, Package, ShoppingBag, ShoppingCart } from "lucide-react";
+import CartSheet from "@/components/CartSheet";
+import { Badge } from "@/components/ui/badge";
 import { useProducts, Product } from "@/hooks/useProducts";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,7 +23,7 @@ const Shop = () => {
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
 
   const { data: products, isLoading, error } = useProducts();
-  const { addToCart } = useCart();
+  const { addToCart, totalItems } = useCart();
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
@@ -59,6 +61,19 @@ const Shop = () => {
                 className="pl-8 h-8 text-xs bg-card"
               />
             </div>
+            <CartSheet
+              trigger={
+                <Button variant="outline" size="sm" className="relative">
+                  <ShoppingCart className="w-3.5 h-3.5 mr-1" />
+                  Cart
+                  {totalItems > 0 && (
+                    <Badge className="absolute -top-2 -right-2 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
+                      {totalItems}
+                    </Badge>
+                  )}
+                </Button>
+              }
+            />
             {user && (
               <Button
                 variant="outline"

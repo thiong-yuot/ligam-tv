@@ -2,9 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Menu, X, User, LogOut, LayoutDashboard, MessageCircle, Bell, Search, ShoppingCart } from "lucide-react";
-import CartSheet from "./CartSheet";
-import { useCart } from "@/hooks/useCart";
+import { Menu, X, User, LogOut, LayoutDashboard, MessageCircle, Bell, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadCount } from "@/hooks/useMessages";
 import { useUnreadNotificationsCount } from "@/hooks/useNotifications";
@@ -27,7 +25,6 @@ const Navbar = () => {
   const { user, profile, signOut, loading } = useAuth();
   const { data: unreadCount = 0 } = useUnreadCount();
   const { data: unreadNotifications = 0 } = useUnreadNotificationsCount();
-  const { totalItems } = useCart();
   const navLinks = [
     { name: "Browse", path: "/browse" },
     { name: "Learn", path: "/courses" },
@@ -93,18 +90,6 @@ const Navbar = () => {
           </form>
 
           <div className="flex items-center gap-2">
-            <CartSheet
-              trigger={
-                <Button variant="ghost" size="icon" className="relative h-8 w-8">
-                  <ShoppingCart className="w-4 h-4" />
-                  {totalItems > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
-                      {totalItems}
-                    </Badge>
-                  )}
-                </Button>
-              }
-            />
             {!loading && (
               <>
                 {user ? (
