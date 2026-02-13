@@ -43,135 +43,52 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
 
   return (
     <Card 
-      className="group h-full overflow-hidden bg-card border-border hover:border-muted-foreground/30 transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      className="group h-full overflow-hidden bg-card border-border hover:border-muted-foreground/30 transition-all duration-300 cursor-pointer"
       onClick={handleCardClick}
     >
-        {/* Thumbnail */}
-        <div className="relative aspect-video overflow-hidden">
-          {course.thumbnail_url ? (
-            <img
-              src={course.thumbnail_url}
-              alt={course.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-          ) : (
-            <div className="w-full h-full bg-muted flex items-center justify-center">
-              <PlayCircle className="w-12 h-12 text-muted-foreground" />
-            </div>
-          )}
-          
-          {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
-            {isBestseller && (
-              <Badge className="bg-primary text-primary-foreground text-xs font-bold">
-                Top Rated
-              </Badge>
-            )}
-            {isPopular && !isBestseller && (
-              <Badge className="bg-primary/80 text-primary-foreground text-xs font-bold">
-                <TrendingUp className="w-3 h-3 mr-1" />
-                Trending
-              </Badge>
-            )}
-            {course.is_featured && !isBestseller && !isPopular && (
-              <Badge className="bg-primary text-primary-foreground text-xs">
-                Featured
-              </Badge>
-            )}
+      <div className="relative aspect-video overflow-hidden">
+        {course.thumbnail_url ? (
+          <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        ) : (
+          <div className="w-full h-full bg-muted flex items-center justify-center">
+            <PlayCircle className="w-6 h-6 text-muted-foreground" />
           </div>
-
-          {/* Play overlay */}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-            <div className="w-14 h-14 rounded-full bg-primary/90 flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform">
-              <PlayCircle className="w-7 h-7 text-primary-foreground" />
-            </div>
+        )}
+        {isBestseller && (
+          <Badge className="absolute top-2 left-2 bg-primary text-primary-foreground text-[10px] px-1.5 py-0.5">Top Rated</Badge>
+        )}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+          <div className="w-8 h-8 rounded-full bg-primary/90 flex items-center justify-center">
+            <PlayCircle className="w-4 h-4 text-primary-foreground" />
           </div>
         </div>
-
-        <CardContent className="p-4 space-y-3 flex flex-col flex-1">
-          {/* Title */}
-          <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-tight">
-            {course.title}
-          </h3>
-
-        {/* Instructor */}
-          {showInstructor && (
-            <div 
-              className={`flex items-center gap-2 ${creatorProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
-              onClick={creatorProfile?.username ? handleInstructorClick : undefined}
-            >
-              <Avatar className="w-6 h-6">
-                <AvatarImage src={instructor.avatar} />
-                <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                  {instructor.name.split(' ').map(n => n[0]).join('')}
-                </AvatarFallback>
-              </Avatar>
-              <span className={`text-xs text-muted-foreground truncate ${creatorProfile?.username ? 'hover:text-primary' : ''}`}>
-                {instructor.name}
-              </span>
-              {instructor.isVerified && (
-                <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
-              )}
-            </div>
-          )}
-
-          {/* Short description */}
-          {course.short_description && (
-            <p className="text-xs text-muted-foreground line-clamp-2">
-              {course.short_description}
-            </p>
-          )}
-
-          {/* Enrollment count */}
-          <div className="flex items-center gap-2 text-xs">
-            <span className="font-bold text-primary">{course.total_enrollments.toLocaleString()}</span>
-            <span className="text-muted-foreground">students enrolled</span>
-            <span className="text-muted-foreground">•</span>
-            <span className="text-muted-foreground">({course.total_reviews.toLocaleString()} reviews)</span>
+      </div>
+      <CardContent className="p-2.5 space-y-1">
+        <h3 className="text-xs font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">{course.title}</h3>
+        {showInstructor && (
+          <div 
+            className={`flex items-center gap-1.5 ${creatorProfile?.username ? 'hover:opacity-80 cursor-pointer' : ''}`}
+            onClick={creatorProfile?.username ? handleInstructorClick : undefined}
+          >
+            <Avatar className="w-4 h-4">
+              <AvatarImage src={instructor.avatar} />
+              <AvatarFallback className="text-[8px] bg-primary/10 text-primary">{instructor.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <span className="text-[10px] text-muted-foreground truncate">{instructor.name}</span>
           </div>
-
-          {/* Course meta */}
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              <span>{Math.floor(course.total_duration_minutes / 60)}h {course.total_duration_minutes % 60}m</span>
-            </div>
-            <span className="text-muted-foreground/50">•</span>
-            <div className="flex items-center gap-1">
-              <PlayCircle className="w-3 h-3" />
-              <span>{course.total_lessons} lessons</span>
-            </div>
-          </div>
-
-          {/* Level badge */}
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs capitalize px-2 py-0.5">
-              {course.level}
-            </Badge>
-            <Badge variant="secondary" className="text-xs px-2 py-0.5">
-              {course.category}
-            </Badge>
-          </div>
-
-          {/* Price - pushed to bottom */}
-          <div className="flex items-center justify-between pt-2 mt-auto border-t border-border">
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold text-foreground">
-                {formatPrice(course.price)}
-              </span>
-              {course.price > 0 && (
-                <span className="text-sm text-muted-foreground line-through">
-                  ${(course.price * 1.67).toFixed(2)}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Users className="w-3 h-3" />
-              <span>{course.total_enrollments.toLocaleString()}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        )}
+        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+          <Clock className="w-2.5 h-2.5" />
+          <span>{Math.floor(course.total_duration_minutes / 60)}h</span>
+          <span>•</span>
+          <span>{course.total_lessons} lessons</span>
+        </div>
+        <div className="flex items-center justify-between pt-1">
+          <span className="text-xs font-bold text-primary">{formatPrice(course.price)}</span>
+          <span className="text-[10px] text-muted-foreground">{course.total_enrollments.toLocaleString()} students</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
