@@ -38,6 +38,11 @@ const Shop = () => {
   }, [products, searchQuery, sellerFilter]);
 
   const handleAddToCart = (product: Product) => {
+    if (!user) {
+      toast.info("Please sign in to add items to your cart");
+      navigate("/auth");
+      return;
+    }
     addToCart(product);
     toast.success(`${product.name} added to cart`);
   };

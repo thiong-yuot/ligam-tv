@@ -31,7 +31,7 @@ const CartSheet = ({ trigger }: CartSheetProps) => {
   const handleCheckout = async () => {
     if (!user) {
       toast.info("Please sign in to checkout");
-      navigate("/login");
+      navigate("/auth");
       return;
     }
 
