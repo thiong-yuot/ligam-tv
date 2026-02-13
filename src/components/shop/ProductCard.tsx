@@ -122,109 +122,34 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   }
 
   return (
-    <div className="group relative rounded-xl bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
-      {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden">
+    <div className="group relative rounded-lg bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
+      <div className="relative aspect-[4/3] overflow-hidden">
         {product.image_url ? (
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
           <div className="w-full h-full bg-muted flex items-center justify-center">
-            <ShoppingCart className="w-12 h-12 text-muted-foreground" />
+            <ShoppingCart className="w-6 h-6 text-muted-foreground" />
           </div>
         )}
-
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {hasDiscount && (
-            <Badge className="bg-destructive text-destructive-foreground">
-              -{discountPercent}%
-            </Badge>
-          )}
-          {isLowStock && (
-            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm border-warning text-warning">
-              Low Stock
-            </Badge>
-          )}
-          {isOutOfStock && (
-            <Badge variant="outline" className="bg-background/80 backdrop-blur-sm">
-              Out of Stock
-            </Badge>
-          )}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="w-9 h-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background hover:text-primary transition-colors">
-            <Heart className="w-4 h-4" />
-          </button>
-          <button className="w-9 h-9 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-background hover:text-primary transition-colors">
-            <Eye className="w-4 h-4" />
-          </button>
-        </div>
-
-        {/* Quick Add Button */}
-        <div className="absolute bottom-0 left-0 right-0 p-3 bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            className="w-full"
-            size="sm"
-            onClick={() => onAddToCart(product)}
-            disabled={isOutOfStock}
-          >
-            <ShoppingCart className="w-4 h-4 mr-2" />
+        {hasDiscount && (
+          <Badge className="absolute top-2 left-2 bg-destructive text-destructive-foreground text-[10px] px-1.5 py-0.5">-{discountPercent}%</Badge>
+        )}
+        {isOutOfStock && (
+          <Badge variant="outline" className="absolute top-2 left-2 bg-background/80 text-[10px] px-1.5 py-0.5">Sold Out</Badge>
+        )}
+        <div className="absolute bottom-0 left-0 right-0 p-2 bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity">
+          <Button className="w-full h-7 text-xs" size="sm" onClick={() => onAddToCart(product)} disabled={isOutOfStock}>
+            <ShoppingCart className="w-3 h-3 mr-1" />
             {isOutOfStock ? "Sold Out" : "Add to Cart"}
           </Button>
         </div>
       </div>
-
-      {/* Content */}
-      <div className="p-4">
-        {/* Seller Info */}
-        <div 
-          className={`flex items-center gap-2 mb-2 ${sellerProfile?.username ? 'hover:opacity-80 transition-opacity cursor-pointer' : ''}`}
-          onClick={sellerProfile?.username ? handleSellerClick : undefined}
-        >
-          <Avatar className="w-5 h-5">
-            <AvatarImage src={seller.avatar || undefined} />
-            <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
-              {seller.name.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <span className={`text-xs text-muted-foreground truncate ${sellerProfile?.username ? 'hover:text-primary' : ''}`}>
-            {seller.name}
-          </span>
-          {seller.verified && (
-            <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />
-          )}
-        </div>
-
-        {/* Category */}
-        <p className="text-xs text-muted-foreground mb-1">{product.category}</p>
-
-        {/* Title */}
-        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[2.5rem]">
-          {product.name}
-        </h3>
-
-        {/* Sales count */}
-        <div className="flex items-center gap-1.5 mt-2">
-          <Package className="w-3.5 h-3.5 text-primary" />
-          <span className="text-xs text-muted-foreground">{soldCount} sold</span>
-        </div>
-
-        {/* Price */}
-        <div className="flex items-center gap-2 mt-3">
-          <span className="text-lg font-bold text-primary">
-            ${displayPrice.toFixed(2)}
-          </span>
-          {hasDiscount && (
-            <span className="text-sm text-muted-foreground line-through">
-              ${product.price.toFixed(2)}
-            </span>
-          )}
+      <div className="p-2.5">
+        <p className="text-xs font-medium text-foreground truncate group-hover:text-primary transition-colors">{product.name}</p>
+        <p className="text-[10px] text-muted-foreground truncate">{product.category}</p>
+        <div className="flex items-center gap-1.5 mt-1">
+          <span className="text-xs font-bold text-primary">${displayPrice.toFixed(2)}</span>
+          {hasDiscount && <span className="text-[10px] text-muted-foreground line-through">${product.price.toFixed(2)}</span>}
         </div>
       </div>
     </div>
