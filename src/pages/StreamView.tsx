@@ -571,7 +571,7 @@ const StreamView = () => {
             {/* Shop Tab */}
             <TabsContent value="shop" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
               <SubscribeWidget
-                creatorName="Streamer"
+                creatorName={stream.profiles?.display_name || stream.profiles?.username || "Streamer"}
                 currentTier={tier}
                 onSubscribe={(tierKey) => {
                   const priceId = SUBSCRIPTION_TIERS[tierKey].price_id;
