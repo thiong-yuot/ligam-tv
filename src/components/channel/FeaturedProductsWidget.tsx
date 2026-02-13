@@ -16,6 +16,7 @@ interface FeaturedProductsWidgetProps {
   products: Product[];
   creatorUsername?: string;
   creatorName?: string;
+  sellerId?: string;
   maxItems?: number;
 }
 
@@ -23,11 +24,14 @@ const FeaturedProductsWidget = ({
   products, 
   creatorUsername,
   creatorName,
+  sellerId,
   maxItems = 3 
 }: FeaturedProductsWidgetProps) => {
   const displayProducts = products.slice(0, maxItems);
 
   if (displayProducts.length === 0) return null;
+
+  const shopLink = sellerId ? `/shop?seller=${sellerId}` : "/shop";
 
   return (
     <Card className="p-4 bg-card border-border">
@@ -36,8 +40,8 @@ const FeaturedProductsWidget = ({
           <ShoppingBag className="w-5 h-5 text-primary" />
           <h3 className="font-semibold text-foreground">{creatorName ? `${creatorName}'s Products` : "Streamer's Products"}</h3>
         </div>
-        {creatorUsername && (
-          <Link to="/shop">
+        {(creatorUsername || sellerId) && (
+          <Link to={shopLink}>
             <Button variant="ghost" size="sm" className="gap-1 text-xs">
               View Store
               <ExternalLink className="w-3 h-3" />
@@ -50,7 +54,7 @@ const FeaturedProductsWidget = ({
         {displayProducts.map((product) => (
           <Link 
             key={product.id} 
-            to="/shop"
+            to={shopLink}
             className="flex items-center gap-3 p-2 rounded-lg hover:bg-secondary/50 transition-colors"
           >
             <div className="w-12 h-12 rounded-lg bg-secondary flex-shrink-0 overflow-hidden">

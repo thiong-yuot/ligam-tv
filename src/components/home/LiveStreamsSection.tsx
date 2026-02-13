@@ -235,7 +235,7 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
               {stream.products.slice(0, 2).map(product => (
                 <Link
                   key={product.id}
-                  to="/shop"
+                  to={`/shop?seller=${stream.user_id}`}
                   className="flex-shrink-0 group/product"
                 >
                   <div className="w-10 h-10 rounded overflow-hidden border border-border group-hover/product:border-primary transition-colors">
