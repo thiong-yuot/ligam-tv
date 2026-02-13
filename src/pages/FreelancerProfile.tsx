@@ -60,7 +60,7 @@ const FreelancerProfile = () => {
         description: "Please sign in to order services",
         variant: "destructive",
       });
-      navigate("/login");
+      navigate("/auth");
       return;
     }
 
