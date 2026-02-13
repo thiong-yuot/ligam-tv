@@ -7,7 +7,7 @@
 @layer base {
   /* Dark mode only - Pure Black/Yellow/White Theme */
   :root {
-    --background: 0 0% 2%;
+    --background: 0 0% 7%;
     --foreground: 0 0% 100%;
     
     --card: 0 0% 5%;
@@ -43,7 +43,7 @@
     --ligam-amber: 45 100% 50%;
     --ligam-yellow: 50 100% 55%;
     --ligam-yellow-glow: 50 100% 65%;
-    --ligam-dark: 0 0% 2%;
+    --ligam-dark: 0 0% 7%;
     --ligam-card: 0 0% 5%;
     --ligam-surface: 0 0% 9%;
 
@@ -67,7 +67,7 @@
 
   /* Dark class kept for compatibility, same as :root */
   .dark {
-    --background: 0 0% 2%;
+    --background: 0 0% 7%;
     --foreground: 0 0% 100%;
     --card: 0 0% 5%;
     --card-foreground: 0 0% 100%;
@@ -88,7 +88,7 @@
     --ring: 50 100% 50%;
     --ligam-card: 0 0% 5%;
     --ligam-surface: 0 0% 9%;
-    --ligam-dark: 0 0% 2%;
+    --ligam-dark: 0 0% 7%;
     --shadow-card: none;
     --sidebar-background: 0 0% 3%;
     --sidebar-foreground: 0 0% 100%;
