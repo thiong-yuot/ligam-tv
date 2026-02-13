@@ -40,13 +40,10 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
       <div className="w-full max-w-[1920px] mx-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-display font-bold text-foreground">Categories</h2>
-          <Link to="/categories">
-            <Button variant="ghost" size="sm">View All</Button>
-          </Link>
         </div>
 
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-          {categories.slice(0, 12).map((category) => (
+          {categories.map((category) => (
             <Link
               key={category.id}
               to={`/browse?category=${encodeURIComponent(category.name)}`}
