@@ -337,16 +337,11 @@ const LiveStreamsSection = () => {
       <div className="w-full max-w-[1920px] mx-auto">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Radio className="w-6 h-6 text-destructive animate-pulse" />
-              <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-                Live Now
-              </h2>
-            </div>
-            <span className="px-3 py-1 rounded-full bg-destructive/10 text-destructive text-sm font-medium">
-              {liveCount} streaming
-            </span>
+          <div className="flex items-center gap-2">
+            <Radio className="w-6 h-6 text-destructive animate-pulse" />
+            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
+              Live Now
+            </h2>
           </div>
           <Link to="/browse">
             <Button variant="ghost" className="group">
