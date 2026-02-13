@@ -123,7 +123,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
 
   return (
     <div className="group relative rounded-lg bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[3/2] overflow-hidden">
         {product.image_url ? (
           <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
