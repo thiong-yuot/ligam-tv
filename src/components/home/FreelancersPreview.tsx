@@ -1,59 +1,72 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, CheckCircle } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useFreelancers } from "@/hooks/useFreelancers";
 
-const FreelancersPreview = () => {
+interface FreelancersPreviewProps {
+  compact?: boolean;
+}
+
+const FreelancersPreview = ({ compact }: FreelancersPreviewProps) => {
   const { data: freelancers = [], isLoading } = useFreelancers();
-  const featured = freelancers.slice(0, 2);
+  const featured = freelancers.slice(0, compact ? 4 : 2);
+
+  const content = (
+    <>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-sm font-display font-bold text-foreground">Freelance</h2>
+        <Link to="/freelance">
+          <Button variant="ghost" size="sm" className="text-xs h-7 px-2">
+            View All <ArrowRight className="w-3 h-3 ml-1" />
+          </Button>
+        </Link>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-card border border-border rounded-lg p-2.5 animate-pulse flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-muted" />
+              <div className="flex-1">
+                <div className="h-2.5 bg-muted rounded w-2/3 mb-1" />
+                <div className="h-2 bg-muted rounded w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : featured.length > 0 ? (
+        <div className="space-y-2">
+          {featured.map((f) => (
+            <Link key={f.id} to={`/freelance/${f.id}`} className="flex items-center gap-2.5 p-2.5 bg-card border border-border rounded-lg hover:border-muted-foreground/30 transition-colors">
+              <Avatar className="w-8 h-8 flex-shrink-0">
+                <AvatarFallback className="text-xs">{f.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1">
+                  <p className="text-[11px] font-medium text-foreground truncate">{f.name}</p>
+                  {f.is_verified && <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />}
+                </div>
+                <p className="text-[10px] text-muted-foreground truncate">{f.title}</p>
+              </div>
+              {f.hourly_rate && <p className="text-[11px] text-primary font-bold flex-shrink-0">${f.hourly_rate}/hr</p>}
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-6 bg-card border border-border rounded-lg">
+          <Users className="w-6 h-6 text-muted-foreground mx-auto mb-1" />
+          <p className="text-muted-foreground text-xs">No freelancers yet</p>
+        </div>
+      )}
+    </>
+  );
+
+  if (compact) return <div>{content}</div>;
 
   return (
     <section className="py-6 px-4 md:px-6 lg:px-8">
-      <div className="w-full max-w-[1920px] mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-display font-bold text-foreground">Freelance</h2>
-          <Link to="/freelance">
-            <Button variant="ghost" size="sm">View All <ArrowRight className="w-3.5 h-3.5 ml-1" /></Button>
-          </Link>
-        </div>
-
-        {isLoading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-card border border-border rounded-lg p-3 animate-pulse">
-                <div className="w-8 h-8 rounded-full bg-muted mb-2" />
-                <div className="h-3 bg-muted rounded w-2/3" />
-              </div>
-            ))}
-          </div>
-        ) : featured.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {featured.map((f) => (
-              <Link key={f.id} to={`/freelance/${f.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
-                <div className="flex items-center gap-2 mb-2">
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback className="text-xs">{f.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-1">
-                      <p className="text-xs font-medium text-foreground truncate">{f.name}</p>
-                      {f.is_verified && <CheckCircle className="w-3 h-3 text-primary flex-shrink-0" />}
-                    </div>
-                    <p className="text-[10px] text-muted-foreground truncate">{f.title}</p>
-                  </div>
-                </div>
-                {f.hourly_rate && <p className="text-xs text-primary font-bold">${f.hourly_rate}/hr</p>}
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8 bg-card border border-border rounded-lg">
-            <Users className="w-8 h-8 text-muted-foreground mx-auto mb-1" />
-            <p className="text-muted-foreground text-xs">No freelancers yet</p>
-          </div>
-        )}
-      </div>
+      <div className="w-full max-w-[1920px] mx-auto">{content}</div>
     </section>
   );
 };
