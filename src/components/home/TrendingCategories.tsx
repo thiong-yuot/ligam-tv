@@ -25,8 +25,8 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
 
   if (isLoading) {
     return (
-      <section className="py-12 px-4 md:px-6 lg:px-8">
-        <div className="w-full max-w-[1920px] mx-auto flex items-center justify-center py-12">
+      <section className="py-6 px-4 md:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto flex items-center justify-center py-6">
           <Loader2 className="w-6 h-6 animate-spin text-primary" />
         </div>
       </section>
@@ -36,10 +36,10 @@ const TrendingCategories = ({ categories, isLoading }: TrendingCategoriesProps) 
   if (categories.length === 0) return null;
 
   return (
-    <section className="py-12 px-4 md:px-6 lg:px-8">
+    <section className="py-6 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-display font-bold text-foreground">Categories</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-display font-bold text-foreground">Categories</h2>
           <Link to="/categories">
             <Button variant="ghost" size="sm">View All</Button>
           </Link>

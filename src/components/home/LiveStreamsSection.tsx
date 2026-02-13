@@ -168,7 +168,7 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
   const showFreelancer = index === 1 || index === 2;
   
   return (
-    <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
+    <div className="bg-card border border-border rounded-lg overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
       {/* Stream Preview */}
       <Link to={`/stream/${stream.id}`} className="block relative">
         <div className="aspect-video relative overflow-hidden">
@@ -179,55 +179,51 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
           />
           <div className="absolute inset-0 bg-background/60" />
           
-          {/* Live Badge */}
           {stream.is_live && (
-            <div className="absolute top-3 left-3 flex items-center gap-2">
-              <span className="px-2 py-1 bg-destructive text-destructive-foreground text-xs font-bold rounded flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+            <div className="absolute top-2 left-2 flex items-center gap-1.5">
+              <span className="px-1.5 py-0.5 bg-destructive text-destructive-foreground text-[10px] font-bold rounded flex items-center gap-1">
+                <span className="w-1 h-1 bg-white rounded-full animate-pulse" />
                 LIVE
               </span>
-              <span className="px-2 py-1 bg-background/80 backdrop-blur-sm text-foreground text-xs font-medium rounded flex items-center gap-1">
-                <Eye className="w-3 h-3" />
+              <span className="px-1.5 py-0.5 bg-background/80 backdrop-blur-sm text-foreground text-[10px] font-medium rounded flex items-center gap-1">
+                <Eye className="w-2.5 h-2.5" />
                 {formatViewers(stream.viewer_count || 0)}
               </span>
             </div>
           )}
           
-          {/* Category Tag */}
           {stream.category && (
-            <div className="absolute top-3 right-3">
-              <span className="px-2 py-1 bg-primary text-primary-foreground text-xs font-medium rounded">
+            <div className="absolute top-2 right-2">
+              <span className="px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-medium rounded">
                 {stream.category.name}
               </span>
             </div>
           )}
           
-          {/* Play Button */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center backdrop-blur-sm">
-              <Play className="w-8 h-8 text-primary-foreground fill-primary-foreground ml-1" />
+            <div className="w-10 h-10 rounded-full bg-primary/90 flex items-center justify-center">
+              <Play className="w-5 h-5 text-primary-foreground fill-primary-foreground ml-0.5" />
             </div>
           </div>
           
-          {/* Creator Info Overlay */}
-          <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3">
+          <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
             <img
               src={stream.profile?.avatar_url || "/placeholder.svg"}
               alt={stream.profile?.display_name || "Creator"}
-              className="w-10 h-10 rounded-full border-2 border-primary object-cover"
+              className="w-6 h-6 rounded-full border border-primary object-cover"
             />
             <div className="flex-1 min-w-0">
-              <h3 className="text-white font-semibold truncate text-sm">
+              <h3 className="text-white font-semibold truncate text-xs">
                 {stream.profile?.display_name || stream.profile?.username || "Creator"}
               </h3>
-              <p className="text-white/70 text-xs truncate">{stream.title}</p>
+              <p className="text-white/70 text-[10px] truncate">{stream.title}</p>
             </div>
           </div>
         </div>
       </Link>
       
       {/* Creator Services - Show different combinations per card */}
-      <div className="p-4 space-y-3">
+      <div className="p-2.5 space-y-2">
         {/* Store Products - Only show for some cards */}
         {showProducts && stream.products.length > 0 && (
           <div className="space-y-2">
@@ -242,14 +238,14 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
                   to="/shop"
                   className="flex-shrink-0 group/product"
                 >
-                  <div className="w-14 h-14 rounded-lg overflow-hidden border border-border group-hover/product:border-primary transition-colors">
+                  <div className="w-10 h-10 rounded overflow-hidden border border-border group-hover/product:border-primary transition-colors">
                     <img
                       src={product.image_url || "/placeholder.svg"}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <p className="text-xs mt-1 truncate w-14 text-muted-foreground">${product.price}</p>
+                  <p className="text-[10px] mt-0.5 truncate w-10 text-muted-foreground">${product.price}</p>
                 </Link>
               ))}
             </div>
@@ -265,9 +261,9 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
             </div>
             <Link
               to={`/courses/${stream.courses[0].id}`}
-              className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 hover:bg-muted transition-colors group/course"
+              className="flex items-center gap-2 p-1.5 rounded bg-muted/50 hover:bg-muted transition-colors group/course"
             >
-              <div className="w-8 h-8 rounded overflow-hidden flex-shrink-0">
+              <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
                 <img
                   src={stream.courses[0].thumbnail_url || "/placeholder.svg"}
                   alt={stream.courses[0].title}
@@ -288,7 +284,7 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
         {showFreelancer && stream.freelancer && (
           <Link
             to={`/freelance/${stream.freelancer.id}`}
-            className="flex items-center gap-3 p-2 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors border border-primary/20"
+            className="flex items-center gap-2 p-1.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors border border-primary/20"
           >
             <Briefcase className="w-4 h-4 text-primary flex-shrink-0" />
             <div className="flex-1 min-w-0">
@@ -315,15 +311,14 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
 };
 
 const LoadingCard = () => (
-  <div className="bg-card border border-border rounded-2xl overflow-hidden">
+  <div className="bg-card border border-border rounded-lg overflow-hidden">
     <Skeleton className="aspect-video w-full" />
-    <div className="p-4 space-y-3">
-      <Skeleton className="h-4 w-20" />
+    <div className="p-2.5 space-y-2">
+      <Skeleton className="h-3 w-16" />
       <div className="flex gap-2">
-        <Skeleton className="w-14 h-14 rounded-lg" />
-        <Skeleton className="w-14 h-14 rounded-lg" />
+        <Skeleton className="w-10 h-10 rounded" />
+        <Skeleton className="w-10 h-10 rounded" />
       </div>
-      <Skeleton className="h-10 w-full rounded-xl" />
     </div>
   </div>
 );
@@ -333,33 +328,27 @@ const LiveStreamsSection = () => {
   const liveCount = streams.filter(s => s.is_live).length;
 
   return (
-    <section className="py-16 px-4 md:px-6 lg:px-8">
+    <section className="py-6 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">
-        {/* Section Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <Radio className="w-6 h-6 text-destructive animate-pulse" />
-            <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground">
-              Live Now
-            </h2>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-1.5">
+            <Radio className="w-4 h-4 text-destructive animate-pulse" />
+            <h2 className="text-lg font-display font-bold text-foreground">Live Now</h2>
           </div>
           <Link to="/browse">
-            <Button variant="ghost" className="group">
-              View All
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Button variant="ghost" size="sm">View All <ArrowRight className="w-3.5 h-3.5 ml-1" /></Button>
           </Link>
         </div>
 
         {/* Streams Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {[...Array(4)].map((_, i) => (
               <LoadingCard key={i} />
             ))}
           </div>
         ) : streams.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {streams.slice(0, 6).map((stream, index) => (
               <div
                 key={stream.id}
@@ -371,16 +360,12 @@ const LiveStreamsSection = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-card/50 rounded-2xl border border-border">
-            <Radio className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">
-              No one is live right now
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Be the first to go live and start streaming!
-            </p>
+          <div className="text-center py-8 bg-card border border-border rounded-lg">
+            <Radio className="w-8 h-8 text-muted-foreground mx-auto mb-1" />
+            <h3 className="text-sm font-semibold text-foreground mb-1">No one is live</h3>
+            <p className="text-xs text-muted-foreground mb-3">Be the first to go live!</p>
             <Link to="/go-live">
-              <Button>Start Streaming</Button>
+              <Button size="sm">Start Streaming</Button>
             </Link>
           </div>
         )}
