@@ -176,16 +176,7 @@ const StreamView = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!chatMessage.trim() || !id || !user) {
-      if (!user) {
-        toast({
-          title: "Login Required",
-          description: "Please login to chat",
-          variant: "destructive",
-        });
-      }
-      return;
-    }
+    if (!chatMessage.trim() || !id) return;
 
     try {
       await sendMessage.mutateAsync({ streamId: id, message: chatMessage });
@@ -537,7 +528,6 @@ const StreamView = () => {
                       onChange={(e) => setChatMessage(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
                       className="pr-10 bg-secondary"
-                      disabled={!user}
                     />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2">
                       <Button variant="ghost" size="icon" className="h-7 w-7">
@@ -549,7 +539,7 @@ const StreamView = () => {
                     variant="default" 
                     size="icon"
                     onClick={handleSendMessage}
-                    disabled={!chatMessage.trim() || !user || sendMessage.isPending}
+                    disabled={!chatMessage.trim() || sendMessage.isPending}
                   >
                     {sendMessage.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
