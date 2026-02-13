@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useParams, Link, useSearchParams } from "react-router-dom";
+import { useParams, Link, useSearchParams, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import HighlightedTip from "@/components/HighlightedTip";
@@ -47,6 +47,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const StreamView = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isFollowing, setIsFollowing] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
@@ -470,94 +471,106 @@ const StreamView = () => {
 
             {/* Chat Tab */}
             <TabsContent value="chat" className="flex-1 flex flex-col m-0 overflow-hidden">
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] lg:min-h-0">
-                {/* Highlighted Tips */}
-                {highlightedTips.map((tip) => (
-                  <HighlightedTip
-                    key={tip.id}
-                    senderName={tip.senderName}
-                    giftName={tip.giftName}
-                    giftIcon={tip.giftIcon}
-                    amount={tip.amount}
-                    message={tip.message}
-                  />
-                ))}
-                
-                {messages.length === 0 && highlightedTips.length === 0 ? (
-                  <div className="text-center text-muted-foreground py-8">
-                    <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">No messages yet</p>
-                    <p className="text-xs">Be the first to say something!</p>
-                  </div>
-                ) : (
-                  messages.map((msg) => (
-                    <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
-                      {tier && (
-                        <Crown className={`w-4 h-4 flex-shrink-0 ${
-                          tier === 'pro' ? 'text-amber-500' : 'text-primary'
-                        }`} />
-                      )}
-                      <span className="font-semibold text-primary">
-                        User:
-                      </span>
-                      <span className="text-foreground">{msg.message}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* Gifts Panel */}
-              {stream?.user_id && (
-                <div className="px-4 pb-2">
-                  <StreamGifts
-                    streamId={stream.id}
-                    recipientId={stream.user_id}
-                    onGiftSent={(gift) => {
-                      setHighlightedTips(prev => [...prev, {
-                        id: crypto.randomUUID(),
-                        senderName: gift.senderName,
-                        giftName: gift.giftName,
-                        giftIcon: gift.giftIcon,
-                        amount: gift.amount,
-                        message: gift.message,
-                      }]);
-                    }}
-                  />
+              {!user ? (
+                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                  <MessageCircle className="w-10 h-10 text-muted-foreground mb-3 opacity-50" />
+                  <h3 className="font-semibold text-foreground mb-1">Join the conversation</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Sign in to view and participate in the live chat</p>
+                  <Button onClick={() => navigate("/auth")} size="sm">
+                    Sign In to Chat
+                  </Button>
                 </div>
-              )}
+              ) : (
+                <>
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] lg:min-h-0">
+                    {/* Highlighted Tips */}
+                    {highlightedTips.map((tip) => (
+                      <HighlightedTip
+                        key={tip.id}
+                        senderName={tip.senderName}
+                        giftName={tip.giftName}
+                        giftIcon={tip.giftIcon}
+                        amount={tip.amount}
+                        message={tip.message}
+                      />
+                    ))}
+                    
+                    {messages.length === 0 && highlightedTips.length === 0 ? (
+                      <div className="text-center text-muted-foreground py-8">
+                        <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No messages yet</p>
+                        <p className="text-xs">Be the first to say something!</p>
+                      </div>
+                    ) : (
+                      messages.map((msg) => (
+                        <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
+                          {tier && (
+                            <Crown className={`w-4 h-4 flex-shrink-0 ${
+                              tier === 'pro' ? 'text-amber-500' : 'text-primary'
+                            }`} />
+                          )}
+                          <span className="font-semibold text-primary">
+                            User:
+                          </span>
+                          <span className="text-foreground">{msg.message}</span>
+                        </div>
+                      ))
+                    )}
+                  </div>
 
-              <div className="p-4 border-t border-border">
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Input
-                      type="text"
-                      placeholder={user ? "Send a message" : "Login to chat"}
-                      value={chatMessage}
-                      onChange={(e) => setChatMessage(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
-                      className="pr-10 bg-secondary"
-                      disabled={!user}
-                    />
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
-                        <Smile className="w-4 h-4" />
+                  {/* Gifts Panel */}
+                  {stream?.user_id && (
+                    <div className="px-4 pb-2">
+                      <StreamGifts
+                        streamId={stream.id}
+                        recipientId={stream.user_id}
+                        onGiftSent={(gift) => {
+                          setHighlightedTips(prev => [...prev, {
+                            id: crypto.randomUUID(),
+                            senderName: gift.senderName,
+                            giftName: gift.giftName,
+                            giftIcon: gift.giftIcon,
+                            amount: gift.amount,
+                            message: gift.message,
+                          }]);
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <div className="p-4 border-t border-border">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          type="text"
+                          placeholder="Send a message"
+                          value={chatMessage}
+                          onChange={(e) => setChatMessage(e.target.value)}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                          className="pr-10 bg-secondary"
+                        />
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                          <Button variant="ghost" size="icon" className="h-7 w-7">
+                            <Smile className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <Button 
+                        variant="default" 
+                        size="icon"
+                        onClick={handleSendMessage}
+                        disabled={!chatMessage.trim() || sendMessage.isPending}
+                      >
+                        {sendMessage.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Send className="w-4 h-4" />
+                        )}
                       </Button>
                     </div>
                   </div>
-                  <Button 
-                    variant="default" 
-                    size="icon"
-                    onClick={handleSendMessage}
-                    disabled={!chatMessage.trim() || !user || sendMessage.isPending}
-                  >
-                    {sendMessage.isPending ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <Send className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
+                </>
+              )}
             </TabsContent>
 
             {/* Shop Tab */}
