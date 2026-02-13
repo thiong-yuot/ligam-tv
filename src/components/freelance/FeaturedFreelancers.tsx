@@ -75,11 +75,9 @@ const FeaturedFreelancers = ({ freelancers }: FeaturedFreelancersProps) => {
             {/* Profile */}
             <div className="flex items-center gap-3 mb-3">
               <div className="relative">
-                <img
-                  src={freelancer.avatar_url || "/placeholder.svg"}
-                  alt={freelancer.name}
-                  className="w-12 h-12 rounded-xl object-cover ring-2 ring-primary/20"
-                />
+                <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center ring-2 ring-primary/20">
+                  <span className="text-sm font-bold text-foreground">{freelancer.name.charAt(0)}</span>
+                </div>
                 {freelancer.is_available && (
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-card" />
                 )}

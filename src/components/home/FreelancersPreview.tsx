@@ -33,7 +33,6 @@ const FreelancersPreview = () => {
               <Link key={f.id} to={`/freelance/${f.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
                 <div className="flex items-center gap-2 mb-2">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src={f.avatar_url || undefined} alt={f.name} />
                     <AvatarFallback className="text-xs">{f.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="min-w-0">
