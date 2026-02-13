@@ -11,9 +11,13 @@ const Index = () => {
       <Navbar />
       <div className="pt-2">
         <LiveStreamsSection />
-        <MarketplacePreview />
-        <FreelancersPreview />
-        <CoursesPreview />
+        <section className="py-4 px-4 md:px-6 lg:px-8">
+          <div className="w-full max-w-[1920px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+            <MarketplacePreview compact />
+            <CoursesPreview compact />
+            <FreelancersPreview compact />
+          </div>
+        </section>
       </div>
       <Footer />
     </div>
