@@ -33,7 +33,7 @@ const creatorPlans = [
     name: "Pro",
     price: "$24.99",
     period: "/month",
-    features: ["Everything in Creator", "Paid streams", "4K streaming", "API access", "Unlimited products", "Unlimited courses"],
+    features: ["Everything in Creator", "Paid streams", "4K streaming", "Unlimited products", "Unlimited courses"],
     cta: "Subscribe",
     popular: false,
     tier: "pro" as const,

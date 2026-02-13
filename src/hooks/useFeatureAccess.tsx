@@ -8,7 +8,7 @@ export type Feature =
   | "custom_reactions"
   | "priority_support"
   | "no_ads"
-  | "api_access"
+  
   | "custom_overlays"
   | "featured_placement"
   | "dedicated_support"
@@ -31,7 +31,7 @@ const featureAccess: FeatureAccess = {
   custom_reactions: ["creator", "pro"],
   priority_support: ["creator", "pro"],
   no_ads: ["creator", "pro"],
-  api_access: ["pro"],
+  
   custom_overlays: ["pro"],
   featured_placement: ["pro"],
   dedicated_support: ["pro"],
@@ -49,7 +49,7 @@ const featureLabels: Record<Feature, string> = {
   custom_reactions: "Custom Reactions",
   priority_support: "Priority Support",
   no_ads: "Ad-Free Viewing",
-  api_access: "API Access",
+  
   custom_overlays: "Custom Overlays",
   featured_placement: "Featured Placement",
   dedicated_support: "Dedicated Support",
@@ -67,7 +67,7 @@ const featureRequiredTier: Record<Feature, string> = {
   custom_reactions: "Creator",
   priority_support: "Creator",
   no_ads: "Creator",
-  api_access: "Pro",
+  
   custom_overlays: "Pro",
   featured_placement: "Pro",
   dedicated_support: "Pro",

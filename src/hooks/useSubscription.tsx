@@ -82,7 +82,7 @@ export const SUBSCRIPTION_TIERS = {
       "Go Live access",
       "Paid live streaming (set your price)",
       "Custom overlays",
-      "API access",
+      
       "Dedicated support",
       "Revenue boost (+10%)",
       "Featured placement",

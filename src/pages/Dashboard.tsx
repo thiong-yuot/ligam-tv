@@ -68,7 +68,6 @@ const Dashboard = () => {
         { name: "Priority Support", included: false },
         { name: "No Ads for Viewers", included: false },
         { name: "4K Streaming", included: false },
-        { name: "API Access", included: false },
       ],
     },
     creator: {
@@ -85,7 +84,7 @@ const Dashboard = () => {
         { name: "Priority Support", included: true },
         { name: "No Ads for Viewers", included: true },
         { name: "4K Streaming", included: false },
-        { name: "API Access", included: false },
+        
       ],
     },
     pro: {
@@ -102,7 +101,7 @@ const Dashboard = () => {
         { name: "Priority Support", included: true },
         { name: "No Ads for Viewers", included: true },
         { name: "4K Streaming", included: true },
-        { name: "API Access", included: true },
+        
       ],
     },
   };
