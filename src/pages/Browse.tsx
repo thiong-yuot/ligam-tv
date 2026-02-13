@@ -14,8 +14,7 @@ const Browse = () => {
 
   const { data: categoriesData = [] } = useCategories();
   const { data: streams, isLoading } = useStreams(
-    activeCategory !== "All" ? activeCategory.toLowerCase() : undefined,
-    true
+    activeCategory !== "All" ? activeCategory.toLowerCase() : undefined
   );
 
   const filteredStreams = streams?.filter(stream => 
