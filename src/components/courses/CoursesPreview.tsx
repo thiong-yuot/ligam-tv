@@ -5,7 +5,7 @@ import { useFeaturedCourses } from "@/hooks/useCourses";
 
 const CoursesPreview = () => {
   const { data: courses = [], isLoading } = useFeaturedCourses();
-  const featured = courses.slice(0, 4);
+  const featured = courses.slice(0, 2);
 
   return (
     <section className="py-6 px-4 md:px-6 lg:px-8">
