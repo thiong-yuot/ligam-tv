@@ -1,10 +1,14 @@
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigationType } from "react-router-dom";
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
+  const navType = useNavigationType();
 
   useEffect(() => {
+    // Don't override scroll on back/forward navigation
+    if (navType === "POP") return;
+
     // If there's a hash, scroll to that element
     if (hash) {
       const element = document.getElementById(hash.substring(1));
@@ -14,13 +18,9 @@ const ScrollToTop = () => {
       }
     }
     
-    // Otherwise scroll to top with smooth behavior
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant"
-    });
-  }, [pathname, hash]);
+    // Otherwise scroll to top instantly
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [pathname, hash, navType]);
 
   return null;
 };
