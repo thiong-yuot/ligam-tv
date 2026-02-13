@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import ProductCard from "@/components/shop/ProductCard";
 
 const Shop = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sellerFilter = searchParams.get("seller");
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
@@ -23,11 +25,17 @@ const Shop = () => {
 
   const filteredProducts = useMemo(() => {
     if (!products) return [];
-    if (!searchQuery) return products;
-    return products.filter((p) =>
-      p.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [products, searchQuery]);
+    let filtered = products;
+    if (sellerFilter) {
+      filtered = filtered.filter((p) => p.seller_id === sellerFilter);
+    }
+    if (searchQuery) {
+      filtered = filtered.filter((p) =>
+        p.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    return filtered;
+  }, [products, searchQuery, sellerFilter]);
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
