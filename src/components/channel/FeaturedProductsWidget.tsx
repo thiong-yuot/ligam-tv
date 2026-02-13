@@ -15,12 +15,14 @@ interface Product {
 interface FeaturedProductsWidgetProps {
   products: Product[];
   creatorUsername?: string;
+  creatorName?: string;
   maxItems?: number;
 }
 
 const FeaturedProductsWidget = ({ 
   products, 
   creatorUsername,
+  creatorName,
   maxItems = 3 
 }: FeaturedProductsWidgetProps) => {
   const displayProducts = products.slice(0, maxItems);
@@ -32,7 +34,7 @@ const FeaturedProductsWidget = ({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <ShoppingBag className="w-5 h-5 text-primary" />
-          <h3 className="font-semibold text-foreground">Featured Products</h3>
+          <h3 className="font-semibold text-foreground">{creatorName ? `${creatorName}'s Products` : "Streamer's Products"}</h3>
         </div>
         {creatorUsername && (
           <Link to={`/${creatorUsername}/store`}>

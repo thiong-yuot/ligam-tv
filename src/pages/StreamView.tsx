@@ -582,6 +582,7 @@ const StreamView = () => {
               {streamerProducts.length > 0 && (
                 <FeaturedProductsWidget
                   products={streamerProducts}
+                  creatorName={stream.profiles?.display_name || stream.profiles?.username || undefined}
                   maxItems={4}
                 />
               )}
