@@ -69,14 +69,14 @@ const CreateProfile = () => {
 
       const { error } = await supabase
         .from("profiles")
-        .update({
+        .upsert({
+          user_id: user.id,
           username: username.toLowerCase().replace(/\s/g, ""),
           display_name: displayName,
           bio,
           website,
           updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
+        }, { onConflict: "user_id" });
 
       if (error) throw error;
 
