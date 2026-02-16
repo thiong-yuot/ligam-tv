@@ -11,30 +11,33 @@ const Feed = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-4">
         <div className="max-w-xl mx-auto">
-          <h1 className="text-lg font-semibold text-foreground mb-4">Feed</h1>
-
-          {user && (
-            <div className="mb-4">
-              <CreatePostForm />
-            </div>
-          )}
+          {user && <CreatePostForm />}
 
           {isLoading ? (
-            <div className="space-y-3">
+            <div className="space-y-6 mt-4">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-32 w-full rounded-lg" />
+                <div key={i} className="space-y-2">
+                  <div className="flex gap-3">
+                    <Skeleton className="w-9 h-9 rounded-full shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-3 w-40" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-3/4" />
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-16">
               <p className="text-sm text-muted-foreground">
-                {user ? "Be the first to share something!" : "Sign in to create posts."}
+                {user ? "Nothing here yet. Be the first to post!" : "Sign in to join the conversation."}
               </p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div>
               {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
