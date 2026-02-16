@@ -22,6 +22,9 @@ import {
 import CourseCard from "@/components/courses/CourseCard";
 import ProductCard from "@/components/shop/ProductCard";
 import { useCart } from "@/hooks/useCart";
+import { usePosts } from "@/hooks/usePosts";
+import PostCard from "@/components/posts/PostCard";
+import { FileText } from "lucide-react";
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
@@ -109,6 +112,9 @@ const UserProfile = () => {
     },
     enabled: !!profile?.user_id,
   });
+
+  // Fetch posts by this user
+  const { posts: userPosts } = usePosts(profile?.user_id);
 
   if (profileLoading) {
     return (
@@ -236,7 +242,7 @@ const UserProfile = () => {
           </div>
 
           {/* Content Tabs */}
-          <Tabs defaultValue="courses" className="w-full">
+          <Tabs defaultValue={userPosts.length > 0 ? "posts" : courses.length > 0 ? "courses" : "streams"} className="w-full">
             <TabsList className="mb-6">
               {courses.length > 0 && (
                 <TabsTrigger value="courses" className="gap-2">
@@ -262,6 +268,10 @@ const UserProfile = () => {
                   Services
                 </TabsTrigger>
               )}
+              <TabsTrigger value="posts" className="gap-2">
+                <FileText className="w-4 h-4" />
+                Posts {userPosts.length > 0 && `(${userPosts.length})`}
+              </TabsTrigger>
             </TabsList>
 
             {courses.length > 0 && (
@@ -351,6 +361,22 @@ const UserProfile = () => {
                 </Card>
               </TabsContent>
             )}
+
+            <TabsContent value="posts">
+              {userPosts.length > 0 ? (
+                <div className="max-w-2xl space-y-4">
+                  {userPosts.map((post) => (
+                    <PostCard key={post.id} post={post} />
+                  ))}
+                </div>
+              ) : (
+                <Card className="text-center py-12">
+                  <CardContent>
+                    <p className="text-muted-foreground">No posts yet.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </TabsContent>
           </Tabs>
 
           {/* Empty state if no content */}

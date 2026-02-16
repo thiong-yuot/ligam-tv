@@ -1479,6 +1479,129 @@ export type Database = {
           },
         ]
       }
+      post_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_likes: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_likes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          comment_count: number | null
+          content: string | null
+          created_at: string
+          id: string
+          is_published: boolean | null
+          is_stream_replay: boolean | null
+          like_count: number | null
+          media_type: string | null
+          media_urls: string[] | null
+          stream_id: string | null
+          updated_at: string
+          user_id: string
+          video_url: string | null
+          view_count: number | null
+        }
+        Insert: {
+          comment_count?: number | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean | null
+          is_stream_replay?: boolean | null
+          like_count?: number | null
+          media_type?: string | null
+          media_urls?: string[] | null
+          stream_id?: string | null
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          comment_count?: number | null
+          content?: string | null
+          created_at?: string
+          id?: string
+          is_published?: boolean | null
+          is_stream_replay?: boolean | null
+          like_count?: number | null
+          media_type?: string | null
+          media_urls?: string[] | null
+          stream_id?: string | null
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_stream_id_fkey"
+            columns: ["stream_id"]
+            isOneToOne: false
+            referencedRelation: "streams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       press_releases: {
         Row: {
           content: string
@@ -2109,6 +2232,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      decrement_post_comments: {
+        Args: { post_id_param: string }
+        Returns: undefined
+      }
+      decrement_post_likes: {
+        Args: { post_id_param: string }
+        Returns: undefined
+      }
       decrement_viewer_count: {
         Args: { stream_id: string }
         Returns: undefined
@@ -2123,6 +2254,14 @@ export type Database = {
       }
       increment_course_enrollments: {
         Args: { course_id_param: string }
+        Returns: undefined
+      }
+      increment_post_comments: {
+        Args: { post_id_param: string }
+        Returns: undefined
+      }
+      increment_post_likes: {
+        Args: { post_id_param: string }
         Returns: undefined
       }
       increment_viewer_count: {
