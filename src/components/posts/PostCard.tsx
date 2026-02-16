@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,6 +10,7 @@ import {
   CheckCircle,
   PlayCircle,
   MoreHorizontal,
+  User,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -33,50 +33,39 @@ const PostCard = ({ post }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
 
   const displayName = post.profile?.display_name || post.profile?.username || "User";
-  const initials = displayName.split(" ").map((n) => n[0]).join("").substring(0, 2).toUpperCase();
   const isOwner = user?.id === post.user_id;
 
   return (
     <Card className="border-border/50">
       <CardContent className="p-4">
         {/* Header */}
-        <div className="flex items-start justify-between mb-3">
-          <div className="flex items-center gap-3">
-            <Link to={`/@${post.profile?.username || ""}`}>
-              <Avatar className="w-10 h-10">
-                <AvatarImage src={post.profile?.avatar_url || undefined} />
-                <AvatarFallback className="bg-primary/10 text-primary text-sm">{initials}</AvatarFallback>
-              </Avatar>
-            </Link>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <Link to={`/@${post.profile?.username || ""}`} className="font-semibold text-foreground hover:underline text-sm">
-                  {displayName}
-                </Link>
-                {post.profile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary" />}
-                {post.is_stream_replay && (
-                  <Badge variant="secondary" className="text-xs">
-                    <PlayCircle className="w-3 h-3 mr-1" /> Replay
-                  </Badge>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-              </p>
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
+              <User className="w-3.5 h-3.5 text-muted-foreground" />
             </div>
+            <Link to={`/@${post.profile?.username || ""}`} className="text-sm font-medium text-foreground hover:underline">
+              {displayName}
+            </Link>
+            {post.profile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary" />}
+            {post.is_stream_replay && (
+              <Badge variant="secondary" className="text-[10px] h-5">
+                <PlayCircle className="w-3 h-3 mr-0.5" /> Replay
+              </Badge>
+            )}
+            <span className="text-xs text-muted-foreground">
+              · {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+            </span>
           </div>
           {isOwner && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button variant="ghost" size="icon" className="h-7 w-7">
                   <MoreHorizontal className="w-4 h-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => deletePost.mutate(post.id)}
-                  className="text-destructive"
-                >
+                <DropdownMenuItem onClick={() => deletePost.mutate(post.id)} className="text-destructive">
                   <Trash2 className="w-4 h-4 mr-2" /> Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -85,55 +74,44 @@ const PostCard = ({ post }: PostCardProps) => {
         </div>
 
         {/* Content */}
-        {post.content && <p className="text-foreground mb-3 whitespace-pre-wrap">{post.content}</p>}
+        {post.content && <p className="text-sm text-foreground mb-3 whitespace-pre-wrap">{post.content}</p>}
 
         {/* Media */}
         {post.media_urls && post.media_urls.length > 0 && (
-          <div className={`grid gap-2 mb-3 ${post.media_urls.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+          <div className={`grid gap-1.5 mb-3 ${post.media_urls.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
             {post.media_urls.map((url, i) => (
-              <img
-                key={i}
-                src={url}
-                alt=""
-                className="w-full rounded-lg object-cover max-h-96"
-                loading="lazy"
-              />
+              <img key={i} src={url} alt="" className="w-full rounded-md object-cover max-h-80" loading="lazy" />
             ))}
           </div>
         )}
 
         {post.video_url && (
           <div className="mb-3">
-            <video
-              src={post.video_url}
-              controls
-              className="w-full rounded-lg max-h-96"
-              preload="metadata"
-            />
+            <video src={post.video_url} controls className="w-full rounded-md max-h-80" preload="metadata" />
           </div>
         )}
 
         {/* Actions */}
-        <div className="flex items-center gap-4 pt-2 border-t border-border/50">
+        <div className="flex items-center gap-3 pt-2 border-t border-border/30">
           <Button
             variant="ghost"
             size="sm"
-            className={`gap-1.5 ${post.user_has_liked ? "text-destructive" : "text-muted-foreground"}`}
+            className={`h-7 gap-1 text-xs ${post.user_has_liked ? "text-destructive" : "text-muted-foreground"}`}
             onClick={() => {
               if (!user) return;
               toggleLike.mutate({ postId: post.id, isLiked: !!post.user_has_liked });
             }}
           >
-            <Heart className={`w-4 h-4 ${post.user_has_liked ? "fill-current" : ""}`} />
+            <Heart className={`w-3.5 h-3.5 ${post.user_has_liked ? "fill-current" : ""}`} />
             {post.like_count > 0 && post.like_count}
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="gap-1.5 text-muted-foreground"
+            className="h-7 gap-1 text-xs text-muted-foreground"
             onClick={() => setShowComments(!showComments)}
           >
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-3.5 h-3.5" />
             {post.comment_count > 0 && post.comment_count}
           </Button>
         </div>
