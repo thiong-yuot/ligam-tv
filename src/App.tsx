@@ -52,6 +52,7 @@ import Search from "./pages/Search";
 import Affiliates from "./pages/Affiliates";
 import UserProfile from "./pages/UserProfile";
 import MyOrders from "./pages/MyOrders";
+import Feed from "./pages/Feed";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +113,7 @@ const App = () => (
                 <Route path="/search" element={<Search />} />
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/my-orders" element={<MyOrders />} />
+                <Route path="/feed" element={<Feed />} />
                 <Route path="/@:username" element={<UserProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
