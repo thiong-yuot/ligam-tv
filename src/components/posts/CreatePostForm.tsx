@@ -1,8 +1,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { Image, Video, X, Loader2, Send } from "lucide-react";
+import { Image, Video, X, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePosts } from "@/hooks/usePosts";
 import { useFileUpload } from "@/hooks/useFileUpload";
@@ -13,6 +12,7 @@ const CreatePostForm = () => {
   const { uploadFile, uploading } = useFileUpload();
   const [content, setContent] = useState("");
   const [mediaFiles, setMediaFiles] = useState<{ url: string; type: "image" | "video" }[]>([]);
+  const [expanded, setExpanded] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
@@ -57,63 +57,82 @@ const CreatePostForm = () => {
     });
     setContent("");
     setMediaFiles([]);
+    setExpanded(false);
   };
 
   return (
-    <Card className="border-border/50">
-      <CardContent className="p-4 space-y-3">
+    <div className="border-b border-border/40 pb-4 mb-2">
+      <div
+        className={`bg-secondary/50 rounded-lg transition-all ${expanded ? "ring-1 ring-primary/30" : ""}`}
+        onClick={() => setExpanded(true)}
+      >
         <Textarea
-          placeholder="Share an idea, video, or stream replay..."
+          placeholder="What's happening?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="min-h-[70px] resize-none border-0 bg-muted/50 focus-visible:ring-1"
+          onFocus={() => setExpanded(true)}
+          className="min-h-[48px] resize-none border-0 bg-transparent focus-visible:ring-0 text-sm placeholder:text-muted-foreground/60"
         />
+      </div>
 
-        {mediaFiles.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {mediaFiles.map((media, i) => (
-              <div key={i} className="relative group">
-                {media.type === "image" ? (
-                  <img src={media.url} alt="" className="w-16 h-16 object-cover rounded-md" />
-                ) : (
-                  <div className="w-16 h-16 bg-muted rounded-md flex items-center justify-center">
-                    <Video className="w-5 h-5 text-muted-foreground" />
-                  </div>
-                )}
-                <button
-                  onClick={() => removeMedia(i)}
-                  className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+      {mediaFiles.length > 0 && (
+        <div className="flex gap-2 mt-2 overflow-x-auto pb-1">
+          {mediaFiles.map((media, i) => (
+            <div key={i} className="relative shrink-0 group">
+              {media.type === "image" ? (
+                <img src={media.url} alt="" className="h-20 w-20 object-cover rounded-md" />
+              ) : (
+                <div className="h-20 w-20 bg-secondary rounded-md flex items-center justify-center">
+                  <Video className="w-5 h-5 text-muted-foreground" />
+                </div>
+              )}
+              <button
+                onClick={() => removeMedia(i)}
+                className="absolute -top-1.5 -right-1.5 bg-background border border-border rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
 
-        <div className="flex items-center justify-between">
-          <div className="flex gap-1">
+      {expanded && (
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex gap-0.5">
             <input ref={imageInputRef} type="file" accept="image/*" multiple hidden onChange={handleImageUpload} />
             <input ref={videoInputRef} type="file" accept="video/*" hidden onChange={handleVideoUpload} />
-            <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => imageInputRef.current?.click()} disabled={uploading}>
-              <Image className="w-3.5 h-3.5 mr-1" /> Photo
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10"
+              onClick={() => imageInputRef.current?.click()}
+              disabled={uploading}
+            >
+              <Image className="w-4 h-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={() => videoInputRef.current?.click()} disabled={uploading}>
-              <Video className="w-3.5 h-3.5 mr-1" /> Video
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10"
+              onClick={() => videoInputRef.current?.click()}
+              disabled={uploading}
+            >
+              <Video className="w-4 h-4" />
             </Button>
           </div>
           <Button
             size="sm"
-            className="h-8"
+            className="h-7 px-4 text-xs rounded-full"
             onClick={handleSubmit}
             disabled={(!content.trim() && mediaFiles.length === 0) || createPost.isPending || uploading}
           >
-            {createPost.isPending || uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-            <span className="ml-1">Post</span>
+            {(createPost.isPending || uploading) && <Loader2 className="w-3 h-3 animate-spin mr-1" />}
+            Post
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
 

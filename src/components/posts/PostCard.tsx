@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,7 +9,7 @@ import {
   CheckCircle,
   PlayCircle,
   MoreHorizontal,
-  User,
+  Share2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -33,92 +32,143 @@ const PostCard = ({ post }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
 
   const displayName = post.profile?.display_name || post.profile?.username || "User";
+  const username = post.profile?.username || "";
+  const initials = displayName.charAt(0).toUpperCase();
   const isOwner = user?.id === post.user_id;
 
   return (
-    <Card className="border-border/50">
-      <CardContent className="p-4">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center">
-              <User className="w-3.5 h-3.5 text-muted-foreground" />
-            </div>
-            <Link to={`/@${post.profile?.username || ""}`} className="text-sm font-medium text-foreground hover:underline">
+    <article className="border-b border-border/30 py-4 first:pt-0">
+      {/* Header row */}
+      <div className="flex items-start gap-3">
+        <Link to={`/@${username}`} className="shrink-0">
+          <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-semibold text-muted-foreground">
+            {initials}
+          </div>
+        </Link>
+
+        <div className="flex-1 min-w-0">
+          {/* Name row */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Link to={`/@${username}`} className="text-sm font-semibold text-foreground hover:underline truncate">
               {displayName}
             </Link>
-            {post.profile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary" />}
+            {post.profile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />}
+            <span className="text-xs text-muted-foreground truncate">@{username}</span>
+            <span className="text-muted-foreground/40 text-xs">·</span>
+            <span className="text-xs text-muted-foreground shrink-0">
+              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+            </span>
             {post.is_stream_replay && (
-              <Badge variant="secondary" className="text-[10px] h-5">
-                <PlayCircle className="w-3 h-3 mr-0.5" /> Replay
+              <Badge variant="outline" className="text-[10px] h-4 border-primary/30 text-primary px-1.5 ml-1">
+                <PlayCircle className="w-2.5 h-2.5 mr-0.5" /> replay
               </Badge>
             )}
-            <span className="text-xs text-muted-foreground">
-              · {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-            </span>
           </div>
-          {isOwner && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <MoreHorizontal className="w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => deletePost.mutate(post.id)} className="text-destructive">
-                  <Trash2 className="w-4 h-4 mr-2" /> Delete
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+
+          {/* Content */}
+          {post.content && (
+            <p className="text-sm text-foreground mt-1 whitespace-pre-wrap leading-relaxed">{post.content}</p>
           )}
-        </div>
 
-        {/* Content */}
-        {post.content && <p className="text-sm text-foreground mb-3 whitespace-pre-wrap">{post.content}</p>}
+          {/* Images */}
+          {post.media_urls && post.media_urls.length > 0 && (
+            <div
+              className={`mt-3 rounded-xl overflow-hidden border border-border/30 ${
+                post.media_urls.length === 1
+                  ? ""
+                  : post.media_urls.length === 2
+                  ? "grid grid-cols-2 gap-0.5"
+                  : post.media_urls.length === 3
+                  ? "grid grid-cols-2 gap-0.5"
+                  : "grid grid-cols-2 gap-0.5"
+              }`}
+            >
+              {post.media_urls.map((url, i) => (
+                <img
+                  key={i}
+                  src={url}
+                  alt=""
+                  className={`w-full object-cover ${
+                    post.media_urls.length === 1
+                      ? "max-h-[400px] rounded-xl"
+                      : post.media_urls.length === 3 && i === 0
+                      ? "row-span-2 h-full"
+                      : "h-48"
+                  }`}
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          )}
 
-        {/* Media */}
-        {post.media_urls && post.media_urls.length > 0 && (
-          <div className={`grid gap-1.5 mb-3 ${post.media_urls.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
-            {post.media_urls.map((url, i) => (
-              <img key={i} src={url} alt="" className="w-full rounded-md object-cover max-h-80" loading="lazy" />
-            ))}
+          {/* Video */}
+          {post.video_url && (
+            <div className="mt-3 rounded-xl overflow-hidden border border-border/30">
+              <video
+                src={post.video_url}
+                controls
+                className="w-full max-h-[400px]"
+                preload="metadata"
+                playsInline
+              />
+            </div>
+          )}
+
+          {/* Action bar */}
+          <div className="flex items-center gap-6 mt-3 -ml-2">
+            <button
+              className={`flex items-center gap-1.5 text-xs transition-colors group ${
+                post.user_has_liked
+                  ? "text-destructive"
+                  : "text-muted-foreground hover:text-destructive"
+              }`}
+              onClick={() => {
+                if (!user) return;
+                toggleLike.mutate({ postId: post.id, isLiked: !!post.user_has_liked });
+              }}
+            >
+              <div className="p-1.5 rounded-full group-hover:bg-destructive/10 transition-colors">
+                <Heart className={`w-4 h-4 ${post.user_has_liked ? "fill-current" : ""}`} />
+              </div>
+              {post.like_count > 0 && <span>{post.like_count}</span>}
+            </button>
+
+            <button
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group"
+              onClick={() => setShowComments(!showComments)}
+            >
+              <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
+                <MessageCircle className="w-4 h-4" />
+              </div>
+              {post.comment_count > 0 && <span>{post.comment_count}</span>}
+            </button>
+
+            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group">
+              <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
+                <Share2 className="w-4 h-4" />
+              </div>
+            </button>
+
+            {isOwner && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="ml-auto p-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-32">
+                  <DropdownMenuItem onClick={() => deletePost.mutate(post.id)} className="text-destructive text-xs">
+                    <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
-        )}
 
-        {post.video_url && (
-          <div className="mb-3">
-            <video src={post.video_url} controls className="w-full rounded-md max-h-80" preload="metadata" />
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex items-center gap-3 pt-2 border-t border-border/30">
-          <Button
-            variant="ghost"
-            size="sm"
-            className={`h-7 gap-1 text-xs ${post.user_has_liked ? "text-destructive" : "text-muted-foreground"}`}
-            onClick={() => {
-              if (!user) return;
-              toggleLike.mutate({ postId: post.id, isLiked: !!post.user_has_liked });
-            }}
-          >
-            <Heart className={`w-3.5 h-3.5 ${post.user_has_liked ? "fill-current" : ""}`} />
-            {post.like_count > 0 && post.like_count}
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 gap-1 text-xs text-muted-foreground"
-            onClick={() => setShowComments(!showComments)}
-          >
-            <MessageCircle className="w-3.5 h-3.5" />
-            {post.comment_count > 0 && post.comment_count}
-          </Button>
+          {showComments && <PostCommentsSection postId={post.id} />}
         </div>
-
-        {showComments && <PostCommentsSection postId={post.id} />}
-      </CardContent>
-    </Card>
+      </div>
+    </article>
   );
 };
 
