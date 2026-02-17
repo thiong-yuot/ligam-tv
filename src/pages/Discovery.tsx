@@ -1,23 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { PlayCircle, Upload, Clock, MoreVertical, Briefcase, DollarSign } from "lucide-react";
+import { PlayCircle, Upload } from "lucide-react";
 import UploadVideoDialog from "@/components/discovery/UploadVideoDialog";
-import { formatDistanceToNow } from "date-fns";
+import DiscoveryFilters from "@/components/discovery/DiscoveryFilters";
+import VideoCard from "@/components/discovery/VideoCard";
 
 export interface DiscoveryItem {
   id: string;
@@ -45,6 +36,9 @@ interface FreelancerService {
 const Discovery = () => {
   const { user } = useAuth();
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [filterType, setFilterType] = useState("all");
 
   // Fetch video posts
   const { data: videoPosts = [], isLoading: postsLoading } = useQuery({
@@ -114,11 +108,10 @@ const Discovery = () => {
     },
   });
 
-  // Fetch all freelancer services mapped by user_id
+  // Fetch freelancer services mapped by user_id
   const { data: servicesMap = new Map() } = useQuery({
     queryKey: ["discovery-services"],
     queryFn: async () => {
-      // Get all freelancers
       const { data: freelancers } = await supabase
         .from("freelancers")
         .select("id, user_id");
@@ -147,15 +140,39 @@ const Discovery = () => {
   });
 
   const isLoading = postsLoading || streamsLoading;
-  const allItems = [...videoPosts, ...streamReplays].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
+
+  // Combined, filtered, sorted items
+  const filteredItems = useMemo(() => {
+    let items = [...videoPosts, ...streamReplays];
+
+    // Filter by type
+    if (filterType === "video") items = items.filter((i) => i.type === "video");
+    if (filterType === "replay") items = items.filter((i) => i.type === "replay");
+
+    // Search
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      items = items.filter(
+        (i) =>
+          i.title.toLowerCase().includes(q) ||
+          i.creator?.display_name?.toLowerCase().includes(q) ||
+          i.creator?.username?.toLowerCase().includes(q)
+      );
+    }
+
+    // Sort
+    if (sortBy === "newest") items.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    if (sortBy === "oldest") items.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    if (sortBy === "most_viewed") items.sort((a, b) => b.view_count - a.view_count);
+
+    return items;
+  }, [videoPosts, streamReplays, filterType, search, sortBy]);
 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4">
           <h1 className="text-lg font-bold text-foreground">Discovery</h1>
           {user && (
             <Button size="sm" onClick={() => setUploadOpen(true)} className="gap-1.5">
@@ -164,6 +181,16 @@ const Discovery = () => {
             </Button>
           )}
         </div>
+
+        {/* Filters */}
+        <DiscoveryFilters
+          search={search}
+          onSearchChange={setSearch}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          filterType={filterType}
+          onFilterTypeChange={setFilterType}
+        />
 
         {/* Grid */}
         {isLoading ? (
@@ -181,14 +208,16 @@ const Discovery = () => {
               </div>
             ))}
           </div>
-        ) : allItems.length === 0 ? (
+        ) : filteredItems.length === 0 ? (
           <div className="text-center py-20">
             <PlayCircle className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">No videos yet. Be the first to upload!</p>
+            <p className="text-sm text-muted-foreground">
+              {search || filterType !== "all" ? "No videos match your filters." : "No videos yet. Be the first to upload!"}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-6">
-            {allItems.map((item) => (
+            {filteredItems.map((item) => (
               <VideoCard
                 key={item.id}
                 item={item}
@@ -201,110 +230,6 @@ const Discovery = () => {
 
       {user && <UploadVideoDialog open={uploadOpen} onOpenChange={setUploadOpen} />}
     </Layout>
-  );
-};
-
-const VideoCard = ({
-  item,
-  services,
-}: {
-  item: DiscoveryItem;
-  services: FreelancerService[];
-}) => {
-  const linkTo = item.id.startsWith("stream-")
-    ? `/stream/${item.id.replace("stream-", "")}`
-    : `/discovery/${item.id}`;
-
-  const creatorName = item.creator?.display_name || item.creator?.username || "Unknown";
-  const username = item.creator?.username || "";
-  const initials = creatorName.charAt(0).toUpperCase();
-
-  return (
-    <div className="group">
-      {/* Thumbnail */}
-      <Link to={linkTo} className="block">
-        <div className="relative aspect-video bg-secondary rounded-xl overflow-hidden mb-2">
-          {item.thumbnail_url ? (
-            <img
-              src={item.thumbnail_url}
-              alt={item.title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <PlayCircle className="w-10 h-10 text-muted-foreground/40" />
-            </div>
-          )}
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-            <PlayCircle className="w-12 h-12 text-white opacity-0 group-hover:opacity-90 transition-opacity drop-shadow-lg" />
-          </div>
-          {item.type === "replay" && (
-            <Badge className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-[10px] h-5">
-              <Clock className="w-3 h-3 mr-0.5" /> Replay
-            </Badge>
-          )}
-        </div>
-      </Link>
-
-      {/* Info row */}
-      <div className="flex gap-2.5">
-        <Link to={`/@${username}`} className="shrink-0 mt-0.5">
-          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-semibold text-muted-foreground">
-            {initials}
-          </div>
-        </Link>
-        <div className="flex-1 min-w-0">
-          <Link to={linkTo}>
-            <h3 className="text-sm font-medium text-foreground line-clamp-2 leading-snug group-hover:text-primary transition-colors">
-              {item.title}
-            </h3>
-          </Link>
-          <Link to={`/@${username}`} className="block">
-            <p className="text-xs text-muted-foreground mt-0.5 hover:text-foreground transition-colors">
-              {creatorName}
-            </p>
-          </Link>
-          <p className="text-xs text-muted-foreground">
-            {item.view_count.toLocaleString()} views · {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
-          </p>
-        </div>
-
-        {/* 3-dot menu with services */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="shrink-0 mt-0.5 p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors opacity-0 group-hover:opacity-100">
-              <MoreVertical className="w-4 h-4" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 bg-popover border border-border shadow-lg z-50">
-            <DropdownMenuItem asChild>
-              <Link to={`/@${username}`} className="cursor-pointer">
-                View channel
-              </Link>
-            </DropdownMenuItem>
-            {services.length > 0 && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuLabel className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <Briefcase className="w-3.5 h-3.5" />
-                  Services by {creatorName}
-                </DropdownMenuLabel>
-                {services.map((service) => (
-                  <DropdownMenuItem key={service.id} className="flex items-center justify-between cursor-pointer">
-                    <span className="text-sm truncate mr-2">{service.title}</span>
-                    <span className="text-xs font-semibold text-primary flex items-center shrink-0">
-                      <DollarSign className="w-3 h-3" />
-                      {service.price}
-                    </span>
-                  </DropdownMenuItem>
-                ))}
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
   );
 };
 
