@@ -27,7 +27,7 @@ const Navbar = () => {
   const { data: unreadNotifications = 0 } = useUnreadNotificationsCount();
   const navLinks = [
     { name: "Browse", path: "/browse" },
-    { name: "Feed", path: "/feed" },
+    { name: "Discovery", path: "/discovery" },
     { name: "Learn", path: "/courses" },
     { name: "Freelance", path: "/freelance" },
     { name: "Shop", path: "/shop" },
