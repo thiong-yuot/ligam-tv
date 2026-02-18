@@ -18,7 +18,7 @@ export const SUBSCRIPTION_TIERS = {
       "Basic chat features",
       "Standard video quality",
       "Community support",
-      "Full service access (20% commission)",
+      "Full service access (25% commission)",
       "1 store product",
       "1 course",
       "Buy unlimited products & courses",
@@ -61,7 +61,7 @@ export const SUBSCRIPTION_TIERS = {
       "Stream analytics",
       "No ads for viewers",
       "Max 3 store products",
-      "Full service access (20% commission)",
+      "Full service access (25% commission)",
       "Max 3 courses",
     ],
   },
@@ -87,7 +87,7 @@ export const SUBSCRIPTION_TIERS = {
       "Revenue boost (+10%)",
       "Featured placement",
       "Unlimited store products",
-      "Full service access (20% commission)",
+      "Full service access (25% commission)",
       "Unlimited courses",
     ],
   },
@@ -95,8 +95,12 @@ export const SUBSCRIPTION_TIERS = {
 
 // Platform commission rates
 export const PLATFORM_FEES = {
-  store: 0.08, // 8% on store sales
-  services: 0.20,  // 20% on freelance commissions (no service fees)
+  store: 0.20,      // 20% on shop/store sales
+  services: 0.25,   // 25% on freelance services
+  courses: 0.40,    // 40% on course sales
+  liveSession: 0.40, // 40% on paid live sessions
+  tips: 0.40,       // 40% on tips & gifts
+  subscriptions: 0.40, // 40% on subscriptions
 } as const;
 
 // Helper to get tier limits

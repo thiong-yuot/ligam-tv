@@ -12,7 +12,12 @@ const supabaseAdmin = createClient(
 );
 
 // Platform commission rates
-const FREELANCE_COMMISSION = 0.20; // 20% on freelance
+const FREELANCE_COMMISSION = 0.25; // 25% on freelance
+const COURSE_COMMISSION = 0.40;    // 40% on courses
+const SHOP_COMMISSION = 0.20;      // 20% on shop/store
+const LIVE_SESSION_COMMISSION = 0.40; // 40% on paid live sessions
+const TIPS_GIFTS_COMMISSION = 0.40;   // 40% on tips & gifts
+const SUBSCRIPTION_COMMISSION = 0.40; // 40% on subscriptions
 // Affiliate rates (percentage of platform earnings)
 const AFFILIATE_RATE_INITIAL = 0.25; // 25% for first 2 months
 const AFFILIATE_RATE_RECURRING = 0.15; // 15% after 2 months
