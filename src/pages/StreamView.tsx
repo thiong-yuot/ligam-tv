@@ -485,9 +485,7 @@ const StreamView = () => {
                   messages.map((msg) => (
                     <div key={msg.id} className="flex gap-2 text-sm animate-slideIn">
                       {tier && (
-                        <Crown className={`w-4 h-4 flex-shrink-0 ${
-                          tier === 'pro' ? 'text-amber-500' : 'text-primary'
-                        }`} />
+                        <Crown className="w-4 h-4 flex-shrink-0 text-primary" />
                       )}
                       <span className="font-semibold text-primary">
                         User:

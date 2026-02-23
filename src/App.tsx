@@ -11,7 +11,7 @@ import Index from "./pages/Index";
 import Browse from "./pages/Browse";
 import Categories from "./pages/Categories";
 import StreamView from "./pages/StreamView";
-import Pricing from "./pages/Pricing";
+
 import FAQ from "./pages/FAQ";
 import About from "./pages/About";
 import Freelance from "./pages/Freelance";
@@ -70,7 +70,7 @@ const App = () => (
                 <Route path="/browse" element={<Browse />} />
                 <Route path="/categories" element={<Categories />} />
                 <Route path="/stream/:id" element={<StreamView />} />
-                <Route path="/pricing" element={<Pricing />} />
+                
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/live" element={<Browse />} />
