@@ -9,67 +9,6 @@ export const SUBSCRIPTION_TIERS = {
     price_id: null,
     product_id: null,
     price: 0,
-    maxProducts: 1,
-    maxCourses: 1,
-    maxGigs: Infinity,
-    canFulfillGigs: true,
-    features: [
-      "Unlimited streaming",
-      "Basic chat features",
-      "Standard video quality",
-      "Community support",
-      "Full service access (25% commission)",
-      "1 store product",
-      "1 course",
-      "Buy unlimited products & courses",
-    ],
-  },
-  adfree: {
-    name: "Ad-Free",
-    price_id: "price_1SpRpU2NM66Z7c4cZTLwt0Bt",
-    product_id: "prod_Tn1tFTeJxapqUs",
-    price: 13,
-    maxProducts: 1,
-    maxCourses: 1,
-    maxGigs: Infinity,
-    canFulfillGigs: true,
-    isViewerPlan: true,
-    features: [
-      "Ad-free viewing experience",
-      "No ads during live broadcasts",
-      "No ads on all platform content",
-      "Standard video quality",
-      "Community support",
-      "1 store product",
-      "1 course",
-    ],
-  },
-  creator: {
-    name: "Creator",
-    price_id: "price_1SmNW62NM66Z7c4cnBpoYoSP",
-    product_id: "prod_TjrEloM1vLq5gW",
-    price: 15.99,
-    maxProducts: 3,
-    maxCourses: 3,
-    maxGigs: Infinity,
-    canFulfillGigs: true,
-    features: [
-      "Everything in Free",
-      "HD streaming (1080p)",
-      "Custom reactions",
-      "Priority support",
-      "Stream analytics",
-      "No ads for viewers",
-      "Max 3 store products",
-      "Full service access (25% commission)",
-      "Max 3 courses",
-    ],
-  },
-  pro: {
-    name: "Pro",
-    price_id: "price_1SmNWH2NM66Z7c4cIfmspU1q",
-    product_id: "prod_TjrEUKyofAQv1p",
-    price: 24.99,
     maxProducts: Infinity,
     maxCourses: Infinity,
     maxGigs: Infinity,
@@ -77,18 +16,15 @@ export const SUBSCRIPTION_TIERS = {
     canGoLive: true,
     canPaidStream: true,
     features: [
-      "Everything in Creator",
-      "4K streaming",
+      "Unlimited streaming",
+      "HD & 4K streaming",
       "Go Live access",
-      "Paid live streaming (set your price)",
-      "Custom overlays",
-      
-      "Dedicated support",
-      "Revenue boost (+10%)",
-      "Featured placement",
+      "Paid live streaming",
       "Unlimited store products",
-      "Full service access (25% commission)",
       "Unlimited courses",
+      "Full service access",
+      "Stream analytics",
+      "All platform tools included",
     ],
   },
 } as const;
@@ -162,18 +98,11 @@ export const useSubscription = () => {
 
       if (error) throw error;
 
-      // Determine tier from product ID
-      let tier: SubscriptionTier = null;
-      if (data.product_id === SUBSCRIPTION_TIERS.adfree.product_id) {
-        tier = "adfree";
-      } else if (data.product_id === SUBSCRIPTION_TIERS.creator.product_id) {
-        tier = "creator";
-      } else if (data.product_id === SUBSCRIPTION_TIERS.pro.product_id) {
-        tier = "pro";
-      }
+      // All users are on free tier now
+      let tier: SubscriptionTier = "free";
 
       setState({
-        subscribed: data.subscribed,
+        subscribed: false,
         productId: data.product_id,
         subscriptionEnd: data.subscription_end,
         tier,

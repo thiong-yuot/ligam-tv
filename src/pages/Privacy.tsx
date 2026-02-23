@@ -18,7 +18,7 @@ const Privacy = () => {
               Privacy Policy
             </h1>
             <p className="text-muted-foreground">
-              Last updated: February 22, 2026
+              Last updated: February 23, 2026
             </p>
           </div>
 
@@ -40,8 +40,8 @@ const Privacy = () => {
                 <h2 className="text-2xl font-semibold text-foreground mb-4">2. How We Use Your Information</h2>
                 <ul className="list-disc list-inside space-y-2">
                   <li>Provide and operate the platform (streaming, Shop, Services, Courses, and community features)</li>
-                  <li>Process payments, calculate creator earnings, and apply platform commission rates</li>
-                  <li>Manage subscription tiers (Free, Ad-Free, Creator, Pro) and enforce feature limits</li>
+                  <li>Process payments, calculate creator earnings, and apply platform commission rates on transactions</li>
+                  <li>Operate the free platform and enforce commission-based revenue model</li>
                   <li>Verify creator identity for monetization and withdrawals</li>
                   <li>Personalize content recommendations and search results</li>
                   <li>Communicate service updates, billing notifications, and promotional content</li>

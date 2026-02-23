@@ -18,7 +18,7 @@ const Terms = () => {
               Terms of Service
             </h1>
             <p className="text-muted-foreground">
-              Last updated: February 22, 2026
+              Last updated: February 23, 2026
             </p>
           </div>
 
@@ -37,7 +37,8 @@ const Terms = () => {
                 <p>
                   Ligam.tv is a unified creative platform that enables users to live stream, sell products 
                   through our integrated Shop, offer freelance Services, teach and enroll in Courses, 
-                  and engage with a global community of creators and viewers.
+                  and engage with a global community of creators and viewers. All platform tools and features 
+                  are provided free of charge to all users.
                 </p>
               </section>
 
@@ -51,19 +52,22 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold text-foreground mb-4">4. Subscription Plans</h2>
+                <h2 className="text-2xl font-semibold text-foreground mb-4">4. Free Platform Model</h2>
                 <p className="mb-3">
-                  Ligam.tv offers the following subscription tiers:
+                  Ligam.tv provides all tools and features completely free of charge. There are no subscription 
+                  tiers or paid plans. Every user has full access to:
                 </p>
                 <ul className="list-disc list-inside space-y-2">
-                  <li><strong className="text-foreground">Free</strong> — Basic streaming, 1 store product, 1 course, full service access.</li>
-                  <li><strong className="text-foreground">Ad-Free ($13/mo)</strong> — Ad-free viewing experience across all platform content.</li>
-                  <li><strong className="text-foreground">Creator ($15.99/mo)</strong> — HD streaming, up to 3 store products, up to 3 courses, stream analytics, and priority support.</li>
-                  <li><strong className="text-foreground">Pro ($24.99/mo)</strong> — 4K streaming, Go Live access, paid live streaming, unlimited products and courses, featured placement, and dedicated support.</li>
+                  <li>Unlimited streaming (including HD &amp; 4K)</li>
+                  <li>Go Live and Paid Live Streaming capabilities</li>
+                  <li>Unlimited store products</li>
+                  <li>Unlimited courses</li>
+                  <li>Full freelance service access</li>
+                  <li>Stream analytics and all platform tools</li>
                 </ul>
                 <p className="mt-3">
-                  Subscriptions are billed monthly via Stripe. You may manage or cancel your subscription at any time 
-                  through the customer portal. Refunds are handled in accordance with our refund policy.
+                  Ligam.tv generates revenue through commission fees on successful transactions, 
+                  as outlined in Section 5.
                 </p>
               </section>
 
@@ -71,7 +75,7 @@ const Terms = () => {
                 <h2 className="text-2xl font-semibold text-foreground mb-4">5. Creator Monetization &amp; Platform Fees</h2>
                 <p className="mb-3">
                   Creators may earn revenue through multiple channels on the platform. Ligam.tv retains a platform 
-                  commission on each transaction as follows:
+                  commission on each successful transaction as follows:
                 </p>
                 <ul className="list-disc list-inside space-y-2">
                   <li><strong className="text-foreground">Shop / Store Sales</strong> — 20% platform fee (creator keeps 80%)</li>

@@ -233,14 +233,12 @@ const GoLive = () => {
                 </div>
 
                 {/* Paid Streaming Section - Pro Only */}
-                {tier === 'pro' && (
-                  <div className="space-y-4 p-4 rounded-xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-orange-500/5">
+                {true && (
+                  <div className="space-y-4 p-4 rounded-xl border-2 border-primary/30 bg-primary/5">
                     <div className="flex items-center gap-2">
-                      <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">
-                        <Crown className="w-3 h-3 mr-1" />
-                        Pro Feature
+                      <Badge className="bg-primary text-primary-foreground border-0">
+                        Paid Live Streaming
                       </Badge>
-                      <span className="text-sm font-medium text-foreground">Paid Live Streaming</span>
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -298,23 +296,6 @@ const GoLive = () => {
                   </div>
                 )}
 
-                {tier !== 'pro' && (
-                  <div className="p-4 rounded-xl border border-border bg-secondary/30">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Lock className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm font-medium text-foreground">Paid Streaming</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Upgrade to Pro to monetize your live streams with paid access
-                    </p>
-                    <Link to="/pricing">
-                      <Button size="sm" variant="outline" className="w-full">
-                        <Crown className="w-4 h-4 mr-2 text-amber-500" />
-                        Upgrade to Pro
-                      </Button>
-                    </Link>
-                  </div>
-                )}
 
                 {!streamKey && (
                   <Button 

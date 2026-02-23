@@ -207,9 +207,9 @@ const Dashboard = () => {
             <Card className={`p-6 border-border ${currentTier.bgColor}`}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-semibold text-foreground">Your Plan</h2>
-                <Badge className={`gap-1 ${tier === "pro" ? "bg-gradient-to-r from-amber-500 to-orange-500 text-primary-foreground border-0" : tier === "creator" ? "bg-gradient-to-r from-primary to-amber-400 text-primary-foreground border-0" : ""}`}>
+                <Badge className="gap-1">
                   <currentTier.icon className="h-3 w-3" />
-                  {currentTier.name}
+                  Free
                 </Badge>
               </div>
               
@@ -234,14 +234,6 @@ const Dashboard = () => {
                 ))}
               </div>
 
-              {tier !== "pro" && (
-                <Link to="/pricing">
-                  <Button variant="default" className="w-full gap-2">
-                    <Crown className="h-4 w-4" />
-                    {tier === "creator" ? "Upgrade to Pro" : "Upgrade Plan"}
-                  </Button>
-                </Link>
-              )}
             </Card>
 
             {/* Quick Actions */}

@@ -235,44 +235,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        {/* Show tier limit info */}
-        {maxProducts !== Infinity && (
-          <div className="flex items-center justify-between text-sm bg-muted/50 rounded-lg p-3 border">
-            <div className="flex items-center gap-2">
-              <Crown className="h-4 w-4 text-primary" />
-              <span>
-                {currentCount} / {maxProducts} products used
-              </span>
-            </div>
-            {remainingSlots > 0 ? (
-              <span className="text-muted-foreground">
-                {remainingSlots} slot{remainingSlots !== 1 ? "s" : ""} remaining
-              </span>
-            ) : (
-              <Link to="/pricing">
-                <Button size="sm" variant="outline" className="h-7 text-xs">
-                  Upgrade
-                </Button>
-              </Link>
-            )}
-          </div>
-        )}
 
-        {/* Show upgrade warning if at limit */}
-        {!canAdd && (
-          <Alert variant="destructive" className="border-yellow-500/50 bg-yellow-500/10">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Product Limit Reached</AlertTitle>
-            <AlertDescription>
-              {getUpgradeMessage("product")}
-              <Link to="/pricing" className="block mt-2">
-                <Button size="sm" variant="outline">
-                  View Plans
-                </Button>
-              </Link>
-            </AlertDescription>
-          </Alert>
-        )}
 
         <ScrollArea className="flex-1 pr-4 -mr-4">
           <form id="add-product-form" onSubmit={handleSubmit} className="space-y-5 pr-4">

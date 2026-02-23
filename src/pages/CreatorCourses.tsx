@@ -139,49 +139,16 @@ const CreatorCourses = () => {
       <main className="py-8">
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            {/* Usage Card */}
+            {/* Courses Info */}
             <Card className="mb-8 border-border bg-card">
               <CardContent className="p-6">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="font-semibold text-foreground text-lg">Course Limit</span>
-                      <Badge variant="outline" className="capitalize">{currentTier} Plan</Badge>
-                    </div>
-                    <Progress value={usagePercentage} className="h-3 mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      {coursesUsed} of {courseLimit === Infinity ? "unlimited" : courseLimit} courses used
-                    </p>
-                  </div>
-                  
-                  {!canAddCourse && (
-                    <div className="flex items-center gap-4 p-4 bg-amber-500/10 rounded-lg border border-amber-500/20">
-                      <AlertTriangle className="w-6 h-6 text-amber-500 flex-shrink-0" />
-                      <div>
-                        <span className="font-medium text-foreground block">Course limit reached</span>
-                        <span className="text-sm text-muted-foreground">Upgrade to create more courses</span>
-                      </div>
-                      <Button variant="outline" onClick={() => navigate("/pricing")} className="gap-2 ml-auto">
-                        <Crown className="w-4 h-4" />
-                        Upgrade
-                      </Button>
-                    </div>
-                  )}
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="font-semibold text-foreground text-lg">Your Courses</span>
+                  <Badge variant="outline">Free — Unlimited</Badge>
                 </div>
-                
-                <div className="mt-4 pt-4 border-t border-border">
-                  <div className="flex flex-wrap gap-4 text-sm">
-                    <span className="text-muted-foreground">
-                      <strong className="text-foreground">Free:</strong> 1 course
-                    </span>
-                    <span className="text-muted-foreground">
-                      <strong className="text-foreground">Creator:</strong> 3 courses
-                    </span>
-                    <span className="text-muted-foreground">
-                      <strong className="text-foreground">Pro:</strong> Unlimited
-                    </span>
-                  </div>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  {coursesUsed} course{coursesUsed !== 1 ? "s" : ""} created — no limits, create as many as you want.
+                </p>
               </CardContent>
             </Card>
 
