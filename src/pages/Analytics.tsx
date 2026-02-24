@@ -4,16 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  TrendingDown,
-  Eye, 
-  Clock, 
+import {
+  Eye,
   Users,
-  MessageSquare,
   Heart,
+  DollarSign,
   Loader2,
   Video,
   ArrowLeft,
@@ -27,11 +22,10 @@ const Analytics = () => {
   const [timeRange, setTimeRange] = useState("7d");
   const navigate = useNavigate();
   const { user, profile } = useAuth();
-  
+
   const { data: stream, isLoading: streamLoading } = useUserStream(user?.id || "");
   const { totalThisMonth, giftEarnings, subEarnings } = useEarningsSummary();
-  
-  // Get follower count from profile
+
   const followerCount = profile?.follower_count || 0;
 
   useEffect(() => {
@@ -54,26 +48,10 @@ const Analytics = () => {
   }
 
   const stats = [
-    { 
-      label: "Total Views", 
-      value: stream?.total_views?.toLocaleString() || "0", 
-      icon: Eye 
-    },
-    { 
-      label: "Peak Viewers", 
-      value: stream?.peak_viewers?.toLocaleString() || "0", 
-      icon: Users 
-    },
-    { 
-      label: "Followers", 
-      value: followerCount.toString(), 
-      icon: Heart 
-    },
-    { 
-      label: "Earnings (This Month)", 
-      value: `$${totalThisMonth.toFixed(2)}`, 
-      icon: BarChart3 
-    },
+    { label: "Views", value: stream?.total_views?.toLocaleString() || "0", icon: Eye },
+    { label: "Peak", value: stream?.peak_viewers?.toLocaleString() || "0", icon: Users },
+    { label: "Followers", value: followerCount.toString(), icon: Heart },
+    { label: "Earnings", value: `$${totalThisMonth.toFixed(0)}`, icon: DollarSign },
   ];
 
   return (
@@ -81,21 +59,22 @@ const Analytics = () => {
       <Navbar />
 
       <section className="pt-28 pb-12 px-4">
-        <div className="container mx-auto">
+        <div className="container mx-auto max-w-2xl space-y-6">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
                 <ArrowLeft className="w-4 h-4" />
               </Button>
-              <h1 className="text-2xl font-display font-bold text-foreground">Analytics</h1>
+              <h1 className="text-lg font-semibold text-foreground">Analytics</h1>
             </div>
-            <div className="flex gap-2">
-              {["24h", "7d", "30d", "90d"].map((range) => (
+            <div className="flex gap-1">
+              {["24h", "7d", "30d"].map((range) => (
                 <Button
                   key={range}
-                  variant={timeRange === range ? "default" : "outline"}
+                  variant={timeRange === range ? "default" : "ghost"}
                   size="sm"
+                  className="h-7 text-xs px-2.5"
                   onClick={() => setTimeRange(range)}
                 >
                   {range}
@@ -104,100 +83,64 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {stats.map((stat, index) => (
-              <Card key={index} className="p-6 bg-card border-border">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <stat.icon className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-foreground mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </Card>
+          {/* Stats */}
+          <div className="grid grid-cols-4 gap-3">
+            {stats.map((stat) => (
+              <div key={stat.label} className="rounded-lg border border-border p-3 text-center">
+                <stat.icon className="w-4 h-4 text-primary mx-auto mb-1" />
+                <p className="text-base font-semibold text-foreground">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+              </div>
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Chart Placeholder */}
-            <Card className="p-6 bg-card border-border lg:col-span-2">
-              <h2 className="text-xl font-semibold text-foreground mb-6">Views Over Time</h2>
-              {stream ? (
-                <div className="aspect-[2/1] rounded-xl bg-secondary/50 flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <BarChart3 className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p>Analytics data will populate as you stream</p>
-                  </div>
-                </div>
-              ) : (
-                <div className="aspect-[2/1] rounded-xl bg-secondary/50 flex items-center justify-center">
-                  <div className="text-center text-muted-foreground">
-                    <Video className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                    <p>Start streaming to see your analytics</p>
-                  </div>
-                </div>
-              )}
-            </Card>
-
-            {/* Earnings Breakdown */}
-            <Card className="p-6 bg-card border-border">
-              <h2 className="text-xl font-semibold text-foreground mb-6">Earnings Breakdown</h2>
-              <div className="space-y-4">
-                {[
-                  { label: "Gifts", amount: giftEarnings },
-                  { label: "Subscriptions", amount: subEarnings },
-                  { label: "Total", amount: totalThisMonth },
-                ].map((item, index) => (
-                  <div key={index} className="flex justify-between items-center">
-                    <span className="text-muted-foreground">{item.label}</span>
-                    <span className={`font-semibold ${index === 2 ? 'text-primary' : 'text-foreground'}`}>
-                      ${item.amount.toFixed(2)}
-                    </span>
-                  </div>
-                ))}
+          {/* Earnings Breakdown */}
+          <div className="rounded-lg border border-border p-4 space-y-3">
+            <h2 className="text-sm font-medium text-foreground">Earnings Breakdown</h2>
+            {[
+              { label: "Gifts", amount: giftEarnings },
+              { label: "Subscriptions", amount: subEarnings },
+            ].map((item) => (
+              <div key={item.label} className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">{item.label}</span>
+                <span className="font-medium text-foreground">${item.amount.toFixed(2)}</span>
               </div>
-            </Card>
+            ))}
+            <div className="border-t border-border pt-2 flex justify-between items-center text-sm">
+              <span className="text-muted-foreground font-medium">Total</span>
+              <span className="font-semibold text-primary">${totalThisMonth.toFixed(2)}</span>
+            </div>
           </div>
 
           {/* Stream Info */}
           {stream && (
-            <Card className="p-6 bg-card border-border mt-8">
-              <h2 className="text-xl font-semibold text-foreground mb-6">Current Stream</h2>
-              <div className="grid md:grid-cols-3 gap-6">
+            <div className="rounded-lg border border-border p-4 space-y-3">
+              <h2 className="text-sm font-medium text-foreground">Current Stream</h2>
+              <div className="grid grid-cols-3 gap-3 text-sm">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Title</p>
-                  <p className="font-medium text-foreground">{stream.title}</p>
+                  <p className="text-xs text-muted-foreground">Title</p>
+                  <p className="font-medium text-foreground truncate">{stream.title}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Status</p>
+                  <p className="text-xs text-muted-foreground">Status</p>
                   <p className={`font-medium ${stream.is_live ? 'text-green-500' : 'text-muted-foreground'}`}>
                     {stream.is_live ? 'Live' : 'Offline'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Current Viewers</p>
+                  <p className="text-xs text-muted-foreground">Viewers</p>
                   <p className="font-medium text-foreground">{stream.viewer_count || 0}</p>
                 </div>
               </div>
-            </Card>
+            </div>
           )}
 
           {!stream && (
-            <Card className="p-8 bg-card border-border mt-8 text-center">
-              <Video className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <h3 className="text-xl font-semibold text-foreground mb-2">No Stream Yet</h3>
-              <p className="text-muted-foreground mb-6">
-                Create your first stream to start tracking your analytics
-              </p>
-              <Button onClick={() => navigate("/go-live")}>
-                Go Live
-              </Button>
-            </Card>
+            <div className="rounded-lg border border-border p-8 text-center">
+              <Video className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-50" />
+              <p className="text-sm text-muted-foreground mb-4">No stream yet — start streaming to track analytics</p>
+              <Button size="sm" onClick={() => navigate("/go-live")}>Go Live</Button>
+            </div>
           )}
         </div>
       </section>
