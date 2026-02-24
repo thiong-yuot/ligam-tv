@@ -1,62 +1,75 @@
 
 
-# SRS Streaming Server Integration Plan
+# SRS Streaming Integration (No Server Required Yet)
 
 ## Overview
-Complete the streaming pipeline by configuring the SRS RTMP webhook integration and updating the Go Live page with proper server URL handling. This will make streams fully functional once you deploy an SRS server.
+Wire up the full SRS streaming pipeline with a configurable placeholder. Everything will work the moment you point it at a real SRS server -- no code changes needed at that point, just set one secret value.
 
 ## What Changes
 
 ### 1. Update `rtmp-webhook` edge function
-- The existing function already handles `on_publish`, `on_publish_done`, `on_play`, `on_play_done` actions -- this is solid.
-- **Add**: When a stream goes live (`on_publish`), automatically set the `hls_url` field on the stream record so viewers can watch. SRS generates HLS at a predictable path: `http://<srs-server>:8080/live/<stream_key>.m3u8`.
-- **Add**: When a stream stops (`on_publish_done`), clear the `hls_url` field.
+- On `on_publish`: build the HLS URL using `SRS_SERVER_HOST` env var (falls back to `localhost:8080`) and save it to the `hls_url` column, plus fetch the `stream_key` from `stream_credentials` to construct the correct path
+- On `on_publish_done`: clear `hls_url` and set `is_live = false`
+- This means the webhook is fully automated -- SRS calls it, and viewers see the stream appear
 
 ### 2. Update `create-mux-stream` edge function
-- Rename references from "Mux" to "SRS" in log messages (cosmetic clarity).
-- Keep the function name as-is for API compatibility.
+- Read `SRS_SERVER_HOST` from env to construct the real RTMP URL (`rtmp://<host>:1935/live`) instead of the placeholder
+- Update log prefixes from `[CREATE-STREAM]` (cosmetic)
+- Falls back to `your-srs-server` if the secret isn't set yet
 
 ### 3. Update `GoLive.tsx`
-- Add an input field or environment-driven config so the RTMP URL isn't hardcoded to `your-srs-server`.
-- Save `is_paid` and `access_price` to the stream record when the creator sets up a paid stream.
-- After generating the key, show clearer instructions for connecting OBS/Streamlabs.
+- Save `is_paid`, `access_price`, and `preview_video_url` to the stream record when creating/updating
+- Add OBS/Streamlabs setup instructions below the credentials
+- Show a note that the RTMP server needs to be configured if it still shows the placeholder URL
 
-### 4. Update `StreamView.tsx`
-- The HLS player already reads `stream.hls_url` -- no major changes needed.
-- Add auto-refresh polling on the stream query (every 5s) so viewers see the stream go live automatically.
+### 4. Update `useStreams.tsx`
+- Add `refetchInterval: 5000` to `useStream` hook so the stream page automatically detects when a stream goes live (picks up `is_live` and `hls_url` changes from the webhook)
 
-### 5. Update `useStreams.tsx`
-- Add `refetchInterval` to `useStream` when the stream is not yet live, so it picks up the `is_live` and `hls_url` changes from the webhook.
+### 5. Update `StreamView.tsx`
+- Add polling on the stream query (5s) so viewers see the stream go live without refreshing
+
+## When You Get a Server
+Later, you just need to set one secret (`SRS_SERVER_HOST`) with your server's hostname (e.g., `stream.ligam.tv`) and everything connects automatically.
 
 ---
 
 ## Technical Details
 
-### rtmp-webhook changes (edge function)
-```text
-on_publish handler:
-  - Build HLS URL from stream_key: `http://<SRS_HOST>:8080/live/<stream_key>.m3u8`
-  - Update streams table: SET hls_url = <built URL>, is_live = true
+### rtmp-webhook changes
 
-on_publish_done handler:
-  - Update streams table: SET hls_url = NULL, is_live = false
+```text
+on_publish handler additions:
+  1. Read SRS_SERVER_HOST from Deno.env (fallback: "localhost:8080")
+  2. Fetch stream_key from stream_credentials table for this stream
+  3. Build HLS URL: http://<SRS_SERVER_HOST>/live/<stream_key>.m3u8
+  4. UPDATE streams SET hls_url = <url>, is_live = true, started_at = now()
+
+on_publish_done handler additions:
+  1. UPDATE streams SET hls_url = NULL, is_live = false, ended_at = now()
 ```
 
-The SRS server hostname will be read from a new secret `SRS_SERVER_HOST` so it's configurable without code changes.
+### create-mux-stream changes
+
+```text
+  1. Read SRS_SERVER_HOST from Deno.env (fallback: "your-srs-server")
+  2. Build RTMP URL: rtmp://<SRS_SERVER_HOST>:1935/live
+  3. Use this URL when inserting/upserting stream_credentials
+```
 
 ### GoLive.tsx changes
-- When creating/updating a stream, also save `is_paid` and `access_price` fields.
-- Display the RTMP URL from credentials (already done) with better copy UX.
+- Pass `is_paid`, `access_price`, and `preview_video_url` when calling `createStream.mutateAsync()`
+- After stream creation, also update the stream record with paid settings via a direct Supabase update
+- Add a help section with OBS setup steps
 
 ### useStreams.tsx changes
-- `useStream` hook: add `refetchInterval: 5000` when `stream.is_live === false` to auto-detect when stream goes live.
+- `useStream` hook: add `refetchInterval: 5000` to auto-detect live status changes
 
-### New Secret Required
-- `SRS_SERVER_HOST` -- the hostname/IP of your SRS server (e.g., `stream.ligam.tv` or `123.45.67.89`). This will be used by the webhook to construct HLS URLs and by the stream creation function to provide the correct RTMP endpoint.
+### StreamView.tsx changes
+- The `useStream` call already exists at line 66 -- the refetchInterval in the hook handles this automatically
 
 ### Files to modify
-1. `supabase/functions/rtmp-webhook/index.ts` -- add HLS URL generation
-2. `supabase/functions/create-mux-stream/index.ts` -- use SRS_SERVER_HOST secret for RTMP URL
-3. `src/pages/GoLive.tsx` -- save paid stream settings to DB
-4. `src/hooks/useStreams.tsx` -- add polling for live status detection
+1. `supabase/functions/rtmp-webhook/index.ts`
+2. `supabase/functions/create-mux-stream/index.ts`
+3. `src/pages/GoLive.tsx`
+4. `src/hooks/useStreams.tsx`
 
