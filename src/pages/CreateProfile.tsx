@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { User, Camera, Palette, Loader2, Check, Globe, ArrowRight } from "lucide-react";
+import { User, Camera, Palette, Loader2, Check, Globe, ArrowRight, ArrowLeft } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 const CreateProfile = () => {
@@ -111,7 +111,13 @@ const CreateProfile = () => {
 
       <section className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-2xl">
-          {/* Progress Bar */}
+          {/* Back + Progress Bar */}
+          <div className="flex items-center gap-2 mb-4">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
+            <h1 className="text-lg font-semibold text-foreground">Create Profile</h1>
+          </div>
           <div className="mb-8">
             <div className="flex justify-between text-sm mb-2">
               <span className="text-muted-foreground">Step {step} of 3</span>
