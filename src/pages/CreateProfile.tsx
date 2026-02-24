@@ -52,9 +52,9 @@ const CreateProfile = () => {
         setBio(profile.bio || "");
         if (profile.website) setWebsite(profile.website);
         if (profile.avatar_url) setAvatarUrl(profile.avatar_url);
-        if ((profile as any).university) setUniversity((profile as any).university);
-        if ((profile as any).degree) setDegree((profile as any).degree);
-        if ((profile as any).field_of_study) setFieldOfStudy((profile as any).field_of_study);
+        if (profile.university) setUniversity(profile.university);
+        if (profile.degree) setDegree(profile.degree);
+        if (profile.field_of_study) setFieldOfStudy(profile.field_of_study);
       }
       setChecking(false);
     };
@@ -68,9 +68,9 @@ const CreateProfile = () => {
       setBio(profile.bio || "");
       setWebsite(profile.website || "");
       setAvatarUrl(profile.avatar_url || null);
-      setUniversity((profile as any).university || "");
-      setDegree((profile as any).degree || "");
-      setFieldOfStudy((profile as any).field_of_study || "");
+      setUniversity(profile.university || "");
+      setDegree(profile.degree || "");
+      setFieldOfStudy(profile.field_of_study || "");
     }
     setEditing(true);
   };

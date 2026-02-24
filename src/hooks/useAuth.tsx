@@ -15,6 +15,9 @@ interface Profile {
   follower_count: number | null;
   following_count: number | null;
   total_views: number | null;
+  university: string | null;
+  degree: string | null;
+  field_of_study: string | null;
 }
 
 interface AuthContextType {
