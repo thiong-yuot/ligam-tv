@@ -34,7 +34,7 @@ const BecomeSellerDialog = ({ open, onOpenChange }: BecomeSellerDialogProps) => 
     
     toast.success("Welcome! You can now list your products.");
     onOpenChange(false);
-    navigate("/seller/dashboard");
+    navigate("/dashboard?tab=products");
   };
 
   return (

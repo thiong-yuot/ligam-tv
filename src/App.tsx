@@ -76,7 +76,7 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/live" element={<Browse />} />
                 <Route path="/freelance" element={<Freelance />} />
-                <Route path="/freelance/dashboard" element={<FreelancerDashboard />} />
+                <Route path="/freelance/dashboard" element={<Dashboard />} />
                 <Route path="/freelance/:id" element={<FreelancerProfile />} />
                 <Route path="/technology" element={<Technology />} />
                 <Route path="/shop" element={<Shop />} />
@@ -103,11 +103,11 @@ const App = () => (
                 
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/notifications" element={<Notifications />} />
-                <Route path="/seller/dashboard" element={<SellerDashboard />} />
+                <Route path="/seller/dashboard" element={<Dashboard />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
                 <Route path="/learn/:courseId" element={<LearnCourse />} />
-                <Route path="/creator/courses" element={<CreatorCourses />} />
+                <Route path="/creator/courses" element={<Dashboard />} />
                 <Route path="/creator/courses/:courseId/edit" element={<EditCourse />} />
                 <Route path="/my-learning" element={<MyLearning />} />
                 

@@ -61,21 +61,21 @@ const CTASection = () => {
               <span>Start Streaming</span>
             </button>
             <button 
-              onClick={() => handleAuthLink("/seller/dashboard")}
+              onClick={() => handleAuthLink("/dashboard?tab=products")}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <ShoppingBag className="w-4 h-4" />
               <span>Sell Products</span>
             </button>
             <button 
-              onClick={() => handleAuthLink("/freelance/dashboard")}
+              onClick={() => handleAuthLink("/dashboard?tab=freelance")}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <Users className="w-4 h-4" />
               <span>Offer Services</span>
             </button>
             <button 
-              onClick={() => handleAuthLink("/creator/courses")}
+              onClick={() => handleAuthLink("/dashboard?tab=courses")}
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
             >
               <GraduationCap className="w-4 h-4" />

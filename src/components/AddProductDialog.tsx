@@ -206,7 +206,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
       toast.success("Product added successfully!", {
         action: {
           label: "View Dashboard",
-          onClick: () => navigate("/seller/dashboard"),
+          onClick: () => navigate("/dashboard?tab=products"),
         },
       });
       queryClient.invalidateQueries({ queryKey: ["products"] });
