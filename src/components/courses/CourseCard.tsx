@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, Clock, PlayCircle, CheckCircle, TrendingUp } from "lucide-react";
+import { Users, Clock, PlayCircle, CheckCircle, TrendingUp, GraduationCap } from "lucide-react";
 import { Course } from "@/hooks/useCourses";
 import { useCreatorProfile } from "@/hooks/useCreatorProfile";
 
@@ -74,6 +74,12 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
               <AvatarFallback className="text-[8px] bg-primary/10 text-primary">{instructor.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-[10px] text-muted-foreground truncate">{instructor.name}</span>
+            {creatorProfile?.university && (
+              <span className="text-[10px] text-muted-foreground truncate flex items-center gap-0.5">
+                <GraduationCap className="w-2.5 h-2.5" />
+                {creatorProfile.university}
+              </span>
+            )}
           </div>
         )}
         <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">

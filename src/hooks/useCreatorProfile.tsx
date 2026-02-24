@@ -11,6 +11,9 @@ export interface CreatorProfile {
   is_verified: boolean;
   follower_count: number;
   total_views: number;
+  university: string | null;
+  degree: string | null;
+  field_of_study: string | null;
 }
 
 export const useCreatorProfile = (userId: string | undefined) => {
