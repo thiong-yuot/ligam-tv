@@ -3,27 +3,18 @@ import { useNavigate, Link } from "react-router-dom";
 import MyContentManager from "@/components/dashboard/MyContentManager";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-
-
 import { useEarningsSummary } from "@/hooks/useEarnings";
 import { useStreams } from "@/hooks/useStreams";
-import { 
-  LayoutDashboard, 
-  Video, 
-  Users, 
-  DollarSign, 
+import {
+  Video,
+  Users,
+  DollarSign,
   Eye,
   Clock,
-  Gift,
   Play,
   Loader2,
   BarChart3,
-  TrendingUp,
-  ShoppingBag,
-  Briefcase,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -31,36 +22,18 @@ const Dashboard = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
-  
-  const { 
-    totalThisMonth, 
-    giftEarnings, 
-    subEarnings, 
-    adEarnings, 
-    storeEarnings, 
-    serviceEarnings,
-  } = useEarningsSummary();
-  const { data: allStreams = [] } = useStreams();
 
-  // Get user's streams
+  const { totalThisMonth } = useEarningsSummary();
+  const { data: allStreams = [] } = useStreams();
   const userStreams = allStreams.filter(s => s.user_id === userId);
 
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
+      if (!session) { navigate("/auth"); return; }
       setUserId(session.user.id);
-
-      // Fetch profile
       const { data: profileData } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
-      
+        .from("profiles").select("*").eq("user_id", session.user.id).maybeSingle();
       setProfile(profileData);
       setChecking(false);
     };
@@ -70,190 +43,102 @@ const Dashboard = () => {
   if (checking) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
   }
 
-  // Calculate real stats
   const totalViews = userStreams.reduce((sum, s) => sum + (s.total_views || 0), 0);
-  const totalWatchTime = userStreams.reduce((sum, s) => sum + (s.duration_seconds || 0), 0);
-  const watchTimeHours = Math.floor(totalWatchTime / 3600);
+  const watchTimeHours = Math.floor(userStreams.reduce((sum, s) => sum + (s.duration_seconds || 0), 0) / 3600);
   const followerCount = profile?.follower_count || 0;
-
-  const stats = [
-    { label: "Total Views", value: totalViews.toLocaleString(), icon: Eye },
-    { label: "Followers", value: followerCount.toLocaleString(), icon: Users },
-    { label: "Watch Time", value: `${watchTimeHours}h`, icon: Clock },
-    { label: "Earnings", value: `$${totalThisMonth.toFixed(2)}`, icon: DollarSign },
-  ];
-
-  const quickActions = [
-    { label: "Go Live", icon: Play, path: "/go-live", primary: true },
-    { label: "Analytics", icon: BarChart3, path: "/analytics" },
-    { label: "Monetization", icon: DollarSign, path: "/monetization" },
-    
-  ];
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="pt-28 pb-12 px-4 md:px-6 lg:px-8">
-        <div className="w-full max-w-[1920px] mx-auto">
+      <div className="pt-20 pb-8 px-4">
+        <div className="container mx-auto max-w-3xl space-y-6">
+
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-                <LayoutDashboard className="w-4 h-4" />
-                Creator Dashboard
-              </div>
-              <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                Welcome back, <span className="text-primary">{profile?.display_name || "Creator"}</span>
-              </h1>
-            </div>
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-semibold text-foreground">
+              Hi, {profile?.display_name || "Creator"}
+            </h1>
             <Link to="/go-live">
-              <Button variant="default" size="lg" className="glow gap-2">
-                <Video className="w-5 h-5" />
-                Go Live Now
+              <Button size="sm" className="gap-1.5">
+                <Play className="w-3.5 h-3.5" />
+                Go Live
               </Button>
             </Link>
           </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {stats.map((stat, index) => (
-              <Card key={index} className="p-6 bg-card border-border hover:border-primary/50 transition-colors">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <stat.icon className="w-6 h-6 text-primary" />
-                  </div>
-                </div>
-                <div className="text-2xl font-bold text-foreground mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </Card>
+          {/* Stats Row */}
+          <div className="grid grid-cols-4 gap-3">
+            {[
+              { label: "Views", value: totalViews.toLocaleString(), icon: Eye },
+              { label: "Followers", value: followerCount.toLocaleString(), icon: Users },
+              { label: "Watch Time", value: `${watchTimeHours}h`, icon: Clock },
+              { label: "Earnings", value: `$${totalThisMonth.toFixed(0)}`, icon: DollarSign },
+            ].map((stat) => (
+              <div key={stat.label} className="rounded-lg border border-border p-3 text-center">
+                <stat.icon className="w-4 h-4 text-primary mx-auto mb-1" />
+                <p className="text-base font-semibold text-foreground">{stat.value}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
+              </div>
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-
-            {/* Quick Actions */}
-            <Card className="p-6 bg-card border-border">
-              <h2 className="text-xl font-semibold text-foreground mb-6">Quick Actions</h2>
-              <div className="grid grid-cols-2 gap-3">
-                {quickActions.map((action, index) => (
-                  <Link key={index} to={action.path}>
-                    <Button 
-                      variant={action.primary ? "default" : "outline"} 
-                      className={`w-full h-auto py-4 flex-col gap-2 relative`}
-                    >
-                      <action.icon className="w-5 h-5" />
-                      <span className="text-sm">{action.label}</span>
-                    </Button>
-                  </Link>
-                ))}
-              </div>
-            </Card>
-
-            {/* Recent Streams */}
-            <Card className="p-6 bg-card border-border">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-foreground">Recent Streams</h2>
-                <Link to="/analytics" className="text-sm text-primary hover:underline">
-                  View all
-                </Link>
-              </div>
-              <div className="space-y-4">
-                {userStreams.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Video className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-                    <p className="text-muted-foreground text-sm">No streams yet</p>
-                    <Link to="/go-live">
-                      <Button variant="outline" size="sm" className="mt-3">
-                        Start Your First Stream
-                      </Button>
-                    </Link>
-                  </div>
-                ) : (
-                  userStreams.slice(0, 3).map((stream) => (
-                    <div 
-                      key={stream.id} 
-                      className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors"
-                    >
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Video className="w-5 h-5 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-foreground text-sm truncate">
-                          {stream.title}
-                        </h3>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Eye className="w-3 h-3" />
-                            {(stream.total_views || 0).toLocaleString()}
-                          </span>
-                          <span>{stream.created_at ? new Date(stream.created_at).toLocaleDateString() : ""}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </Card>
+          {/* Quick Links */}
+          <div className="flex gap-2">
+            {[
+              { label: "Analytics", icon: BarChart3, path: "/analytics" },
+              { label: "Monetization", icon: DollarSign, path: "/monetization" },
+            ].map((action) => (
+              <Link key={action.label} to={action.path} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full gap-1.5">
+                  <action.icon className="w-3.5 h-3.5" />
+                  {action.label}
+                </Button>
+              </Link>
+            ))}
           </div>
 
-          {/* Earnings Overview */}
-          <Card className="p-6 bg-card border-border mt-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Earnings Overview</h2>
-              <Link to="/monetization" className="text-sm text-primary hover:underline">
-                View details
-              </Link>
+          {/* Recent Streams */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-foreground">Recent Streams</p>
+              <Link to="/analytics" className="text-xs text-primary hover:underline">View all</Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Gift className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-xl font-bold text-foreground">${giftEarnings.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Tips/Gifts</div>
+            {userStreams.length === 0 ? (
+              <div className="text-center py-6 rounded-lg border border-border">
+                <Video className="w-8 h-8 mx-auto mb-2 text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground">No streams yet</p>
+                <Link to="/go-live">
+                  <Button variant="outline" size="sm" className="mt-2">Start Streaming</Button>
+                </Link>
               </div>
-              <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Users className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-xl font-bold text-foreground">${subEarnings.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Subscriptions</div>
+            ) : (
+              <div className="space-y-1.5">
+                {userStreams.slice(0, 3).map((stream) => (
+                  <div key={stream.id} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+                    <Video className="w-4 h-4 text-primary shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{stream.title}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-0.5"><Eye className="w-3 h-3" />{(stream.total_views || 0).toLocaleString()}</span>
+                        <span>{stream.created_at ? new Date(stream.created_at).toLocaleDateString() : ""}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <TrendingUp className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-xl font-bold text-foreground">${adEarnings.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Ad Revenue</div>
-              </div>
-              <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <ShoppingBag className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-xl font-bold text-foreground">${storeEarnings.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Store Sales</div>
-              </div>
-              <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Briefcase className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-xl font-bold text-foreground">${serviceEarnings.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Services</div>
-              </div>
-              <div className="text-center p-4 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5">
-                <DollarSign className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-xl font-bold text-primary">${totalThisMonth.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Total Net</div>
-              </div>
-            </div>
-          </Card>
+            )}
+          </div>
 
-          {/* My Content Manager */}
+          {/* Content Manager */}
           <MyContentManager />
         </div>
-      </section>
-
-      <Footer />
+      </div>
     </div>
   );
 };
