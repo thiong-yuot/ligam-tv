@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Users, Eye, MessageCircle, Briefcase } from "lucide-react";
+import { CheckCircle, Users, Eye, MessageCircle, Briefcase, GraduationCap } from "lucide-react";
 import { CreatorProfile } from "@/hooks/useCreatorProfile";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -76,6 +76,17 @@ const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 
               </Badge>
             )}
             
+            {((creator as any).university || (creator as any).degree) && (
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-1">
+                <GraduationCap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                <span className="truncate">
+                  {(creator as any).degree && `${(creator as any).degree}`}
+                  {(creator as any).field_of_study && ` in ${(creator as any).field_of_study}`}
+                  {(creator as any).university && ` — ${(creator as any).university}`}
+                </span>
+              </div>
+            )}
+
             {creator.bio && (
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {creator.bio}
