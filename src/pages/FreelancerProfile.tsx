@@ -220,7 +220,7 @@ const FreelancerProfile = () => {
                   ) : (
                     <div className="grid gap-4 md:grid-cols-2">
                       {services.map((service) => (
-                        <Card key={service.id} className="hover:border-primary/50 transition-colors">
+                        <Card key={service.id} className="hover:border-primary/50 transition-colors cursor-pointer group">
                           <CardHeader className="pb-2">
                             <CardTitle className="text-lg">{service.title}</CardTitle>
                             {service.category && (
@@ -233,7 +233,7 @@ const FreelancerProfile = () => {
                                 {service.description}
                               </p>
                             )}
-                            <div className="flex items-center justify-between">
+                            <div className="flex items-center justify-between mb-4">
                               <div className="flex items-center gap-1 font-bold text-xl text-primary">
                                 <DollarSign className="w-5 h-5" />
                                 {service.price}
@@ -243,6 +243,18 @@ const FreelancerProfile = () => {
                                 {service.delivery_days} days
                               </div>
                             </div>
+                            {freelancer.user_id && (
+                              <ContactFreelancerDialog
+                                freelancerId={freelancer.id}
+                                freelancerUserId={freelancer.user_id}
+                                freelancerName={freelancer.name}
+                              >
+                                <Button className="w-full" size="sm">
+                                  <MessageCircle className="w-4 h-4 mr-2" />
+                                  Contact to Order
+                                </Button>
+                              </ContactFreelancerDialog>
+                            )}
                           </CardContent>
                         </Card>
                       ))}
