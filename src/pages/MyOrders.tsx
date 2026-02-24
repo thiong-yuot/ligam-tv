@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { useMyOrders } from "@/hooks/useOrders";
 import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Package, ShoppingBag, ArrowLeft, Clock, CheckCircle, Truck, XCircle } from "lucide-react";
+import { Package, ShoppingBag, ArrowLeft, Clock, CheckCircle, Truck, XCircle, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const statusConfig: Record<string, { label: string; icon: typeof Clock; className: string }> = {
   pending: { label: "Pending", icon: Clock, className: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20" },
@@ -19,6 +22,26 @@ const statusConfig: Record<string, { label: string; icon: typeof Clock; classNam
 const MyOrders = () => {
   const { user } = useAuth();
   const { data: orders, isLoading } = useMyOrders();
+  const [downloading, setDownloading] = useState<string | null>(null);
+
+  const handleDownload = async (productId: string) => {
+    setDownloading(productId);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await supabase.functions.invoke("download-digital-product", {
+        body: { productId },
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (response.error) throw new Error(response.error.message);
+      if (response.data?.url) {
+        window.open(response.data.url, "_blank");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Download failed");
+    } finally {
+      setDownloading(null);
+    }
+  };
 
   if (!user) {
     return (
@@ -130,6 +153,25 @@ const MyOrders = () => {
                             <p className="text-xs text-muted-foreground">Tracking</p>
                             <p className="text-xs text-primary font-mono font-medium">{order.tracking_number}</p>
                           </div>
+                        </div>
+                      )}
+                      {/* Download button for digital products */}
+                      {product?.product_type === "digital" && product?.digital_file_url && order.product_id && (
+                        <div className="mt-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-8 text-xs gap-1.5"
+                            disabled={downloading === order.product_id}
+                            onClick={() => handleDownload(order.product_id!)}
+                          >
+                            {downloading === order.product_id ? (
+                              <Loader2 className="w-3 h-3 animate-spin" />
+                            ) : (
+                              <Download className="w-3 h-3" />
+                            )}
+                            Download File
+                          </Button>
                         </div>
                       )}
                     </div>

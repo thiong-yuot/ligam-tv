@@ -37,7 +37,7 @@ export const useMyOrders = () => {
       
       const { data, error } = await supabase
         .from("orders")
-        .select("*, products(id, name, image_url, price)")
+        .select("*, products(id, name, image_url, price, product_type, digital_file_url)")
         .eq("user_id", session.session.user.id)
         .order("created_at", { ascending: false });
       

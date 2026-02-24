@@ -38,6 +38,7 @@ import {
   Plus,
   Check,
   Image as ImageIcon,
+  FileDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +69,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const additionalInputRef = useRef<HTMLInputElement>(null);
+  const digitalFileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -82,6 +84,9 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
   const [productType, setProductType] = useState<"digital" | "physical">("digital");
   const [additionalImages, setAdditionalImages] = useState<{ url: string; preview: string }[]>([]);
   const [additionalUploading, setAdditionalUploading] = useState(false);
+  const [digitalFilePath, setDigitalFilePath] = useState("");
+  const [digitalFileName, setDigitalFileName] = useState("");
+  const [digitalFileUploading, setDigitalFileUploading] = useState(false);
 
   const maxProducts = getMaxProducts();
   const canAdd = featureLoading ? true : canAddProduct();
@@ -97,6 +102,8 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     setStockQuantity("999");
     setProductType("digital");
     setAdditionalImages([]);
+    setDigitalFilePath("");
+    setDigitalFileName("");
   };
 
   const uploadImage = async (file: File): Promise<{ url: string; preview: string } | null> => {
@@ -177,6 +184,35 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
     setAdditionalImages(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleDigitalFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error("File must be less than 50MB");
+      return;
+    }
+    setDigitalFileUploading(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const filePath = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${fileExt}`;
+      const { error } = await supabase.storage.from("digital-products").upload(filePath, file);
+      if (error) throw error;
+      setDigitalFilePath(filePath);
+      setDigitalFileName(file.name);
+      toast.success("File uploaded");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to upload file");
+    } finally {
+      setDigitalFileUploading(false);
+    }
+  };
+
+  const removeDigitalFile = () => {
+    setDigitalFilePath("");
+    setDigitalFileName("");
+    if (digitalFileInputRef.current) digitalFileInputRef.current.value = "";
+  };
+
   const totalImages = (imageUrl ? 1 : 0) + additionalImages.length;
   const physicalImagesValid = productType === "physical" ? totalImages >= MIN_PHYSICAL_IMAGES : true;
   const digitalImageValid = productType === "digital" ? !!imageUrl : true;
@@ -214,6 +250,7 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
         is_active: true,
         product_type: productType,
         additional_images: additionalImages.map(img => img.url),
+        digital_file_url: productType === "digital" && digitalFilePath ? digitalFilePath : null,
       } as any);
 
       if (error) throw error;
@@ -362,6 +399,49 @@ const AddProductDialog = ({ open, onOpenChange }: AddProductDialogProps) => {
                 {!physicalImagesValid && (
                   <p className="text-xs text-destructive">Upload at least {MIN_PHYSICAL_IMAGES} images total for physical products</p>
                 )}
+              </div>
+            )}
+
+            {/* Digital File Upload */}
+            {productType === "digital" && (
+              <div className="space-y-2">
+                <Label className="flex items-center gap-1.5">
+                  <FileDown className="w-3.5 h-3.5" />
+                  Downloadable File
+                </Label>
+                <p className="text-xs text-muted-foreground">Upload the file buyers will receive after purchase (max 50MB)</p>
+                {digitalFileName ? (
+                  <div className="flex items-center gap-2 p-3 rounded-lg border border-border bg-secondary/50">
+                    <FileDown className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="text-sm text-foreground truncate flex-1">{digitalFileName}</span>
+                    <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={removeDigitalFile}>
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => digitalFileInputRef.current?.click()}
+                    disabled={digitalFileUploading}
+                    className="w-full flex items-center justify-center gap-2 p-4 rounded-lg border-2 border-dashed border-border hover:border-primary hover:bg-primary/5 transition-all"
+                  >
+                    {digitalFileUploading ? (
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Upload file (ZIP, PDF, etc.)</span>
+                      </>
+                    )}
+                  </button>
+                )}
+                <input
+                  ref={digitalFileInputRef}
+                  type="file"
+                  onChange={handleDigitalFileUpload}
+                  className="hidden"
+                  accept=".zip,.rar,.pdf,.png,.jpg,.jpeg,.mp3,.wav,.mp4,.psd,.ai,.eps,.svg,.ttf,.otf,.woff,.woff2"
+                />
               </div>
             )}
 
