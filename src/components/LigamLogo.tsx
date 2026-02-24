@@ -6,7 +6,7 @@ const LigamLogo = ({ className = "w-8 h-8" }: { className?: string }) => {
       <img
         src={ligamLogo}
         alt="Ligam Logo"
-        className="w-full h-full object-contain"
+        className="w-full h-full object-contain dark:invert-0 invert"
       />
     </div>
   );

@@ -178,7 +178,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
             alt={stream.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-background/60" />
+          <div className="absolute inset-0 bg-background/20 dark:bg-background/60" />
           
           {stream.is_live && (
             <div className="absolute top-2 left-2 flex items-center gap-1.5">
