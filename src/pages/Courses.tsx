@@ -33,7 +33,7 @@ const Courses = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => user ? navigate("/creator/courses") : navigate("/login")}
+              onClick={() => user ? navigate("/dashboard?tab=courses") : navigate("/login")}
             >
               <BookOpen className="w-3.5 h-3.5 mr-1" />
               Teach
