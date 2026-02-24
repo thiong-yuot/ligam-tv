@@ -8,7 +8,7 @@ const corsHeaders = {
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-MUX-STREAM] ${step}${detailsStr}`);
+  console.log(`[CREATE-STREAM] ${step}${detailsStr}`);
 };
 
 serve(async (req) => {
@@ -37,10 +37,9 @@ serve(async (req) => {
     const { title, description, category_id, tags } = await req.json();
     logStep("Request body parsed", { title, category_id });
 
-    // Generate a simple stream key and playback ID
+    // Generate stream key for SRS RTMP server
     const streamKey = crypto.randomUUID();
     const playbackId = crypto.randomUUID();
-    const rtmpUrl = "rtmps://global-live.mux.com:443/app";
 
     // Use admin client for database operations
     const supabaseAdmin = createClient(
@@ -78,7 +77,7 @@ serve(async (req) => {
         .upsert({
           stream_id: stream.id,
           stream_key: streamKey,
-          rtmp_url: rtmpUrl,
+          rtmp_url: "rtmp://your-srs-server:1935/live",
         }, { onConflict: 'stream_id' });
 
       if (credError) {
@@ -106,7 +105,7 @@ serve(async (req) => {
         .insert({
           stream_id: stream.id,
           stream_key: streamKey,
-          rtmp_url: rtmpUrl,
+          rtmp_url: "rtmp://your-srs-server:1935/live",
         });
 
       if (credError) {
@@ -117,7 +116,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       stream,
       streamKey,
-      rtmpUrl,
+      rtmpUrl: "rtmp://your-srs-server:1935/live",
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

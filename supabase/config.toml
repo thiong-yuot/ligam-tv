@@ -18,8 +18,6 @@ verify_jwt = false
 [functions.create-mux-stream]
 verify_jwt = false
 
-[functions.mux-webhook]
-verify_jwt = false
 
 [functions.get-stream-status]
 verify_jwt = false

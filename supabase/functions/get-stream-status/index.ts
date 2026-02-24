@@ -54,7 +54,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       hasStream: true,
       stream,
-      muxStatus: stream.is_live ? { status: "active" } : { status: "idle" },
+      status: stream.is_live ? "active" : "idle",
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
