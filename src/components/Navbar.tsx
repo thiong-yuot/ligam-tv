@@ -157,6 +157,24 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
 
         {isMenuOpen && (
           <div className="md:hidden py-3 border-t border-border">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (search.trim()) {
+                  navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+                  setIsMenuOpen(false);
+                }
+              }}
+              className="relative mb-2"
+            >
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8 h-8 text-xs bg-card border-border"
+              />
+            </form>
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
