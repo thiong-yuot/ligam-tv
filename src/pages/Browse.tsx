@@ -51,16 +51,16 @@ const Browse = () => {
                       onClick={() => setSelectedCategory({ id: category.id, name: category.name })}
                       className="group rounded-lg border border-border bg-card overflow-hidden hover:border-muted-foreground/30 transition-colors text-left"
                     >
-                      <div className="aspect-[4/3] relative">
+                      <div className="aspect-[4/3] relative overflow-hidden">
                         {category.image_url ? (
-                          <img src={category.image_url} alt={category.name} className="w-full h-full object-cover" />
+                          <img src={category.image_url} alt={category.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
                           <div className="w-full h-full bg-muted" />
                         )}
-                        <div className="absolute inset-0 bg-background/60" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent group-hover:from-black/80 transition-colors" />
                         <div className="absolute bottom-0 left-0 right-0 p-2">
-                          <p className="font-medium text-foreground text-xs truncate">{category.name}</p>
-                          <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+                          <p className="font-medium text-white text-xs truncate">{category.name}</p>
+                          <p className="text-[10px] text-white/70 flex items-center gap-1">
                             <Users className="w-2.5 h-2.5" />
                             {formatViewers(category.viewer_count || 0)}
                           </p>
