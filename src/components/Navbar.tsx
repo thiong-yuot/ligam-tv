@@ -2,7 +2,8 @@ import { useState, forwardRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Menu, X, User, LogOut, LayoutDashboard, MessageCircle, Bell, Search } from "lucide-react";
+import { Menu, X, User, LogOut, LayoutDashboard, MessageCircle, Bell, Search, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadCount } from "@/hooks/useMessages";
 import { useUnreadNotificationsCount } from "@/hooks/useNotifications";
@@ -25,6 +26,7 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
   const { user, profile, signOut, loading } = useAuth();
   const { data: unreadCount = 0 } = useUnreadCount();
   const { data: unreadNotifications = 0 } = useUnreadNotificationsCount();
+  const { theme, toggleTheme } = useTheme();
   const navLinks = [
     { name: "Browse", path: "/browse" },
     
@@ -89,7 +91,16 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
             />
           </form>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             {!loading && (
               <>
                 {user ? (
