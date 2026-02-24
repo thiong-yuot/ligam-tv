@@ -154,6 +154,7 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
   };
 
   const anyLessonUploading = lessons.some(l => l.uploading);
+  const allLessonsHaveVideo = lessons.length > 0 && lessons.every(l => l.videoUrl && l.title.trim());
 
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) resetForm(); }}>
@@ -278,7 +279,7 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
         {step === 3 && (
           <div className="space-y-3">
             <p className="text-xs text-muted-foreground">
-              Add a title and upload a video for each lesson. Videos can also be added later.
+              Upload a video for each lesson to continue.
             </p>
 
             <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
@@ -353,7 +354,7 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
               </Button>
               <Button
                 onClick={handleSubmit}
-                disabled={submitting || anyLessonUploading || !lessons.some(l => l.title.trim())}
+                disabled={submitting || anyLessonUploading || !allLessonsHaveVideo}
                 size="sm"
                 className="gap-1.5"
               >
