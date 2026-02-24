@@ -7,8 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { useSubscription } from "@/hooks/useSubscription";
-import { useFeatureAccess } from "@/hooks/useFeatureAccess";
+
 import { useEarningsSummary } from "@/hooks/useEarnings";
 import { useStreams } from "@/hooks/useStreams";
 import { 
@@ -21,16 +20,13 @@ import {
   Gift,
   Play,
   Loader2,
-  Crown,
-  Sparkles,
   Check,
-  X,
-  Zap,
-  Code,
   BarChart3,
   TrendingUp,
   ShoppingBag,
-  Briefcase
+  Briefcase,
+  GraduationCap,
+  Percent
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -38,8 +34,7 @@ const Dashboard = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
-  const { tier, subscriptionEnd } = useSubscription();
-  const { hasAccess } = useFeatureAccess();
+  
   const { 
     totalThisMonth, 
     giftEarnings, 
@@ -54,60 +49,12 @@ const Dashboard = () => {
   // Get user's streams
   const userStreams = allStreams.filter(s => s.user_id === userId);
 
-  const tierFeatures = {
-    free: {
-      name: "Free",
-      icon: Zap,
-      color: "text-muted-foreground",
-      bgColor: "bg-secondary",
-      features: [
-        { name: "720p Streaming", included: true },
-        { name: "Basic Chat", included: true },
-        { name: "Community Access", included: true },
-        { name: "HD Streaming", included: false },
-        { name: "Custom Reactions", included: false },
-        { name: "Priority Support", included: false },
-        { name: "No Ads for Viewers", included: false },
-        { name: "4K Streaming", included: false },
-      ],
-    },
-    creator: {
-      name: "Creator",
-      icon: Sparkles,
-      color: "text-primary",
-      bgColor: "bg-gradient-to-r from-primary/20 to-amber-500/20",
-      features: [
-        { name: "720p Streaming", included: true },
-        { name: "Basic Chat", included: true },
-        { name: "Community Access", included: true },
-        { name: "HD Streaming", included: true },
-        { name: "Custom Reactions", included: true },
-        { name: "Priority Support", included: true },
-        { name: "No Ads for Viewers", included: true },
-        { name: "4K Streaming", included: false },
-        
-      ],
-    },
-    pro: {
-      name: "Pro",
-      icon: Crown,
-      color: "text-amber-500",
-      bgColor: "bg-gradient-to-r from-amber-500/20 to-orange-500/20",
-      features: [
-        { name: "720p Streaming", included: true },
-        { name: "Basic Chat", included: true },
-        { name: "Community Access", included: true },
-        { name: "HD Streaming", included: true },
-        { name: "Custom Reactions", included: true },
-        { name: "Priority Support", included: true },
-        { name: "No Ads for Viewers", included: true },
-        { name: "4K Streaming", included: true },
-        
-      ],
-    },
-  };
-
-  const currentTier = tierFeatures[tier || "free"];
+  const commissionRates = [
+    { label: "Shop Sales", rate: "20%", icon: ShoppingBag },
+    { label: "Freelance", rate: "25%", icon: Briefcase },
+    { label: "Courses", rate: "40%", icon: GraduationCap },
+    { label: "Live & Tips", rate: "40%", icon: Play },
+  ];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -204,37 +151,29 @@ const Dashboard = () => {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Subscription Benefits */}
-            <Card className={`p-6 border-border ${currentTier.bgColor}`}>
+            {/* Platform Info */}
+            <Card className="p-6 border-border bg-card">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-foreground">Your Plan</h2>
-                <Badge className="gap-1">
-                  <currentTier.icon className="h-3 w-3" />
+                <h2 className="text-xl font-semibold text-foreground">Platform</h2>
+                <Badge variant="secondary" className="gap-1">
+                  <Check className="h-3 w-3" />
                   Free
                 </Badge>
               </div>
-              
-              {subscriptionEnd && (
-                <p className="text-sm text-muted-foreground mb-4">
-                  Renews on {new Date(subscriptionEnd).toLocaleDateString()}
-                </p>
-              )}
-
-              <div className="space-y-2 mb-6">
-                {currentTier.features.map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    {feature.included ? (
-                      <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                    ) : (
-                      <X className="h-4 w-4 text-muted-foreground/50 flex-shrink-0" />
-                    )}
-                    <span className={feature.included ? "text-foreground" : "text-muted-foreground/50"}>
-                      {feature.name}
-                    </span>
+              <p className="text-sm text-muted-foreground mb-4">
+                All tools are free. We only earn when you earn.
+              </p>
+              <div className="space-y-2">
+                {commissionRates.map((item, i) => (
+                  <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-secondary/50">
+                    <div className="flex items-center gap-2 text-sm">
+                      <item.icon className="h-4 w-4 text-muted-foreground" />
+                      <span>{item.label}</span>
+                    </div>
+                    <span className="text-sm font-medium text-muted-foreground">{item.rate} fee</span>
                   </div>
                 ))}
               </div>
-
             </Card>
 
             {/* Quick Actions */}
