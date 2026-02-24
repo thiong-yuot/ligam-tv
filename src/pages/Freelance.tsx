@@ -42,15 +42,6 @@ const Freelance = () => {
         <div className="w-full max-w-[1920px] mx-auto flex items-center justify-between gap-3">
           <h1 className="text-lg font-display font-bold text-foreground">Freelance</h1>
           <div className="flex items-center gap-2">
-            <div className="relative w-48">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-8 text-xs bg-card"
-              />
-            </div>
             <Button variant="outline" size="sm" onClick={handleAction}>
               {myProfile ? <LayoutDashboard className="w-3.5 h-3.5 mr-1" /> : <Briefcase className="w-3.5 h-3.5 mr-1" />}
               {myProfile ? "Dashboard" : "Join"}
