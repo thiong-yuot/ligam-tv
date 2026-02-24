@@ -163,8 +163,9 @@ serve(async (req) => {
           const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
 
           if (paymentType === "freelancer_order" && metadata.package_id) {
-            // Handle freelancer package order - platform takes 20%
+            // Handle freelancer package order - platform takes 25%
             const platformEarnings = totalAmount * FREELANCE_COMMISSION;
+            const freelancerEarnings = totalAmount - platformEarnings;
             
             const { error: orderError } = await supabaseAdmin
               .from("freelancer_orders")
@@ -180,14 +181,37 @@ serve(async (req) => {
               console.error("Error updating freelancer order:", orderError);
             } else {
               console.log("Freelancer order payment completed");
+
+              // Get freelancer's user_id for earnings
+              if (metadata.freelancer_id) {
+                const { data: freelancer } = await supabaseAdmin
+                  .from("freelancers")
+                  .select("user_id")
+                  .eq("id", metadata.freelancer_id)
+                  .single();
+
+                if (freelancer?.user_id) {
+                  await supabaseAdmin.from("earnings").insert({
+                    user_id: freelancer.user_id,
+                    amount: freelancerEarnings,
+                    type: "service",
+                    source_id: metadata.package_id,
+                    status: "available",
+                  });
+                  console.log(`Freelancer earnings created: $${freelancerEarnings} (after ${FREELANCE_COMMISSION * 100}% commission)`);
+                }
+              }
               
-              // Process affiliate commission on platform's 20% earnings
+              // Process affiliate commission on platform's 25% earnings
               if (metadata.client_id) {
                 await processAffiliateCommission(metadata.client_id, platformEarnings, "freelancer_order");
               }
             }
           } else if (paymentType === "course_enrollment" && metadata.course_id) {
-            // Handle course enrollment - platform gets full amount as earnings
+            // Handle course enrollment - platform takes 40%
+            const platformEarnings = totalAmount * COURSE_COMMISSION;
+            const creatorEarnings = totalAmount - platformEarnings;
+
             const { error: enrollError } = await supabaseAdmin
               .from("enrollments")
               .insert({
@@ -205,17 +229,94 @@ serve(async (req) => {
                 course_id_param: metadata.course_id 
               });
               console.log("Course enrollment created");
+
+              // Create creator earnings record
+              if (metadata.creator_id) {
+                await supabaseAdmin.from("earnings").insert({
+                  user_id: metadata.creator_id,
+                  amount: creatorEarnings,
+                  type: "course",
+                  source_id: metadata.course_id,
+                  status: "available",
+                });
+                console.log(`Course creator earnings: $${creatorEarnings} (after ${COURSE_COMMISSION * 100}% commission)`);
+              }
               
-              // Process affiliate commission on course earnings (platform share)
-              // Assuming platform takes some commission from course sales
+              // Process affiliate commission on platform's 40% earnings
               if (metadata.user_id) {
-                await processAffiliateCommission(metadata.user_id, totalAmount, "course_enrollment");
+                await processAffiliateCommission(metadata.user_id, platformEarnings, "course_enrollment");
               }
             }
-          } else if (paymentType === "product_order" && userId) {
-            // Handle product order
+          } else if (paymentType === "stream_access" && metadata.stream_id) {
+            // Handle paid stream access - platform takes 40%
+            const platformEarnings = totalAmount * LIVE_SESSION_COMMISSION;
+            const streamerEarnings = totalAmount - platformEarnings;
+
+            // Grant stream access
+            const { error: accessError } = await supabaseAdmin
+              .from("stream_access")
+              .insert({
+                stream_id: metadata.stream_id,
+                user_id: metadata.supabase_user_id,
+                amount_paid: totalAmount,
+                platform_fee: platformEarnings,
+                streamer_earnings: streamerEarnings,
+                stripe_payment_intent_id: session.payment_intent as string,
+              });
+
+            if (accessError) {
+              console.error("Error granting stream access:", accessError);
+            } else {
+              console.log("Stream access granted via webhook");
+
+              // Create streamer earnings
+              if (metadata.streamer_id) {
+                await supabaseAdmin.from("earnings").insert({
+                  user_id: metadata.streamer_id,
+                  amount: streamerEarnings,
+                  type: "live_session",
+                  source_id: metadata.stream_id,
+                  status: "available",
+                });
+                console.log(`Streamer earnings: $${streamerEarnings} (after ${LIVE_SESSION_COMMISSION * 100}% commission)`);
+              }
+
+              // Update stream_earnings aggregate
+              const { data: existingEarnings } = await supabaseAdmin
+                .from("stream_earnings")
+                .select("*")
+                .eq("stream_id", metadata.stream_id)
+                .single();
+
+              if (existingEarnings) {
+                await supabaseAdmin
+                  .from("stream_earnings")
+                  .update({
+                    total_earnings: existingEarnings.total_earnings + streamerEarnings,
+                    platform_fees: existingEarnings.platform_fees + platformEarnings,
+                    access_count: existingEarnings.access_count + 1,
+                  })
+                  .eq("stream_id", metadata.stream_id);
+              } else {
+                await supabaseAdmin.from("stream_earnings").insert({
+                  stream_id: metadata.stream_id,
+                  streamer_id: metadata.streamer_id,
+                  total_earnings: streamerEarnings,
+                  platform_fees: platformEarnings,
+                  access_count: 1,
+                });
+              }
+            }
+
+            if (userId) {
+              await processAffiliateCommission(userId, platformEarnings, "stream_access");
+            }
+          } else if (paymentType === "product_order" || (items && !paymentType)) {
+            // Handle product order - platform takes 20%
+            const platformEarnings = totalAmount * SHOP_COMMISSION;
+            
             const { data: order, error: orderError } = await supabaseAdmin.from("orders").insert({
-              user_id: userId,
+              user_id: userId || metadata.supabase_user_id,
               total_amount: totalAmount,
               status: "paid",
               stripe_payment_intent_id: session.payment_intent as string,
@@ -225,12 +326,29 @@ serve(async (req) => {
               console.error("Error creating order:", orderError);
             } else {
               console.log("Product order created:", order.id);
+
+              // Create earnings for each seller
+              const sellerIds = metadata.seller_ids?.split(",").filter(Boolean) || [];
+              for (const sellerId of sellerIds) {
+                const sellerEarnings = totalAmount * (1 - SHOP_COMMISSION) / (sellerIds.length || 1);
+                await supabaseAdmin.from("earnings").insert({
+                  user_id: sellerId,
+                  amount: sellerEarnings,
+                  type: "store",
+                  source_id: order.id,
+                  status: "available",
+                });
+                console.log(`Seller earnings: $${sellerEarnings} (after ${SHOP_COMMISSION * 100}% commission)`);
+              }
               
-              // Process affiliate commission on product sale (platform earnings)
-              await processAffiliateCommission(userId, totalAmount, "product_order");
+              // Process affiliate commission on platform's 20% earnings
+              const buyerId = userId || metadata.supabase_user_id;
+              if (buyerId) {
+                await processAffiliateCommission(buyerId, platformEarnings, "product_order");
+              }
             }
           } else if (userId) {
-            // Generic order
+            // Generic order fallback
             const { data: order, error: orderError } = await supabaseAdmin.from("orders").insert({
               user_id: userId,
               total_amount: totalAmount,
@@ -241,8 +359,6 @@ serve(async (req) => {
               console.error("Error creating order:", orderError);
             } else {
               console.log("Order created:", order.id);
-              
-              // Process affiliate commission
               await processAffiliateCommission(userId, totalAmount, "generic_order");
             }
           }

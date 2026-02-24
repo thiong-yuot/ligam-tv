@@ -47,8 +47,8 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
-    // Calculate platform fee (20% - no service fees on freelance)
-    const platformFee = Math.round(packageData.price * 100 * 0.20);
+    // Calculate platform fee (25% on freelance services)
+    const platformFee = Math.round(packageData.price * 100 * 0.25);
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -74,6 +74,7 @@ serve(async (req) => {
         type: "freelancer_order",
         package_id: packageId,
         freelancer_id: packageData.freelancer_id,
+        freelancer_user_id: packageData.freelancers?.user_id || "",
         client_id: user.id,
         requirements: requirements || "",
         delivery_days: packageData.delivery_days.toString(),
