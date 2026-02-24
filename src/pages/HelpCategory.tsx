@@ -1,10 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
+import {
   ArrowLeft,
   ArrowRight,
   HelpCircle,
@@ -19,13 +17,7 @@ import {
 import { useHelpArticles, useHelpCategories } from "@/hooks/useHelp";
 
 const iconMap: Record<string, LucideIcon> = {
-  Video,
-  DollarSign,
-  Shield,
-  Settings,
-  Users,
-  MessageSquare,
-  HelpCircle,
+  Video, DollarSign, Shield, Settings, Users, MessageSquare, HelpCircle,
 };
 
 const HelpCategory = () => {
@@ -40,78 +32,57 @@ const HelpCategory = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="pt-24 pb-20 px-4">
-        <div className="container mx-auto max-w-4xl">
-          {/* Back button */}
-          <Link to="/help" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Help Center
+      <main className="pt-20 pb-12 px-4 md:px-6">
+        <div className="max-w-2xl mx-auto">
+
+          <Link to="/help" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors mb-4">
+            <ArrowLeft className="w-3 h-3" />
+            Help Center
           </Link>
 
-          {/* Category Header */}
           {category && (
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center">
-                <IconComponent className="w-8 h-8 text-primary" />
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <IconComponent className="w-4 h-4 text-primary" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                  {category.name}
-                </h1>
-                <p className="text-muted-foreground">{category.description}</p>
+                <h1 className="text-lg font-display font-bold text-foreground">{category.name}</h1>
+                {category.description && <p className="text-xs text-muted-foreground">{category.description}</p>}
               </div>
             </div>
           )}
 
-          {/* Articles List */}
-          <div className="space-y-4">
+          <div className="space-y-1">
             {isLoading ? (
-              Array.from({ length: 5 }).map((_, index) => (
-                <Card key={index} className="p-6 bg-card border-border">
-                  <Skeleton className="h-6 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-full" />
-                </Card>
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between p-2.5 rounded-lg bg-card border border-border">
+                  <Skeleton className="h-3.5 w-3/4" />
+                  <Skeleton className="h-3.5 w-3.5" />
+                </div>
               ))
             ) : articles?.length === 0 ? (
-              <Card className="p-8 bg-card border-border text-center">
-                <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">No articles found in this category yet.</p>
-              </Card>
+              <div className="text-center py-12">
+                <HelpCircle className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+                <p className="text-xs text-muted-foreground">No articles in this category yet.</p>
+              </div>
             ) : (
               articles?.map((article) => (
-                <Link key={article.id} to={`/help/article/${article.id}`}>
-                  <Card className="p-6 bg-card border-border hover:border-primary/50 transition-colors cursor-pointer group">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors mb-1">
-                          {article.title}
-                        </h3>
-                        {article.summary && (
-                          <p className="text-sm text-muted-foreground line-clamp-1">
-                            {article.summary}
-                          </p>
-                        )}
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                    </div>
-                  </Card>
+                <Link key={article.id} to={`/help/article/${article.id}`} className="flex items-center justify-between p-2.5 rounded-lg hover:bg-muted/50 transition-colors group">
+                  <div>
+                    <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">{article.title}</p>
+                    {article.summary && <p className="text-[10px] text-muted-foreground line-clamp-1">{article.summary}</p>}
+                  </div>
+                  <ArrowRight className="w-3 h-3 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                 </Link>
               ))
             )}
           </div>
 
-          {/* Contact CTA */}
-          <div className="mt-12 text-center p-8 bg-card border border-border rounded-xl">
-            <h3 className="text-xl font-display font-bold text-foreground mb-2">
-              Can't find what you're looking for?
-            </h3>
-            <p className="text-muted-foreground mb-4">
-              Our support team is here to help
-            </p>
-            <Link to="/contact">
-              <Button>Contact Support</Button>
-            </Link>
+          <div className="text-center mt-8 pt-4 border-t border-border">
+            <p className="text-xs text-muted-foreground mb-2">Can't find what you need?</p>
+            <Link to="/contact" className="text-xs text-primary hover:underline font-medium">Contact Support</Link>
           </div>
+
         </div>
       </main>
 

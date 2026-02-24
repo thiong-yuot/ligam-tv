@@ -2,7 +2,6 @@ import { Link, useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, HelpCircle, ThumbsUp, ThumbsDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +21,6 @@ const HelpArticle = () => {
         .select("*, help_categories(name, slug)")
         .eq("id", id)
         .single();
-      
       if (error) throw error;
       return data;
     },
@@ -38,100 +36,60 @@ const HelpArticle = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="pt-24 pb-20 px-4">
-        <div className="container mx-auto max-w-3xl">
-          {/* Back button */}
-          <Link 
-            to={article?.help_categories ? `/help/${article.help_categories.slug}` : "/help"} 
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
+      <main className="pt-20 pb-12 px-4 md:px-6">
+        <div className="max-w-2xl mx-auto">
+
+          <Link
+            to={article?.help_categories ? `/help/${article.help_categories.slug}` : "/help"}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors mb-4"
           >
-            <ArrowLeft className="w-4 h-4" />
-            {article?.help_categories ? `Back to ${article.help_categories.name}` : "Back to Help Center"}
+            <ArrowLeft className="w-3 h-3" />
+            {article?.help_categories ? article.help_categories.name : "Help Center"}
           </Link>
 
           {isLoading ? (
-            <div className="space-y-4">
-              <Skeleton className="h-10 w-3/4" />
-              <Skeleton className="h-4 w-1/4" />
-              <div className="space-y-2 mt-8">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
+            <div className="space-y-3">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-3 w-1/3" />
+              <div className="space-y-2 mt-4">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-3 w-2/3" />
               </div>
             </div>
           ) : article ? (
             <>
-              {/* Article Header */}
-              <div className="mb-8">
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
-                  {article.title}
-                </h1>
-                {article.summary && (
-                  <p className="text-lg text-muted-foreground">
-                    {article.summary}
-                  </p>
-                )}
+              <h1 className="text-lg font-display font-bold text-foreground mb-1">{article.title}</h1>
+              {article.summary && (
+                <p className="text-xs text-muted-foreground mb-4">{article.summary}</p>
+              )}
+
+              <div className="text-xs text-foreground leading-relaxed whitespace-pre-wrap mb-6">
+                {article.content}
               </div>
 
-              {/* Article Content */}
-              <Card className="p-8 bg-card border-border mb-8">
-                <div className="prose prose-invert max-w-none">
-                  <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                    {article.content}
-                  </p>
-                </div>
-              </Card>
-
               {/* Feedback */}
-              <Card className="p-6 bg-card border-border">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <p className="text-foreground font-medium">Was this article helpful?</p>
-                  <div className="flex gap-3">
-                    <Button
-                      variant={helpful === true ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleHelpful(true)}
-                      className="gap-2"
-                    >
-                      <ThumbsUp className="w-4 h-4" />
-                      Yes
-                    </Button>
-                    <Button
-                      variant={helpful === false ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleHelpful(false)}
-                      className="gap-2"
-                    >
-                      <ThumbsDown className="w-4 h-4" />
-                      No
-                    </Button>
-                  </div>
-                </div>
-              </Card>
+              <div className="flex items-center gap-3 py-3 border-t border-border">
+                <span className="text-xs text-muted-foreground">Helpful?</span>
+                <Button variant={helpful === true ? "default" : "outline"} size="sm" onClick={() => handleHelpful(true)} className="h-7 gap-1 text-[11px]">
+                  <ThumbsUp className="w-3 h-3" /> Yes
+                </Button>
+                <Button variant={helpful === false ? "default" : "outline"} size="sm" onClick={() => handleHelpful(false)} className="h-7 gap-1 text-[11px]">
+                  <ThumbsDown className="w-3 h-3" /> No
+                </Button>
+              </div>
 
-              {/* Contact CTA */}
-              <div className="mt-12 text-center p-8 bg-card/50 border border-border rounded-xl">
-                <h3 className="text-xl font-display font-bold text-foreground mb-2">
-                  Still need help?
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  Our support team is ready to assist you
-                </p>
-                <Link to="/contact">
-                  <Button>Contact Support</Button>
-                </Link>
+              <div className="text-center mt-6 pt-4 border-t border-border">
+                <p className="text-xs text-muted-foreground mb-2">Still need help?</p>
+                <Link to="/contact" className="text-xs text-primary hover:underline font-medium">Contact Support</Link>
               </div>
             </>
           ) : (
-            <Card className="p-8 bg-card border-border text-center">
-              <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Article not found.</p>
-              <Link to="/help">
-                <Button variant="outline" className="mt-4">
-                  Go to Help Center
-                </Button>
-              </Link>
-            </Card>
+            <div className="text-center py-12">
+              <HelpCircle className="w-6 h-6 text-muted-foreground mx-auto mb-2" />
+              <p className="text-xs text-muted-foreground mb-3">Article not found.</p>
+              <Link to="/help" className="text-xs text-primary hover:underline font-medium">Back to Help Center</Link>
+            </div>
           )}
         </div>
       </main>
