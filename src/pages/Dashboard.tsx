@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import MyContentManager from "@/components/dashboard/MyContentManager";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -355,6 +356,9 @@ const Dashboard = () => {
               </p>
             </div>
           </Card>
+
+          {/* My Content Manager */}
+          <MyContentManager />
         </div>
       </section>
 
