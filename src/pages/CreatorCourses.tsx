@@ -247,9 +247,9 @@ const CreatorCourses = () => {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => navigate(`/courses/${course.id}`)}
+                          onClick={() => navigate(`/creator/courses/${course.id}/edit`)}
                         >
-                          <Eye className="w-4 h-4" />
+                          <Edit className="w-4 h-4" />
                         </Button>
                         <Button 
                           variant="outline" 
