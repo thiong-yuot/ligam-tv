@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useCreateFreelancerProfile } from "@/hooks/useFreelancerProfile";
@@ -24,7 +24,7 @@ interface BecomeFreelancerDialogProps {
 
 const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const createProfile = useCreateFreelancerProfile();
 
   const [name, setName] = useState("");
@@ -34,6 +34,14 @@ const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogPr
   const [portfolioUrl, setPortfolioUrl] = useState("");
   const [skillInput, setSkillInput] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
+
+  // Pre-fill from existing profile
+  useEffect(() => {
+    if (open && profile) {
+      if (!name) setName(profile.display_name || "");
+      if (!bio) setBio(profile.bio || "");
+    }
+  }, [open, profile]);
 
   const addSkill = () => {
     if (skillInput.trim() && !skills.includes(skillInput.trim())) {

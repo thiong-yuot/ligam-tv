@@ -159,10 +159,24 @@ export const useUpdateFreelancerProfile = () => {
         .eq("user_id", user.id);
       
       if (error) throw error;
+
+      // Sync display_name, avatar_url, bio to main profiles table
+      const profileUpdate: Record<string, any> = { updated_at: new Date().toISOString() };
+      if (data.name !== undefined) profileUpdate.display_name = data.name;
+      if (data.avatar_url !== undefined) profileUpdate.avatar_url = data.avatar_url;
+      if (data.bio !== undefined) profileUpdate.bio = data.bio;
+
+      if (Object.keys(profileUpdate).length > 1) {
+        await supabase
+          .from("profiles")
+          .update(profileUpdate)
+          .eq("user_id", user.id);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-freelancer-profile"] });
       queryClient.invalidateQueries({ queryKey: ["freelancers"] });
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
     },
   });
 };
