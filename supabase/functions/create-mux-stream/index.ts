@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const logStep = (step: string, details?: any) => {
@@ -18,14 +18,6 @@ serve(async (req) => {
 
   try {
     logStep("Function started");
-
-    const muxTokenId = Deno.env.get("MUX_TOKEN_ID");
-    const muxTokenSecret = Deno.env.get("MUX_TOKEN_SECRET");
-    
-    if (!muxTokenId || !muxTokenSecret) {
-      throw new Error("Mux credentials not configured");
-    }
-    logStep("Mux credentials verified");
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -45,39 +37,10 @@ serve(async (req) => {
     const { title, description, category_id, tags } = await req.json();
     logStep("Request body parsed", { title, category_id });
 
-    // Create Mux Live Stream
-    const muxAuth = btoa(`${muxTokenId}:${muxTokenSecret}`);
-    
-    const muxResponse = await fetch("https://api.mux.com/video/v1/live-streams", {
-      method: "POST",
-      headers: {
-        "Authorization": `Basic ${muxAuth}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        playback_policy: ["public"],
-        new_asset_settings: {
-          playback_policy: ["public"],
-        },
-        reduced_latency: true,
-        low_latency: true,
-      }),
-    });
-
-    if (!muxResponse.ok) {
-      const errorText = await muxResponse.text();
-      logStep("Mux API error", { status: muxResponse.status, error: errorText });
-      throw new Error(`Mux API error: ${errorText}`);
-    }
-
-    const muxData = await muxResponse.json();
-    const liveStream = muxData.data;
-    logStep("Mux stream created", { streamId: liveStream.id });
-
-    const streamKey = liveStream.stream_key;
-    const playbackId = liveStream.playback_ids?.[0]?.id;
+    // Generate a simple stream key and playback ID
+    const streamKey = crypto.randomUUID();
+    const playbackId = crypto.randomUUID();
     const rtmpUrl = "rtmps://global-live.mux.com:443/app";
-    const hlsUrl = playbackId ? `https://stream.mux.com/${playbackId}.m3u8` : null;
 
     // Use admin client for database operations
     const supabaseAdmin = createClient(
@@ -94,7 +57,6 @@ serve(async (req) => {
 
     let stream;
     if (existingStream) {
-      // Update existing stream
       const { data, error } = await supabaseAdmin
         .from("streams")
         .update({
@@ -102,9 +64,6 @@ serve(async (req) => {
           description,
           category_id,
           tags: tags || [],
-          mux_stream_id: liveStream.id,
-          mux_playback_id: playbackId,
-          hls_url: hlsUrl,
         })
         .eq("id", existingStream.id)
         .select()
@@ -114,7 +73,6 @@ serve(async (req) => {
       stream = data;
       logStep("Stream updated", { streamId: stream.id });
 
-      // Update or create stream credentials
       const { error: credError } = await supabaseAdmin
         .from("stream_credentials")
         .upsert({
@@ -127,7 +85,6 @@ serve(async (req) => {
         logStep("Error updating credentials", { error: credError });
       }
     } else {
-      // Create new stream
       const { data, error } = await supabaseAdmin
         .from("streams")
         .insert({
@@ -136,9 +93,6 @@ serve(async (req) => {
           description,
           category_id,
           tags: tags || [],
-          mux_stream_id: liveStream.id,
-          mux_playback_id: playbackId,
-          hls_url: hlsUrl,
         })
         .select()
         .single();
@@ -147,7 +101,6 @@ serve(async (req) => {
       stream = data;
       logStep("Stream created", { streamId: stream.id });
 
-      // Create stream credentials
       const { error: credError } = await supabaseAdmin
         .from("stream_credentials")
         .insert({
@@ -165,7 +118,6 @@ serve(async (req) => {
       stream,
       streamKey,
       rtmpUrl,
-      hlsUrl,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
