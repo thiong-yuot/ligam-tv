@@ -76,13 +76,13 @@ const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 
               </Badge>
             )}
             
-            {((creator as any).university || (creator as any).degree) && (
+            {(creator.university || creator.degree) && (
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-1">
                 <GraduationCap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                 <span className="truncate">
-                  {(creator as any).degree && `${(creator as any).degree}`}
-                  {(creator as any).field_of_study && ` in ${(creator as any).field_of_study}`}
-                  {(creator as any).university && ` — ${(creator as any).university}`}
+                  {creator.degree && `${creator.degree}`}
+                  {creator.field_of_study && ` in ${creator.field_of_study}`}
+                  {creator.university && ` — ${creator.university}`}
                 </span>
               </div>
             )}
