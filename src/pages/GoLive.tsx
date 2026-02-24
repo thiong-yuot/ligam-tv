@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { useUserStream, useCreateMuxStream, useStreamCredentials } from "@/hooks/useStreams";
+import { useUserStream, useCreateStream, useStreamCredentials } from "@/hooks/useStreams";
 import {
   Copy,
   Eye,
@@ -37,9 +37,9 @@ const GoLive = () => {
 
   const { data: userStream, isLoading: streamLoading, refetch: refetchStream } = useUserStream(userId || "");
   const { data: streamCredentials, isLoading: credentialsLoading } = useStreamCredentials(userStream?.id || "");
-  const createMuxStream = useCreateMuxStream();
+  const createStream = useCreateStream();
 
-  const rtmpUrl = "rtmps://global-live.mux.com:443/app";
+  const rtmpUrl = streamCredentials?.rtmp_url || "rtmp://your-srs-server:1935/live";
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -65,7 +65,7 @@ const GoLive = () => {
       return;
     }
     try {
-      await createMuxStream.mutateAsync({ title, description, tags: [category] });
+      await createStream.mutateAsync({ title, description, tags: [category] });
       toast({ title: "Stream created!", description: "Your stream key is ready." });
       refetchStream();
     } catch (error) {
@@ -180,9 +180,9 @@ const GoLive = () => {
 
           {/* Generate / Credentials */}
           {!streamKey ? (
-            <Button onClick={handleCreateStream} className="w-full" disabled={createMuxStream.isPending}>
-              {createMuxStream.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Key className="w-4 h-4 mr-2" />}
-              {createMuxStream.isPending ? "Creating..." : "Generate Stream Key"}
+            <Button onClick={handleCreateStream} className="w-full" disabled={createStream.isPending}>
+              {createStream.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Key className="w-4 h-4 mr-2" />}
+              {createStream.isPending ? "Creating..." : "Generate Stream Key"}
             </Button>
           ) : (
             <div className="rounded-lg border border-border p-4 space-y-4">

@@ -19,8 +19,6 @@ export interface Stream {
   started_at: string | null;
   ended_at: string | null;
   created_at: string;
-  mux_stream_id?: string | null;
-  mux_playback_id?: string | null;
   hls_url?: string | null;
   profiles?: {
     display_name: string | null;
@@ -149,7 +147,7 @@ export const useStreamCredentials = (streamId: string) => {
   });
 };
 
-export const useCreateMuxStream = () => {
+export const useCreateStream = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
@@ -198,38 +196,6 @@ export const useStreamStatus = () => {
   });
 };
 
-export const useCreateStream = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (data: { title: string; description?: string; category_id?: string; tags?: string[] }) => {
-      // Validate input
-      const validated = validateOrThrow(streamSchema, data);
-
-      const { data: session } = await supabase.auth.getSession();
-      if (!session.session) throw new Error("Not authenticated");
-      
-      const { data: stream, error } = await supabase
-        .from("streams")
-        .insert({
-          user_id: session.session.user.id,
-          title: validated.title,
-          description: validated.description,
-          category_id: validated.category_id,
-          tags: validated.tags || [],
-        })
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return stream;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["streams"] });
-      queryClient.invalidateQueries({ queryKey: ["userStream"] });
-    },
-  });
-};
 
 export const useUpdateStream = () => {
   const queryClient = useQueryClient();

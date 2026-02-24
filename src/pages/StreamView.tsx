@@ -130,10 +130,8 @@ const StreamView = () => {
   const streamerProducts = allProducts.filter(p => p.seller_id === stream?.user_id);
   const streamerCourses = allCourses.filter(c => c.creator_id === stream?.user_id);
 
-  // Use Mux HLS URL from stream data or construct from playback ID
-  const hlsUrl = stream?.hls_url || (stream?.mux_playback_id 
-    ? `https://stream.mux.com/${stream.mux_playback_id}.m3u8`
-    : null);
+  // Use SRS HLS URL from stream data
+  const hlsUrl = stream?.hls_url || null;
 
   const handleViewerJoin = useCallback(async () => {
     if (stream?.id) {
