@@ -2,37 +2,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, GraduationCap } from "lucide-react";
 import { useFeaturedCourses } from "@/hooks/useCourses";
-import { useCreatorProfile } from "@/hooks/useCreatorProfile";
 
 interface CoursesPreviewProps {
   compact?: boolean;
 }
-
-const CoursePreviewItem = ({ course }: { course: any }) => {
-  const { data: creator } = useCreatorProfile(course.creator_id);
-  return (
-    <Link to={`/courses/${course.id}`} className="bg-card border border-border rounded-lg p-2 hover:border-muted-foreground/30 transition-colors">
-      <div className="aspect-[4/3] rounded overflow-hidden mb-1.5 bg-muted">
-        {course.thumbnail_url ? (
-          <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center"><BookOpen className="w-5 h-5 text-muted-foreground" /></div>
-        )}
-      </div>
-      <p className="text-[11px] font-medium text-foreground line-clamp-1">{course.title}</p>
-      <p className="text-[10px] text-muted-foreground truncate">
-        {creator?.display_name || creator?.username || "Instructor"}
-      </p>
-      {creator?.university && (
-        <p className="text-[10px] text-muted-foreground truncate flex items-center gap-0.5">
-          <GraduationCap className="w-2.5 h-2.5 flex-shrink-0" />
-          {creator.degree && `${creator.degree} — `}{creator.university}
-        </p>
-      )}
-      <p className="text-[11px] text-primary font-bold">{course.price === 0 ? "Free" : `$${course.price.toFixed(2)}`}</p>
-    </Link>
-  );
-};
 
 const CoursesPreview = ({ compact }: CoursesPreviewProps) => {
   const { data: courses = [], isLoading } = useFeaturedCourses();
@@ -61,7 +34,17 @@ const CoursesPreview = ({ compact }: CoursesPreviewProps) => {
       ) : featured.length > 0 ? (
         <div className="grid grid-cols-2 gap-2">
           {featured.map((c) => (
-            <CoursePreviewItem key={c.id} course={c} />
+            <Link key={c.id} to={`/courses/${c.id}`} className="bg-card border border-border rounded-lg p-2 hover:border-muted-foreground/30 transition-colors">
+              <div className="aspect-[4/3] rounded overflow-hidden mb-1.5 bg-muted">
+                {c.thumbnail_url ? (
+                  <img src={c.thumbnail_url} alt={c.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center"><BookOpen className="w-5 h-5 text-muted-foreground" /></div>
+                )}
+              </div>
+              <p className="text-[11px] font-medium text-foreground line-clamp-1">{c.title}</p>
+              <p className="text-[11px] text-primary font-bold">{c.price === 0 ? "Free" : `$${c.price.toFixed(2)}`}</p>
+            </Link>
           ))}
         </div>
       ) : (

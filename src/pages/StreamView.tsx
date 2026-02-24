@@ -5,10 +5,14 @@ import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import HighlightedTip from "@/components/HighlightedTip";
 import StreamGifts from "@/components/stream/StreamGifts";
 import TipDialog from "@/components/TipDialog";
+import FeaturedProductsWidget from "@/components/channel/FeaturedProductsWidget";
+import FeaturedGigsWidget from "@/components/channel/FeaturedGigsWidget";
+import FeaturedCoursesWidget from "@/components/channel/FeaturedCoursesWidget";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { 
@@ -17,12 +21,20 @@ import {
   MessageCircle, 
   Users, 
   Send,
+  Smile,
+  Gift,
   Loader2,
   Crown,
+  ShoppingBag,
+  Briefcase,
+  GraduationCap,
   Lock,
   Play,
   DollarSign,
   CheckCircle,
+  Coins,
+  Maximize,
+  Minimize
 } from "lucide-react";
 import EmojiPicker from "@/components/stream/EmojiPicker";
 import { useStream } from "@/hooks/useStreams";
@@ -30,8 +42,12 @@ import { useChatMessages, useSendMessage } from "@/hooks/useChat";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useProducts } from "@/hooks/useProducts";
+import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
+import { useCourses } from "@/hooks/useCourses";
 import { useCheckStreamAccess, useCreateStreamCheckout, useVerifyStreamAccess } from "@/hooks/useStreamAccess";
 import { useIsFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useFollowers";
+import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
 const StreamView = () => {
@@ -50,15 +66,19 @@ const StreamView = () => {
   const { toast } = useToast();
 
   const [isTheaterMode, setIsTheaterMode] = useState(false);
+  const [activeTab, setActiveTab] = useState("chat");
   const { user } = useAuth();
   const { tier } = useSubscription();
   const { data: stream, isLoading } = useStream(id || "");
   const { data: accessInfo, isLoading: accessLoading, refetch: refetchAccess } = useCheckStreamAccess(id || "");
   const messages = useChatMessages(id || "");
   const sendMessage = useSendMessage();
+  const { data: allProducts = [] } = useProducts();
+  const { data: allCourses = [] } = useCourses();
   const createStreamCheckout = useCreateStreamCheckout();
   const verifyStreamAccess = useVerifyStreamAccess();
 
+  // Follow state from DB
   const { data: isFollowing = false } = useIsFollowing(stream?.user_id || "");
   const followUser = useFollowUser();
   const unfollowUser = useUnfollowUser();
@@ -79,51 +99,128 @@ const StreamView = () => {
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) {
-      try { await navigator.share({ title: stream?.title || "Stream", url }); } catch {}
+      try {
+        await navigator.share({ title: stream?.title || "Stream", url });
+      } catch {}
     } else {
       await navigator.clipboard.writeText(url);
       toast({ title: "Link copied!", description: "Stream link copied to clipboard" });
     }
   };
 
+  // Verify payment on return from Stripe
   useEffect(() => {
     const accessParam = searchParams.get('access');
     const sessionId = searchParams.get('session_id');
+    
     if (accessParam === 'granted' && sessionId && id) {
       verifyStreamAccess.mutate({ sessionId, streamId: id }, {
-        onSuccess: () => { toast({ title: "Access Granted!", description: "You now have access to this stream." }); refetchAccess(); },
-        onError: (error) => { toast({ title: "Verification Error", description: error.message, variant: "destructive" }); },
+        onSuccess: () => {
+          toast({
+            title: "Access Granted!",
+            description: "You now have access to this stream.",
+          });
+          refetchAccess();
+        },
+        onError: (error) => {
+          toast({
+            title: "Verification Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        },
       });
     }
   }, [searchParams, id]);
 
+  // Fetch streamer's freelancer profile and packages
+  const { data: streamerFreelancer } = useQuery({
+    queryKey: ["freelancer-by-user", stream?.user_id],
+    queryFn: async () => {
+      if (!stream?.user_id) return null;
+      const { data } = await supabase
+        .from("freelancers")
+        .select("*")
+        .eq("user_id", stream.user_id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!stream?.user_id,
+  });
+
+  const { data: streamerPackages = [] } = useQuery({
+    queryKey: ["freelancer-packages", streamerFreelancer?.id],
+    queryFn: async () => {
+      if (!streamerFreelancer?.id) return [];
+      const { data } = await supabase
+        .from("freelancer_packages")
+        .select("*")
+        .eq("freelancer_id", streamerFreelancer.id)
+        .order("price");
+      return data || [];
+    },
+    enabled: !!streamerFreelancer?.id,
+  });
+
+  // Filter products and courses by streamer
+  const streamerProducts = allProducts.filter(p => p.seller_id === stream?.user_id);
+  const streamerCourses = allCourses.filter(c => c.creator_id === stream?.user_id);
+
+  // Use SRS HLS URL from stream data
   const hlsUrl = stream?.hls_url || null;
 
   const handleViewerJoin = useCallback(async () => {
-    if (stream?.id) await supabase.functions.invoke("rtmp-webhook", { body: { action: "on_play", stream_id: stream.id } });
+    if (stream?.id) {
+      await supabase.functions.invoke("rtmp-webhook", {
+        body: { action: "on_play", stream_id: stream.id },
+      });
+    }
   }, [stream?.id]);
 
   const handleViewerLeave = useCallback(async () => {
-    if (stream?.id) await supabase.functions.invoke("rtmp-webhook", { body: { action: "on_play_done", stream_id: stream.id } });
+    if (stream?.id) {
+      await supabase.functions.invoke("rtmp-webhook", {
+        body: { action: "on_play_done", stream_id: stream.id },
+      });
+    }
   }, [stream?.id]);
 
   const handlePurchaseAccess = async () => {
-    if (!user) { toast({ title: "Login Required", description: "Please login to purchase stream access", variant: "destructive" }); return; }
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to purchase stream access",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const result = await createStreamCheckout.mutateAsync(id!);
-      if (result.url) window.location.href = result.url;
+      if (result.url) {
+        window.location.href = result.url;
+      }
     } catch (error) {
-      toast({ title: "Error", description: error instanceof Error ? error.message : "Failed to create checkout", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to create checkout",
+        variant: "destructive",
+      });
     }
   };
 
   const handleSendMessage = async () => {
     if (!chatMessage.trim() || !id) return;
+
     try {
       await sendMessage.mutateAsync({ streamId: id, message: chatMessage });
       setChatMessage("");
     } catch (error) {
-      toast({ title: "Error", description: error instanceof Error ? error.message : "Failed to send message", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to send message",
+        variant: "destructive",
+      });
     }
   };
 
@@ -148,7 +245,9 @@ const StreamView = () => {
         <div className="pt-24 text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Stream Not Found</h1>
           <p className="text-muted-foreground mb-6">This stream doesn't exist or has ended.</p>
-          <Link to="/browse"><Button>Browse Streams</Button></Link>
+          <Link to="/browse">
+            <Button>Browse Streams</Button>
+          </Link>
         </div>
       </div>
     );
@@ -158,23 +257,76 @@ const StreamView = () => {
   const hasAccess = accessInfo?.hasAccess;
   const streamPrice = accessInfo?.price || 0;
 
+  // Paid Stream Paywall Component
   const PaidStreamPaywall = () => (
     <div className="relative aspect-video bg-secondary flex items-center justify-center">
-      {stream.thumbnail_url && (
-        <img src={stream.thumbnail_url} alt={stream.title} className="w-full h-full object-cover absolute inset-0 opacity-30" />
-      )}
+      {/* Preview Video or Thumbnail */}
+      {accessInfo?.previewUrl ? (
+        <video
+          src={accessInfo.previewUrl}
+          poster={stream.thumbnail_url || undefined}
+          controls
+          className="w-full h-full object-cover absolute inset-0"
+        />
+      ) : stream.thumbnail_url ? (
+        <img
+          src={stream.thumbnail_url}
+          alt={stream.title}
+          className="w-full h-full object-cover absolute inset-0 opacity-30"
+        />
+      ) : null}
+      
+      {/* Paywall Overlay */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
         <Card className="max-w-md mx-4 p-6 text-center bg-card/95 border-primary/20">
-          <Lock className="w-10 h-10 text-primary mx-auto mb-3" />
-          <h2 className="text-lg font-bold text-foreground mb-1">{stream.title}</h2>
-          <p className="text-sm text-muted-foreground mb-4">Purchase access to watch this stream.</p>
-          <div className="text-2xl font-bold text-foreground mb-1">${streamPrice.toFixed(2)}</div>
-          <p className="text-xs text-muted-foreground mb-4">One-time payment</p>
-          <Button onClick={handlePurchaseAccess} disabled={createStreamCheckout.isPending} className="w-full">
-            {createStreamCheckout.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Crown className="w-4 h-4 mr-2" />}
-            Purchase Access
-          </Button>
-          {!user && <p className="text-xs text-muted-foreground mt-2"><Link to="/auth" className="text-primary hover:underline">Login</Link> to purchase</p>}
+          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-4">
+            <Lock className="w-8 h-8 text-primary" />
+          </div>
+          <Badge className="bg-primary text-primary-foreground border-0 mb-4">
+            <Crown className="w-3 h-3 mr-1" />
+            Premium Stream
+          </Badge>
+          <h2 className="text-xl font-bold text-foreground mb-2">{stream.title}</h2>
+          <p className="text-muted-foreground mb-4">
+            This is a paid live stream. Purchase access to watch the full content.
+          </p>
+          
+          {accessInfo?.previewUrl && (
+            <div className="mb-4 p-3 rounded-lg bg-secondary/50 border border-border">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Play className="w-4 h-4" />
+                <span>Free preview available above</span>
+              </div>
+            </div>
+          )}
+          
+          <div className="space-y-3">
+            <div className="flex items-center justify-center gap-2 text-2xl font-bold text-foreground">
+              <DollarSign className="w-6 h-6 text-primary" />
+              <span>{streamPrice.toFixed(2)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">One-time payment • Lifetime access</p>
+            
+            <Button 
+              onClick={handlePurchaseAccess}
+              disabled={createStreamCheckout.isPending}
+              className="w-full"
+              size="lg"
+            >
+              {createStreamCheckout.isPending ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Crown className="w-4 h-4 mr-2" />
+              )}
+              Purchase Access
+            </Button>
+            
+            {!user && (
+              <p className="text-xs text-muted-foreground">
+                <Link to="/auth" className="text-primary hover:underline">Login</Link> to purchase
+              </p>
+            )}
+          </div>
         </Card>
       </div>
     </div>
@@ -187,7 +339,7 @@ const StreamView = () => {
       <div className={cn("pt-16 flex flex-col lg:flex-row min-h-screen", isTheaterMode && "fixed inset-0 pt-0 z-50 bg-background")}>
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
-          {/* Video */}
+          {/* Video Player or Paywall */}
           <div className="relative group">
             {isPaidStream && !hasAccess ? (
               <PaidStreamPaywall />
@@ -204,179 +356,328 @@ const StreamView = () => {
             ) : (
               <div className="relative aspect-video bg-secondary flex items-center justify-center">
                 {stream.thumbnail_url ? (
-                  <img src={stream.thumbnail_url} alt={stream.title} className="w-full h-full object-cover" />
+                  <img
+                    src={stream.thumbnail_url}
+                    alt={stream.title}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <div className="text-center">
-                    <Users className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm font-medium text-foreground">Stream Offline</p>
+                    <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-medium text-foreground">Stream Offline</p>
+                    <p className="text-sm text-muted-foreground">Check back later when the streamer is live</p>
                   </div>
                 )}
               </div>
             )}
           </div>
 
-          {/* Compact Stream Info */}
-          <div className="p-3 md:p-4 border-b border-border flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-10 h-10 rounded-full ring-2 ring-primary bg-secondary flex-shrink-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-foreground">
-                  {(stream.profiles?.display_name || stream.profiles?.username || "S").charAt(0)}
-                </span>
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-sm font-bold text-foreground truncate">{stream.title}</h1>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span className="font-medium text-primary">
-                    {stream.profiles?.display_name || stream.profiles?.username || "Streamer"}
+          {/* Stream Info */}
+          <div className="p-4 md:p-6 border-b border-border">
+            <div className="flex flex-col md:flex-row gap-4 md:items-start justify-between">
+              <div className="flex gap-4">
+                <div className="w-14 h-14 rounded-full ring-2 ring-primary bg-secondary overflow-hidden flex items-center justify-center">
+                  <span className="text-xl font-bold text-foreground">
+                    {(stream.profiles?.display_name || stream.profiles?.username || "S").charAt(0)}
                   </span>
-                  <span>•</span>
-                  <span>{formatViewers(stream.viewer_count || 0)} viewers</span>
-                  {isPaidStream && hasAccess && (
-                    <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                      <CheckCircle className="w-2.5 h-2.5 mr-0.5" /> Access
-                    </Badge>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h1 className="text-xl font-display font-bold text-foreground">
+                      {stream.title}
+                    </h1>
+                    {isPaidStream && (
+                      <Badge className="bg-primary text-primary-foreground border-0">
+                        <DollarSign className="w-3 h-3 mr-1" />
+                        ${streamPrice}
+                      </Badge>
+                    )}
+                    {hasAccess && isPaidStream && (
+                      <Badge variant="secondary" className="border-green-500/50 text-green-500">
+                        <CheckCircle className="w-3 h-3 mr-1" />
+                        Access Granted
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-primary font-semibold">
+                    {stream.profiles?.display_name || stream.profiles?.username || "Streamer"}
+                    {stream.profiles?.is_verified && (
+                      <Badge variant="secondary" className="ml-2 text-xs">Verified</Badge>
+                    )}
+                  </p>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <span>{formatViewers(stream.viewer_count || 0)} viewers</span>
+                    {stream.profiles?.follower_count && (
+                      <span>{formatViewers(stream.profiles.follower_count)} followers</span>
+                    )}
+                  </div>
+                  {stream.tags && stream.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {stream.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 py-0.5 bg-secondary text-secondary-foreground text-xs rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              <Button
-                variant={isFollowing ? "secondary" : "default"}
-                size="sm"
-                onClick={handleToggleFollow}
-                disabled={followUser.isPending || unfollowUser.isPending}
-                className="h-8 text-xs"
-              >
-                <Heart className={`w-3.5 h-3.5 ${isFollowing ? "fill-current" : ""}`} />
-                {isFollowing ? "Following" : "Follow"}
-              </Button>
-              {stream?.user_id && (
-                <TipDialog
-                  streamId={stream.id}
-                  recipientId={stream.user_id}
-                  onTipSent={(tip) => {
-                    setHighlightedTips(prev => [...prev, {
-                      id: crypto.randomUUID(),
-                      senderName: user?.email?.split('@')[0] || "Anonymous",
-                      giftName: tip.giftName,
-                      giftIcon: tip.giftIcon,
-                      amount: tip.amount,
-                      message: tip.message,
-                    }]);
-                  }}
-                />
-              )}
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleShare}>
-                <Share2 className="w-3.5 h-3.5" />
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={isFollowing ? "secondary" : "default"}
+                  onClick={handleToggleFollow}
+                  disabled={followUser.isPending || unfollowUser.isPending}
+                >
+                  <Heart className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`} />
+                  {isFollowing ? "Following" : "Follow"}
+                </Button>
+                
+                {/* Tip/Donate Button */}
+                {stream?.user_id && (
+                  <TipDialog
+                    streamId={stream.id}
+                    recipientId={stream.user_id}
+                    onTipSent={(tip) => {
+                      setHighlightedTips(prev => [...prev, {
+                        id: crypto.randomUUID(),
+                        senderName: user?.email?.split('@')[0] || "Anonymous",
+                        giftName: tip.giftName,
+                        giftIcon: tip.giftIcon,
+                        amount: tip.amount,
+                        message: tip.message,
+                      }]);
+                    }}
+                  />
+                )}
+                
+                <Button variant="outline" onClick={handleShare}>
+                  <Share2 className="w-4 h-4" />
+                  Share
+                </Button>
+              </div>
             </div>
+          </div>
+
+          {/* Description */}
+          <div className="p-4 md:p-6">
+            <h3 className="font-semibold text-foreground mb-2">About this stream</h3>
+            <p className="text-muted-foreground">{stream.description || "No description provided."}</p>
           </div>
         </div>
 
-        {/* Chat Sidebar */}
-        <div className="w-full lg:w-80 border-l border-border flex flex-col bg-card">
-          {/* Chat header */}
-          <div className="flex items-center justify-between px-3 py-2 border-b border-border">
-            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Live Chat</span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Users className="w-3 h-3" />
-              <span>{formatViewers(stream.viewer_count || 0)}</span>
-            </div>
-          </div>
+        {/* Sidebar with Tabs */}
+        <div className="w-full lg:w-96 border-l border-border flex flex-col bg-card">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className={cn("flex flex-col", activeTab === "chat" && "h-full")}>
+            <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0">
+              <TabsTrigger 
+                value="chat" 
+                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Chat
+              </TabsTrigger>
+              <TabsTrigger 
+                value="shop" 
+                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                Shop
+              </TabsTrigger>
+              <TabsTrigger 
+                value="services" 
+                className="flex-1 gap-2 rounded-none border-b-2 border-transparent data-[state=active]:border-primary"
+              >
+                <Briefcase className="w-4 h-4" />
+                Services
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Messages */}
-          <div
-            className="flex-1 overflow-y-auto px-3 py-2 space-y-0.5 min-h-[300px] lg:min-h-0 scroll-smooth"
-            ref={(el) => { if (el) el.scrollTop = el.scrollHeight; }}
-          >
-            {highlightedTips.map((tip) => (
-              <HighlightedTip
-                key={tip.id}
-                senderName={tip.senderName}
-                giftName={tip.giftName}
-                giftIcon={tip.giftIcon}
-                amount={tip.amount}
-                message={tip.message}
-              />
-            ))}
-
-            {messages.length === 0 && highlightedTips.length === 0 ? (
-              <div className="text-center text-muted-foreground py-8">
-                <MessageCircle className="w-6 h-6 mx-auto mb-1 opacity-50" />
-                <p className="text-xs">Say something to start the chat.</p>
-              </div>
-            ) : (
-              messages.map((msg) => {
-                const nameColors = [
-                  "text-red-400", "text-blue-400", "text-green-400",
-                  "text-yellow-400", "text-pink-400", "text-purple-400",
-                  "text-orange-400", "text-teal-400", "text-cyan-400",
-                  "text-emerald-400", "text-rose-400", "text-indigo-400",
-                ];
-                const colorIndex = msg.user_id ? msg.user_id.charCodeAt(0) % nameColors.length : 0;
-                const displayName = msg.profiles?.display_name || msg.profiles?.username || (msg.user_id === "00000000-0000-0000-0000-000000000000" ? "Guest" : "User");
-                const isStreamer = msg.user_id === stream?.user_id;
-
-                return (
-                  <div key={msg.id} className="py-0.5 px-1.5 -mx-1.5 rounded hover:bg-secondary/40 transition-colors text-sm break-words">
-                    {isStreamer && (
-                      <Badge variant="secondary" className="mr-1 px-1 py-0 text-[10px] font-bold bg-primary/20 text-primary border-0 align-middle">
-                        STREAMER
-                      </Badge>
-                    )}
-                    {tier && !isStreamer && <Crown className="w-3 h-3 inline-block mr-0.5 text-primary align-middle" />}
-                    <span className={`font-semibold ${isStreamer ? "text-primary" : nameColors[colorIndex]}`}>{displayName}</span>
-                    <span className="text-muted-foreground mx-0.5">:</span>
-                    <span className="text-foreground">{msg.message}</span>
-                  </div>
-                );
-              })
-            )}
-          </div>
-
-          {/* Gifts */}
-          {stream?.user_id && user && (
-            <div className="px-3 pb-1">
-              <StreamGifts
-                streamId={stream.id}
-                recipientId={stream.user_id}
-                onGiftSent={(gift) => {
-                  setHighlightedTips(prev => [...prev, {
-                    id: crypto.randomUUID(),
-                    senderName: gift.senderName,
-                    giftName: gift.giftName,
-                    giftIcon: gift.giftIcon,
-                    amount: gift.amount,
-                    message: gift.message,
-                  }]);
-                }}
-              />
-            </div>
-          )}
-
-          {/* Chat input */}
-          <div className="p-2.5 border-t border-border bg-card">
-            <div className="flex gap-1.5">
-              <div className="relative flex-1">
-                <Input
-                  type="text"
-                  placeholder="Send a message"
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                  className="pr-9 bg-secondary/50 border-border/50 text-sm h-8"
-                  maxLength={500}
-                />
-                <div className="absolute right-1.5 top-1/2 -translate-y-1/2">
-                  <EmojiPicker onEmojiSelect={(emoji) => setChatMessage(prev => prev + emoji)} />
+            {/* Chat Tab — Twitch-style live chat */}
+            <TabsContent value="chat" className="flex-1 flex flex-col m-0 overflow-hidden">
+              {/* Chat header */}
+              <div className="flex items-center justify-between px-4 py-2 border-b border-border">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Live Chat
+                </span>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>{formatViewers(stream.viewer_count || 0)}</span>
                 </div>
               </div>
-              <Button variant="default" size="sm" className="h-8 px-3" onClick={handleSendMessage} disabled={!chatMessage.trim() || sendMessage.isPending}>
-                {sendMessage.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <span className="text-xs font-semibold">Chat</span>}
-              </Button>
-            </div>
-          </div>
+
+              {/* Messages area */}
+              <div
+                className="flex-1 overflow-y-auto px-4 py-2 space-y-0.5 min-h-[300px] lg:min-h-0 scroll-smooth"
+                ref={(el) => {
+                  if (el) el.scrollTop = el.scrollHeight;
+                }}
+              >
+                {/* Highlighted Tips */}
+                {highlightedTips.map((tip) => (
+                  <HighlightedTip
+                    key={tip.id}
+                    senderName={tip.senderName}
+                    giftName={tip.giftName}
+                    giftIcon={tip.giftIcon}
+                    amount={tip.amount}
+                    message={tip.message}
+                  />
+                ))}
+
+                {messages.length === 0 && highlightedTips.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-8">
+                    <MessageCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Welcome to the chat!</p>
+                    <p className="text-xs">Say something to get the conversation started.</p>
+                  </div>
+                ) : (
+                  messages.map((msg) => {
+                    const nameColors = [
+                      "text-red-400", "text-blue-400", "text-green-400",
+                      "text-yellow-400", "text-pink-400", "text-purple-400",
+                      "text-orange-400", "text-teal-400", "text-cyan-400",
+                      "text-emerald-400", "text-rose-400", "text-indigo-400",
+                    ];
+                    const colorIndex = msg.user_id
+                      ? msg.user_id.charCodeAt(0) % nameColors.length
+                      : 0;
+                    const displayName =
+                      msg.profiles?.display_name ||
+                      msg.profiles?.username ||
+                      (msg.user_id === "00000000-0000-0000-0000-000000000000"
+                        ? "Guest"
+                        : "User");
+                    const isStreamer = msg.user_id === stream?.user_id;
+
+                    return (
+                      <div
+                        key={msg.id}
+                        className="py-1 px-2 -mx-2 rounded hover:bg-secondary/40 transition-colors leading-relaxed text-sm break-words animate-slideIn"
+                      >
+                        {isStreamer && (
+                          <Badge
+                            variant="secondary"
+                            className="mr-1.5 px-1 py-0 text-[10px] font-bold bg-primary/20 text-primary border-0 align-middle"
+                          >
+                            STREAMER
+                          </Badge>
+                        )}
+                        {tier && !isStreamer && (
+                          <Crown className="w-3.5 h-3.5 inline-block mr-1 text-primary align-middle" />
+                        )}
+                        <span className={`font-semibold ${isStreamer ? "text-primary" : nameColors[colorIndex]} cursor-pointer hover:underline`}>
+                          {displayName}
+                        </span>
+                        <span className="text-muted-foreground mx-1">:</span>
+                        <span className="text-foreground">{msg.message}</span>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* Gifts Panel */}
+              {stream?.user_id && user && (
+                <div className="px-4 pb-2">
+                  <StreamGifts
+                    streamId={stream.id}
+                    recipientId={stream.user_id}
+                    onGiftSent={(gift) => {
+                      setHighlightedTips(prev => [...prev, {
+                        id: crypto.randomUUID(),
+                        senderName: gift.senderName,
+                        giftName: gift.giftName,
+                        giftIcon: gift.giftIcon,
+                        amount: gift.amount,
+                        message: gift.message,
+                      }]);
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Chat input */}
+              <div className="p-3 border-t border-border bg-card">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      type="text"
+                      placeholder="Send a message"
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                      className="pr-10 bg-secondary/50 border-border/50 text-sm h-9"
+                      maxLength={500}
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                      <EmojiPicker onEmojiSelect={(emoji) => setChatMessage(prev => prev + emoji)} />
+                    </div>
+                  </div>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="h-9 px-3"
+                    onClick={handleSendMessage}
+                    disabled={!chatMessage.trim() || sendMessage.isPending}
+                  >
+                    {sendMessage.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <span className="text-xs font-semibold">Chat</span>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* Shop Tab */}
+            <TabsContent value="shop" className="overflow-y-auto p-3 m-0 space-y-2 [&[data-state=active]]:flex-none">
+              {streamerProducts.length > 0 && (
+                <FeaturedProductsWidget
+                  products={streamerProducts}
+                  creatorName={stream.profiles?.display_name || stream.profiles?.username || undefined}
+                  sellerId={stream.user_id}
+                  maxItems={4}
+                />
+              )}
+              
+              {streamerProducts.length === 0 && (
+                <div className="text-center py-4 text-muted-foreground">
+                  <ShoppingBag className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                  <p className="text-sm">No products available</p>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* Services Tab (Gigs + Courses) */}
+            <TabsContent value="services" className="overflow-y-auto p-3 m-0 space-y-2 [&[data-state=active]]:flex-none">
+              {streamerFreelancer && streamerPackages.length > 0 && (
+                <FeaturedGigsWidget
+                  freelancer={streamerFreelancer}
+                  packages={streamerPackages}
+                  maxItems={3}
+                />
+              )}
+              
+              {stream?.user_id && (
+                <FeaturedCoursesWidget
+                  creatorId={stream.user_id}
+                />
+              )}
+              
+              {(!streamerFreelancer || streamerPackages.length === 0) && streamerCourses.length === 0 && (
+                <div className="text-center py-4 text-muted-foreground">
+                  <Briefcase className="w-6 h-6 mx-auto mb-1 opacity-50" />
+                  <p className="text-sm">No services available</p>
+                  <p className="text-xs">No gigs or courses yet</p>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
