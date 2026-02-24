@@ -1,26 +1,17 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CourseCard from "@/components/courses/CourseCard";
 import { useCourses } from "@/hooks/useCourses";
 import { useAuth } from "@/hooks/useAuth";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, BookOpen, Loader2, GraduationCap } from "lucide-react";
+import { BookOpen, Loader2, GraduationCap } from "lucide-react";
 
 const Courses = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const { data: courses = [], isLoading } = useCourses();
   const { user } = useAuth();
   const navigate = useNavigate();
-
-  const filteredCourses = useMemo(() => {
-    if (!searchQuery) return courses;
-    return courses.filter((c) =>
-      c.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [courses, searchQuery]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,9 +39,9 @@ const Courses = () => {
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-6 h-6 animate-spin text-primary" />
             </div>
-          ) : filteredCourses.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-              {filteredCourses.map((course) => (
+          ) : courses.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {courses.map((course) => (
                 <CourseCard key={course.id} course={course} />
               ))}
             </div>
