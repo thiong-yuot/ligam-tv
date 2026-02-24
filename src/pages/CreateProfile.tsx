@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -23,6 +23,9 @@ const CreateProfile = () => {
   const [checking, setChecking] = useState(true);
   const [step, setStep] = useState(1);
   const [editing, setEditing] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -45,6 +48,7 @@ const CreateProfile = () => {
         setDisplayName(profile.display_name || "");
         setBio(profile.bio || "");
         if (profile.website) setWebsite(profile.website);
+        if (profile.avatar_url) setAvatarUrl(profile.avatar_url);
       }
       setChecking(false);
     };
@@ -57,9 +61,71 @@ const CreateProfile = () => {
       setDisplayName(profile.display_name || "");
       setBio(profile.bio || "");
       setWebsite(profile.website || "");
+      setAvatarUrl(profile.avatar_url || null);
     }
     setEditing(true);
   };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ variant: "destructive", title: "Invalid file", description: "Please select an image file." });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ variant: "destructive", title: "File too large", description: "Image must be under 5MB." });
+      return;
+    }
+
+    setAvatarUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      setAvatarUrl(data.publicUrl);
+      toast({ title: "Photo uploaded!" });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Upload failed", description: err.message });
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  const AvatarDisplay = ({ size = "w-24 h-24", iconSize = "w-12 h-12", onClick }: { size?: string; iconSize?: string; onClick?: () => void }) => (
+    <div className="relative">
+      <div
+        className={`${size} rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20 overflow-hidden ${onClick ? "cursor-pointer" : ""}`}
+        onClick={onClick}
+      >
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+        ) : (
+          <User className={`${iconSize} text-primary`} />
+        )}
+        {avatarUploading && (
+          <div className="absolute inset-0 bg-background/60 flex items-center justify-center rounded-full">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+          </div>
+        )}
+      </div>
+      {onClick && (
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onClick(); }}
+          className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
+        >
+          <Camera className="w-5 h-5 text-primary-foreground" />
+        </button>
+      )}
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+    </div>
+  );
+
+  const triggerUpload = () => fileInputRef.current?.click();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,11 +140,13 @@ const CreateProfile = () => {
         display_name: displayName,
         bio,
         website,
+        avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       };
+
       const { error } = await supabase.from("profiles").upsert(profileData, { onConflict: "user_id" });
       if (error) throw error;
-      await supabase.from("freelancers").update({ name: displayName }).eq("user_id", user.id);
+      await supabase.from("freelancers").update({ name: displayName, avatar_url: avatarUrl }).eq("user_id", user.id);
       await refreshProfile();
       toast({ title: hasProfile ? "Profile Updated!" : "Profile Created!", description: hasProfile ? "Your changes have been saved." : "Your profile is ready." });
       if (hasProfile) { setEditing(false); } else { navigate("/dashboard"); }
@@ -106,18 +174,14 @@ const CreateProfile = () => {
             </div>
 
             <div className="p-8 rounded-2xl bg-card border border-border">
-              {/* Avatar + name */}
               <div className="flex flex-col items-center gap-4 mb-8">
-                <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20">
-                  <User className="w-12 h-12 text-primary" />
-                </div>
+                <AvatarDisplay />
                 <div className="text-center">
                   <h2 className="text-2xl font-bold text-foreground">{profile?.display_name}</h2>
                   <p className="text-muted-foreground">@{profile?.username}</p>
                 </div>
               </div>
 
-              {/* Info rows */}
               <div className="space-y-4 mb-8">
                 {profile?.bio && (
                   <div>
@@ -179,10 +243,9 @@ const CreateProfile = () => {
             <div className="p-8 rounded-2xl bg-card border border-border">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex justify-center mb-4">
-                  <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center border-4 border-primary/20">
-                    <User className="w-12 h-12 text-muted-foreground" />
-                  </div>
+                  <AvatarDisplay onClick={triggerUpload} />
                 </div>
+                <p className="text-center text-xs text-muted-foreground -mt-4">Tap to change photo</p>
 
                 <div className="space-y-2">
                   <Label htmlFor="username">Username *</Label>
@@ -258,10 +321,7 @@ const CreateProfile = () => {
               {step === 1 && (
                 <>
                   <div className="flex justify-center mb-8">
-                    <div className="relative">
-                      <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center border-4 border-primary/20"><User className="w-16 h-16 text-muted-foreground" /></div>
-                      <button type="button" className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"><Camera className="w-5 h-5 text-primary-foreground" /></button>
-                    </div>
+                    <AvatarDisplay size="w-32 h-32" iconSize="w-16 h-16" onClick={triggerUpload} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="username">Username *</Label>
@@ -303,7 +363,13 @@ const CreateProfile = () => {
                   <div className="mt-8 p-6 rounded-xl bg-background border border-border">
                     <p className="text-sm text-muted-foreground mb-4">Preview</p>
                     <div className="flex items-center gap-4">
-                      <div className={`w-16 h-16 rounded-full ${themes[selectedTheme].color} flex items-center justify-center`}><User className="w-8 h-8 text-white" /></div>
+                      <div className={`w-16 h-16 rounded-full ${themes[selectedTheme].color} flex items-center justify-center overflow-hidden`}>
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-8 h-8 text-white" />
+                        )}
+                      </div>
                       <div><h3 className="text-lg font-semibold">{displayName || "Your Name"}</h3><p className="text-muted-foreground">@{username || "username"}</p></div>
                     </div>
                     {bio && <p className="mt-4 text-sm text-muted-foreground line-clamp-2">{bio}</p>}
