@@ -1,3 +1,4 @@
+import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -161,14 +162,14 @@ const formatViewers = (count: number) => {
   return count.toString();
 };
 
-const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices; index: number }) => {
+const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: StreamWithServices; index: number }>(({ stream, index }, ref) => {
   // Show different service combinations based on stream index
   const showProducts = index === 0 || index === 2;
   const showCourses = index === 0 || index === 1;
   const showFreelancer = index === 1 || index === 2;
   
   return (
-    <div className="bg-card border border-border rounded-lg overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
+    <div ref={ref} className="bg-card border border-border rounded-lg overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
       {/* Stream Preview */}
       <Link to={`/stream/${stream.id}`} className="block relative">
         <div className="aspect-video relative overflow-hidden">
@@ -308,7 +309,8 @@ const StreamCardWithServices = ({ stream, index }: { stream: StreamWithServices;
       </div>
     </div>
   );
-};
+});
+StreamCardWithServices.displayName = "StreamCardWithServices";
 
 const LoadingCard = () => (
   <div className="bg-card border border-border rounded-lg overflow-hidden">
