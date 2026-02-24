@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { User, Camera, Palette, Loader2, Check, Globe, ArrowRight, ArrowLeft, Edit } from "lucide-react";
+import { User, Camera, Palette, Loader2, Check, Globe, ArrowRight, ArrowLeft, Edit, X } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 const CreateProfile = () => {
@@ -22,11 +22,11 @@ const CreateProfile = () => {
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [step, setStep] = useState(1);
+  const [editing, setEditing] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Determine if this is an edit (profile already has username + display_name)
-  const isEditing = !!(profile?.username && profile?.display_name);
+  const hasProfile = !!(profile?.username && profile?.display_name);
 
   const themes = [
     { color: "bg-primary", name: "Default" },
@@ -39,42 +39,35 @@ const CreateProfile = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/login");
-        return;
-      }
-      
-      // Pre-fill from existing profile
+      if (!session) { navigate("/login"); return; }
       if (profile) {
         setUsername(profile.username || "");
         setDisplayName(profile.display_name || "");
         setBio(profile.bio || "");
-        if (profile.website) {
-          setWebsite(profile.website);
-        }
+        if (profile.website) setWebsite(profile.website);
       }
       setChecking(false);
     };
     checkAuth();
   }, [navigate, profile]);
 
-  // If editing, skip the step wizard — show all fields at once
-  const isStepMode = !isEditing;
-  const progress = isStepMode ? (step === 1 ? 33 : step === 2 ? 66 : 100) : 100;
+  const handleStartEdit = () => {
+    if (profile) {
+      setUsername(profile.username || "");
+      setDisplayName(profile.display_name || "");
+      setBio(profile.bio || "");
+      setWebsite(profile.website || "");
+    }
+    setEditing(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (isStepMode && step < 3) {
-      setStep(step + 1);
-      return;
-    }
+    if (!hasProfile && step < 3) { setStep(step + 1); return; }
 
     setLoading(true);
-
     try {
       if (!user) throw new Error("Not authenticated");
-
       const profileData = {
         user_id: user.id,
         username: username.toLowerCase().replace(/\s/g, ""),
@@ -83,48 +76,23 @@ const CreateProfile = () => {
         website,
         updated_at: new Date().toISOString(),
       };
-
-      const { error } = await supabase
-        .from("profiles")
-        .upsert(profileData, { onConflict: "user_id" });
-
+      const { error } = await supabase.from("profiles").upsert(profileData, { onConflict: "user_id" });
       if (error) throw error;
-
-      // Sync display_name to freelancer table if freelancer profile exists
-      await supabase
-        .from("freelancers")
-        .update({ name: displayName })
-        .eq("user_id", user.id);
-
+      await supabase.from("freelancers").update({ name: displayName }).eq("user_id", user.id);
       await refreshProfile();
-      
-      toast({
-        title: isEditing ? "Profile Updated!" : "Profile Created!",
-        description: isEditing ? "Your changes have been saved." : "Your profile is ready. Start streaming now!",
-      });
-      navigate("/dashboard");
+      toast({ title: hasProfile ? "Profile Updated!" : "Profile Created!", description: hasProfile ? "Your changes have been saved." : "Your profile is ready." });
+      if (hasProfile) { setEditing(false); } else { navigate("/dashboard"); }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to update profile";
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: errorMessage,
-      });
-    } finally {
-      setLoading(false);
-    }
+      toast({ variant: "destructive", title: "Error", description: error instanceof Error ? error.message : "Failed to save profile" });
+    } finally { setLoading(false); }
   };
 
   if (checking) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
-  // Edit mode: single-page form with all fields
-  if (isEditing) {
+  // ── View Mode (profile exists & not editing) ──
+  if (hasProfile && !editing) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
@@ -134,6 +102,74 @@ const CreateProfile = () => {
               <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
                 <ArrowLeft className="w-4 h-4" />
               </Button>
+              <h1 className="text-lg font-semibold text-foreground">My Profile</h1>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-card border border-border">
+              {/* Avatar + name */}
+              <div className="flex flex-col items-center gap-4 mb-8">
+                <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center border-4 border-primary/20">
+                  <User className="w-12 h-12 text-primary" />
+                </div>
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-foreground">{profile?.display_name}</h2>
+                  <p className="text-muted-foreground">@{profile?.username}</p>
+                </div>
+              </div>
+
+              {/* Info rows */}
+              <div className="space-y-4 mb-8">
+                {profile?.bio && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Bio</p>
+                    <p className="text-sm text-foreground">{profile.bio}</p>
+                  </div>
+                )}
+                {profile?.website && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Website</p>
+                    <a href={profile.website} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">{profile.website}</a>
+                  </div>
+                )}
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-foreground">{profile?.follower_count || 0}</p>
+                    <p className="text-xs text-muted-foreground">Followers</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-foreground">{profile?.following_count || 0}</p>
+                    <p className="text-xs text-muted-foreground">Following</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-foreground">{profile?.total_views || 0}</p>
+                    <p className="text-xs text-muted-foreground">Views</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button onClick={handleStartEdit} className="w-full" size="lg">
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Profile
+              </Button>
+            </div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  // ── Edit Mode (profile exists & editing) ──
+  if (hasProfile && editing) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <section className="pt-32 pb-20 px-4">
+          <div className="container mx-auto max-w-2xl">
+            <div className="flex items-center gap-2 mb-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditing(false)}>
+                <X className="w-4 h-4" />
+              </Button>
               <div className="flex items-center gap-2">
                 <Edit className="w-5 h-5 text-primary" />
                 <h1 className="text-lg font-semibold text-foreground">Edit Profile</h1>
@@ -142,7 +178,6 @@ const CreateProfile = () => {
 
             <div className="p-8 rounded-2xl bg-card border border-border">
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Avatar Placeholder */}
                 <div className="flex justify-center mb-4">
                   <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center border-4 border-primary/20">
                     <User className="w-12 h-12 text-muted-foreground" />
@@ -151,72 +186,32 @@ const CreateProfile = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="username">Username *</Label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Choose a unique username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ""))}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    ligam.tv/{username || "username"}
-                  </p>
+                  <Input id="username" type="text" placeholder="Choose a unique username" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ""))} required />
+                  <p className="text-xs text-muted-foreground">ligam.tv/{username || "username"}</p>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="displayName">Display Name *</Label>
-                  <Input
-                    id="displayName"
-                    type="text"
-                    placeholder="How should we call you?"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    required
-                  />
+                  <Input id="displayName" type="text" placeholder="How should we call you?" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    placeholder="Tell viewers about yourself..."
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value.slice(0, 300))}
-                    rows={4}
-                  />
+                  <Textarea id="bio" placeholder="Tell viewers about yourself..." value={bio} onChange={(e) => setBio(e.target.value.slice(0, 300))} rows={4} />
                   <p className="text-xs text-muted-foreground">{bio.length}/300</p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="website" className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    Website / Social Link
-                  </Label>
-                  <Input
-                    id="website"
-                    type="url"
-                    placeholder="https://your-website.com"
-                    value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
-                  />
+                  <Label htmlFor="website" className="flex items-center gap-2"><Globe className="w-4 h-4" /> Website / Social Link</Label>
+                  <Input id="website" type="url" placeholder="https://your-website.com" value={website} onChange={(e) => setWebsite(e.target.value)} />
                 </div>
 
-                <Button
-                  type="submit"
-                  className="w-full"
-                  size="lg"
-                  disabled={loading || !username || !displayName}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </Button>
+                <div className="flex gap-3">
+                  <Button type="button" variant="outline" className="flex-1" onClick={() => setEditing(false)}>Cancel</Button>
+                  <Button type="submit" className="flex-1" disabled={loading || !username || !displayName}>
+                    {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</> : "Save Changes"}
+                  </Button>
+                </div>
               </form>
             </div>
           </div>
@@ -226,17 +221,16 @@ const CreateProfile = () => {
     );
   }
 
-  // Create mode: step wizard
+  // ── Create Mode (no profile — step wizard) ──
+  const progress = step === 1 ? 33 : step === 2 ? 66 : 100;
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-
       <section className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-2xl">
           <div className="flex items-center gap-2 mb-4">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}><ArrowLeft className="w-4 h-4" /></Button>
             <h1 className="text-lg font-semibold text-foreground">Create Profile</h1>
           </div>
           <div className="mb-8">
@@ -257,11 +251,6 @@ const CreateProfile = () => {
               {step === 2 && <>Tell us about <span className="text-primary">yourself</span></>}
               {step === 3 && <>Customize your <span className="text-primary">look</span></>}
             </h1>
-            <p className="text-muted-foreground text-lg">
-              {step === 1 && "Choose your username and display name"}
-              {step === 2 && "Add a bio so viewers can get to know you"}
-              {step === 3 && "Pick a theme that represents your brand"}
-            </p>
           </div>
 
           <div className="p-8 rounded-2xl bg-card border border-border">
@@ -270,164 +259,67 @@ const CreateProfile = () => {
                 <>
                   <div className="flex justify-center mb-8">
                     <div className="relative">
-                      <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center border-4 border-primary/20">
-                        <User className="w-16 h-16 text-muted-foreground" />
-                      </div>
-                      <button
-                        type="button"
-                        className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
-                      >
-                        <Camera className="w-5 h-5 text-primary-foreground" />
-                      </button>
+                      <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center border-4 border-primary/20"><User className="w-16 h-16 text-muted-foreground" /></div>
+                      <button type="button" className="absolute bottom-0 right-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"><Camera className="w-5 h-5 text-primary-foreground" /></button>
                     </div>
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="username">Username *</Label>
-                    <Input
-                      id="username"
-                      type="text"
-                      placeholder="Choose a unique username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ""))}
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      This will be your unique identifier: ligam.tv/{username || "username"}
-                    </p>
+                    <Input id="username" type="text" placeholder="Choose a unique username" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ""))} required />
+                    <p className="text-xs text-muted-foreground">ligam.tv/{username || "username"}</p>
                   </div>
-
                   <div className="space-y-2">
                     <Label htmlFor="displayName">Display Name *</Label>
-                    <Input
-                      id="displayName"
-                      type="text"
-                      placeholder="How should we call you?"
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      required
-                    />
+                    <Input id="displayName" type="text" placeholder="How should we call you?" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
                   </div>
                 </>
               )}
-
               {step === 2 && (
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="bio">Bio</Label>
-                    <Textarea
-                      id="bio"
-                      placeholder="Tell viewers about yourself, what you stream, your schedule..."
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value.slice(0, 300))}
-                      rows={5}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      {bio.length}/300 characters
-                    </p>
+                    <Textarea id="bio" placeholder="Tell viewers about yourself..." value={bio} onChange={(e) => setBio(e.target.value.slice(0, 300))} rows={5} />
+                    <p className="text-xs text-muted-foreground">{bio.length}/300 characters</p>
                   </div>
-
                   <div className="space-y-2">
-                    <Label htmlFor="website" className="flex items-center gap-2">
-                      <Globe className="w-4 h-4" />
-                      Website / Social Link
-                    </Label>
-                    <Input
-                      id="website"
-                      type="url"
-                      placeholder="https://your-website.com"
-                      value={website}
-                      onChange={(e) => setWebsite(e.target.value)}
-                    />
+                    <Label htmlFor="website" className="flex items-center gap-2"><Globe className="w-4 h-4" /> Website / Social Link</Label>
+                    <Input id="website" type="url" placeholder="https://your-website.com" value={website} onChange={(e) => setWebsite(e.target.value)} />
                   </div>
                 </>
               )}
-
               {step === 3 && (
                 <>
                   <div className="space-y-4">
-                    <Label className="flex items-center gap-2">
-                      <Palette className="w-4 h-4" />
-                      Channel Theme
-                    </Label>
+                    <Label className="flex items-center gap-2"><Palette className="w-4 h-4" /> Channel Theme</Label>
                     <div className="grid grid-cols-5 gap-4">
                       {themes.map((theme, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => setSelectedTheme(index)}
-                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                            selectedTheme === index
-                              ? "border-primary bg-primary/5"
-                              : "border-transparent hover:border-border"
-                          }`}
-                        >
-                          <div className={`w-12 h-12 rounded-full ${theme.color} flex items-center justify-center`}>
-                            {selectedTheme === index && (
-                              <Check className="w-6 h-6 text-white" />
-                            )}
-                          </div>
+                        <button key={index} type="button" onClick={() => setSelectedTheme(index)} className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${selectedTheme === index ? "border-primary bg-primary/5" : "border-transparent hover:border-border"}`}>
+                          <div className={`w-12 h-12 rounded-full ${theme.color} flex items-center justify-center`}>{selectedTheme === index && <Check className="w-6 h-6 text-white" />}</div>
                           <span className="text-xs text-muted-foreground">{theme.name}</span>
                         </button>
                       ))}
                     </div>
                   </div>
-
                   <div className="mt-8 p-6 rounded-xl bg-background border border-border">
                     <p className="text-sm text-muted-foreground mb-4">Preview</p>
                     <div className="flex items-center gap-4">
-                      <div className={`w-16 h-16 rounded-full ${themes[selectedTheme].color} flex items-center justify-center`}>
-                        <User className="w-8 h-8 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold">{displayName || "Your Name"}</h3>
-                        <p className="text-muted-foreground">@{username || "username"}</p>
-                      </div>
+                      <div className={`w-16 h-16 rounded-full ${themes[selectedTheme].color} flex items-center justify-center`}><User className="w-8 h-8 text-white" /></div>
+                      <div><h3 className="text-lg font-semibold">{displayName || "Your Name"}</h3><p className="text-muted-foreground">@{username || "username"}</p></div>
                     </div>
-                    {bio && (
-                      <p className="mt-4 text-sm text-muted-foreground line-clamp-2">{bio}</p>
-                    )}
+                    {bio && <p className="mt-4 text-sm text-muted-foreground line-clamp-2">{bio}</p>}
                   </div>
                 </>
               )}
-
               <div className="flex gap-4">
-                {step > 1 && (
-                  <Button 
-                    type="button" 
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => setStep(step - 1)}
-                  >
-                    Back
-                  </Button>
-                )}
-                <Button 
-                  type="submit" 
-                  className={`glow ${step > 1 ? "flex-1" : "w-full"}`}
-                  size="lg"
-                  disabled={loading || (step === 1 && (!username || !displayName))}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Saving...
-                    </>
-                  ) : step < 3 ? (
-                    <>
-                      Continue
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
-                  ) : (
-                    "Complete Setup"
-                  )}
+                {step > 1 && <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(step - 1)}>Back</Button>}
+                <Button type="submit" className={`glow ${step > 1 ? "flex-1" : "w-full"}`} size="lg" disabled={loading || (step === 1 && (!username || !displayName))}>
+                  {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</> : step < 3 ? <>Continue<ArrowRight className="w-4 h-4 ml-2" /></> : "Complete Setup"}
                 </Button>
               </div>
             </form>
           </div>
         </div>
       </section>
-
       <Footer />
     </div>
   );
