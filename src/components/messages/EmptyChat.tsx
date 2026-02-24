@@ -5,7 +5,7 @@ export const EmptyChat = () => (
     <div className="text-center">
       <MessageCircle className="h-10 w-10 mx-auto mb-3 opacity-30" />
       <p className="text-sm font-medium text-foreground/70">Select a conversation</p>
-      <p className="text-xs mt-1 text-muted-foreground/60">Choose from your existing chats</p>
+      <p className="text-xs mt-1 text-muted-foreground/60">Chat with creators, sellers, and freelancers</p>
     </div>
   </div>
 );

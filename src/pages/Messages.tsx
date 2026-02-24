@@ -97,7 +97,7 @@ const Messages = () => {
             selectedUserId && "hidden lg:flex"
           )}>
             <div className="px-4 py-3 border-b border-border">
-              <h1 className="text-sm font-semibold">Messages</h1>
+              <h1 className="text-sm font-semibold">Inbox</h1>
             </div>
             <ConversationList
               conversations={conversations}

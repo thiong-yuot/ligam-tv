@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Search, Briefcase, User } from "lucide-react";
+import { MessageCircle, Search, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -71,16 +71,7 @@ export const ConversationList = ({
           <div className="p-6 text-center text-muted-foreground">
             <MessageCircle className="h-10 w-10 mx-auto mb-2 opacity-40" />
             <p className="text-sm font-medium">No messages</p>
-            <p className="text-xs mt-1 text-muted-foreground/70">Start a conversation</p>
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-3 text-xs"
-              onClick={() => navigate("/freelance")}
-            >
-              <Briefcase className="h-3 w-3 mr-1.5" />
-              Browse Freelancers
-            </Button>
+            <p className="text-xs mt-1 text-muted-foreground/70">Start a conversation with creators, sellers, or freelancers</p>
           </div>
         ) : (
           filtered.map(({ otherUserId, otherProfile, lastMessage, unreadCount }) => (
