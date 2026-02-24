@@ -11,6 +11,7 @@ import FeaturedCoursesWidget from "@/components/channel/FeaturedCoursesWidget";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -31,8 +32,11 @@ import {
   Play,
   DollarSign,
   CheckCircle,
-  Coins
+  Coins,
+  Maximize,
+  Minimize
 } from "lucide-react";
+import EmojiPicker from "@/components/stream/EmojiPicker";
 import { useStream } from "@/hooks/useStreams";
 import { useChatMessages, useSendMessage } from "@/hooks/useChat";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,6 +65,7 @@ const StreamView = () => {
   }>>([]);
   const { toast } = useToast();
 
+  const [isTheaterMode, setIsTheaterMode] = useState(false);
   const { user } = useAuth();
   const { tier } = useSubscription();
   const { data: stream, isLoading } = useStream(id || "");
@@ -300,7 +305,7 @@ const StreamView = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      <div className="pt-16 flex flex-col lg:flex-row min-h-screen">
+      <div className={cn("pt-16 flex flex-col lg:flex-row min-h-screen", isTheaterMode && "fixed inset-0 pt-0 z-50 bg-background")}>
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Video Player or Paywall */}
@@ -416,6 +421,9 @@ const StreamView = () => {
                 <Button variant="outline">
                   <Crown className="w-4 h-4" />
                   Subscribe
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => setIsTheaterMode(!isTheaterMode)}>
+                  {isTheaterMode ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
                 </Button>
                 <Button variant="ghost" size="icon">
                   <Share2 className="w-4 h-4" />
@@ -576,9 +584,7 @@ const StreamView = () => {
                       maxLength={500}
                     />
                     <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                      <Button variant="ghost" size="icon" className="h-6 w-6">
-                        <Smile className="w-4 h-4 text-muted-foreground" />
-                      </Button>
+                      <EmojiPicker onEmojiSelect={(emoji) => setChatMessage(prev => prev + emoji)} />
                     </div>
                   </div>
                   <Button
