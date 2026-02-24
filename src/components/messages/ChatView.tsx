@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -61,7 +61,6 @@ export const ChatView = ({
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <Avatar className="h-8 w-8">
-          <AvatarImage src={selectedProfile?.avatar_url || undefined} />
           <AvatarFallback className="bg-muted text-muted-foreground text-xs">
             {selectedProfile?.display_name?.[0]?.toUpperCase() || <User className="h-3 w-3" />}
           </AvatarFallback>
@@ -104,7 +103,6 @@ export const ChatView = ({
                 >
                   {!isOwn && showAvatar && (
                     <Avatar className="h-6 w-6 shrink-0 mt-1">
-                      <AvatarImage src={msg.sender_profile?.avatar_url || undefined} />
                       <AvatarFallback className="text-[10px] bg-muted text-muted-foreground">
                         {msg.sender_profile?.display_name?.[0]?.toUpperCase() || "?"}
                       </AvatarFallback>
