@@ -7,7 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const PLATFORM_FEE_PERCENTAGE = 0.20;
+const PLATFORM_FEE_PERCENTAGE = 0.40; // 40% on paid live sessions
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';

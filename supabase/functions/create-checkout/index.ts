@@ -127,6 +127,23 @@ serve(async (req) => {
       throw new Error("No items or price ID provided");
     }
 
+    // Collect seller IDs from products for earnings tracking
+    const sellerIds = new Set<string>();
+    const productIds: string[] = [];
+    if (items && items.length > 0) {
+      for (const item of items as CartItem[]) {
+        if (item.id) {
+          productIds.push(item.id);
+          const { data: product } = await supabaseAdmin
+            .from("products")
+            .select("seller_id")
+            .eq("id", item.id)
+            .single();
+          if (product?.seller_id) sellerIds.add(product.seller_id);
+        }
+      }
+    }
+
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       line_items: lineItems,
       mode: mode as "payment" | "subscription",
@@ -134,6 +151,9 @@ serve(async (req) => {
       cancel_url: cancelUrl || `${req.headers.get("origin")}/shop?canceled=true`,
       metadata: {
         ...(user ? { supabase_user_id: user.id } : {}),
+        type: priceId ? "subscription" : "product_order",
+        product_ids: productIds.join(","),
+        seller_ids: Array.from(sellerIds).join(","),
       },
     };
 
