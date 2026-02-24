@@ -33,6 +33,7 @@ const HLSVideoPlayer = ({ src, poster, isLive, isTheaterMode, onToggleTheater, o
   const [showControls, setShowControls] = useState(true);
   const [qualities, setQualities] = useState<{ height: number; level: number }[]>([]);
   const [currentQuality, setCurrentQuality] = useState(-1); // -1 = auto
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -165,6 +166,14 @@ const HLSVideoPlayer = ({ src, poster, isLive, isTheaterMode, onToggleTheater, o
       container.requestFullscreen();
     }
   };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   const setQuality = (level: number) => {
     if (hlsRef.current) {
@@ -326,9 +335,9 @@ const HLSVideoPlayer = ({ src, poster, isLive, isTheaterMode, onToggleTheater, o
               size="icon"
               onClick={toggleFullscreen}
               className="text-white hover:bg-white/20"
-              title="Full screen"
+              title={isFullscreen ? "Exit full screen" : "Full screen"}
             >
-              <Maximize className="w-5 h-5" />
+              {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
             </Button>
           </div>
         </div>
