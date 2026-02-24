@@ -15,6 +15,7 @@ import {
   Share2,
   ShoppingBag,
   Briefcase,
+  ArrowLeft,
 } from "lucide-react";
 import IdentityVerificationCard from "@/components/monetization/IdentityVerificationCard";
 import WithdrawalDialog from "@/components/monetization/WithdrawalDialog";
@@ -66,7 +67,12 @@ const Monetization = () => {
         <div className="container mx-auto max-w-3xl">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-2xl font-display font-bold text-foreground">Monetization</h1>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <h1 className="text-2xl font-display font-bold text-foreground">Monetization</h1>
+            </div>
             <Link to="/affiliates">
               <Button variant="outline" size="sm" className="gap-2">
                 <Share2 className="w-4 h-4" />

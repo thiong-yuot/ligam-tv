@@ -15,7 +15,8 @@ import {
   MessageSquare,
   Heart,
   Loader2,
-  Video
+  Video,
+  ArrowLeft,
 } from "lucide-react";
 import { useUserStream } from "@/hooks/useStreams";
 import { useEarningsSummary } from "@/hooks/useEarnings";
@@ -83,14 +84,11 @@ const Analytics = () => {
         <div className="container mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-                <BarChart3 className="w-4 h-4" />
-                Analytics
-              </div>
-              <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-                Stream <span className="text-primary">Analytics</span>
-              </h1>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <h1 className="text-2xl font-display font-bold text-foreground">Analytics</h1>
             </div>
             <div className="flex gap-2">
               {["24h", "7d", "30d", "90d"].map((range) => (
