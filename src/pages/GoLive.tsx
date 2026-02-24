@@ -275,20 +275,40 @@ const GoLive = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="previewVideo">Preview Video URL (Optional)</Label>
-                          <div className="relative">
-                            <Play className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                            <Input
-                              id="previewVideo"
-                              type="url"
-                              placeholder="https://youtube.com/watch?v=..."
-                              value={previewVideoUrl}
-                              onChange={(e) => setPreviewVideoUrl(e.target.value)}
-                              className="pl-9"
+                          <Label>Preview Video (Optional)</Label>
+                          <div className="flex items-center gap-4">
+                            {previewVideoUrl && (
+                              <video src={previewVideoUrl} className="h-20 w-32 object-cover rounded-lg" controls />
+                            )}
+                            <input
+                              type="file"
+                              accept="video/*"
+                              capture="user"
+                              className="hidden"
+                              id="previewVideoInput"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file || !userId) return;
+                                const fileExt = file.name.split(".").pop();
+                                const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+                                const { error } = await supabase.storage.from("post-media").upload(fileName, file);
+                                if (!error) {
+                                  const { data } = supabase.storage.from("post-media").getPublicUrl(fileName);
+                                  setPreviewVideoUrl(data.publicUrl);
+                                }
+                              }}
                             />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              onClick={() => document.getElementById("previewVideoInput")?.click()}
+                            >
+                              <Camera className="h-4 w-4 mr-2" />
+                              {previewVideoUrl ? "Re-record" : "Record Preview"}
+                            </Button>
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            A free preview video explaining what viewers will see in your paid stream
+                            Record a free preview video explaining what viewers will see in your paid stream
                           </p>
                         </div>
                       </div>

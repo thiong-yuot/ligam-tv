@@ -236,6 +236,7 @@ export const CourseForm = ({
                 ref={videoInputRef}
                 type="file"
                 accept="video/*"
+                capture="user"
                 className="hidden"
                 onChange={handleVideoUpload}
               />

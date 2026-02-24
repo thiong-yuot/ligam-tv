@@ -101,7 +101,7 @@ const CreatePostForm = () => {
         <div className="flex items-center justify-between mt-2">
           <div className="flex gap-0.5">
             <input ref={imageInputRef} type="file" accept="image/*" multiple hidden onChange={handleImageUpload} />
-            <input ref={videoInputRef} type="file" accept="video/*" hidden onChange={handleVideoUpload} />
+            <input ref={videoInputRef} type="file" accept="video/*" capture="user" hidden onChange={handleVideoUpload} />
             <Button
               variant="ghost"
               size="icon"
