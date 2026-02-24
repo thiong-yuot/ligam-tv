@@ -53,6 +53,7 @@ import Search from "./pages/Search";
 import Affiliates from "./pages/Affiliates";
 import UserProfile from "./pages/UserProfile";
 import MyOrders from "./pages/MyOrders";
+import SellerOrders from "./pages/SellerOrders";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +105,7 @@ const App = () => (
                 <Route path="/messages" element={<Messages />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/seller/dashboard" element={<SellerDashboard />} />
+                <Route path="/seller/orders" element={<SellerOrders />} />
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
                 <Route path="/learn/:courseId" element={<LearnCourse />} />

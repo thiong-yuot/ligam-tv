@@ -120,9 +120,17 @@ const MyOrders = () => {
                         Ordered {new Date(order.created_at).toLocaleDateString()}
                       </p>
                       {order.tracking_number && (
-                        <p className="text-xs text-primary mt-1">
-                          Tracking: {order.tracking_number}
-                        </p>
+                        <div className="mt-2 flex items-center gap-3">
+                          <img
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(order.tracking_number)}`}
+                            alt="Tracking QR"
+                            className="w-10 h-10"
+                          />
+                          <div>
+                            <p className="text-xs text-muted-foreground">Tracking</p>
+                            <p className="text-xs text-primary font-mono font-medium">{order.tracking_number}</p>
+                          </div>
+                        </div>
                       )}
                     </div>
                   </CardContent>

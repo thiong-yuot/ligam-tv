@@ -107,17 +107,18 @@ const SellerDashboard = () => {
               Manage your products and track sales
             </p>
           </div>
-          {canAdd ? (
+          <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link to="/seller/orders">
+                <ShoppingBag className="mr-2 h-4 w-4" />
+                Orders
+              </Link>
+            </Button>
             <Button onClick={() => setAddProductOpen(true)} className="glow">
               <Plus className="mr-2 h-4 w-4" />
               Add Product
             </Button>
-          ) : (
-            <Button onClick={() => setAddProductOpen(true)} className="glow">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
-            </Button>
-          )}
+          </div>
         </div>
 
         {/* Stats Cards */}
