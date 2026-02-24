@@ -9,10 +9,12 @@ interface Profile {
   display_name: string | null;
   avatar_url: string | null;
   bio: string | null;
-  is_verified: boolean;
-  follower_count: number;
-  following_count: number;
-  total_views: number;
+  website: string | null;
+  is_verified: boolean | null;
+  is_public: boolean;
+  follower_count: number | null;
+  following_count: number | null;
+  total_views: number | null;
 }
 
 interface AuthContextType {
