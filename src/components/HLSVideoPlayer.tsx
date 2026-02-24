@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import Hls from "hls.js";
-import { Play, Pause, Volume2, VolumeX, Maximize, Settings, Loader2 } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, Settings, Loader2, RectangleHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,11 +14,13 @@ interface HLSVideoPlayerProps {
   src: string;
   poster?: string;
   isLive?: boolean;
+  isTheaterMode?: boolean;
+  onToggleTheater?: () => void;
   onViewerJoin?: () => void;
   onViewerLeave?: () => void;
 }
 
-const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HLSVideoPlayerProps) => {
+const HLSVideoPlayer = ({ src, poster, isLive, isTheaterMode, onToggleTheater, onViewerJoin, onViewerLeave }: HLSVideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -306,11 +308,25 @@ const HLSVideoPlayer = ({ src, poster, isLive, onViewerJoin, onViewerLeave }: HL
               </DropdownMenu>
             )}
 
+            {/* Theater Mode Toggle (YouTube-style) */}
+            {onToggleTheater && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onToggleTheater}
+                className="text-white hover:bg-white/20"
+                title={isTheaterMode ? "Default view" : "Theater mode"}
+              >
+                {isTheaterMode ? <Minimize className="w-5 h-5" /> : <RectangleHorizontal className="w-5 h-5" />}
+              </Button>
+            )}
+
             <Button
               variant="ghost"
               size="icon"
               onClick={toggleFullscreen}
               className="text-white hover:bg-white/20"
+              title="Full screen"
             >
               <Maximize className="w-5 h-5" />
             </Button>

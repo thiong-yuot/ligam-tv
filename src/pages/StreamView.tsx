@@ -46,6 +46,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useFreelancerPackages } from "@/hooks/useFreelancerPackages";
 import { useCourses } from "@/hooks/useCourses";
 import { useCheckStreamAccess, useCreateStreamCheckout, useVerifyStreamAccess } from "@/hooks/useStreamAccess";
+import { useIsFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useFollowers";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,7 +54,6 @@ const StreamView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [isFollowing, setIsFollowing] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
   const [highlightedTips, setHighlightedTips] = useState<Array<{
     id: string;
@@ -76,6 +76,36 @@ const StreamView = () => {
   const { data: allCourses = [] } = useCourses();
   const createStreamCheckout = useCreateStreamCheckout();
   const verifyStreamAccess = useVerifyStreamAccess();
+
+  // Follow state from DB
+  const { data: isFollowing = false } = useIsFollowing(stream?.user_id || "");
+  const followUser = useFollowUser();
+  const unfollowUser = useUnfollowUser();
+
+  const handleToggleFollow = () => {
+    if (!stream?.user_id) return;
+    if (!user) {
+      toast({ title: "Login Required", description: "Please login to follow streamers", variant: "destructive" });
+      return;
+    }
+    if (isFollowing) {
+      unfollowUser.mutate(stream.user_id);
+    } else {
+      followUser.mutate(stream.user_id);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: stream?.title || "Stream", url });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast({ title: "Link copied!", description: "Stream link copied to clipboard" });
+    }
+  };
 
   // Verify payment on return from Stripe
   useEffect(() => {
@@ -317,6 +347,8 @@ const StreamView = () => {
                 src={hlsUrl}
                 poster={stream.thumbnail_url || undefined}
                 isLive={stream.is_live}
+                isTheaterMode={isTheaterMode}
+                onToggleTheater={() => setIsTheaterMode(!isTheaterMode)}
                 onViewerJoin={handleViewerJoin}
                 onViewerLeave={handleViewerLeave}
               />
@@ -337,15 +369,6 @@ const StreamView = () => {
                 )}
               </div>
             )}
-            {/* Theater mode toggle overlay */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-3 right-3 z-10 bg-black/50 hover:bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => setIsTheaterMode(!isTheaterMode)}
-            >
-              {isTheaterMode ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-            </Button>
           </div>
 
           {/* Stream Info */}
@@ -405,7 +428,8 @@ const StreamView = () => {
               <div className="flex items-center gap-2">
                 <Button
                   variant={isFollowing ? "secondary" : "default"}
-                  onClick={() => setIsFollowing(!isFollowing)}
+                  onClick={handleToggleFollow}
+                  disabled={followUser.isPending || unfollowUser.isPending}
                 >
                   <Heart className={`w-4 h-4 ${isFollowing ? "fill-current" : ""}`} />
                   {isFollowing ? "Following" : "Follow"}
@@ -429,11 +453,11 @@ const StreamView = () => {
                   />
                 )}
                 
-                <Button variant="outline">
+                <Button variant="outline" onClick={() => navigate("/premium")}>
                   <Crown className="w-4 h-4" />
                   Subscribe
                 </Button>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" onClick={handleShare}>
                   <Share2 className="w-4 h-4" />
                 </Button>
               </div>
