@@ -158,7 +158,7 @@ const SellerDashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">0</div>
-              <p className="text-xs text-muted-foreground">8% platform fee</p>
+              <p className="text-xs text-muted-foreground">20% platform fee</p>
             </CardContent>
           </Card>
         </div>
