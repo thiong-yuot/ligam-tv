@@ -637,7 +637,7 @@ const StreamView = () => {
             </TabsContent>
 
             {/* Shop Tab */}
-            <TabsContent value="shop" className="overflow-y-auto p-3 m-0 space-y-2">
+            <TabsContent value="shop" className="overflow-y-auto p-3 m-0 space-y-2 [&[data-state=active]]:flex-none">
               {streamerProducts.length > 0 && (
                 <FeaturedProductsWidget
                   products={streamerProducts}
@@ -648,15 +648,15 @@ const StreamView = () => {
               )}
               
               {streamerProducts.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <ShoppingBag className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <div className="text-center py-4 text-muted-foreground">
+                  <ShoppingBag className="w-6 h-6 mx-auto mb-1 opacity-50" />
                   <p className="text-sm">No products available</p>
                 </div>
               )}
             </TabsContent>
 
             {/* Services Tab (Gigs + Courses) */}
-            <TabsContent value="services" className="overflow-y-auto p-3 m-0 space-y-2">
+            <TabsContent value="services" className="overflow-y-auto p-3 m-0 space-y-2 [&[data-state=active]]:flex-none">
               {streamerFreelancer && streamerPackages.length > 0 && (
                 <FeaturedGigsWidget
                   freelancer={streamerFreelancer}
@@ -672,10 +672,10 @@ const StreamView = () => {
               )}
               
               {(!streamerFreelancer || streamerPackages.length === 0) && streamerCourses.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <Briefcase className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <div className="text-center py-4 text-muted-foreground">
+                  <Briefcase className="w-6 h-6 mx-auto mb-1 opacity-50" />
                   <p className="text-sm">No services available</p>
-                  <p className="text-xs">This streamer hasn't set up any gigs or courses yet</p>
+                  <p className="text-xs">No gigs or courses yet</p>
                 </div>
               )}
             </TabsContent>
