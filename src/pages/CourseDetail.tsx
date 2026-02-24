@@ -2,7 +2,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useCourse, useCourseReviews, useCheckEnrollment, useEnrollCourse, useCourses } from "@/hooks/useCourses";
+import { useCourse, useCourseReviews, useCheckEnrollment, useEnrollCourse, useCourses, useCreateReview } from "@/hooks/useCourses";
 import { useAuth } from "@/hooks/useAuth";
 import { useCourseCheckout } from "@/hooks/useStripeCheckout";
 import { useCreatorProfile } from "@/hooks/useCreatorProfile";
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import InstructorCard from "@/components/courses/InstructorCard";
 import { 
@@ -31,6 +32,23 @@ const CourseDetail = () => {
   const { data: creatorProfile, isLoading: creatorLoading } = useCreatorProfile(course?.creator_id);
   const enrollMutation = useEnrollCourse();
   const { checkout, loading: checkoutLoading } = useCourseCheckout();
+  const createReview = useCreateReview();
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState("");
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const userAlreadyReviewed = reviews.some(r => r.user_id === user?.id);
+
+  const handleSubmitReview = async () => {
+    if (!courseId || !user) return;
+    await createReview.mutateAsync({
+      course_id: courseId,
+      rating: reviewRating,
+      review_text: reviewText.trim() || undefined,
+    });
+    setReviewText("");
+    setReviewRating(5);
+  };
 
   // Count courses by the same creator
   const creatorCourseCount = allCourses?.filter(c => c.creator_id === course?.creator_id).length || 0;
@@ -366,13 +384,66 @@ const CourseDetail = () => {
                   </TabsContent>
 
                   <TabsContent value="reviews" className="space-y-4">
-                    {reviews.length === 0 ? (
+                    {/* Review Form - only for enrolled users who haven't reviewed */}
+                    {enrollment && !userAlreadyReviewed && (
+                      <Card className="bg-card border-border">
+                        <CardContent className="p-6 space-y-4">
+                          <h3 className="font-semibold text-foreground">Write a Review</h3>
+                          <div className="flex items-center gap-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <button
+                                key={star}
+                                type="button"
+                                onMouseEnter={() => setHoverRating(star)}
+                                onMouseLeave={() => setHoverRating(0)}
+                                onClick={() => setReviewRating(star)}
+                                className="p-0.5"
+                              >
+                                <Star
+                                  className={`w-6 h-6 cursor-pointer transition-colors ${
+                                    star <= (hoverRating || reviewRating)
+                                      ? "text-yellow-500 fill-yellow-500"
+                                      : "text-muted-foreground"
+                                  }`}
+                                />
+                              </button>
+                            ))}
+                            <span className="text-sm text-muted-foreground ml-2">
+                              {reviewRating}/5
+                            </span>
+                          </div>
+                          <Textarea
+                            placeholder="Share your experience with this course..."
+                            value={reviewText}
+                            onChange={(e) => setReviewText(e.target.value)}
+                            rows={3}
+                            className="resize-none"
+                          />
+                          <Button
+                            onClick={handleSubmitReview}
+                            disabled={createReview.isPending}
+                            size="sm"
+                          >
+                            {createReview.isPending ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Submitting...
+                              </>
+                            ) : (
+                              "Submit Review"
+                            )}
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    )}
+
+                    {reviews.length === 0 && (!enrollment || userAlreadyReviewed) ? (
                       <Card className="bg-card border-border">
                         <CardContent className="py-12 text-center">
                           <Star className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                           <h3 className="font-semibold text-foreground mb-2">No reviews yet</h3>
                           <p className="text-muted-foreground">
-                            Be the first to review this course after enrolling!
+                            {enrollment ? "Thanks for your review!" : "Enroll to be the first to review this course!"}
                           </p>
                         </CardContent>
                       </Card>
@@ -402,7 +473,9 @@ const CourseDetail = () => {
                                     {new Date(review.created_at).toLocaleDateString()}
                                   </span>
                                 </div>
-                                <p className="text-foreground">{review.review_text}</p>
+                                {review.review_text && (
+                                  <p className="text-foreground">{review.review_text}</p>
+                                )}
                               </div>
                             </div>
                           </CardContent>
