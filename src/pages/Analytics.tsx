@@ -7,39 +7,34 @@ import { Button } from "@/components/ui/button";
 import {
   Eye,
   Users,
-  Heart,
-  DollarSign,
+  Clock,
   Loader2,
   Video,
   ArrowLeft,
+  TrendingUp,
 } from "lucide-react";
-import { useUserStream } from "@/hooks/useStreams";
-import { useEarningsSummary } from "@/hooks/useEarnings";
+import { useStreams } from "@/hooks/useStreams";
 import { useAuth } from "@/hooks/useAuth";
 
 const Analytics = () => {
   const [checking, setChecking] = useState(true);
   const [timeRange, setTimeRange] = useState("7d");
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
 
-  const { data: stream, isLoading: streamLoading } = useUserStream(user?.id || "");
-  const { totalThisMonth, giftEarnings, subEarnings } = useEarningsSummary();
-
-  const followerCount = profile?.follower_count || 0;
+  const { data: allStreams = [], isLoading: streamsLoading } = useStreams();
+  const userStreams = allStreams.filter(s => s.user_id === user?.id);
 
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate("/login");
-      }
+      if (!session) navigate("/login");
       setChecking(false);
     };
     checkAuth();
   }, [navigate]);
 
-  if (checking || streamLoading) {
+  if (checking || streamsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -47,11 +42,16 @@ const Analytics = () => {
     );
   }
 
+  const totalViews = userStreams.reduce((sum, s) => sum + (s.total_views || 0), 0);
+  const peakViewers = userStreams.reduce((max, s) => Math.max(max, s.peak_viewers || 0), 0);
+  const watchTimeHours = Math.floor(userStreams.reduce((sum, s) => sum + (s.duration_seconds || 0), 0) / 3600);
+  const liveStream = userStreams.find(s => s.is_live);
+
   const stats = [
-    { label: "Views", value: stream?.total_views?.toLocaleString() || "0", icon: Eye },
-    { label: "Peak", value: stream?.peak_viewers?.toLocaleString() || "0", icon: Users },
-    { label: "Followers", value: followerCount.toString(), icon: Heart },
-    { label: "Earnings", value: `$${totalThisMonth.toFixed(0)}`, icon: DollarSign },
+    { label: "Total Views", value: totalViews.toLocaleString(), icon: Eye },
+    { label: "Peak Viewers", value: peakViewers.toLocaleString(), icon: TrendingUp },
+    { label: "Streams", value: userStreams.length.toString(), icon: Video },
+    { label: "Watch Time", value: `${watchTimeHours}h`, icon: Clock },
   ];
 
   return (
@@ -83,7 +83,7 @@ const Analytics = () => {
             </div>
           </div>
 
-          {/* Stats */}
+          {/* Stream Performance Stats */}
           <div className="grid grid-cols-4 gap-3">
             {stats.map((stat) => (
               <div key={stat.label} className="rounded-lg border border-border p-3 text-center">
@@ -94,54 +94,58 @@ const Analytics = () => {
             ))}
           </div>
 
-          {/* Earnings Breakdown */}
-          <div className="rounded-lg border border-border p-4 space-y-3">
-            <h2 className="text-sm font-medium text-foreground">Earnings Breakdown</h2>
-            {[
-              { label: "Gifts", amount: giftEarnings },
-              { label: "Subscriptions", amount: subEarnings },
-            ].map((item) => (
-              <div key={item.label} className="flex justify-between items-center text-sm">
-                <span className="text-muted-foreground">{item.label}</span>
-                <span className="font-medium text-foreground">${item.amount.toFixed(2)}</span>
+          {/* Live Now */}
+          {liveStream && (
+            <div className="rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <h2 className="text-sm font-medium text-foreground">Live Now</h2>
               </div>
-            ))}
-            <div className="border-t border-border pt-2 flex justify-between items-center text-sm">
-              <span className="text-muted-foreground font-medium">Total</span>
-              <span className="font-semibold text-primary">${totalThisMonth.toFixed(2)}</span>
-            </div>
-          </div>
-
-          {/* Stream Info */}
-          {stream && (
-            <div className="rounded-lg border border-border p-4 space-y-3">
-              <h2 className="text-sm font-medium text-foreground">Current Stream</h2>
               <div className="grid grid-cols-3 gap-3 text-sm">
                 <div>
                   <p className="text-xs text-muted-foreground">Title</p>
-                  <p className="font-medium text-foreground truncate">{stream.title}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Status</p>
-                  <p className={`font-medium ${stream.is_live ? 'text-green-500' : 'text-muted-foreground'}`}>
-                    {stream.is_live ? 'Live' : 'Offline'}
-                  </p>
+                  <p className="font-medium text-foreground truncate">{liveStream.title}</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Viewers</p>
-                  <p className="font-medium text-foreground">{stream.viewer_count || 0}</p>
+                  <p className="font-medium text-foreground">{liveStream.viewer_count || 0}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Peak</p>
+                  <p className="font-medium text-foreground">{liveStream.peak_viewers || 0}</p>
                 </div>
               </div>
             </div>
           )}
 
-          {!stream && (
-            <div className="rounded-lg border border-border p-8 text-center">
-              <Video className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-50" />
-              <p className="text-sm text-muted-foreground mb-4">No stream yet — start streaming to track analytics</p>
-              <Button size="sm" onClick={() => navigate("/go-live")}>Go Live</Button>
-            </div>
-          )}
+          {/* Stream History */}
+          <div className="space-y-2">
+            <h2 className="text-sm font-medium text-foreground">Stream History</h2>
+            {userStreams.length === 0 ? (
+              <div className="rounded-lg border border-border p-8 text-center">
+                <Video className="w-10 h-10 mx-auto mb-3 text-muted-foreground opacity-50" />
+                <p className="text-sm text-muted-foreground mb-4">No streams yet — start streaming to track analytics</p>
+                <Button size="sm" onClick={() => navigate("/go-live")}>Go Live</Button>
+              </div>
+            ) : (
+              <div className="space-y-1.5">
+                {userStreams.map((stream) => (
+                  <div key={stream.id} className="flex items-center gap-3 p-3 rounded-lg bg-secondary/50">
+                    <Video className="w-4 h-4 text-primary shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{stream.title}</p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-0.5"><Eye className="w-3 h-3" />{(stream.total_views || 0).toLocaleString()}</span>
+                        <span className="flex items-center gap-0.5"><Users className="w-3 h-3" />{stream.peak_viewers || 0} peak</span>
+                        <span>{stream.created_at ? new Date(stream.created_at).toLocaleDateString() : ""}</span>
+                      </div>
+                    </div>
+                    {stream.is_live && <span className="text-[10px] font-medium text-green-500 bg-green-500/10 px-1.5 py-0.5 rounded">LIVE</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
