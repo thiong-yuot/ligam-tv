@@ -1975,8 +1975,6 @@ export type Database = {
           is_featured: boolean | null
           is_live: boolean | null
           is_paid: boolean | null
-          mux_playback_id: string | null
-          mux_stream_id: string | null
           peak_viewers: number | null
           preview_video_url: string | null
           started_at: string | null
@@ -2001,8 +1999,6 @@ export type Database = {
           is_featured?: boolean | null
           is_live?: boolean | null
           is_paid?: boolean | null
-          mux_playback_id?: string | null
-          mux_stream_id?: string | null
           peak_viewers?: number | null
           preview_video_url?: string | null
           started_at?: string | null
@@ -2027,8 +2023,6 @@ export type Database = {
           is_featured?: boolean | null
           is_live?: boolean | null
           is_paid?: boolean | null
-          mux_playback_id?: string | null
-          mux_stream_id?: string | null
           peak_viewers?: number | null
           preview_video_url?: string | null
           started_at?: string | null
