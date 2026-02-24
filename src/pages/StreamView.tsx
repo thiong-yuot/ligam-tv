@@ -454,8 +454,9 @@ const StreamView = () => {
                   />
                 )}
                 
-                <Button variant="ghost" size="icon" onClick={handleShare}>
+                <Button variant="outline" onClick={handleShare}>
                   <Share2 className="w-4 h-4" />
+                  Share
                 </Button>
               </div>
             </div>
