@@ -33,10 +33,10 @@ const Courses = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => user ? navigate("/dashboard?tab=orders") : navigate("/auth")}
+              onClick={() => user ? navigate("/dashboard?tab=courses") : navigate("/auth")}
             >
               <BookOpen className="w-3.5 h-3.5 mr-1" />
-              Dashboard
+              Teach
             </Button>
           </div>
         </div>
