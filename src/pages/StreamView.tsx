@@ -309,33 +309,44 @@ const StreamView = () => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
           {/* Video Player or Paywall */}
-          {isPaidStream && !hasAccess ? (
-            <PaidStreamPaywall />
-          ) : stream.is_live && hlsUrl ? (
-            <HLSVideoPlayer
-              src={hlsUrl}
-              poster={stream.thumbnail_url || undefined}
-              isLive={stream.is_live}
-              onViewerJoin={handleViewerJoin}
-              onViewerLeave={handleViewerLeave}
-            />
-          ) : (
-            <div className="relative aspect-video bg-secondary flex items-center justify-center">
-              {stream.thumbnail_url ? (
-                <img
-                  src={stream.thumbnail_url}
-                  alt={stream.title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="text-center">
-                  <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-lg font-medium text-foreground">Stream Offline</p>
-                  <p className="text-sm text-muted-foreground">Check back later when the streamer is live</p>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="relative group">
+            {isPaidStream && !hasAccess ? (
+              <PaidStreamPaywall />
+            ) : stream.is_live && hlsUrl ? (
+              <HLSVideoPlayer
+                src={hlsUrl}
+                poster={stream.thumbnail_url || undefined}
+                isLive={stream.is_live}
+                onViewerJoin={handleViewerJoin}
+                onViewerLeave={handleViewerLeave}
+              />
+            ) : (
+              <div className="relative aspect-video bg-secondary flex items-center justify-center">
+                {stream.thumbnail_url ? (
+                  <img
+                    src={stream.thumbnail_url}
+                    alt={stream.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-lg font-medium text-foreground">Stream Offline</p>
+                    <p className="text-sm text-muted-foreground">Check back later when the streamer is live</p>
+                  </div>
+                )}
+              </div>
+            )}
+            {/* Theater mode toggle overlay */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-3 right-3 z-10 bg-black/50 hover:bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => setIsTheaterMode(!isTheaterMode)}
+            >
+              {isTheaterMode ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+            </Button>
+          </div>
 
           {/* Stream Info */}
           <div className="p-4 md:p-6 border-b border-border">
@@ -421,9 +432,6 @@ const StreamView = () => {
                 <Button variant="outline">
                   <Crown className="w-4 h-4" />
                   Subscribe
-                </Button>
-                <Button variant="ghost" size="icon" onClick={() => setIsTheaterMode(!isTheaterMode)}>
-                  {isTheaterMode ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
                 </Button>
                 <Button variant="ghost" size="icon">
                   <Share2 className="w-4 h-4" />
