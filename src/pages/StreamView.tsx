@@ -454,10 +454,6 @@ const StreamView = () => {
                   />
                 )}
                 
-                <Button variant="outline" onClick={() => navigate("/premium")}>
-                  <Crown className="w-4 h-4" />
-                  Subscribe
-                </Button>
                 <Button variant="ghost" size="icon" onClick={handleShare}>
                   <Share2 className="w-4 h-4" />
                 </Button>
