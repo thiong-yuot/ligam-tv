@@ -30,7 +30,7 @@ const Freelance = () => {
 
   const handleAction = () => {
     if (!user) { navigate("/auth"); return; }
-    if (myProfile) navigate("/dashboard?tab=freelance");
+    if (myProfile) navigate("/freelance/dashboard");
     else setBecomeFreelancerOpen(true);
   };
 
