@@ -214,10 +214,10 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-white font-semibold truncate text-xs">
+              <h3 className="text-foreground font-semibold truncate text-xs">
                 {stream.profile?.display_name || stream.profile?.username || "Creator"}
               </h3>
-              <p className="text-white/70 text-[10px] truncate">{stream.title}</p>
+              <p className="text-muted-foreground text-[10px] truncate">{stream.title}</p>
             </div>
           </div>
         </div>
