@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const logStep = (step: string, details?: any) => {
@@ -18,13 +18,6 @@ serve(async (req) => {
 
   try {
     logStep("Function started");
-
-    const muxTokenId = Deno.env.get("MUX_TOKEN_ID");
-    const muxTokenSecret = Deno.env.get("MUX_TOKEN_SECRET");
-    
-    if (!muxTokenId || !muxTokenSecret) {
-      throw new Error("Mux credentials not configured");
-    }
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -41,7 +34,6 @@ serve(async (req) => {
     const userId = userData.user.id;
     logStep("User authenticated", { userId });
 
-    // Get user's stream
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
@@ -59,38 +51,10 @@ serve(async (req) => {
       });
     }
 
-    if (!stream.mux_stream_id) {
-      return new Response(JSON.stringify({
-        hasStream: true,
-        stream,
-        muxStatus: null,
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Get status from Mux
-    const muxAuth = btoa(`${muxTokenId}:${muxTokenSecret}`);
-    const muxResponse = await fetch(
-      `https://api.mux.com/video/v1/live-streams/${stream.mux_stream_id}`,
-      {
-        headers: {
-          "Authorization": `Basic ${muxAuth}`,
-        },
-      }
-    );
-
-    let muxStatus = null;
-    if (muxResponse.ok) {
-      const muxData = await muxResponse.json();
-      muxStatus = muxData.data;
-      logStep("Mux status fetched", { status: muxStatus.status });
-    }
-
     return new Response(JSON.stringify({
       hasStream: true,
       stream,
-      muxStatus,
+      muxStatus: stream.is_live ? { status: "active" } : { status: "idle" },
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
