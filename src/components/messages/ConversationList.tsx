@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -85,7 +85,6 @@ export const ConversationList = ({
               )}
             >
               <Avatar className="h-10 w-10 shrink-0">
-                <AvatarImage src={otherProfile?.avatar_url || undefined} />
                 <AvatarFallback className="bg-muted text-muted-foreground text-sm">
                   {otherProfile?.display_name?.[0]?.toUpperCase() || <User className="h-4 w-4" />}
                 </AvatarFallback>

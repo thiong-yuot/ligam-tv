@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -160,7 +160,6 @@ const UserProfile = () => {
           {/* Profile Header */}
           <div className="flex flex-col md:flex-row items-start gap-6 mb-8">
             <Avatar className="w-32 h-32 border-4 border-primary/20">
-              <AvatarImage src={profile.avatar_url || undefined} alt={displayName} />
               <AvatarFallback className="text-3xl font-bold bg-primary/10 text-primary">
                 {initials}
               </AvatarFallback>

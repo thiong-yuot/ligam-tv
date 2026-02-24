@@ -5,8 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { X, Plus, Upload, Image, Link as LinkIcon } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { X, Plus, Upload, Image, Link as LinkIcon, User } from "lucide-react";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -113,30 +113,14 @@ export const FreelancerProfileForm = ({
           <CardTitle>Profile Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Avatar Upload */}
+          {/* Avatar Placeholder */}
           <div className="flex items-center gap-4">
-            <Avatar className="h-20 w-20">
-              <AvatarImage src={formData.avatar_url} />
-              <AvatarFallback>{formData.name.charAt(0) || "?"}</AvatarFallback>
-            </Avatar>
-            <div>
-              <input
-                ref={avatarInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleAvatarUpload}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => avatarInputRef.current?.click()}
-                disabled={uploading}
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                {uploading ? "Uploading..." : "Upload Avatar"}
-              </Button>
+            <div className="h-20 w-20 rounded-full bg-secondary flex items-center justify-center border-2 border-primary/20">
+              {formData.name ? (
+                <span className="text-2xl font-bold text-foreground">{formData.name.charAt(0)}</span>
+              ) : (
+                <User className="h-8 w-8 text-muted-foreground" />
+              )}
             </div>
           </div>
 
