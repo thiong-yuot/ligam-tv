@@ -76,17 +76,6 @@ const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 
               </Badge>
             )}
             
-            {(creator.university || creator.degree) && (
-              <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-1">
-                <GraduationCap className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                <span className="truncate">
-                  {creator.degree && `${creator.degree}`}
-                  {creator.field_of_study && ` in ${creator.field_of_study}`}
-                  {creator.university && ` — ${creator.university}`}
-                </span>
-              </div>
-            )}
-
             {creator.bio && (
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {creator.bio}
@@ -120,14 +109,23 @@ const InstructorCard = ({ creator, isLoading, totalStudents = 0, totalCourses = 
           </div>
         </div>
 
-        {/* Action */}
-        {creator.username && (
-          <Button variant="outline" className="w-full" asChild>
-            <Link to={`/@${creator.username}`}>
-              <MessageCircle className="w-4 h-4 mr-2" />
-              View Profile
-            </Link>
-          </Button>
+        {/* Education Background */}
+        {(creator.university || creator.degree) && (
+          <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+            <div className="flex items-center gap-2 mb-1.5">
+              <GraduationCap className="w-4 h-4 text-primary flex-shrink-0" />
+              <span className="text-sm font-semibold text-foreground">Education</span>
+            </div>
+            {creator.degree && (
+              <p className="text-sm text-foreground">
+                {creator.degree}
+                {creator.field_of_study && <span className="text-muted-foreground"> in {creator.field_of_study}</span>}
+              </p>
+            )}
+            {creator.university && (
+              <p className="text-sm text-muted-foreground">{creator.university}</p>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>
