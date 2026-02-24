@@ -19,6 +19,9 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
+    const srsHost = Deno.env.get("SRS_SERVER_HOST") || "your-srs-server";
+    const rtmpUrl = `rtmp://${srsHost}:1935/live`;
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
@@ -37,17 +40,13 @@ serve(async (req) => {
     const { title, description, category_id, tags } = await req.json();
     logStep("Request body parsed", { title, category_id });
 
-    // Generate stream key for SRS RTMP server
     const streamKey = crypto.randomUUID();
-    const playbackId = crypto.randomUUID();
 
-    // Use admin client for database operations
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Check if user already has a stream
     const { data: existingStream } = await supabaseAdmin
       .from("streams")
       .select("id")
@@ -77,7 +76,7 @@ serve(async (req) => {
         .upsert({
           stream_id: stream.id,
           stream_key: streamKey,
-          rtmp_url: "rtmp://your-srs-server:1935/live",
+          rtmp_url: rtmpUrl,
         }, { onConflict: 'stream_id' });
 
       if (credError) {
@@ -105,7 +104,7 @@ serve(async (req) => {
         .insert({
           stream_id: stream.id,
           stream_key: streamKey,
-          rtmp_url: "rtmp://your-srs-server:1935/live",
+          rtmp_url: rtmpUrl,
         });
 
       if (credError) {
@@ -116,7 +115,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       stream,
       streamKey,
-      rtmpUrl: "rtmp://your-srs-server:1935/live",
+      rtmpUrl,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

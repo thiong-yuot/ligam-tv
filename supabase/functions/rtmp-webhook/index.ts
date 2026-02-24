@@ -6,7 +6,6 @@ const corsHeaders = {
 };
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -16,15 +15,17 @@ Deno.serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    const srsHost = Deno.env.get("SRS_SERVER_HOST") || "localhost:8080";
+
     const { action, stream_key, stream_id, app, name } = await req.json();
     
     console.log(`RTMP Webhook received: action=${action}, stream_key=${stream_key || name}, stream_id=${stream_id}, app=${app}`);
 
     // Support both stream_key lookup and direct stream_id lookup
     let stream;
+    let resolvedStreamKey: string | null = null;
     
     if (stream_id) {
-      // Direct stream ID lookup (preferred for viewer tracking)
       const { data, error } = await supabase
         .from("streams")
         .select("id, user_id, title, is_live")
@@ -39,8 +40,15 @@ Deno.serve(async (req) => {
         );
       }
       stream = data;
+
+      // Fetch stream_key for HLS URL construction
+      const { data: creds } = await supabase
+        .from("stream_credentials")
+        .select("stream_key")
+        .eq("stream_id", stream_id)
+        .single();
+      resolvedStreamKey = creds?.stream_key || null;
     } else {
-      // Legacy stream_key lookup via stream_credentials table
       const key = stream_key || name;
 
       if (!key) {
@@ -51,7 +59,8 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Find the stream by stream_key in stream_credentials table
+      resolvedStreamKey = key;
+
       const { data: credentials, error: credError } = await supabase
         .from("stream_credentials")
         .select("stream_id")
@@ -87,14 +96,19 @@ Deno.serve(async (req) => {
     switch (action) {
       case "on_publish":
       case "publish":
-      case "start":
-        // Stream is starting - set to live
+      case "start": {
+        // Build HLS URL from SRS server
+        const hlsUrl = resolvedStreamKey
+          ? `http://${srsHost}/live/${resolvedStreamKey}.m3u8`
+          : null;
+
         const { error: publishError } = await supabase
           .from("streams")
           .update({
             is_live: true,
             started_at: new Date().toISOString(),
             viewer_count: 0,
+            hls_url: hlsUrl,
           })
           .eq("id", stream.id);
 
@@ -106,9 +120,9 @@ Deno.serve(async (req) => {
           );
         }
 
-        console.log(`Stream ${stream.id} is now LIVE`);
+        console.log(`Stream ${stream.id} is now LIVE (HLS: ${hlsUrl})`);
         
-        // Create notification for followers (optional enhancement)
+        // Notify followers
         const { data: followers } = await supabase
           .from("followers")
           .select("follower_id")
@@ -128,19 +142,20 @@ Deno.serve(async (req) => {
         }
 
         return new Response(
-          JSON.stringify({ success: true, message: "Stream started", stream_id: stream.id }),
+          JSON.stringify({ success: true, message: "Stream started", stream_id: stream.id, hls_url: hlsUrl }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "on_publish_done":
       case "unpublish":
-      case "stop":
-        // Stream is ending - set to offline
+      case "stop": {
         const { error: stopError } = await supabase
           .from("streams")
           .update({
             is_live: false,
             ended_at: new Date().toISOString(),
+            hls_url: null,
           })
           .eq("id", stream.id);
 
@@ -158,15 +173,14 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: true, message: "Stream stopped", stream_id: stream.id }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "on_play":
-      case "play":
-        // Viewer joined - increment count
+      case "play": {
         const { error: playError } = await supabase.rpc("increment_viewer_count", {
           stream_id: stream.id,
         });
 
-        // If RPC doesn't exist, do a simple update
         if (playError) {
           await supabase
             .from("streams")
@@ -180,10 +194,10 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: true, message: "Viewer joined" }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "on_play_done":
-      case "play_done":
-        // Viewer left - decrement count
+      case "play_done": {
         const { error: playDoneError } = await supabase.rpc("decrement_viewer_count", {
           stream_id: stream.id,
         });
@@ -202,10 +216,10 @@ Deno.serve(async (req) => {
           JSON.stringify({ success: true, message: "Viewer left" }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
+      }
 
       case "validate":
       case "auth":
-        // Just validate the stream key exists
         console.log(`Stream key validated for stream ${stream.id}`);
         return new Response(
           JSON.stringify({ success: true, message: "Stream key valid", stream_id: stream.id }),
