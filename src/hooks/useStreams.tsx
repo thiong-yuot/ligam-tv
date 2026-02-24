@@ -109,6 +109,7 @@ export const useStream = (id: string) => {
       } as unknown as Stream;
     },
     enabled: !!id && !id.startsWith('demo-') && !id.startsWith('sample-'),
+    refetchInterval: 5000,
   });
 };
 

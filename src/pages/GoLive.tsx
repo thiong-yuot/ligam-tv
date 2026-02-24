@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { useUserStream, useCreateStream, useStreamCredentials } from "@/hooks/useStreams";
+import { useUserStream, useCreateStream, useStreamCredentials, useUpdateStream } from "@/hooks/useStreams";
 import {
   Copy,
   Eye,
@@ -20,6 +20,8 @@ import {
   Key,
   DollarSign,
   ArrowLeft,
+  AlertTriangle,
+  Monitor,
 } from "lucide-react";
 
 const GoLive = () => {
@@ -38,8 +40,10 @@ const GoLive = () => {
   const { data: userStream, isLoading: streamLoading, refetch: refetchStream } = useUserStream(userId || "");
   const { data: streamCredentials, isLoading: credentialsLoading } = useStreamCredentials(userStream?.id || "");
   const createStream = useCreateStream();
+  const updateStream = useUpdateStream();
 
   const rtmpUrl = streamCredentials?.rtmp_url || "rtmp://your-srs-server:1935/live";
+  const isPlaceholderUrl = rtmpUrl.includes("your-srs-server");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -65,7 +69,21 @@ const GoLive = () => {
       return;
     }
     try {
-      await createStream.mutateAsync({ title, description, tags: [category] });
+      const result = await createStream.mutateAsync({ title, description, tags: [category] });
+
+      // Update paid stream settings if applicable
+      if (result?.stream?.id) {
+        await supabase
+          .from("streams")
+          .update({
+            is_paid: isPaidStream,
+            access_price: isPaidStream ? parseFloat(accessPrice) || 0 : 0,
+            preview_video_url: previewVideoUrl || null,
+            stream_type: isPaidStream ? "paid" : "free",
+          })
+          .eq("id", result.stream.id);
+      }
+
       toast({ title: "Stream created!", description: "Your stream key is ready." });
       refetchStream();
     } catch (error) {
@@ -185,33 +203,59 @@ const GoLive = () => {
               {createStream.isPending ? "Creating..." : "Generate Stream Key"}
             </Button>
           ) : (
-            <div className="rounded-lg border border-border p-4 space-y-4">
-              <p className="text-sm font-medium text-foreground">Connection Details</p>
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border p-4 space-y-4">
+                <p className="text-sm font-medium text-foreground">Connection Details</p>
 
-              <div className="space-y-1.5">
-                <Label className="text-xs">Server URL</Label>
-                <div className="flex gap-2">
-                  <Input value={rtmpUrl} readOnly className="font-mono text-xs h-8" />
-                  <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={() => copyToClipboard(rtmpUrl, "Server URL")}>
-                    <Copy className="w-3.5 h-3.5" />
-                  </Button>
+                {isPlaceholderUrl && (
+                  <div className="flex items-start gap-2 rounded-md bg-accent/50 p-3">
+                    <AlertTriangle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
+                    <p className="text-xs text-muted-foreground">
+                      RTMP server not configured yet. Set the <code className="font-mono text-foreground">SRS_SERVER_HOST</code> secret with your server's hostname to enable streaming.
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Server URL</Label>
+                  <div className="flex gap-2">
+                    <Input value={rtmpUrl} readOnly className="font-mono text-xs h-8" />
+                    <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={() => copyToClipboard(rtmpUrl, "Server URL")}>
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs">Stream Key</Label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Input type={showStreamKey ? "text" : "password"} value={streamKey} readOnly className="font-mono text-xs h-8 pr-8" />
+                      <button type="button" onClick={() => setShowStreamKey(!showStreamKey)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                        {showStreamKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
+                    <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={() => copyToClipboard(streamKey, "Stream Key")}>
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <Label className="text-xs">Stream Key</Label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Input type={showStreamKey ? "text" : "password"} value={streamKey} readOnly className="font-mono text-xs h-8 pr-8" />
-                    <button type="button" onClick={() => setShowStreamKey(!showStreamKey)} className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                      {showStreamKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                  <Button variant="outline" size="icon" className="h-8 w-8 shrink-0" onClick={() => copyToClipboard(streamKey, "Stream Key")}>
-                    <Copy className="w-3.5 h-3.5" />
-                  </Button>
+              {/* OBS Setup Instructions */}
+              <div className="rounded-lg border border-border p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Monitor className="w-4 h-4 text-primary" />
+                  <p className="text-sm font-medium text-foreground">OBS / Streamlabs Setup</p>
                 </div>
-                <p className="text-xs text-muted-foreground">Use OBS Studio or Streamlabs to connect</p>
+                <ol className="text-xs text-muted-foreground space-y-2 list-decimal list-inside">
+                  <li>Open <strong>OBS Studio</strong> or <strong>Streamlabs</strong></li>
+                  <li>Go to <strong>Settings → Stream</strong></li>
+                  <li>Set <strong>Service</strong> to <strong>Custom</strong></li>
+                  <li>Paste the <strong>Server URL</strong> above into the <strong>Server</strong> field</li>
+                  <li>Paste the <strong>Stream Key</strong> into the <strong>Stream Key</strong> field</li>
+                  <li>Click <strong>Start Streaming</strong> — your stream will go live automatically!</li>
+                </ol>
               </div>
             </div>
           )}
