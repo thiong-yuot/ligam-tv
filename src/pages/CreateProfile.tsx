@@ -357,8 +357,11 @@ const CreateProfile = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {step === 1 && (
                 <>
-                  <div className="flex justify-center mb-8">
+                  <div className="flex flex-col items-center mb-8">
                     <AvatarDisplay size="w-32 h-32" iconSize="w-16 h-16" onClick={triggerUpload} />
+                    {!avatarUrl && (
+                      <p className="text-xs text-destructive mt-2">Profile photo is required</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="username">Username *</Label>
@@ -429,7 +432,7 @@ const CreateProfile = () => {
               )}
               <div className="flex gap-4">
                 {step > 1 && <Button type="button" variant="outline" className="flex-1" onClick={() => setStep(step - 1)}>Back</Button>}
-                <Button type="submit" className={`glow ${step > 1 ? "flex-1" : "w-full"}`} size="lg" disabled={loading || (step === 1 && (!username || !displayName))}>
+                <Button type="submit" className={`glow ${step > 1 ? "flex-1" : "w-full"}`} size="lg" disabled={loading || (step === 1 && (!username || !displayName || !avatarUrl))}>
                   {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving...</> : step < 3 ? <>Continue<ArrowRight className="w-4 h-4 ml-2" /></> : "Complete Setup"}
                 </Button>
               </div>

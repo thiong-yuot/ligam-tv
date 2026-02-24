@@ -1673,6 +1673,7 @@ export type Database = {
       }
       products: {
         Row: {
+          additional_images: string[] | null
           category: string | null
           created_at: string | null
           description: string | null
@@ -1681,11 +1682,13 @@ export type Database = {
           is_active: boolean | null
           name: string
           price: number
+          product_type: string | null
           sale_price: number | null
           seller_id: string | null
           stock_quantity: number | null
         }
         Insert: {
+          additional_images?: string[] | null
           category?: string | null
           created_at?: string | null
           description?: string | null
@@ -1694,11 +1697,13 @@ export type Database = {
           is_active?: boolean | null
           name: string
           price: number
+          product_type?: string | null
           sale_price?: number | null
           seller_id?: string | null
           stock_quantity?: number | null
         }
         Update: {
+          additional_images?: string[] | null
           category?: string | null
           created_at?: string | null
           description?: string | null
@@ -1707,6 +1712,7 @@ export type Database = {
           is_active?: boolean | null
           name?: string
           price?: number
+          product_type?: string | null
           sale_price?: number | null
           seller_id?: string | null
           stock_quantity?: number | null
