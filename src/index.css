@@ -5,67 +5,63 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 @layer base {
-  /* Dark mode only - Pure Black/Yellow/White Theme */
+  /* Light mode */
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-    
-    --card: 0 0% 0%;
-    --card-foreground: 0 0% 100%;
-    
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
-    
-    --primary: 50 100% 50%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+
+    --popover: 0 0% 97%;
+    --popover-foreground: 0 0% 0%;
+
+    --primary: 50 100% 45%;
     --primary-foreground: 0 0% 0%;
-    
-    --secondary: 0 0% 9%;
-    --secondary-foreground: 0 0% 100%;
-    
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 65%;
-    
-    --accent: 50 100% 50%;
+
+    --secondary: 0 0% 93%;
+    --secondary-foreground: 0 0% 0%;
+
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 50 100% 45%;
     --accent-foreground: 0 0% 0%;
-    
+
     --destructive: 0 62.8% 45%;
     --destructive-foreground: 0 0% 100%;
-    
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 50 100% 50%;
+
+    --border: 0 0% 86%;
+    --input: 0 0% 86%;
+    --ring: 50 100% 45%;
 
     --radius: 0.5rem;
 
-    /* Custom Ligam colors - Pure Black/Yellow/White Theme */
-    --ligam-gold: 50 100% 50%;
-    --ligam-gold-glow: 50 100% 60%;
-    --ligam-amber: 45 100% 50%;
-    --ligam-yellow: 50 100% 55%;
-    --ligam-yellow-glow: 50 100% 65%;
-    --ligam-dark: 0 0% 0%;
-    --ligam-card: 0 0% 0%;
-    --ligam-surface: 0 0% 9%;
+    --ligam-gold: 50 100% 45%;
+    --ligam-gold-glow: 50 100% 55%;
+    --ligam-amber: 45 100% 45%;
+    --ligam-yellow: 50 100% 50%;
+    --ligam-yellow-glow: 50 100% 60%;
+    --ligam-dark: 0 0% 100%;
+    --ligam-card: 0 0% 100%;
+    --ligam-surface: 0 0% 95%;
 
-    /* Gradients - removed for clean look */
-
-    /* Shadows - removed for clean look */
     --shadow-glow: none;
     --shadow-glow-lg: none;
     --shadow-glow-yellow: none;
     --shadow-card: none;
 
-    --sidebar-background: 0 0% 3%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 50 100% 50%;
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 5%;
+    --sidebar-primary: 50 100% 45%;
     --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 9%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 14%;
-    --sidebar-ring: 50 100% 50%;
+    --sidebar-accent: 0 0% 93%;
+    --sidebar-accent-foreground: 0 0% 5%;
+    --sidebar-border: 0 0% 86%;
+    --sidebar-ring: 50 100% 45%;
   }
 
-  /* Dark class kept for compatibility, same as :root */
+  /* Dark mode */
   .dark {
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
