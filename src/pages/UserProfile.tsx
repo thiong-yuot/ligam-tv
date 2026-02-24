@@ -351,11 +351,6 @@ const UserProfile = () => {
                         <Badge key={i} variant="secondary">{skill}</Badge>
                       ))}
                     </div>
-                    {freelancer.hourly_rate && (
-                      <p className="text-lg font-bold text-primary">
-                        ${freelancer.hourly_rate}/hour
-                      </p>
-                    )}
                     <Button className="mt-4" asChild>
                       <Link to={`/freelance/${freelancer.id}`}>View Full Profile</Link>
                     </Button>
