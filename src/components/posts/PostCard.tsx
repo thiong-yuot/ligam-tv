@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { usePosts, type Post } from "@/hooks/usePosts";
 import PostCommentsSection from "./PostCommentsSection";
+import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 
 interface PostCardProps {
@@ -29,7 +30,20 @@ interface PostCardProps {
 const PostCard = ({ post }: PostCardProps) => {
   const { user } = useAuth();
   const { toggleLike, deletePost } = usePosts();
+  const { toast } = useToast();
   const [showComments, setShowComments] = useState(false);
+
+  const handleShare = useCallback(async () => {
+    const url = `${window.location.origin}/@${post.profile?.username || post.user_id}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: displayName + "'s post", text: post.content || "", url });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast({ title: "Link copied!", description: "Post link copied to clipboard" });
+    }
+  }, [post, toast]);
 
   const displayName = post.profile?.display_name || post.profile?.username || "User";
   const username = post.profile?.username || "";
@@ -143,7 +157,7 @@ const PostCard = ({ post }: PostCardProps) => {
               {post.comment_count > 0 && <span>{post.comment_count}</span>}
             </button>
 
-            <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group">
+            <button onClick={handleShare} className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors group">
               <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
                 <Share2 className="w-4 h-4" />
               </div>
