@@ -270,7 +270,7 @@ const GoLive = () => {
                             />
                           </div>
                           <p className="text-xs text-muted-foreground">
-                            Ligam takes 20% • You receive ${accessPrice ? (parseFloat(accessPrice) * 0.8).toFixed(2) : '0.00'}
+                            Ligam takes 40% • You receive ${accessPrice ? (parseFloat(accessPrice) * 0.6).toFixed(2) : '0.00'}
                           </p>
                         </div>
 
