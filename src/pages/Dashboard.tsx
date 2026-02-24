@@ -6,21 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEarningsSummary } from "@/hooks/useEarnings";
 import { useStreams } from "@/hooks/useStreams";
-import { useMyProducts } from "@/hooks/useProducts";
-import { useCreatorCourses } from "@/hooks/useCourses";
-import { useMyFreelancerProfile, useMyFreelancerServices } from "@/hooks/useFreelancerProfile";
-import { useFreelancerPackages, useFreelancerIncomingOrders } from "@/hooks/useFreelancerPackages";
 import {
   Video, DollarSign, Eye, Clock, Play, Loader2, BarChart3, User,
-  ShoppingBag, GraduationCap, Briefcase, ClipboardList,
+  ClipboardList,
 } from "lucide-react";
 
-// Tab content components
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
 import DashboardOrders from "@/components/dashboard/DashboardOrders";
-import DashboardProducts from "@/components/dashboard/DashboardProducts";
-import DashboardFreelance from "@/components/dashboard/DashboardFreelance";
-import DashboardCourses from "@/components/dashboard/DashboardCourses";
 
 const Dashboard = () => {
   const [checking, setChecking] = useState(true);
@@ -34,10 +26,6 @@ const Dashboard = () => {
   const { totalThisMonth } = useEarningsSummary();
   const { data: allStreams = [] } = useStreams();
   const userStreams = allStreams.filter(s => s.user_id === userId);
-  const { data: products = [] } = useMyProducts();
-  const { data: courses = [] } = useCreatorCourses();
-  const { data: freelancerProfile } = useMyFreelancerProfile();
-  const { data: freelancerOrders = [] } = useFreelancerIncomingOrders(freelancerProfile?.id || "");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -62,8 +50,6 @@ const Dashboard = () => {
 
   const totalViews = userStreams.reduce((sum, s) => sum + (s.total_views || 0), 0);
   const watchTimeHours = Math.floor(userStreams.reduce((sum, s) => sum + (s.duration_seconds || 0), 0) / 3600);
-
-  const pendingFreelanceOrders = freelancerOrders.filter(o => o.status === "pending").length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -124,7 +110,7 @@ const Dashboard = () => {
             ))}
           </div>
 
-          {/* Unified Tabs */}
+          {/* Tabs: Streams + Orders */}
           <Tabs defaultValue={defaultTab} className="space-y-4">
             <TabsList className="w-full justify-start">
               <TabsTrigger value="overview" className="gap-1.5">
@@ -135,23 +121,6 @@ const Dashboard = () => {
                 <ClipboardList className="w-3.5 h-3.5" />
                 Orders
               </TabsTrigger>
-              <TabsTrigger value="products" className="gap-1.5">
-                <ShoppingBag className="w-3.5 h-3.5" />
-                Products{products.length > 0 && ` (${products.length})`}
-              </TabsTrigger>
-              <TabsTrigger value="freelance" className="gap-1.5 relative">
-                <Briefcase className="w-3.5 h-3.5" />
-                Freelance
-                {pendingFreelanceOrders > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive text-destructive-foreground text-[10px] rounded-full flex items-center justify-center">
-                    {pendingFreelanceOrders}
-                  </span>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="courses" className="gap-1.5">
-                <GraduationCap className="w-3.5 h-3.5" />
-                Courses{courses.length > 0 && ` (${courses.length})`}
-              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="overview">
@@ -160,18 +129,6 @@ const Dashboard = () => {
 
             <TabsContent value="orders">
               <DashboardOrders />
-            </TabsContent>
-
-            <TabsContent value="products">
-              <DashboardProducts />
-            </TabsContent>
-
-            <TabsContent value="freelance">
-              <DashboardFreelance />
-            </TabsContent>
-
-            <TabsContent value="courses">
-              <DashboardCourses />
             </TabsContent>
           </Tabs>
         </div>

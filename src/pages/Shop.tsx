@@ -77,7 +77,7 @@ const Shop = () => {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => user ? navigate("/dashboard?tab=products") : setBecomeSellerOpen(true)}
+              onClick={() => user ? navigate("/seller/dashboard") : setBecomeSellerOpen(true)}
             >
               <Store className="w-3.5 h-3.5 mr-1" />
               Sell
