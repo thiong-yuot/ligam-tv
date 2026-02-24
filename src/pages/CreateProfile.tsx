@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { User, Camera, Palette, Loader2, Check, Globe, ArrowRight, ArrowLeft } from "lucide-react";
+import { User, Camera, Palette, Loader2, Check, Globe, ArrowRight, ArrowLeft, Edit } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 
 const CreateProfile = () => {
@@ -24,6 +24,9 @@ const CreateProfile = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Determine if this is an edit (profile already has username + display_name)
+  const isEditing = !!(profile?.username && profile?.display_name);
 
   const themes = [
     { color: "bg-primary", name: "Default" },
@@ -41,28 +44,28 @@ const CreateProfile = () => {
         return;
       }
       
-      // Pre-fill from existing profile if editing
+      // Pre-fill from existing profile
       if (profile) {
         setUsername(profile.username || "");
         setDisplayName(profile.display_name || "");
         setBio(profile.bio || "");
-      }
-      
-      // Pre-fill website from profile
-      if (profile?.website) {
-        setWebsite(profile.website);
+        if (profile.website) {
+          setWebsite(profile.website);
+        }
       }
       setChecking(false);
     };
     checkAuth();
   }, [navigate, profile]);
 
-  const progress = step === 1 ? 33 : step === 2 ? 66 : 100;
+  // If editing, skip the step wizard — show all fields at once
+  const isStepMode = !isEditing;
+  const progress = isStepMode ? (step === 1 ? 33 : step === 2 ? 66 : 100) : 100;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (step < 3) {
+    if (isStepMode && step < 3) {
       setStep(step + 1);
       return;
     }
@@ -96,8 +99,8 @@ const CreateProfile = () => {
       await refreshProfile();
       
       toast({
-        title: "Profile Updated!",
-        description: "Your profile is ready. Start streaming now!",
+        title: isEditing ? "Profile Updated!" : "Profile Created!",
+        description: isEditing ? "Your changes have been saved." : "Your profile is ready. Start streaming now!",
       });
       navigate("/dashboard");
     } catch (error: unknown) {
@@ -120,13 +123,116 @@ const CreateProfile = () => {
     );
   }
 
+  // Edit mode: single-page form with all fields
+  if (isEditing) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <section className="pt-32 pb-20 px-4">
+          <div className="container mx-auto max-w-2xl">
+            <div className="flex items-center gap-2 mb-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+              <div className="flex items-center gap-2">
+                <Edit className="w-5 h-5 text-primary" />
+                <h1 className="text-lg font-semibold text-foreground">Edit Profile</h1>
+              </div>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-card border border-border">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Avatar Placeholder */}
+                <div className="flex justify-center mb-4">
+                  <div className="w-24 h-24 rounded-full bg-secondary flex items-center justify-center border-4 border-primary/20">
+                    <User className="w-12 h-12 text-muted-foreground" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="username">Username *</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Choose a unique username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/\s/g, ""))}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    ligam.tv/{username || "username"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="displayName">Display Name *</Label>
+                  <Input
+                    id="displayName"
+                    type="text"
+                    placeholder="How should we call you?"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea
+                    id="bio"
+                    placeholder="Tell viewers about yourself..."
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value.slice(0, 300))}
+                    rows={4}
+                  />
+                  <p className="text-xs text-muted-foreground">{bio.length}/300</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="website" className="flex items-center gap-2">
+                    <Globe className="w-4 h-4" />
+                    Website / Social Link
+                  </Label>
+                  <Input
+                    id="website"
+                    type="url"
+                    placeholder="https://your-website.com"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  disabled={loading || !username || !displayName}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </form>
+            </div>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Create mode: step wizard
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
       <section className="pt-32 pb-20 px-4">
         <div className="container mx-auto max-w-2xl">
-          {/* Back + Progress Bar */}
           <div className="flex items-center gap-2 mb-4">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-4 h-4" />
@@ -162,7 +268,6 @@ const CreateProfile = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {step === 1 && (
                 <>
-                  {/* Avatar Placeholder */}
                   <div className="flex justify-center mb-8">
                     <div className="relative">
                       <div className="w-32 h-32 rounded-full bg-secondary flex items-center justify-center border-4 border-primary/20">
@@ -268,7 +373,6 @@ const CreateProfile = () => {
                     </div>
                   </div>
 
-                  {/* Preview */}
                   <div className="mt-8 p-6 rounded-xl bg-background border border-border">
                     <p className="text-sm text-muted-foreground mb-4">Preview</p>
                     <div className="flex items-center gap-4">

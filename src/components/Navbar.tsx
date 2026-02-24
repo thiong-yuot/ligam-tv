@@ -108,7 +108,7 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
                         <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/create-profile")}>
-                        <User className="mr-2 h-4 w-4" /> Profile
+                        <User className="mr-2 h-4 w-4" /> {profile?.username ? "Edit Profile" : "Create Profile"}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/messages")}>
                         <MessageCircle className="mr-2 h-4 w-4" /> Messages
