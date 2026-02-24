@@ -637,7 +637,7 @@ const StreamView = () => {
             </TabsContent>
 
             {/* Shop Tab */}
-            <TabsContent value="shop" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
+            <TabsContent value="shop" className="flex-1 overflow-y-auto p-3 m-0 space-y-2">
               {streamerProducts.length > 0 && (
                 <FeaturedProductsWidget
                   products={streamerProducts}
@@ -656,7 +656,7 @@ const StreamView = () => {
             </TabsContent>
 
             {/* Services Tab (Gigs + Courses) */}
-            <TabsContent value="services" className="flex-1 overflow-y-auto p-4 m-0 space-y-4">
+            <TabsContent value="services" className="flex-1 overflow-y-auto p-3 m-0 space-y-2">
               {streamerFreelancer && streamerPackages.length > 0 && (
                 <FeaturedGigsWidget
                   freelancer={streamerFreelancer}
