@@ -213,7 +213,7 @@ const AddCourseDialog = ({ disabled, children }: AddCourseDialogProps) => {
               {previewVideoUrl && (
                 <video src={previewVideoUrl} className="h-20 w-32 object-cover rounded-lg" controls />
               )}
-              <input ref={videoInputRef} type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} />
+              <input ref={videoInputRef} type="file" accept="video/*" capture="user" className="hidden" onChange={handleVideoUpload} />
               <Button type="button" variant="outline" onClick={() => videoInputRef.current?.click()} disabled={!canAdd || uploading}>
                 <Video className="h-4 w-4 mr-2" />
                 {uploading ? "Uploading..." : previewVideoUrl ? "Change" : "Upload Video"}
