@@ -29,8 +29,8 @@ const Freelance = () => {
   }, [freelancers, searchQuery]);
 
   const handleAction = () => {
-    if (!user) { navigate("/login"); return; }
-    if (myProfile) navigate("/dashboard?tab=freelance");
+    if (!user) { navigate("/auth"); return; }
+    if (myProfile) navigate("/dashboard?tab=orders");
     else setBecomeFreelancerOpen(true);
   };
 
@@ -44,7 +44,7 @@ const Freelance = () => {
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleAction}>
               {myProfile ? <LayoutDashboard className="w-3.5 h-3.5 mr-1" /> : <Briefcase className="w-3.5 h-3.5 mr-1" />}
-              {myProfile ? "Dashboard" : "Join"}
+              {myProfile ? "Dashboard" : "Join as Freelancer"}
             </Button>
           </div>
         </div>

@@ -12,11 +12,12 @@ import { useMyFreelancerProfile, useMyFreelancerServices } from "@/hooks/useFree
 import { useFreelancerPackages, useFreelancerIncomingOrders } from "@/hooks/useFreelancerPackages";
 import {
   Video, DollarSign, Eye, Clock, Play, Loader2, BarChart3, User,
-  ShoppingBag, GraduationCap, Briefcase,
+  ShoppingBag, GraduationCap, Briefcase, ClipboardList,
 } from "lucide-react";
 
 // Tab content components
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
+import DashboardOrders from "@/components/dashboard/DashboardOrders";
 import DashboardProducts from "@/components/dashboard/DashboardProducts";
 import DashboardFreelance from "@/components/dashboard/DashboardFreelance";
 import DashboardCourses from "@/components/dashboard/DashboardCourses";
@@ -130,6 +131,10 @@ const Dashboard = () => {
                 <Video className="w-3.5 h-3.5" />
                 Streams
               </TabsTrigger>
+              <TabsTrigger value="orders" className="gap-1.5">
+                <ClipboardList className="w-3.5 h-3.5" />
+                Orders
+              </TabsTrigger>
               <TabsTrigger value="products" className="gap-1.5">
                 <ShoppingBag className="w-3.5 h-3.5" />
                 Products{products.length > 0 && ` (${products.length})`}
@@ -151,6 +156,10 @@ const Dashboard = () => {
 
             <TabsContent value="overview">
               <DashboardOverview userStreams={userStreams} />
+            </TabsContent>
+
+            <TabsContent value="orders">
+              <DashboardOrders />
             </TabsContent>
 
             <TabsContent value="products">
