@@ -8,19 +8,19 @@ import { useEarningsSummary } from "@/hooks/useEarnings";
 import { useStreams } from "@/hooks/useStreams";
 import {
   Video,
-  Users,
   DollarSign,
   Eye,
   Clock,
   Play,
   Loader2,
   BarChart3,
+  User,
 } from "lucide-react";
 
 const Dashboard = () => {
   const [checking, setChecking] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [displayName, setDisplayName] = useState("");
   const navigate = useNavigate();
 
   const { totalThisMonth } = useEarningsSummary();
@@ -33,8 +33,8 @@ const Dashboard = () => {
       if (!session) { navigate("/auth"); return; }
       setUserId(session.user.id);
       const { data: profileData } = await supabase
-        .from("profiles").select("*").eq("user_id", session.user.id).maybeSingle();
-      setProfile(profileData);
+        .from("profiles").select("display_name").eq("user_id", session.user.id).maybeSingle();
+      setDisplayName(profileData?.display_name || "Creator");
       setChecking(false);
     };
     checkAuth();
@@ -50,7 +50,7 @@ const Dashboard = () => {
 
   const totalViews = userStreams.reduce((sum, s) => sum + (s.total_views || 0), 0);
   const watchTimeHours = Math.floor(userStreams.reduce((sum, s) => sum + (s.duration_seconds || 0), 0) / 3600);
-  const followerCount = profile?.follower_count || 0;
+  const totalStreams = userStreams.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -61,9 +61,17 @@ const Dashboard = () => {
 
           {/* Header */}
           <div className="flex items-center justify-between">
-            <h1 className="text-lg font-semibold text-foreground">
-              Hi, {profile?.display_name || "Creator"}
-            </h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-lg font-semibold text-foreground">
+                Hi, {displayName}
+              </h1>
+              <Link to="/create-profile">
+                <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground hover:text-foreground h-7 px-2">
+                  <User className="w-3 h-3" />
+                  Profile
+                </Button>
+              </Link>
+            </div>
             <Link to="/go-live">
               <Button size="sm" className="gap-1.5">
                 <Play className="w-3.5 h-3.5" />
@@ -72,11 +80,11 @@ const Dashboard = () => {
             </Link>
           </div>
 
-          {/* Stats Row */}
+          {/* Activity Stats — stream/earnings focused, no social stats */}
           <div className="grid grid-cols-4 gap-3">
             {[
-              { label: "Views", value: totalViews.toLocaleString(), icon: Eye },
-              { label: "Followers", value: followerCount.toLocaleString(), icon: Users },
+              { label: "Streams", value: totalStreams.toLocaleString(), icon: Video },
+              { label: "Total Views", value: totalViews.toLocaleString(), icon: Eye },
               { label: "Watch Time", value: `${watchTimeHours}h`, icon: Clock },
               { label: "Earnings", value: `$${totalThisMonth.toFixed(0)}`, icon: DollarSign },
             ].map((stat) => (
