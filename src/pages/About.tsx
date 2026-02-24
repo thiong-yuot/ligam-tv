@@ -1,15 +1,14 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Users, Shield, Zap, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
 const values = [
-  { icon: Users, title: "Built for All", description: "Streamers, viewers, teachers, sellers, freelancers—everyone belongs here." },
-  { icon: Shield, title: "Fair & Transparent", description: "Keep 85-92% of earnings. No hidden fees." },
-  { icon: Zap, title: "One Platform", description: "Stream, sell, teach, or hire—all in one place." },
-  { icon: Heart, title: "Your Way", description: "Use what you need. No lock-in, no pressure." },
+  { icon: Users, title: "Built for All", desc: "Streamers, viewers, teachers, sellers, freelancers — everyone belongs." },
+  { icon: Shield, title: "Fair & Transparent", desc: "Free platform. We only earn when you do." },
+  { icon: Zap, title: "One Platform", desc: "Stream, sell, teach, or hire — all in one place." },
+  { icon: Heart, title: "Your Way", desc: "Use what you need. No lock-in, no pressure." },
 ];
 
 const About = () => {
@@ -18,32 +17,28 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <main className="pt-20 pb-12 px-4 md:px-6">
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-lg font-display font-bold text-foreground mb-1">About</h1>
+          <p className="text-xs text-muted-foreground mb-6">Ligam.tv is a platform for creators and viewers. Stream, teach, sell, or discover — your way.</p>
 
-      <main className="pt-20 pb-16 px-4 md:px-6 lg:px-8">
-        <div className="w-full max-w-3xl mx-auto">
-          <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-2">About</h1>
-          <p className="text-muted-foreground mb-12">
-            Ligam.tv is a platform for creators and viewers. Stream, teach, sell, or discover—your way.
-          </p>
-
-          <div className="grid sm:grid-cols-2 gap-4 mb-12">
+          <div className="grid grid-cols-2 gap-2 mb-6">
             {values.map((v) => (
-              <div key={v.title} className="p-5 rounded-xl bg-card border border-border">
-                <v.icon className="w-5 h-5 text-primary mb-3" />
-                <h3 className="font-semibold text-foreground mb-1">{v.title}</h3>
-                <p className="text-sm text-muted-foreground">{v.description}</p>
+              <div key={v.title} className="p-3 rounded-lg bg-card border border-border">
+                <v.icon className="w-3.5 h-3.5 text-primary mb-1.5" />
+                <p className="text-xs font-medium text-foreground">{v.title}</p>
+                <p className="text-[10px] text-muted-foreground">{v.desc}</p>
               </div>
             ))}
           </div>
 
-          <div className="text-center">
-            <Link to={user ? "/dashboard" : "/signup"}>
-              <Button>{user ? "Go to Dashboard" : "Get Started"}</Button>
+          <div className="text-center pt-4 border-t border-border">
+            <Link to={user ? "/dashboard" : "/auth"} className="text-xs text-primary hover:underline font-medium">
+              {user ? "Go to Dashboard" : "Get Started"}
             </Link>
           </div>
         </div>
       </main>
-
       <Footer />
     </div>
   );
