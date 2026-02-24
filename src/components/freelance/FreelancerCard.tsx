@@ -56,12 +56,6 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
                 <Briefcase className="w-4 h-4" />
                 <span className="font-medium">{freelancer.total_jobs || 0} jobs</span>
               </div>
-              {freelancer.hourly_rate && (
-                <div className="flex items-center gap-1 text-muted-foreground">
-                  <DollarSign className="w-4 h-4" />
-                  <span className="font-medium text-foreground">${freelancer.hourly_rate}</span>/hr
-                </div>
-              )}
             </div>
 
             {freelancer.skills && freelancer.skills.length > 0 && (
@@ -129,12 +123,6 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
             <Briefcase className="w-4 h-4" />
             <span className="font-medium">{freelancer.total_jobs || 0} jobs</span>
           </div>
-          {freelancer.hourly_rate && (
-            <div className="flex items-center gap-1">
-              <span className="text-lg font-bold text-foreground">${freelancer.hourly_rate}</span>
-              <span className="text-muted-foreground text-xs">/hr</span>
-            </div>
-          )}
         </div>
 
         {/* Skills */}

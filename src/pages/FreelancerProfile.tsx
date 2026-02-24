@@ -144,13 +144,7 @@ const FreelancerProfile = () => {
                             ({freelancer.total_jobs || 0} jobs)
                           </span>
                         </div>
-                        {freelancer.hourly_rate && (
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <DollarSign className="w-5 h-5" />
-                            <span className="font-semibold">${freelancer.hourly_rate}/hr</span>
-                          </div>
-                        )}
-                      </div>
+                        </div>
 
                       {freelancer.bio && (
                         <p className="text-muted-foreground mb-4">{freelancer.bio}</p>
