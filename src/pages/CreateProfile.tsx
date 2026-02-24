@@ -49,8 +49,8 @@ const CreateProfile = () => {
       }
       
       // Pre-fill website from profile
-      if (profile && (profile as any).website) {
-        setWebsite((profile as any).website || "");
+      if (profile?.website) {
+        setWebsite(profile.website);
       }
       setChecking(false);
     };
