@@ -66,6 +66,7 @@ const StreamView = () => {
   const { toast } = useToast();
 
   const [isTheaterMode, setIsTheaterMode] = useState(false);
+  const [activeTab, setActiveTab] = useState("chat");
   const { user } = useAuth();
   const { tier } = useSubscription();
   const { data: stream, isLoading } = useStream(id || "");
@@ -473,7 +474,7 @@ const StreamView = () => {
 
         {/* Sidebar with Tabs */}
         <div className="w-full lg:w-96 border-l border-border flex flex-col bg-card">
-          <Tabs defaultValue="chat" className="flex flex-col h-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className={cn("flex flex-col", activeTab === "chat" && "h-full")}>
             <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0">
               <TabsTrigger 
                 value="chat" 
