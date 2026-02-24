@@ -141,22 +141,6 @@ const FreelancerCard = ({ freelancer, viewMode = "grid" }: FreelancerCardProps) 
           </div>
         )}
 
-        {/* Portfolio thumbnails */}
-        {freelancer.portfolio_images && freelancer.portfolio_images.length > 0 && (
-          <div className="flex gap-1 mb-3 overflow-hidden rounded-lg">
-            {freelancer.portfolio_images.slice(0, 3).map((img, i) => (
-              <div key={i} className="relative flex-1 aspect-square overflow-hidden">
-                <img src={img} alt={`Portfolio ${i + 1}`} className="w-full h-full object-cover" />
-                {i === 2 && freelancer.portfolio_images!.length > 3 && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="text-xs font-medium text-white">+{freelancer.portfolio_images!.length - 3}</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* Bio snippet */}
         {freelancer.bio && (
           <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
