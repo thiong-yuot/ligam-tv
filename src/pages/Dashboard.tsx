@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 
 import { useEarningsSummary } from "@/hooks/useEarnings";
 import { useStreams } from "@/hooks/useStreams";
@@ -20,13 +20,10 @@ import {
   Gift,
   Play,
   Loader2,
-  Check,
   BarChart3,
   TrendingUp,
   ShoppingBag,
   Briefcase,
-  GraduationCap,
-  Percent
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -42,19 +39,11 @@ const Dashboard = () => {
     adEarnings, 
     storeEarnings, 
     serviceEarnings,
-    platformFees 
   } = useEarningsSummary();
   const { data: allStreams = [] } = useStreams();
 
   // Get user's streams
   const userStreams = allStreams.filter(s => s.user_id === userId);
-
-  const commissionRates = [
-    { label: "Shop Sales", rate: "20%", icon: ShoppingBag },
-    { label: "Freelance", rate: "25%", icon: Briefcase },
-    { label: "Courses", rate: "40%", icon: GraduationCap },
-    { label: "Live & Tips", rate: "40%", icon: Play },
-  ];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -150,31 +139,7 @@ const Dashboard = () => {
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Platform Info */}
-            <Card className="p-6 border-border bg-card">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-foreground">Platform</h2>
-                <Badge variant="secondary" className="gap-1">
-                  <Check className="h-3 w-3" />
-                  Free
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground mb-4">
-                All tools are free. We only earn when you earn.
-              </p>
-              <div className="space-y-2">
-                {commissionRates.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between p-2 rounded-lg bg-secondary/50">
-                    <div className="flex items-center gap-2 text-sm">
-                      <item.icon className="h-4 w-4 text-muted-foreground" />
-                      <span>{item.label}</span>
-                    </div>
-                    <span className="text-sm font-medium text-muted-foreground">{item.rate} fee</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
+          <div className="grid lg:grid-cols-2 gap-8">
 
             {/* Quick Actions */}
             <Card className="p-6 bg-card border-border">
@@ -251,48 +216,35 @@ const Dashboard = () => {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Gift className="w-6 h-6 text-pink-500 mx-auto mb-2" />
+                <Gift className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-xl font-bold text-foreground">${giftEarnings.toFixed(2)}</div>
                 <div className="text-xs text-muted-foreground">Tips/Gifts</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <Users className="w-6 h-6 text-blue-500 mx-auto mb-2" />
+                <Users className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-xl font-bold text-foreground">${subEarnings.toFixed(2)}</div>
                 <div className="text-xs text-muted-foreground">Subscriptions</div>
               </div>
               <div className="text-center p-4 rounded-xl bg-secondary/50">
-                <TrendingUp className="w-6 h-6 text-blue-500 mx-auto mb-2" />
+                <TrendingUp className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-xl font-bold text-foreground">${adEarnings.toFixed(2)}</div>
                 <div className="text-xs text-muted-foreground">Ad Revenue</div>
               </div>
-              <div className="text-center p-4 rounded-xl bg-secondary/50 relative">
-                <ShoppingBag className="w-6 h-6 text-green-500 mx-auto mb-2" />
+              <div className="text-center p-4 rounded-xl bg-secondary/50">
+                <ShoppingBag className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-xl font-bold text-foreground">${storeEarnings.toFixed(2)}</div>
                 <div className="text-xs text-muted-foreground">Store Sales</div>
-                <span className="absolute top-2 right-2 text-[10px] text-muted-foreground">
-                  -{platformFees.store}%
-                </span>
               </div>
-              <div className="text-center p-4 rounded-xl bg-secondary/50 relative">
-                <Briefcase className="w-6 h-6 text-amber-500 mx-auto mb-2" />
+              <div className="text-center p-4 rounded-xl bg-secondary/50">
+                <Briefcase className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-xl font-bold text-foreground">${serviceEarnings.toFixed(2)}</div>
-                <div className="text-xs text-muted-foreground">Service Commissions</div>
-                <span className="absolute top-2 right-2 text-[10px] text-muted-foreground">
-                  -{platformFees.services}%
-                </span>
+                <div className="text-xs text-muted-foreground">Services</div>
               </div>
-              <div className="text-center p-4 rounded-xl bg-gradient-to-r from-primary/20 to-blue-500/20">
+              <div className="text-center p-4 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5">
                 <DollarSign className="w-6 h-6 text-primary mx-auto mb-2" />
                 <div className="text-xl font-bold text-primary">${totalThisMonth.toFixed(2)}</div>
                 <div className="text-xs text-muted-foreground">Total Net</div>
               </div>
-            </div>
-            
-            {/* Platform Fee Info */}
-            <div className="mt-4 pt-4 border-t border-border">
-              <p className="text-xs text-muted-foreground text-center">
-                Platform fees: {platformFees.store}% on store sales • {platformFees.services}% on service commissions • No fees on tips
-              </p>
             </div>
           </Card>
 
