@@ -19,6 +19,7 @@ import {
   Camera,
   Key,
   DollarSign,
+  ArrowLeft,
 } from "lucide-react";
 
 const GoLive = () => {
@@ -92,7 +93,10 @@ const GoLive = () => {
         <div className="container mx-auto max-w-2xl space-y-6">
 
           {/* Header */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
             <h1 className="text-lg font-semibold text-foreground">Go Live</h1>
             {isLive && (
               <Badge variant="destructive" className="animate-pulse">
