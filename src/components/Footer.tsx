@@ -1,7 +1,8 @@
+import { forwardRef } from "react";
 import { Link } from "react-router-dom";
 import LigamLogo from "./LigamLogo";
 
-const Footer = () => {
+const Footer = forwardRef<HTMLElement>((_, ref) => {
   const links = [
     { name: "Browse", path: "/browse" },
     { name: "Shop", path: "/shop" },
@@ -13,7 +14,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-card border-t border-border">
+    <footer ref={ref} className="bg-card border-t border-border">
       <div className="w-full max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <Link to="/" className="flex items-center gap-2">
@@ -48,6 +49,8 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
+
+Footer.displayName = "Footer";
 
 export default Footer;
