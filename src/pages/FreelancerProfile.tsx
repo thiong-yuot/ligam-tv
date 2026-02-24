@@ -193,8 +193,9 @@ const FreelancerProfile = () => {
 
               {/* Tabs for Services and Reviews */}
               <Tabs defaultValue="services">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="services">Services</TabsTrigger>
+                  <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
                   <TabsTrigger value="reviews">Reviews</TabsTrigger>
                 </TabsList>
                 
@@ -253,6 +254,44 @@ const FreelancerProfile = () => {
                         </Card>
                       ))}
                     </div>
+                  )}
+                </TabsContent>
+
+                <TabsContent value="portfolio" className="mt-6">
+                  {freelancer.portfolio_images && freelancer.portfolio_images.length > 0 ? (
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {freelancer.portfolio_images.map((url, index) => (
+                        <Dialog key={index}>
+                          <DialogTrigger asChild>
+                            <div className="aspect-square rounded-lg overflow-hidden cursor-pointer group">
+                              <img
+                                src={url}
+                                alt={`Portfolio ${index + 1}`}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-3xl p-2">
+                            <DialogHeader className="sr-only">
+                              <DialogTitle>Portfolio Image {index + 1}</DialogTitle>
+                              <DialogDescription>Full size portfolio image</DialogDescription>
+                            </DialogHeader>
+                            <img
+                              src={url}
+                              alt={`Portfolio ${index + 1}`}
+                              className="w-full h-auto rounded-lg"
+                            />
+                          </DialogContent>
+                        </Dialog>
+                      ))}
+                    </div>
+                  ) : (
+                    <Card>
+                      <CardContent className="text-center py-12">
+                        <ExternalLink className="w-12 h-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                        <p className="text-muted-foreground">No portfolio images uploaded yet</p>
+                      </CardContent>
+                    </Card>
                   )}
                 </TabsContent>
 

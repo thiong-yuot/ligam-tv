@@ -184,6 +184,17 @@ const UserProfile = () => {
               {profile.bio && (
                 <p className="text-foreground/80 mb-4 max-w-2xl">{profile.bio}</p>
               )}
+
+              {((profile as any).university || (profile as any).degree) && (
+                <div className="flex items-center gap-2 text-muted-foreground mb-4">
+                  <BookOpen className="w-4 h-4" />
+                  <span>
+                    {(profile as any).degree && `${(profile as any).degree}`}
+                    {(profile as any).field_of_study && ` in ${(profile as any).field_of_study}`}
+                    {(profile as any).university && ` — ${(profile as any).university}`}
+                  </span>
+                </div>
+              )}
               
               {profile.website && (
                 <a 

@@ -1718,13 +1718,16 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string | null
+          degree: string | null
           display_name: string | null
+          field_of_study: string | null
           follower_count: number | null
           following_count: number | null
           id: string
           is_public: boolean
           is_verified: boolean | null
           total_views: number | null
+          university: string | null
           updated_at: string | null
           user_id: string
           username: string | null
@@ -1734,13 +1737,16 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          degree?: string | null
           display_name?: string | null
+          field_of_study?: string | null
           follower_count?: number | null
           following_count?: number | null
           id?: string
           is_public?: boolean
           is_verified?: boolean | null
           total_views?: number | null
+          university?: string | null
           updated_at?: string | null
           user_id: string
           username?: string | null
@@ -1750,13 +1756,16 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          degree?: string | null
           display_name?: string | null
+          field_of_study?: string | null
           follower_count?: number | null
           following_count?: number | null
           id?: string
           is_public?: boolean
           is_verified?: boolean | null
           total_views?: number | null
+          university?: string | null
           updated_at?: string | null
           user_id?: string
           username?: string | null

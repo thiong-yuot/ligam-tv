@@ -18,6 +18,9 @@ const CreateProfile = () => {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [website, setWebsite] = useState("");
+  const [university, setUniversity] = useState("");
+  const [degree, setDegree] = useState("");
+  const [fieldOfStudy, setFieldOfStudy] = useState("");
   const [selectedTheme, setSelectedTheme] = useState(0);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -49,6 +52,9 @@ const CreateProfile = () => {
         setBio(profile.bio || "");
         if (profile.website) setWebsite(profile.website);
         if (profile.avatar_url) setAvatarUrl(profile.avatar_url);
+        if ((profile as any).university) setUniversity((profile as any).university);
+        if ((profile as any).degree) setDegree((profile as any).degree);
+        if ((profile as any).field_of_study) setFieldOfStudy((profile as any).field_of_study);
       }
       setChecking(false);
     };
@@ -62,6 +68,9 @@ const CreateProfile = () => {
       setBio(profile.bio || "");
       setWebsite(profile.website || "");
       setAvatarUrl(profile.avatar_url || null);
+      setUniversity((profile as any).university || "");
+      setDegree((profile as any).degree || "");
+      setFieldOfStudy((profile as any).field_of_study || "");
     }
     setEditing(true);
   };
@@ -134,7 +143,7 @@ const CreateProfile = () => {
     setLoading(true);
     try {
       if (!user) throw new Error("Not authenticated");
-      const profileData = {
+      const profileData: Record<string, any> = {
         user_id: user.id,
         username: username.toLowerCase().replace(/\s/g, ""),
         display_name: displayName,
@@ -143,8 +152,11 @@ const CreateProfile = () => {
         avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       };
+      if (university) profileData.university = university;
+      if (degree) profileData.degree = degree;
+      if (fieldOfStudy) profileData.field_of_study = fieldOfStudy;
 
-      const { error } = await supabase.from("profiles").upsert(profileData, { onConflict: "user_id" });
+      const { error } = await supabase.from("profiles").upsert(profileData as any, { onConflict: "user_id" });
       if (error) throw error;
       await supabase.from("freelancers").update({ name: displayName, avatar_url: avatarUrl }).eq("user_id", user.id);
       await refreshProfile();
@@ -187,6 +199,16 @@ const CreateProfile = () => {
                   <div>
                     <p className="text-xs font-medium text-muted-foreground mb-1">Bio</p>
                     <p className="text-sm text-foreground">{profile.bio}</p>
+                  </div>
+                )}
+                {((profile as any)?.university || (profile as any)?.degree) && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">Education</p>
+                    <p className="text-sm text-foreground">
+                      {(profile as any)?.degree && `${(profile as any).degree}`}
+                      {(profile as any)?.field_of_study && ` in ${(profile as any).field_of_study}`}
+                      {(profile as any)?.university && ` — ${(profile as any).university}`}
+                    </p>
                   </div>
                 )}
                 {profile?.website && (
@@ -265,6 +287,21 @@ const CreateProfile = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label htmlFor="edit-university">University / Institution</Label>
+                  <Input id="edit-university" type="text" placeholder="e.g., MIT, Stanford University" value={university} onChange={(e) => setUniversity(e.target.value)} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-degree">Degree</Label>
+                    <Input id="edit-degree" type="text" placeholder="e.g., Bachelor's, Master's" value={degree} onChange={(e) => setDegree(e.target.value)} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-fieldOfStudy">Field of Study</Label>
+                    <Input id="edit-fieldOfStudy" type="text" placeholder="e.g., Computer Science" value={fieldOfStudy} onChange={(e) => setFieldOfStudy(e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="website" className="flex items-center gap-2"><Globe className="w-4 h-4" /> Website / Social Link</Label>
                   <Input id="website" type="url" placeholder="https://your-website.com" value={website} onChange={(e) => setWebsite(e.target.value)} />
                 </div>
@@ -340,6 +377,20 @@ const CreateProfile = () => {
                     <Label htmlFor="bio">Bio</Label>
                     <Textarea id="bio" placeholder="Tell viewers about yourself..." value={bio} onChange={(e) => setBio(e.target.value.slice(0, 300))} rows={5} />
                     <p className="text-xs text-muted-foreground">{bio.length}/300 characters</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="university">University / Institution</Label>
+                    <Input id="university" type="text" placeholder="e.g., MIT, Stanford University" value={university} onChange={(e) => setUniversity(e.target.value)} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="degree">Degree</Label>
+                      <Input id="degree" type="text" placeholder="e.g., Bachelor's, Master's" value={degree} onChange={(e) => setDegree(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="fieldOfStudy">Field of Study</Label>
+                      <Input id="fieldOfStudy" type="text" placeholder="e.g., Computer Science" value={fieldOfStudy} onChange={(e) => setFieldOfStudy(e.target.value)} />
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="website" className="flex items-center gap-2"><Globe className="w-4 h-4" /> Website / Social Link</Label>
