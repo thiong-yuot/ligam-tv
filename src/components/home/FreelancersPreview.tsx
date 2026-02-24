@@ -1,26 +1,47 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Users, CheckCircle } from "lucide-react";
+import { ArrowRight, Users, CheckCircle, Briefcase } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useFreelancers } from "@/hooks/useFreelancers";
+import { useMyFreelancerProfile } from "@/hooks/useFreelancerProfile";
+import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
+import BecomeFreelancerDialog from "@/components/BecomeFreelancerDialog";
 
 interface FreelancersPreviewProps {
   compact?: boolean;
 }
 
 const FreelancersPreview = ({ compact }: FreelancersPreviewProps) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: freelancers = [], isLoading } = useFreelancers();
+  const { data: myProfile } = useMyFreelancerProfile();
+  const [becomeFreelancerOpen, setBecomeFreelancerOpen] = useState(false);
   const featured = freelancers.slice(0, compact ? 4 : 2);
+
+  const handleJoin = () => {
+    if (!user) { navigate("/auth"); return; }
+    if (myProfile) navigate("/freelance/dashboard");
+    else setBecomeFreelancerOpen(true);
+  };
 
   const content = (
     <>
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-display font-bold text-foreground">Freelance</h2>
-        <Link to="/freelance">
-          <Button variant="ghost" size="sm" className="text-xs h-7 px-2">
-            View All <ArrowRight className="w-3 h-3 ml-1" />
-          </Button>
-        </Link>
+        <div className="flex items-center gap-1">
+          {user && !myProfile && (
+            <Button variant="outline" size="sm" className="text-xs h-7 px-2 gap-1" onClick={handleJoin}>
+              <Briefcase className="w-3 h-3" /> Join
+            </Button>
+          )}
+          <Link to="/freelance">
+            <Button variant="ghost" size="sm" className="text-xs h-7 px-2">
+              View All <ArrowRight className="w-3 h-3 ml-1" />
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {isLoading ? (
@@ -62,11 +83,17 @@ const FreelancersPreview = ({ compact }: FreelancersPreviewProps) => {
     </>
   );
 
-  if (compact) return <div>{content}</div>;
+  if (compact) return (
+    <>
+      <div>{content}</div>
+      <BecomeFreelancerDialog open={becomeFreelancerOpen} onOpenChange={setBecomeFreelancerOpen} />
+    </>
+  );
 
   return (
     <section className="py-6 px-4 md:px-6 lg:px-8">
       <div className="w-full max-w-[1920px] mx-auto">{content}</div>
+      <BecomeFreelancerDialog open={becomeFreelancerOpen} onOpenChange={setBecomeFreelancerOpen} />
     </section>
   );
 };
