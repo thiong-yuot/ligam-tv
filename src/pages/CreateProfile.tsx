@@ -13,7 +13,7 @@ import { User, Camera, Palette, Loader2, Check, Globe, ArrowRight, ArrowLeft } f
 import { Progress } from "@/components/ui/progress";
 
 const CreateProfile = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
@@ -47,6 +47,11 @@ const CreateProfile = () => {
         setDisplayName(profile.display_name || "");
         setBio(profile.bio || "");
       }
+      
+      // Pre-fill website from profile
+      if (profile && (profile as any).website) {
+        setWebsite((profile as any).website || "");
+      }
       setChecking(false);
     };
     checkAuth();
@@ -67,19 +72,29 @@ const CreateProfile = () => {
     try {
       if (!user) throw new Error("Not authenticated");
 
+      const profileData = {
+        user_id: user.id,
+        username: username.toLowerCase().replace(/\s/g, ""),
+        display_name: displayName,
+        bio,
+        website,
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
         .from("profiles")
-        .upsert({
-          user_id: user.id,
-          username: username.toLowerCase().replace(/\s/g, ""),
-          display_name: displayName,
-          bio,
-          website,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: "user_id" });
+        .upsert(profileData, { onConflict: "user_id" });
 
       if (error) throw error;
 
+      // Sync display_name to freelancer table if freelancer profile exists
+      await supabase
+        .from("freelancers")
+        .update({ name: displayName })
+        .eq("user_id", user.id);
+
+      await refreshProfile();
+      
       toast({
         title: "Profile Updated!",
         description: "Your profile is ready. Start streaming now!",
