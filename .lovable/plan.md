@@ -1,108 +1,62 @@
 
 
-# Plan: Remove User Pictures/Avatars
+# SRS Streaming Server Integration Plan
 
 ## Overview
-Remove all user profile pictures from the platform, replacing them with blank/placeholder icons or initials fallbacks only. This affects avatars across navigation, profiles, cards, messages, streams, freelancers, and courses.
+Complete the streaming pipeline by configuring the SRS RTMP webhook integration and updating the Go Live page with proper server URL handling. This will make streams fully functional once you deploy an SRS server.
+
+## What Changes
+
+### 1. Update `rtmp-webhook` edge function
+- The existing function already handles `on_publish`, `on_publish_done`, `on_play`, `on_play_done` actions -- this is solid.
+- **Add**: When a stream goes live (`on_publish`), automatically set the `hls_url` field on the stream record so viewers can watch. SRS generates HLS at a predictable path: `http://<srs-server>:8080/live/<stream_key>.m3u8`.
+- **Add**: When a stream stops (`on_publish_done`), clear the `hls_url` field.
+
+### 2. Update `create-mux-stream` edge function
+- Rename references from "Mux" to "SRS" in log messages (cosmetic clarity).
+- Keep the function name as-is for API compatibility.
+
+### 3. Update `GoLive.tsx`
+- Add an input field or environment-driven config so the RTMP URL isn't hardcoded to `your-srs-server`.
+- Save `is_paid` and `access_price` to the stream record when the creator sets up a paid stream.
+- After generating the key, show clearer instructions for connecting OBS/Streamlabs.
+
+### 4. Update `StreamView.tsx`
+- The HLS player already reads `stream.hls_url` -- no major changes needed.
+- Add auto-refresh polling on the stream query (every 5s) so viewers see the stream go live automatically.
+
+### 5. Update `useStreams.tsx`
+- Add `refetchInterval` to `useStream` when the stream is not yet live, so it picks up the `is_live` and `hls_url` changes from the webhook.
 
 ---
 
-## Files to Modify
+## Technical Details
 
-### 1. Core Avatar Component
-**`src/components/ui/avatar.tsx`**
-- Modify `AvatarImage` to never render (always return null or skip)
-- Keep `AvatarFallback` working for initials/icons
-
-### 2. Navigation
-**`src/components/Navbar.tsx`**
-- Remove `<AvatarImage>` component usage (3 locations)
-- Keep only `<AvatarFallback>` with initials
-
-### 3. User Profile Pages
-**`src/pages/UserProfile.tsx`**
-- Remove avatar image, show only fallback with initials
-
-**`src/pages/CreateProfile.tsx`**
-- Already using a placeholder icon - no change needed
-
-### 4. Messages
-**`src/pages/Messages.tsx`**
-- Remove `<AvatarImage>` from conversation list (line ~206)
-- Remove from chat header (line ~267)
-- Remove from message bubbles (line ~313)
-
-### 5. Stream Components
-**`src/components/StreamCard.tsx`**
-- Replace `<img src={avatar}>` with a placeholder icon div
-
-**`src/components/FeaturedStream.tsx`**
-- Replace avatar image with placeholder div
-
-**`src/components/home/LiveStreamsSection.tsx`**
-- Replace streamer avatar image (line ~214) with placeholder
-
-**`src/pages/StreamView.tsx`**
-- Replace streamer avatar in header with placeholder
-
-### 6. Freelancer Components
-**`src/components/freelance/FreelancerCard.tsx`**
-- Replace `<img src={freelancer.avatar_url}>` with placeholder (grid and list views)
-
-**`src/components/home/FreelancersPreview.tsx`**
-- Remove `<AvatarImage>`, keep only fallback
-
-**`src/components/freelance/FeaturedFreelancers.tsx`**
-- Replace avatar image with placeholder
-
-**`src/pages/FreelancerProfile.tsx`**
-- Replace main profile image with placeholder
-
-**`src/components/freelance/FreelancerProfileForm.tsx`**
-- Remove avatar upload functionality, show placeholder only
-
-### 7. Course Components
-**`src/components/courses/CourseCard.tsx`**
-- Remove instructor `<AvatarImage>`, keep fallback initials
-
-**`src/components/courses/InstructorCard.tsx`**
-- Remove `<AvatarImage>`, keep fallback
-
-**`src/components/courses/TeacherCard.tsx`**
-- Remove avatar image display
-
-### 8. Shop Components
-**`src/components/shop/ProductCard.tsx`**
-- Remove seller `<AvatarImage>`, keep fallback
-
-### 9. Sidebar
-**`src/components/Sidebar.tsx`**
-- Replace streamer avatar images with placeholder divs
-
----
-
-## Technical Approach
-
-Replace all avatar images with either:
-1. **For Avatar components**: Keep `<Avatar>` and `<AvatarFallback>` only, remove `<AvatarImage>`
-2. **For raw `<img>` tags**: Replace with a styled div containing a User icon or initials
-
-Example replacement pattern:
+### rtmp-webhook changes (edge function)
 ```text
-Before:
-<img src={user.avatar_url} className="w-10 h-10 rounded-full" />
+on_publish handler:
+  - Build HLS URL from stream_key: `http://<SRS_HOST>:8080/live/<stream_key>.m3u8`
+  - Update streams table: SET hls_url = <built URL>, is_live = true
 
-After:
-<div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-  <User className="w-5 h-5 text-muted-foreground" />
-</div>
+on_publish_done handler:
+  - Update streams table: SET hls_url = NULL, is_live = false
 ```
 
----
+The SRS server hostname will be read from a new secret `SRS_SERVER_HOST` so it's configurable without code changes.
 
-## Summary
-- **18 files** will be modified
-- All profile pictures replaced with icon/initials placeholders
-- Maintains visual layout and sizing
-- Removes avatar upload functionality from freelancer form
+### GoLive.tsx changes
+- When creating/updating a stream, also save `is_paid` and `access_price` fields.
+- Display the RTMP URL from credentials (already done) with better copy UX.
+
+### useStreams.tsx changes
+- `useStream` hook: add `refetchInterval: 5000` when `stream.is_live === false` to auto-detect when stream goes live.
+
+### New Secret Required
+- `SRS_SERVER_HOST` -- the hostname/IP of your SRS server (e.g., `stream.ligam.tv` or `123.45.67.89`). This will be used by the webhook to construct HLS URLs and by the stream creation function to provide the correct RTMP endpoint.
+
+### Files to modify
+1. `supabase/functions/rtmp-webhook/index.ts` -- add HLS URL generation
+2. `supabase/functions/create-mux-stream/index.ts` -- use SRS_SERVER_HOST secret for RTMP URL
+3. `src/pages/GoLive.tsx` -- save paid stream settings to DB
+4. `src/hooks/useStreams.tsx` -- add polling for live status detection
 
