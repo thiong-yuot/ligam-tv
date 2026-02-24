@@ -178,7 +178,11 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
             alt={stream.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          <div className="absolute inset-0 bg-background/20 dark:bg-background/60" />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+            <div className="w-8 h-8 rounded-full bg-primary/90 flex items-center justify-center">
+              <Play className="w-4 h-4 text-primary-foreground fill-primary-foreground ml-0.5" />
+            </div>
+          </div>
           
           {stream.is_live && (
             <div className="absolute top-2 left-2 flex items-center gap-1.5">
@@ -201,11 +205,6 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
             </div>
           )}
           
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="w-10 h-10 rounded-full bg-primary/90 flex items-center justify-center">
-              <Play className="w-5 h-5 text-primary-foreground fill-primary-foreground ml-0.5" />
-            </div>
-          </div>
           
           <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
             <div className="w-6 h-6 rounded-full border border-primary bg-secondary flex items-center justify-center">
