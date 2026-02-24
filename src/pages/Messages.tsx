@@ -90,7 +90,8 @@ const Messages = () => {
         }
       });
     }
-  }, [selectedUserId, conversation, user?.id, markAsRead]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedUserId, conversation, user?.id]);
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -280,7 +281,10 @@ const Messages = () => {
                       Online
                     </p>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => navigate(`/freelancer/${selectedUserId}`)}>
+                  <Button variant="outline" size="sm" onClick={() => {
+                    const username = selectedConversation?.otherProfile?.username;
+                    if (username) navigate(`/@${username}`);
+                  }}>
                     View Profile
                   </Button>
                 </div>
