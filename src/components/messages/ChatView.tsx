@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ArrowLeft, Send, Loader2, User, MessageCircle, CheckCheck, Check, Globe } from "lucide-react";
+import EmojiPicker from "@/components/stream/EmojiPicker";
 import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -175,6 +176,7 @@ export const ChatView = ({
       {/* Input */}
       <div className="px-4 py-3 border-t border-border">
         <form onSubmit={onSend} className="flex items-end gap-2 max-w-2xl mx-auto">
+          <EmojiPicker onEmojiSelect={(emoji) => onNewMessageChange(newMessage + emoji)} />
           <Textarea
             value={newMessage}
             onChange={(e) => onNewMessageChange(e.target.value)}
