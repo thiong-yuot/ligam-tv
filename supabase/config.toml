@@ -48,3 +48,6 @@ verify_jwt = false
 
 [functions.eelai-company]
 verify_jwt = false
+
+[functions.send-notification-email]
+verify_jwt = false
