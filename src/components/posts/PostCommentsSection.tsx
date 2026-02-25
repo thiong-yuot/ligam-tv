@@ -31,14 +31,14 @@ const PostCommentsSection = ({ postId }: { postId: string }) => {
           const initial = name.charAt(0).toUpperCase();
           return (
             <div key={comment.id} className="flex gap-2.5 group">
-              <Link to={`/@${comment.profile?.username || ""}`} className="shrink-0">
+              <Link to={`/user/${comment.profile?.username || ""}`} className="shrink-0">
                 <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-semibold text-muted-foreground">
                   {initial}
                 </div>
               </Link>
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-1.5">
-                  <Link to={`/@${comment.profile?.username || ""}`} className="text-xs font-semibold text-foreground hover:underline">
+                  <Link to={`/user/${comment.profile?.username || ""}`} className="text-xs font-semibold text-foreground hover:underline">
                     {name}
                   </Link>
                   <span className="text-[10px] text-muted-foreground">

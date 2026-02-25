@@ -98,7 +98,7 @@ export const ChatView = ({
                 variant="outline"
                 size="sm"
                 className="w-full text-xs"
-                onClick={() => navigate(`/@${selectedProfile.username}`)}
+                onClick={() => navigate(`/user/${selectedProfile.username}`)}
               >
                 <Globe className="h-3 w-3 mr-1.5" />
                 View full profile
