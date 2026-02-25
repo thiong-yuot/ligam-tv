@@ -3,7 +3,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowLeft, Send, Loader2, User, MessageCircle, CheckCheck, Check } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ArrowLeft, Send, Loader2, User, MessageCircle, CheckCheck, Check, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday } from "date-fns";
 import { useNavigate } from "react-router-dom";
@@ -70,17 +71,41 @@ export const ChatView = ({
             {selectedProfile?.display_name || selectedProfile?.username || "User"}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-xs text-muted-foreground"
-          onClick={() => {
-            const username = selectedProfile?.username;
-            if (username) navigate(`/@${username}`);
-          }}
-        >
-          Profile
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground">
+              Profile
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-64 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <Avatar className="h-10 w-10">
+                <AvatarFallback className="bg-muted text-muted-foreground text-sm">
+                  {selectedProfile?.display_name?.[0]?.toUpperCase() || <User className="h-4 w-4" />}
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold truncate">
+                  {selectedProfile?.display_name || "User"}
+                </p>
+                {selectedProfile?.username && (
+                  <p className="text-xs text-muted-foreground truncate">@{selectedProfile.username}</p>
+                )}
+              </div>
+            </div>
+            {selectedProfile?.username && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full text-xs"
+                onClick={() => navigate(`/@${selectedProfile.username}`)}
+              >
+                <Globe className="h-3 w-3 mr-1.5" />
+                View full profile
+              </Button>
+            )}
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Messages */}
