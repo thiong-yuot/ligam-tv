@@ -186,6 +186,20 @@ const SellerOrders = () => {
                         <p className="text-xs text-muted-foreground">
                           Buyer: {order.buyer_profile?.display_name || "Unknown"}
                         </p>
+                        {/* Payment hold info */}
+                        {order.payment_released ? (
+                          <Badge className="mt-1 bg-green-500/10 text-green-600 border-green-500/20 text-[10px]">
+                            💰 Payment Released
+                          </Badge>
+                        ) : order.delivery_confirmed_at ? (
+                          <Badge className="mt-1 bg-green-500/10 text-green-600 border-green-500/20 text-[10px]">
+                            ✅ Delivery confirmed
+                          </Badge>
+                        ) : order.payment_held_until ? (
+                          <Badge variant="secondary" className="mt-1 text-[10px]">
+                            🔒 Payment held until {new Date(order.payment_held_until).toLocaleDateString()}
+                          </Badge>
+                        ) : null}
                       </div>
                     </div>
 

@@ -190,13 +190,14 @@ serve(async (req) => {
                   .eq("id", metadata.freelancer_id)
                   .single();
 
-                if (freelancer?.user_id) {
+              if (freelancer?.user_id) {
+                  // Earnings are HELD until both parties confirm completion
                   await supabaseAdmin.from("earnings").insert({
                     user_id: freelancer.user_id,
                     amount: freelancerEarnings,
                     type: "service",
                     source_id: metadata.package_id,
-                    status: "available",
+                    status: "held",
                   });
                   console.log(`Freelancer earnings created: $${freelancerEarnings} (after ${FREELANCE_COMMISSION * 100}% commission)`);
                 }
@@ -329,14 +330,20 @@ serve(async (req) => {
 
               // Create earnings for each seller
               const sellerIds = metadata.seller_ids?.split(",").filter(Boolean) || [];
+              // Set payment hold for 40 days
+              await supabaseAdmin.from("orders").update({
+                payment_held_until: new Date(Date.now() + 40 * 24 * 60 * 60 * 1000).toISOString(),
+              }).eq("id", order.id);
+
               for (const sellerId of sellerIds) {
                 const sellerEarnings = totalAmount * (1 - SHOP_COMMISSION) / (sellerIds.length || 1);
+                // Earnings are HELD until delivery confirmed (QR scan) or 40-day timeout
                 await supabaseAdmin.from("earnings").insert({
                   user_id: sellerId,
                   amount: sellerEarnings,
                   type: "store",
                   source_id: order.id,
-                  status: "available",
+                  status: "held",
                 });
                 console.log(`Seller earnings: $${sellerEarnings} (after ${SHOP_COMMISSION * 100}% commission)`);
               }

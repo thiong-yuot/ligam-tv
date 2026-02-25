@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "@/components/Layout";
-import { useMyOrders } from "@/hooks/useOrders";
+import { useMyOrders, useConfirmDelivery } from "@/hooks/useOrders";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Package, ShoppingBag, ArrowLeft, Clock, CheckCircle, Truck, XCircle, Download, Loader2 } from "lucide-react";
+import { Package, ShoppingBag, ArrowLeft, Clock, CheckCircle, Truck, XCircle, Download, Loader2, ScanLine } from "lucide-react";
 import { toast } from "sonner";
 
 const statusConfig: Record<string, { label: string; icon: typeof Clock; className: string }> = {
@@ -23,6 +23,16 @@ const MyOrders = () => {
   const { user } = useAuth();
   const { data: orders, isLoading } = useMyOrders();
   const [downloading, setDownloading] = useState<string | null>(null);
+  const confirmDelivery = useConfirmDelivery();
+
+  const handleConfirmDelivery = async (orderId: string) => {
+    try {
+      await confirmDelivery.mutateAsync(orderId);
+      toast.success("Delivery confirmed! Seller payment will be released.");
+    } catch {
+      toast.error("Failed to confirm delivery");
+    }
+  };
 
   const handleDownload = async (productId: string) => {
     setDownloading(productId);
@@ -173,6 +183,28 @@ const MyOrders = () => {
                             Download File
                           </Button>
                         </div>
+                      )}
+                      {/* Confirm Delivery for physical products */}
+                      {order.status === "shipped" && !order.delivery_confirmed_at && product?.product_type !== "digital" && (
+                        <div className="mt-2">
+                          <Button
+                            size="sm"
+                            className="h-8 text-xs gap-1.5"
+                            onClick={() => handleConfirmDelivery(order.id)}
+                            disabled={confirmDelivery.isPending}
+                          >
+                            <ScanLine className="w-3 h-3" />
+                            Confirm Delivery
+                          </Button>
+                          <p className="text-[10px] text-muted-foreground mt-1">
+                            Confirm when you receive your package
+                          </p>
+                        </div>
+                      )}
+                      {order.delivery_confirmed_at && (
+                        <Badge className="mt-2 bg-green-500/10 text-green-600 border-green-500/20 text-[10px]">
+                          ✅ Delivery confirmed {new Date(order.delivery_confirmed_at).toLocaleDateString()}
+                        </Badge>
                       )}
                     </div>
                   </CardContent>

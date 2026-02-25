@@ -60,10 +60,14 @@ const DashboardFreelance = () => {
 
   const handleOrderStatusChange = async (orderId: string, newStatus: string) => {
     try {
-      const updateData: { status: string; completed_at?: string } = { status: newStatus };
-      if (newStatus === "completed") updateData.completed_at = new Date().toISOString();
-      await updateOrder.mutateAsync({ id: orderId, ...updateData });
-      toast.success(`Order marked as ${newStatus}`);
+      if (newStatus === "freelancer_complete") {
+        await updateOrder.mutateAsync({ id: orderId, freelancer_completed: true });
+        toast.success("Marked complete. Waiting for client confirmation.");
+      } else {
+        const updateData: { status: string; completed_at?: string } = { status: newStatus };
+        await updateOrder.mutateAsync({ id: orderId, ...updateData });
+        toast.success(`Order marked as ${newStatus}`);
+      }
     } catch {
       toast.error("Failed to update order");
     }
@@ -156,10 +160,20 @@ const DashboardFreelance = () => {
                       </Button>
                     </>
                   )}
-                  {order.status === "in_progress" && (
-                    <Button size="sm" className="h-7 text-xs" onClick={() => handleOrderStatusChange(order.id, "completed")}>
+                  {order.status === "in_progress" && !order.freelancer_completed && (
+                    <Button size="sm" className="h-7 text-xs" onClick={() => handleOrderStatusChange(order.id, "freelancer_complete")}>
                       <CheckCircle2 className="w-3 h-3 mr-1" /> Mark Complete
                     </Button>
+                  )}
+                  {order.status === "in_progress" && order.freelancer_completed && !order.client_completed && (
+                    <Badge variant="secondary" className="text-[10px]">
+                      <Clock className="w-3 h-3 mr-1" />Awaiting client
+                    </Badge>
+                  )}
+                  {order.payment_released && (
+                    <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-[10px]">
+                      💰 Payment Released
+                    </Badge>
                   )}
                 </div>
               </div>

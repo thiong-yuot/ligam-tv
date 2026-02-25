@@ -812,14 +812,18 @@ export type Database = {
       }
       freelancer_orders: {
         Row: {
+          client_completed: boolean | null
           client_id: string
           completed_at: string | null
           created_at: string
           deliverables: string[] | null
           due_date: string | null
+          freelancer_completed: boolean | null
           freelancer_id: string | null
           id: string
           package_id: string | null
+          payment_released: boolean | null
+          payment_released_at: string | null
           requirements: string | null
           status: string
           stripe_payment_intent_id: string | null
@@ -827,14 +831,18 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          client_completed?: boolean | null
           client_id: string
           completed_at?: string | null
           created_at?: string
           deliverables?: string[] | null
           due_date?: string | null
+          freelancer_completed?: boolean | null
           freelancer_id?: string | null
           id?: string
           package_id?: string | null
+          payment_released?: boolean | null
+          payment_released_at?: string | null
           requirements?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
@@ -842,14 +850,18 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          client_completed?: boolean | null
           client_id?: string
           completed_at?: string | null
           created_at?: string
           deliverables?: string[] | null
           due_date?: string | null
+          freelancer_completed?: boolean | null
           freelancer_id?: string | null
           id?: string
           package_id?: string | null
+          payment_released?: boolean | null
+          payment_released_at?: string | null
           requirements?: string | null
           status?: string
           stripe_payment_intent_id?: string | null
@@ -1432,7 +1444,11 @@ export type Database = {
       orders: {
         Row: {
           created_at: string | null
+          delivery_confirmed_at: string | null
           id: string
+          payment_held_until: string | null
+          payment_released: boolean | null
+          payment_released_at: string | null
           product_id: string | null
           quantity: number | null
           shipping_address: Json | null
@@ -1445,7 +1461,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          delivery_confirmed_at?: string | null
           id?: string
+          payment_held_until?: string | null
+          payment_released?: boolean | null
+          payment_released_at?: string | null
           product_id?: string | null
           quantity?: number | null
           shipping_address?: Json | null
@@ -1458,7 +1478,11 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          delivery_confirmed_at?: string | null
           id?: string
+          payment_held_until?: string | null
+          payment_released?: boolean | null
+          payment_released_at?: string | null
           product_id?: string | null
           quantity?: number | null
           shipping_address?: Json | null

@@ -274,18 +274,23 @@ const FreelancerDashboard = () => {
 
   const handleOrderStatusChange = async (orderId: string, newStatus: string) => {
     try {
-      const updateData: { status: string; completed_at?: string } = { status: newStatus };
-      if (newStatus === "completed") {
-        updateData.completed_at = new Date().toISOString();
+      if (newStatus === "freelancer_complete") {
+        await updateOrder.mutateAsync({ id: orderId, freelancer_completed: true });
+        toast.success("Marked as complete. Waiting for client confirmation to release payment.");
+      } else {
+        const updateData: { status: string; completed_at?: string } = { status: newStatus };
+        await updateOrder.mutateAsync({ id: orderId, ...updateData });
+        toast.success(`Order marked as ${newStatus}`);
       }
-      await updateOrder.mutateAsync({ id: orderId, ...updateData });
-      toast.success(`Order marked as ${newStatus}`);
     } catch (error: any) {
       toast.error("Failed to update order");
     }
   };
 
-  const getOrderStatusBadge = (status: string) => {
+  const getOrderStatusBadge = (status: string, order?: any) => {
+    if (order?.payment_released) {
+      return <Badge className="bg-green-500"><CheckCircle2 className="w-3 h-3 mr-1" />Payment Released</Badge>;
+    }
     switch (status) {
       case "pending":
         return <Badge variant="secondary"><AlertCircle className="w-3 h-3 mr-1" />Pending</Badge>;
@@ -419,7 +424,7 @@ const FreelancerDashboard = () => {
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
-                                {getOrderStatusBadge(order.status)}
+                                {getOrderStatusBadge(order.status, order)}
                                 <span className="text-sm text-muted-foreground">
                                   {new Date(order.created_at).toLocaleDateString()}
                                 </span>
@@ -456,14 +461,26 @@ const FreelancerDashboard = () => {
                                   </Button>
                                 </>
                               )}
-                              {order.status === "in_progress" && (
+                              {order.status === "in_progress" && !order.freelancer_completed && (
                                 <Button 
                                   size="sm"
-                                  onClick={() => handleOrderStatusChange(order.id, "completed")}
+                                  onClick={() => handleOrderStatusChange(order.id, "freelancer_complete")}
                                 >
                                   <CheckCircle2 className="w-4 h-4 mr-1" />
                                   Mark Complete
                                 </Button>
+                              )}
+                              {order.status === "in_progress" && order.freelancer_completed && !order.client_completed && (
+                                <Badge variant="secondary" className="text-xs">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  Waiting for client confirmation
+                                </Badge>
+                              )}
+                              {order.payment_released && (
+                                <Badge className="bg-green-500 text-white text-xs">
+                                  <DollarSign className="w-3 h-3 mr-1" />
+                                  Payment Released
+                                </Badge>
                               )}
                             </div>
                           </div>

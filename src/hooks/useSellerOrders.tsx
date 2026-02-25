@@ -18,6 +18,10 @@ export interface SellerOrder {
     country?: string;
   } | null;
   tracking_number: string | null;
+  delivery_confirmed_at: string | null;
+  payment_held_until: string | null;
+  payment_released: boolean;
+  payment_released_at: string | null;
   created_at: string;
   updated_at: string;
   product?: {
