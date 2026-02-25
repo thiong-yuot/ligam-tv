@@ -20,6 +20,7 @@ const Shop = () => {
   const sellerFilter = searchParams.get("seller");
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [productType, setProductType] = useState<"all" | "digital" | "physical">("all");
   const [becomeSellerOpen, setBecomeSellerOpen] = useState(false);
 
   const { data: products, isLoading, error } = useProducts();
@@ -31,13 +32,16 @@ const Shop = () => {
     if (sellerFilter) {
       filtered = filtered.filter((p) => p.seller_id === sellerFilter);
     }
+    if (productType !== "all") {
+      filtered = filtered.filter((p) => (p as any).product_type === productType);
+    }
     if (searchQuery) {
       filtered = filtered.filter((p) =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
     return filtered;
-  }, [products, searchQuery, sellerFilter]);
+  }, [products, searchQuery, sellerFilter, productType]);
 
   const handleAddToCart = (product: Product) => {
     addToCart(product);
@@ -49,39 +53,54 @@ const Shop = () => {
       <Navbar />
 
       <section className="pt-16 pb-4 px-4 md:px-6 lg:px-8">
-        <div className="w-full max-w-[1920px] mx-auto flex items-center justify-between gap-3">
-          <h1 className="text-lg font-display font-bold text-foreground">Shop</h1>
-          <div className="flex items-center gap-2">
-            <div className="relative w-48">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-8 text-xs bg-card"
+        <div className="w-full max-w-[1920px] mx-auto space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-lg font-display font-bold text-foreground">Shop</h1>
+            <div className="flex items-center gap-2">
+              <div className="relative w-48">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8 h-8 text-xs bg-card"
+                />
+              </div>
+              <CartSheet
+                trigger={
+                  <Button variant="outline" size="sm" className="relative">
+                    <ShoppingCart className="w-3.5 h-3.5 mr-1" />
+                    Cart
+                    {totalItems > 0 && (
+                      <Badge className="absolute -top-2 -right-2 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
+                        {totalItems}
+                      </Badge>
+                    )}
+                  </Button>
+                }
               />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => user ? navigate("/seller/dashboard") : setBecomeSellerOpen(true)}
+              >
+                <Store className="w-3.5 h-3.5 mr-1" />
+                Sell
+              </Button>
             </div>
-            <CartSheet
-              trigger={
-                <Button variant="outline" size="sm" className="relative">
-                  <ShoppingCart className="w-3.5 h-3.5 mr-1" />
-                  Cart
-                  {totalItems > 0 && (
-                    <Badge className="absolute -top-2 -right-2 h-4 w-4 p-0 flex items-center justify-center text-[10px]">
-                      {totalItems}
-                    </Badge>
-                  )}
-                </Button>
-              }
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => user ? navigate("/seller/dashboard") : setBecomeSellerOpen(true)}
-            >
-              <Store className="w-3.5 h-3.5 mr-1" />
-              Sell
-            </Button>
+          </div>
+          <div className="flex gap-1">
+            {(["all", "digital", "physical"] as const).map((type) => (
+              <Button
+                key={type}
+                variant={productType === type ? "default" : "outline"}
+                size="sm"
+                className="h-7 text-xs capitalize"
+                onClick={() => setProductType(type)}
+              >
+                {type === "all" ? "All Products" : type === "digital" ? "Digital" : "Physical"}
+              </Button>
+            ))}
           </div>
         </div>
       </section>
