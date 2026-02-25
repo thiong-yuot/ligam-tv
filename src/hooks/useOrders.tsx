@@ -18,6 +18,10 @@ export interface Order {
   } | null;
   tracking_number: string | null;
   stripe_payment_intent_id: string | null;
+  delivery_confirmed_at: string | null;
+  payment_held_until: string | null;
+  payment_released: boolean;
+  payment_released_at: string | null;
   created_at: string;
   updated_at: string;
   product?: {
@@ -117,6 +121,25 @@ export const useUpdateOrderStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["my-orders"] });
       queryClient.invalidateQueries({ queryKey: ["order"] });
+    },
+  });
+};
+
+export const useConfirmDelivery = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (orderId: string) => {
+      const { error } = await supabase
+        .from("orders")
+        .update({ delivery_confirmed_at: new Date().toISOString() })
+        .eq("id", orderId);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["my-orders"] });
+      queryClient.invalidateQueries({ queryKey: ["seller-orders"] });
     },
   });
 };

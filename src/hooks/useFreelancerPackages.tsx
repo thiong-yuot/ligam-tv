@@ -28,6 +28,10 @@ export interface FreelancerOrder {
   completed_at: string | null;
   created_at: string;
   updated_at: string;
+  client_completed: boolean;
+  freelancer_completed: boolean;
+  payment_released: boolean;
+  payment_released_at: string | null;
   package?: FreelancerPackage;
 }
 
@@ -180,7 +184,7 @@ export const useUpdateFreelancerOrder = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ id, ...data }: { id: string; status?: string; deliverables?: string[]; completed_at?: string }) => {
+    mutationFn: async ({ id, ...data }: { id: string; status?: string; deliverables?: string[]; completed_at?: string; client_completed?: boolean; freelancer_completed?: boolean }) => {
       const { error } = await supabase
         .from("freelancer_orders")
         .update(data)

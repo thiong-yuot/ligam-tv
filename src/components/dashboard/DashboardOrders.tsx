@@ -1,10 +1,12 @@
 import { useMyOrders } from "@/hooks/useOrders";
-import { useMyFreelancerOrders } from "@/hooks/useFreelancerPackages";
+import { useMyFreelancerOrders, useUpdateFreelancerOrder } from "@/hooks/useFreelancerPackages";
 import { useEarningsSummary } from "@/hooks/useEarnings";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, ShoppingBag, Briefcase, GraduationCap, DollarSign } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, ShoppingBag, Briefcase, GraduationCap, DollarSign, CheckCircle2, Clock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const useMyEnrollments = () => {
   return useQuery({
@@ -38,6 +40,16 @@ const DashboardOrders = () => {
   const { data: freelanceOrders = [], isLoading: loadingFreelance } = useMyFreelancerOrders();
   const { data: enrollments = [], isLoading: loadingEnrollments } = useMyEnrollments();
   const { totalThisMonth, storeEarnings, serviceEarnings, courseEarnings } = useEarningsSummary();
+  const updateOrder = useUpdateFreelancerOrder();
+
+  const handleClientComplete = async (orderId: string) => {
+    try {
+      await updateOrder.mutateAsync({ id: orderId, client_completed: true });
+      toast.success("Project confirmed complete! Payment will be released.");
+    } catch {
+      toast.error("Failed to confirm completion");
+    }
+  };
 
   const isLoading = loadingShop || loadingFreelance || loadingEnrollments;
 
@@ -117,6 +129,14 @@ const DashboardOrders = () => {
                   </p>
                 </div>
                 <Badge variant={statusColor(order.status)}>{order.status}</Badge>
+                {order.freelancer_completed && !order.client_completed && order.status === "in_progress" && (
+                  <Button size="sm" className="h-6 text-[10px] px-2" onClick={() => handleClientComplete(order.id)}>
+                    <CheckCircle2 className="w-3 h-3 mr-1" /> Confirm Complete
+                  </Button>
+                )}
+                {order.payment_released && (
+                  <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-[10px]">💰 Released</Badge>
+                )}
               </div>
             ))}
           </div>
