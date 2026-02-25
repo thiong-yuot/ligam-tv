@@ -20,7 +20,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   const handleSellerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (sellerProfile?.username) {
-      navigate(`/@${sellerProfile.username}`);
+      navigate(`/user/${sellerProfile.username}`);
     }
   };
   

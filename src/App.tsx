@@ -116,7 +116,7 @@ const App = () => (
                 <Route path="/search" element={<Search />} />
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/my-orders" element={<MyOrders />} />
-                <Route path="/@:username" element={<UserProfile />} />
+                <Route path="/user/:username" element={<UserProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
