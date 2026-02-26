@@ -5,9 +5,6 @@ import HLSVideoPlayer from "@/components/HLSVideoPlayer";
 import HighlightedTip from "@/components/HighlightedTip";
 import StreamGifts from "@/components/stream/StreamGifts";
 import TipDialog from "@/components/TipDialog";
-import FeaturedProductsWidget from "@/components/channel/FeaturedProductsWidget";
-import FeaturedGigsWidget from "@/components/channel/FeaturedGigsWidget";
-import FeaturedCoursesWidget from "@/components/channel/FeaturedCoursesWidget";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -636,16 +633,25 @@ const StreamView = () => {
 
             {/* Shop Tab */}
             <TabsContent value="shop" className="overflow-y-auto p-3 m-0 space-y-2 [&[data-state=active]]:flex-none">
-              {streamerProducts.length > 0 && (
-                <FeaturedProductsWidget
-                  products={streamerProducts}
-                  creatorName={stream.profiles?.display_name || stream.profiles?.username || undefined}
-                  sellerId={stream.user_id}
-                  maxItems={4}
-                />
-              )}
-              
-              {streamerProducts.length === 0 && (
+              {streamerProducts.length > 0 ? (
+                <div className="space-y-2">
+                  {streamerProducts.slice(0, 4).map((product) => (
+                    <Link key={product.id} to={`/shop?seller=${stream.user_id}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="w-10 h-10 rounded bg-muted overflow-hidden flex-shrink-0">
+                        {product.image_url ? (
+                          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-4 h-4 text-muted-foreground" /></div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
+                        <p className="text-xs text-primary font-bold">${product.price.toFixed(2)}</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
                 <div className="text-center py-4 text-muted-foreground">
                   <ShoppingBag className="w-6 h-6 mx-auto mb-1 opacity-50" />
                   <p className="text-sm">No products available</p>
@@ -656,24 +662,25 @@ const StreamView = () => {
             {/* Services Tab (Gigs + Courses) */}
             <TabsContent value="services" className="overflow-y-auto p-3 m-0 space-y-2 [&[data-state=active]]:flex-none">
               {streamerFreelancer && streamerPackages.length > 0 && (
-                <FeaturedGigsWidget
-                  freelancer={streamerFreelancer}
-                  packages={streamerPackages}
-                  maxItems={3}
-                />
-              )}
-              
-              {stream?.user_id && (
-                <FeaturedCoursesWidget
-                  creatorId={stream.user_id}
-                />
+                <div className="space-y-2">
+                  {streamerPackages.slice(0, 3).map((pkg) => (
+                    <Link key={pkg.id} to={`/freelance/${streamerFreelancer.id}`} className="block p-3 rounded-lg border border-border hover:border-primary/50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-foreground">{pkg.name}</p>
+                          <p className="text-xs text-muted-foreground">{pkg.delivery_days} day{pkg.delivery_days > 1 ? 's' : ''} delivery</p>
+                        </div>
+                        <span className="text-sm font-bold text-primary">${pkg.price}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               )}
               
               {(!streamerFreelancer || streamerPackages.length === 0) && streamerCourses.length === 0 && (
                 <div className="text-center py-4 text-muted-foreground">
                   <Briefcase className="w-6 h-6 mx-auto mb-1 opacity-50" />
                   <p className="text-sm">No services available</p>
-                  <p className="text-xs">No gigs or courses yet</p>
                 </div>
               )}
             </TabsContent>
