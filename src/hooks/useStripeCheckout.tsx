@@ -9,8 +9,14 @@ export const useFreelancerCheckout = () => {
   const checkout = async (packageId: string, requirements?: string) => {
     setLoading(true);
     try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) throw new Error("Please login to place an order");
+
       const { data, error } = await supabase.functions.invoke("create-freelancer-checkout", {
         body: { packageId, requirements },
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
       });
 
       if (error) throw error;
@@ -39,8 +45,14 @@ export const useCourseCheckout = () => {
   const checkout = async (courseId: string) => {
     setLoading(true);
     try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) throw new Error("Please login to enroll");
+
       const { data, error } = await supabase.functions.invoke("create-course-checkout", {
         body: { courseId },
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
       });
 
       if (error) throw error;

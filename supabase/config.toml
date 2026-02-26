@@ -51,3 +51,6 @@ verify_jwt = false
 
 [functions.send-notification-email]
 verify_jwt = false
+
+[functions.download-digital-product]
+verify_jwt = false
