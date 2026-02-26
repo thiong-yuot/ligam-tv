@@ -16,17 +16,17 @@ import {
   Briefcase,
   MessageCircle,
   Globe,
-  FileText,
+  
   UserPlus,
   UserMinus
 } from "lucide-react";
 import CourseCard from "@/components/courses/CourseCard";
 import ProductCard from "@/components/shop/ProductCard";
 import { useCart } from "@/hooks/useCart";
-import { usePosts } from "@/hooks/usePosts";
+
 import { useAuth } from "@/hooks/useAuth";
 import { useIsFollowing, useFollowUser, useUnfollowUser } from "@/hooks/useFollowers";
-import PostCard from "@/components/posts/PostCard";
+
 import { toast } from "@/hooks/use-toast";
 
 const UserProfile = () => {
@@ -112,7 +112,7 @@ const UserProfile = () => {
     enabled: !!profile?.user_id,
   });
 
-  const { posts: userPosts } = usePosts(profile?.user_id);
+  
 
   const isOwnProfile = user?.id === profile?.user_id;
 
@@ -332,22 +332,8 @@ const UserProfile = () => {
           </section>
         )}
 
-        {userPosts.length > 0 && (
-          <section className="space-y-3">
-            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <FileText className="w-4 h-4 text-primary" />
-              Posts ({userPosts.length})
-            </h2>
-            <div className="space-y-3">
-              {userPosts.map((post) => (
-                <PostCard key={post.id} post={post} />
-              ))}
-            </div>
-          </section>
-        )}
-
         {/* Empty state */}
-        {courses.length === 0 && products.length === 0 && streams.length === 0 && !freelancer && userPosts.length === 0 && (
+        {courses.length === 0 && products.length === 0 && streams.length === 0 && !freelancer && (
           <div className="text-center py-12">
             <p className="text-xs text-muted-foreground">No content yet.</p>
           </div>
