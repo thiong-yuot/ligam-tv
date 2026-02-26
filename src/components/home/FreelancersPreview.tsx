@@ -70,7 +70,7 @@ const FreelancersPreview = ({ compact }: FreelancersPreviewProps) => {
                 </div>
                 <p className="text-[10px] text-muted-foreground truncate">{f.title}</p>
               </div>
-              {f.hourly_rate && <p className="text-[11px] text-primary font-bold flex-shrink-0">${f.hourly_rate}/hr</p>}
+              {f.hourly_rate && <p className="text-[11px] text-primary font-bold flex-shrink-0">From ${f.hourly_rate}</p>}
             </Link>
           ))}
         </div>

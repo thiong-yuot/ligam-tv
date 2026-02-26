@@ -871,7 +871,7 @@ const FreelancerDashboard = () => {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>Hourly Rate ($) - Optional</Label>
+                          <Label>Service Cost ($) - Optional</Label>
                           <Input
                             type="number"
                             value={editForm.hourly_rate}
@@ -1011,7 +1011,7 @@ const FreelancerDashboard = () => {
                         {profile.hourly_rate && (
                           <div className="flex items-center gap-1 text-muted-foreground">
                             <DollarSign className="w-4 h-4" />
-                            <span>${profile.hourly_rate}/hr</span>
+                            <span>From ${profile.hourly_rate}</span>
                           </div>
                         )}
                       </div>

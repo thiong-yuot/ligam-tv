@@ -291,7 +291,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
               <p className="text-xs font-medium truncate">{stream.freelancer.title}</p>
               {stream.freelancer.hourly_rate && (
                 <p className="text-xs text-muted-foreground">
-                  From ${stream.freelancer.hourly_rate}/hr
+                  From ${stream.freelancer.hourly_rate}
                 </p>
               )}
             </div>

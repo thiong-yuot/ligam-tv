@@ -105,8 +105,8 @@ const FreelanceSidebar = ({
             <div className="space-y-6">
               {/* Price Range */}
               <div>
-                <label className="text-sm text-muted-foreground mb-3 block">
-                  Hourly Rate: ${priceRange[0]} - ${priceRange[1]}+
+              <label className="text-sm text-muted-foreground mb-3 block">
+                  Service Cost: ${priceRange[0]} - ${priceRange[1]}+
                 </label>
                 <Slider
                   value={priceRange}
