@@ -99,7 +99,7 @@ const MobileFreelanceFilters = ({
 
           {/* Price Range */}
           <div>
-            <h3 className="font-semibold text-foreground mb-3">Hourly Rate</h3>
+            <h3 className="font-semibold text-foreground mb-3">Service Cost</h3>
             <p className="text-sm text-muted-foreground mb-4">
               ${priceRange[0]} - ${priceRange[1]}+
             </p>

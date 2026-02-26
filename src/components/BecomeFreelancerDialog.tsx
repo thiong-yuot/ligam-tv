@@ -162,7 +162,7 @@ const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogPr
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hourlyRate">Hourly Rate ($)</Label>
+            <Label htmlFor="hourlyRate">Service Cost ($)</Label>
             <Input
               id="hourlyRate"
               type="number"

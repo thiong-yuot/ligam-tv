@@ -98,7 +98,7 @@ const FeaturedFreelancers = ({ freelancers }: FeaturedFreelancersProps) => {
               </div>
               {freelancer.hourly_rate && (
                 <span className="font-semibold text-foreground">
-                  ${freelancer.hourly_rate}/hr
+                  From ${freelancer.hourly_rate}
                 </span>
               )}
             </div>
