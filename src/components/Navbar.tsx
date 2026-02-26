@@ -92,51 +92,62 @@ const Navbar = forwardRef<HTMLElement>((_, ref) => {
           </form>
 
           <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </Button>
             {!loading && (
               <>
                 {user ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                            {getInitials()}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-48" align="end">
-                      <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                        <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/create-profile")}>
-                        <User className="mr-2 h-4 w-4" /> {profile?.username ? "View Profile" : "Create Profile"}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/messages")}>
-                        <MessageCircle className="mr-2 h-4 w-4" /> Messages
-                        {unreadCount > 0 && <Badge variant="default" className="ml-auto text-xs h-5">{unreadCount}</Badge>}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/notifications")}>
-                        <Bell className="mr-2 h-4 w-4" /> Notifications
-                        {unreadNotifications > 0 && <Badge variant="default" className="ml-auto text-xs h-5">{unreadNotifications}</Badge>}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-                        <LogOut className="mr-2 h-4 w-4" /> Sign Out
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={toggleTheme}
+                      aria-label="Toggle theme"
+                    >
+                      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                              {getInitials()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-48" align="end">
+                        <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                          <LayoutDashboard className="mr-2 h-4 w-4" /> Dashboard
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate("/create-profile")}>
+                          <User className="mr-2 h-4 w-4" /> {profile?.username ? "View Profile" : "Create Profile"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate("/messages")}>
+                          <MessageCircle className="mr-2 h-4 w-4" /> Messages
+                          {unreadCount > 0 && <Badge variant="default" className="ml-auto text-xs h-5">{unreadCount}</Badge>}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => navigate("/notifications")}>
+                          <Bell className="mr-2 h-4 w-4" /> Notifications
+                          {unreadNotifications > 0 && <Badge variant="default" className="ml-auto text-xs h-5">{unreadNotifications}</Badge>}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                          <LogOut className="mr-2 h-4 w-4" /> Sign Out
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </>
                 ) : (
                   <div className="hidden sm:flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={toggleTheme}
+                      aria-label="Toggle theme"
+                    >
+                      {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                    </Button>
                     <Link to="/login"><Button variant="ghost" size="sm">Log In</Button></Link>
                     <Link to="/signup"><Button size="sm">Sign Up</Button></Link>
                   </div>
