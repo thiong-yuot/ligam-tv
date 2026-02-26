@@ -464,40 +464,6 @@ const StreamView = () => {
             <h3 className="font-semibold text-foreground mb-2">About this stream</h3>
             <p className="text-muted-foreground">{stream.description || "No description provided."}</p>
           </div>
-
-          {/* Creator's Courses */}
-          {streamerCourses.length > 0 && (
-            <div className="p-4 md:p-6 border-t border-border">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <GraduationCap className="w-4 h-4 text-primary" />
-                  <h3 className="font-semibold text-foreground text-sm">Courses by {stream.profiles?.display_name || stream.profiles?.username || "Creator"}</h3>
-                </div>
-                <Link to="/courses">
-                  <Button variant="ghost" size="sm" className="text-xs h-7 px-2">View All</Button>
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                {streamerCourses.slice(0, 4).map((course) => (
-                  <Link key={course.id} to={`/courses/${course.id}`} className="bg-card border border-border rounded-lg overflow-hidden hover:border-muted-foreground/30 transition-colors group">
-                    <div className="aspect-[4/3] bg-muted overflow-hidden">
-                      {course.thumbnail_url ? (
-                        <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <GraduationCap className="w-6 h-6 text-muted-foreground" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-medium text-foreground line-clamp-1">{course.title}</p>
-                      <p className="text-xs text-primary font-bold">{course.price === 0 ? "Free" : `$${course.price}`}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Sidebar with Tabs */}
@@ -694,9 +660,13 @@ const StreamView = () => {
             </TabsContent>
 
             {/* Services Tab (Gigs + Courses) */}
-            <TabsContent value="services" className="overflow-y-auto p-3 m-0 space-y-2 [&[data-state=active]]:flex-none">
+            <TabsContent value="services" className="overflow-y-auto p-3 m-0 space-y-3 [&[data-state=active]]:flex-none">
               {streamerFreelancer && streamerPackages.length > 0 && (
                 <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Briefcase className="w-3.5 h-3.5 text-primary" />
+                    <span className="font-medium">Gigs</span>
+                  </div>
                   {streamerPackages.slice(0, 3).map((pkg) => (
                     <Link key={pkg.id} to={`/freelance/${streamerFreelancer.id}`} className="block p-3 rounded-lg border border-border hover:border-primary/50 transition-colors">
                       <div className="flex items-start justify-between">
@@ -705,6 +675,32 @@ const StreamView = () => {
                           <p className="text-xs text-muted-foreground">{pkg.delivery_days} day{pkg.delivery_days > 1 ? 's' : ''} delivery</p>
                         </div>
                         <span className="text-sm font-bold text-primary">${pkg.price}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+
+              {streamerCourses.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <GraduationCap className="w-3.5 h-3.5 text-primary" />
+                    <span className="font-medium">Courses</span>
+                  </div>
+                  {streamerCourses.slice(0, 3).map((course) => (
+                    <Link key={course.id} to={`/courses/${course.id}`} className="flex items-center gap-3 p-2 rounded-lg border border-border hover:border-primary/50 transition-colors">
+                      <div className="w-12 h-9 rounded overflow-hidden flex-shrink-0 bg-muted">
+                        {course.thumbnail_url ? (
+                          <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <GraduationCap className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{course.title}</p>
+                        <p className="text-xs text-primary font-bold">{course.price === 0 ? "Free" : `$${course.price}`}</p>
                       </div>
                     </Link>
                   ))}
