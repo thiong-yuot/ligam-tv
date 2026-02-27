@@ -36,7 +36,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
 
   // Use real seller data from profile or fallback
   const seller = {
-    name: sellerProfile?.display_name || sellerProfile?.username || "Ligam Store",
+    name: sellerProfile?.display_name || sellerProfile?.username || "Seller",
     verified: sellerProfile?.is_verified || false,
     avatar: sellerProfile?.avatar_url || null,
   };
