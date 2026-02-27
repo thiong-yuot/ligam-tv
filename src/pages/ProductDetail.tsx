@@ -233,14 +233,6 @@ const ProductDetail = () => {
               <div className="rounded-xl border border-border p-4 space-y-3">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Sold by</p>
                 <div className="flex items-center gap-3">
-                  <Link to={sellerProfile?.username ? `/user/${sellerProfile.username}` : "#"}>
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={sellerProfile?.avatar_url || undefined} />
-                      <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                        {(sellerProfile?.display_name || sellerProfile?.username || "S")[0].toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Link>
                   <div className="flex-1 min-w-0">
                     <Link
                       to={sellerProfile?.username ? `/user/${sellerProfile.username}` : "#"}

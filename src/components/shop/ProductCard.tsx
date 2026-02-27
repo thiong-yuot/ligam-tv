@@ -150,15 +150,6 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
       <div className="p-2.5">
         <p className="text-xs font-medium text-foreground truncate group-hover:text-primary transition-colors">{product.name}</p>
         <div className="flex items-center gap-1.5 mt-0.5">
-          {sellerProfile?.avatar_url ? (
-            <img src={sellerProfile.avatar_url} alt="" className="w-3.5 h-3.5 rounded-full object-cover" />
-          ) : (
-            <div className="w-3.5 h-3.5 rounded-full bg-primary/10 flex items-center justify-center">
-              <span className="text-[7px] font-bold text-primary">
-                {(sellerProfile?.display_name || sellerProfile?.username || "S")[0].toUpperCase()}
-              </span>
-            </div>
-          )}
           <p className="text-[10px] text-muted-foreground truncate">
             {sellerProfile?.display_name || sellerProfile?.username || product.category}
           </p>
