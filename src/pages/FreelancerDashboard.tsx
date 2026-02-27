@@ -113,7 +113,7 @@ const FreelancerDashboard = () => {
   }
 
   if (!user) {
-    navigate("/login");
+    navigate("/login?redirect=%2Ffreelance%2Fdashboard");
     return null;
   }
 

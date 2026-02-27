@@ -21,7 +21,7 @@ const FreelancersPreview = ({ compact }: FreelancersPreviewProps) => {
   const featured = freelancers.slice(0, compact ? 4 : 2);
 
   const handleJoin = () => {
-    if (!user) { navigate("/auth"); return; }
+    if (!user) { navigate("/login?redirect=%2Ffreelance"); return; }
     if (myProfile) navigate("/freelance/dashboard");
     else setBecomeFreelancerOpen(true);
   };

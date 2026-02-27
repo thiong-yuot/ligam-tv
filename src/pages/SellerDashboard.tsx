@@ -66,7 +66,7 @@ const SellerDashboard = () => {
   }
 
   if (!user) {
-    navigate("/login");
+    navigate("/login?redirect=%2Fseller%2Fdashboard");
     return null;
   }
 

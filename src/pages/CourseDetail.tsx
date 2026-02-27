@@ -55,7 +55,7 @@ const CourseDetail = () => {
 
   const handleEnroll = async () => {
     if (!user) {
-      navigate("/login");
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 

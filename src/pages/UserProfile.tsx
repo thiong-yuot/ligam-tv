@@ -118,7 +118,7 @@ const UserProfile = () => {
 
   const handleMessage = () => {
     if (!user) {
-      navigate("/login");
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
     if (profile?.user_id) {
@@ -128,7 +128,7 @@ const UserProfile = () => {
 
   const handleFollow = () => {
     if (!user) {
-      navigate("/login");
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
     if (!profile?.user_id) return;
