@@ -25,23 +25,25 @@ const Auth = ({ mode }: AuthProps) => {
   const referralCode = searchParams.get("ref");
   const { toast } = useToast();
 
+  const redirectTo = searchParams.get("redirect") || "/";
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (session?.user) {
-          navigate("/");
+          navigate(redirectTo, { replace: true });
         }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        navigate("/");
+        navigate(redirectTo, { replace: true });
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, redirectTo]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -403,14 +405,14 @@ const Auth = ({ mode }: AuthProps) => {
               {mode === "login" ? (
                 <>
                   Don't have an account?{" "}
-                  <Link to="/signup" className="text-primary hover:underline font-medium">
+                  <Link to={`/signup${redirectTo !== "/" ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`} className="text-primary hover:underline font-medium">
                     Sign up
                   </Link>
                 </>
               ) : (
                 <>
                   Already have an account?{" "}
-                  <Link to="/login" className="text-primary hover:underline font-medium">
+                  <Link to={`/login${redirectTo !== "/" ? `?redirect=${encodeURIComponent(redirectTo)}` : ""}`} className="text-primary hover:underline font-medium">
                     Log in
                   </Link>
                 </>

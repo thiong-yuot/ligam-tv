@@ -45,7 +45,7 @@ const CreateProfile = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/login"); return; }
+      if (!session) { navigate("/login?redirect=%2Fcreate-profile"); return; }
       if (profile) {
         setUsername(profile.username || "");
         setDisplayName(profile.display_name || "");

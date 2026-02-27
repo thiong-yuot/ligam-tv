@@ -28,7 +28,7 @@ const Analytics = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) navigate("/login");
+      if (!session) navigate("/login?redirect=%2Fanalytics");
       setChecking(false);
     };
     checkAuth();

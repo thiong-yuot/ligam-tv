@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Search as SearchIcon, Radio, Package, Users, BookOpen, Loader2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useStreams } from "@/hooks/useStreams";
 import { useProducts } from "@/hooks/useProducts";
 import { useFreelancers } from "@/hooks/useFreelancers";
@@ -94,7 +94,7 @@ const Search = () => {
                     {filteredFreelancers.slice(0, 4).map(f => (
                       <Link key={f.id} to={`/freelance/${f.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
                         <div className="flex items-center gap-2 mb-1">
-                          <Avatar className="w-6 h-6"><AvatarImage src={f.avatar_url || undefined} /><AvatarFallback className="text-[10px]">{f.name.charAt(0)}</AvatarFallback></Avatar>
+                          <Avatar className="w-6 h-6"><AvatarFallback className="text-[10px]">{f.name.charAt(0)}</AvatarFallback></Avatar>
                           <p className="text-xs font-medium text-foreground truncate">{f.name}</p>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{f.title}</p>

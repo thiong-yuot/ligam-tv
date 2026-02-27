@@ -29,7 +29,7 @@ const Messages = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/auth");
+    if (!authLoading && !user) navigate("/login?redirect=%2Fmessages");
   }, [user, authLoading, navigate]);
 
   // Build conversation list

@@ -58,7 +58,7 @@ const Notifications = () => {
   // Redirect if not logged in
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate("/auth");
+      navigate("/login?redirect=%2Fnotifications");
     }
   }, [user, authLoading, navigate]);
 

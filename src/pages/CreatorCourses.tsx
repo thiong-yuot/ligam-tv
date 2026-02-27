@@ -24,7 +24,7 @@ const CreatorCourses = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const { data } = await supabase.auth.getSession();
-      if (!data.session) navigate("/auth");
+      if (!data.session) navigate("/login?redirect=%2Fcreator%2Fcourses");
       setChecking(false);
     };
     checkAuth();

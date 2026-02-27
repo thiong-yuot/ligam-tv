@@ -41,7 +41,7 @@ const ContactFreelancerDialog = ({
         description: "Please sign in to contact freelancers.",
         variant: "destructive",
       });
-      navigate("/auth");
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 

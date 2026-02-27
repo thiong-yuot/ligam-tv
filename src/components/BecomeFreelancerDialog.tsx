@@ -59,7 +59,7 @@ const BecomeFreelancerDialog = ({ open, onOpenChange }: BecomeFreelancerDialogPr
 
     if (!user) {
       toast.error("Please log in to become a freelancer");
-      navigate("/login");
+      navigate("/login?redirect=%2Ffreelance");
       return;
     }
 

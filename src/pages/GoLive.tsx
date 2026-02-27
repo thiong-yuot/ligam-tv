@@ -49,7 +49,7 @@ const GoLive = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate("/auth");
+        navigate("/login?redirect=%2Fgo-live");
       } else {
         setUserId(session.user.id);
       }

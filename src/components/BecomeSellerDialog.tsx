@@ -27,7 +27,7 @@ const BecomeSellerDialog = ({ open, onOpenChange }: BecomeSellerDialogProps) => 
   const handleGetStarted = () => {
     if (!user) {
       toast.error("Please log in to become a seller");
-      navigate("/login");
+      navigate("/login?redirect=%2Fshop");
       onOpenChange(false);
       return;
     }

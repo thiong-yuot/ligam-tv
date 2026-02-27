@@ -73,7 +73,7 @@ const ProductDetail = () => {
 
   const handleDM = () => {
     if (!user) {
-      navigate("/auth");
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
     if (!sellerProfile?.user_id) return;

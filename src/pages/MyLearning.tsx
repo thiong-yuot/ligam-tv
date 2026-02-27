@@ -28,7 +28,7 @@ const MyLearning = () => {
     const checkAuth = async () => {
       const { data } = await supabase.auth.getSession();
       if (!data.session) {
-        navigate("/auth");
+        navigate("/login?redirect=%2Fmy-learning");
       }
       setChecking(false);
     };

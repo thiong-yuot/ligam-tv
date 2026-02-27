@@ -29,7 +29,7 @@ const Freelance = () => {
   }, [freelancers, searchQuery]);
 
   const handleAction = () => {
-    if (!user) { navigate("/auth"); return; }
+    if (!user) { navigate("/login?redirect=%2Ffreelance"); return; }
     if (myProfile) navigate("/freelance/dashboard");
     else setBecomeFreelancerOpen(true);
   };

@@ -9,7 +9,7 @@ const CTASection = () => {
 
   const handleAuthLink = (path: string) => {
     if (!user) {
-      navigate("/login");
+      navigate(`/login?redirect=${encodeURIComponent(path)}`);
     } else {
       navigate(path);
     }
