@@ -24,7 +24,7 @@ const Messages = () => {
   const markAsRead = useMarkAsRead();
 
   useEffect(() => {
-    const userId = searchParams.get("user");
+    const userId = searchParams.get("user") || searchParams.get("to");
     if (userId) setSelectedUserId(userId);
   }, [searchParams]);
 

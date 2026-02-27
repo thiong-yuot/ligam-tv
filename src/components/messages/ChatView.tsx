@@ -176,7 +176,6 @@ export const ChatView = ({
       {/* Input */}
       <div className="px-4 py-3 border-t border-border">
         <form onSubmit={onSend} className="flex items-end gap-2 max-w-2xl mx-auto">
-          <EmojiPicker onEmojiSelect={(emoji) => onNewMessageChange(newMessage + emoji)} />
           <Textarea
             value={newMessage}
             onChange={(e) => onNewMessageChange(e.target.value)}
@@ -190,6 +189,7 @@ export const ChatView = ({
             className="min-h-[40px] max-h-[100px] resize-none bg-muted/30 border-0 text-sm"
             rows={1}
           />
+          <EmojiPicker onEmojiSelect={(emoji) => onNewMessageChange(newMessage + emoji)} />
           <Button
             type="submit"
             size="icon"

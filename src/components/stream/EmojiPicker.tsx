@@ -30,7 +30,7 @@ const EmojiPicker = ({ onEmojiSelect }: EmojiPickerProps) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-6 w-6">
+        <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0">
           <Smile className="w-4 h-4 text-muted-foreground" />
         </Button>
       </PopoverTrigger>

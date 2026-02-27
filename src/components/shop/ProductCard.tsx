@@ -151,7 +151,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
         <p className="text-xs font-medium text-foreground truncate group-hover:text-primary transition-colors">{product.name}</p>
         <div className="flex items-center gap-1.5 mt-0.5">
           <p className="text-[10px] text-muted-foreground truncate">
-            {sellerProfile?.display_name || sellerProfile?.username || product.category}
+            {sellerProfile?.display_name || sellerProfile?.username || product.category || "Seller"}
           </p>
           {sellerProfile?.is_verified && <CheckCircle className="w-2.5 h-2.5 text-primary flex-shrink-0" />}
         </div>

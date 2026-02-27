@@ -60,7 +60,7 @@ export const useMessages = () => {
     enabled: !!user,
   });
 
-  // Subscribe to realtime updates
+  // Subscribe to realtime updates (both incoming and outgoing)
   useEffect(() => {
     if (!user) return;
 
@@ -73,6 +73,18 @@ export const useMessages = () => {
           schema: 'public',
           table: 'messages',
           filter: `recipient_id=eq.${user.id}`,
+        },
+        () => {
+          refetch();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${user.id}`,
         },
         () => {
           refetch();
