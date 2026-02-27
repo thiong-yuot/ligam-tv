@@ -239,7 +239,7 @@ const ProductDetail = () => {
                       className="flex items-center gap-1 hover:underline"
                     >
                       <span className="text-sm font-medium text-foreground truncate">
-                        {sellerProfile?.display_name || sellerProfile?.username || "Ligam Store"}
+                        {sellerProfile?.display_name || sellerProfile?.username || "Seller"}
                       </span>
                       {sellerProfile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
                     </Link>
