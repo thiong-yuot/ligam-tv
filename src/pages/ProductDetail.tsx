@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 import CartSheet from "@/components/CartSheet";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { Separator } from "@/components/ui/separator";
 import {
   ShoppingCart,
@@ -21,7 +21,6 @@ import {
   ChevronRight,
   Package,
   Loader2,
-  Store,
   ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -229,44 +228,23 @@ const ProductDetail = () => {
 
               <Separator />
 
-              {/* Seller Info */}
-              <div className="rounded-xl border border-border p-4 space-y-3">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Sold by</p>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 min-w-0">
-                    <Link
-                      to={sellerProfile?.username ? `/user/${sellerProfile.username}` : "#"}
-                      className="flex items-center gap-1 hover:underline"
-                    >
-                      <span className="text-sm font-medium text-foreground truncate">
-                        {sellerProfile?.display_name || sellerProfile?.username || "Seller"}
-                      </span>
-                      {sellerProfile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
-                    </Link>
-                    {sellerProfile?.bio && (
-                      <p className="text-xs text-muted-foreground truncate">{sellerProfile.bio}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => {
-                      if (sellerProfile?.username) navigate(`/user/${sellerProfile.username}`);
-                    }}
-                  >
-                    <Store className="w-3.5 h-3.5 mr-1" />
-                    View Profile
+              {/* Seller */}
+              <div className="flex items-center justify-between">
+                <Link
+                  to={sellerProfile?.username ? `/user/${sellerProfile.username}` : "#"}
+                  className="flex items-center gap-1.5 hover:underline"
+                >
+                  <span className="text-sm font-medium text-foreground">
+                    {sellerProfile?.display_name || sellerProfile?.username || "Seller"}
+                  </span>
+                  {sellerProfile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
+                </Link>
+                {product.seller_id && product.seller_id !== user?.id && (
+                  <Button variant="outline" size="sm" onClick={handleDM}>
+                    <MessageSquare className="w-3.5 h-3.5 mr-1" />
+                    Message
                   </Button>
-                  {product.seller_id && product.seller_id !== user?.id && (
-                    <Button variant="outline" size="sm" className="flex-1" onClick={handleDM}>
-                      <MessageSquare className="w-3.5 h-3.5 mr-1" />
-                      Message
-                    </Button>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           </div>
