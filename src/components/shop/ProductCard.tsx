@@ -122,7 +122,10 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   }
 
   return (
-    <div className="group relative rounded-lg bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300">
+    <div
+      className="group relative rounded-lg bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 cursor-pointer"
+      onClick={() => navigate(`/shop/${product.id}`)}
+    >
       <div className="relative aspect-[3/2] overflow-hidden">
         {product.image_url ? (
           <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -138,7 +141,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
           <Badge variant="outline" className="absolute top-2 left-2 bg-background/80 text-[10px] px-1.5 py-0.5">Sold Out</Badge>
         )}
         <div className="absolute bottom-0 left-0 right-0 p-2 bg-background/90 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button className="w-full h-7 text-xs" size="sm" onClick={() => onAddToCart(product)} disabled={isOutOfStock}>
+          <Button className="w-full h-7 text-xs" size="sm" onClick={(e) => { e.stopPropagation(); onAddToCart(product); }} disabled={isOutOfStock}>
             <ShoppingCart className="w-3 h-3 mr-1" />
             {isOutOfStock ? "Sold Out" : "Add to Cart"}
           </Button>
@@ -146,7 +149,21 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
       </div>
       <div className="p-2.5">
         <p className="text-xs font-medium text-foreground truncate group-hover:text-primary transition-colors">{product.name}</p>
-        <p className="text-[10px] text-muted-foreground truncate">{product.category}</p>
+        <div className="flex items-center gap-1.5 mt-0.5">
+          {sellerProfile?.avatar_url ? (
+            <img src={sellerProfile.avatar_url} alt="" className="w-3.5 h-3.5 rounded-full object-cover" />
+          ) : (
+            <div className="w-3.5 h-3.5 rounded-full bg-primary/10 flex items-center justify-center">
+              <span className="text-[7px] font-bold text-primary">
+                {(sellerProfile?.display_name || sellerProfile?.username || "S")[0].toUpperCase()}
+              </span>
+            </div>
+          )}
+          <p className="text-[10px] text-muted-foreground truncate">
+            {sellerProfile?.display_name || sellerProfile?.username || product.category}
+          </p>
+          {sellerProfile?.is_verified && <CheckCircle className="w-2.5 h-2.5 text-primary flex-shrink-0" />}
+        </div>
         <div className="flex items-center gap-1.5 mt-1">
           <span className="text-xs font-bold text-primary">${displayPrice.toFixed(2)}</span>
           {hasDiscount && <span className="text-[10px] text-muted-foreground line-through">${product.price.toFixed(2)}</span>}

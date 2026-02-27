@@ -19,6 +19,7 @@ import FreelancerDashboard from "./pages/FreelancerDashboard";
 import FreelancerProfile from "./pages/FreelancerProfile";
 import Technology from "./pages/Technology";
 import Shop from "./pages/Shop";
+import ProductDetail from "./pages/ProductDetail";
 import Auth from "./pages/Auth";
 import CreateProfile from "./pages/CreateProfile";
 import Dashboard from "./pages/Dashboard";
@@ -81,6 +82,7 @@ const App = () => (
                 <Route path="/freelance/:id" element={<FreelancerProfile />} />
                 <Route path="/technology" element={<Technology />} />
                 <Route path="/shop" element={<Shop />} />
+                <Route path="/shop/:id" element={<ProductDetail />} />
                 <Route path="/auth" element={<Auth mode="login" />} />
                 <Route path="/login" element={<Auth mode="login" />} />
                 <Route path="/signup" element={<Auth mode="signup" />} />
