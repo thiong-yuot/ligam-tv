@@ -4,10 +4,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
-
-const PLATFORM_FEE_PERCENTAGE = 0.40; // 40% on paid live sessions
 
 const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -81,7 +79,7 @@ serve(async (req) => {
       throw new Error("Session does not match user");
     }
 
-    // Check if access already granted
+    // Check if access already granted (by webhook or previous call)
     const { data: existingAccess } = await supabaseAdmin
       .from('stream_access')
       .select('id')
@@ -90,7 +88,7 @@ serve(async (req) => {
       .single();
 
     if (existingAccess) {
-      logStep("Access already exists", { accessId: existingAccess.id });
+      logStep("Access already granted by webhook", { accessId: existingAccess.id });
       return new Response(JSON.stringify({ 
         success: true, 
         message: "Access already granted" 
@@ -100,12 +98,12 @@ serve(async (req) => {
       });
     }
 
+    // Fallback: grant access if webhook hasn't processed yet
     const amountPaid = (session.amount_total || 0) / 100;
     const platformFee = parseFloat(session.metadata?.platform_fee || "0");
     const streamerEarnings = parseFloat(session.metadata?.streamer_earnings || "0");
     const streamerId = session.metadata?.streamer_id;
 
-    // Grant access to the stream
     const { error: accessError } = await supabaseAdmin
       .from('stream_access')
       .insert({
@@ -118,65 +116,33 @@ serve(async (req) => {
       });
 
     if (accessError) {
+      // If it's a unique constraint violation, access was granted between our check and insert
+      if (accessError.code === '23505') {
+        logStep("Access granted concurrently, no duplicate created");
+        return new Response(JSON.stringify({ 
+          success: true, 
+          message: "Access already granted" 
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
       logStep("Error granting access", { error: accessError });
       throw new Error("Failed to grant stream access");
     }
 
-    // Update or create stream earnings record
-    const { data: existingEarnings } = await supabaseAdmin
-      .from('stream_earnings')
-      .select('*')
-      .eq('stream_id', streamId)
-      .single();
+    // NOTE: Earnings are handled by the stripe-webhook to avoid double-counting.
+    // This function only grants access as a fallback if the webhook hasn't fired yet.
 
-    if (existingEarnings) {
-      await supabaseAdmin
-        .from('stream_earnings')
-        .update({
-          total_earnings: existingEarnings.total_earnings + streamerEarnings,
-          platform_fees: existingEarnings.platform_fees + platformFee,
-          access_count: existingEarnings.access_count + 1,
-        })
-        .eq('stream_id', streamId);
-    } else {
-      await supabaseAdmin
-        .from('stream_earnings')
-        .insert({
-          stream_id: streamId,
-          streamer_id: streamerId,
-          total_earnings: streamerEarnings,
-          platform_fees: platformFee,
-          access_count: 1,
-        });
-    }
-
-    // Add to creator's earnings
-    await supabaseAdmin
-      .from('earnings')
-      .insert({
-        user_id: streamerId,
-        amount: streamerEarnings,
-        type: 'stream_access',
-        source_id: streamId,
-        status: 'available',
-      });
-
-    logStep("Access granted successfully", {
+    logStep("Fallback access granted (earnings handled by webhook)", {
       streamId,
       userId: user.id,
       amountPaid,
-      platformFee,
-      streamerEarnings
     });
 
     return new Response(JSON.stringify({ 
       success: true, 
       message: "Stream access granted",
-      earnings: {
-        total: amountPaid,
-        platformFee,
-        streamerEarnings
-      }
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
