@@ -79,6 +79,7 @@ export interface CourseReview {
 export const useCourses = (category?: string) => {
   return useQuery({
     queryKey: ["courses", category],
+    staleTime: 60000,
     queryFn: async () => {
       let query = supabase
         .from("courses")
@@ -101,6 +102,7 @@ export const useCourses = (category?: string) => {
 export const useFeaturedCourses = () => {
   return useQuery({
     queryKey: ["courses", "featured"],
+    staleTime: 60000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")

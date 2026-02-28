@@ -44,6 +44,7 @@ export interface StreamCredentials {
 export const useStreams = (categoryId?: string, isLive?: boolean) => {
   return useQuery({
     queryKey: ["streams", categoryId, isLive],
+    staleTime: 60000,
     queryFn: async () => {
       let query = supabase
         .from("streams")
@@ -152,7 +153,8 @@ export const useStream = (idOrUsername: string) => {
       } as unknown as Stream;
     },
     enabled: !!idOrUsername && !idOrUsername.startsWith('demo-') && !idOrUsername.startsWith('sample-'),
-    refetchInterval: 5000,
+    staleTime: 30000,
+    refetchInterval: 30000,
   });
 };
 
@@ -236,7 +238,8 @@ export const useStreamStatus = () => {
       if (error) throw error;
       return data;
     },
-    refetchInterval: 5000,
+    staleTime: 30000,
+    refetchInterval: 30000,
   });
 };
 

@@ -23,6 +23,7 @@ export interface Freelancer {
 export const useFreelancers = () => {
   return useQuery({
     queryKey: ["freelancers"],
+    staleTime: 60000,
     queryFn: async () => {
       const { data: freelancers, error } = await supabase
         .from("freelancers")

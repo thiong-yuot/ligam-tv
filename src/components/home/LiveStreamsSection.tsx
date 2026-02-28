@@ -153,7 +153,7 @@ const useLiveStreamsWithServices = () => {
       
       return streamsWithServices;
     },
-    staleTime: 30000, // Cache for 30 seconds
+    staleTime: 60000, // Cache for 60 seconds
   });
 };
 
