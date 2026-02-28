@@ -86,6 +86,14 @@ serve(async (req) => {
       },
     });
 
+    // Clean up any stale pending_payment orders from this user for this package (abandoned checkouts)
+    await supabaseAdmin
+      .from("freelancer_orders")
+      .delete()
+      .eq("package_id", packageId)
+      .eq("client_id", user.id)
+      .eq("status", "pending_payment");
+
     // Create order record
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + packageData.delivery_days);

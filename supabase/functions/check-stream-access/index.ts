@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 const logStep = (step: string, details?: any) => {
@@ -46,15 +46,11 @@ serve(async (req) => {
 
     logStep("Checking access", { streamId, userId });
 
-    // Handle demo/sample streams (IDs starting with "demo-" or "sample-")
+    // Handle demo/sample streams
     if (streamId.startsWith('demo-') || streamId.startsWith('sample-')) {
       logStep("Demo stream detected, granting free access");
       return new Response(JSON.stringify({ 
-        hasAccess: true,
-        isPaid: false,
-        isDemo: true,
-        price: 0,
-        previewUrl: null
+        hasAccess: true, isPaid: false, isDemo: true, price: 0, previewUrl: null
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -71,11 +67,7 @@ serve(async (req) => {
     if (streamError || !stream) {
       logStep("Stream not found in database", { streamId, error: streamError?.message });
       return new Response(JSON.stringify({ 
-        hasAccess: true,
-        isPaid: false,
-        isDemo: true,
-        price: 0,
-        previewUrl: null
+        hasAccess: true, isPaid: false, isDemo: true, price: 0, previewUrl: null
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -86,10 +78,7 @@ serve(async (req) => {
     if (!stream.is_paid || stream.stream_type === 'free') {
       logStep("Stream is free, access granted");
       return new Response(JSON.stringify({ 
-        hasAccess: true,
-        isPaid: false,
-        price: 0,
-        previewUrl: stream.preview_video_url
+        hasAccess: true, isPaid: false, price: 0, previewUrl: stream.preview_video_url
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -100,11 +89,7 @@ serve(async (req) => {
     if (userId && userId === stream.user_id) {
       logStep("User is the streamer, access granted");
       return new Response(JSON.stringify({ 
-        hasAccess: true,
-        isPaid: true,
-        isOwner: true,
-        price: stream.access_price,
-        previewUrl: stream.preview_video_url
+        hasAccess: true, isPaid: true, isOwner: true, price: stream.access_price, previewUrl: stream.preview_video_url
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -115,11 +100,7 @@ serve(async (req) => {
     if (!userId) {
       logStep("No user logged in, no access to paid stream");
       return new Response(JSON.stringify({ 
-        hasAccess: false,
-        isPaid: true,
-        price: stream.access_price,
-        previewUrl: stream.preview_video_url,
-        requiresLogin: true
+        hasAccess: false, isPaid: true, price: stream.access_price, previewUrl: stream.preview_video_url, requiresLogin: true
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -137,12 +118,7 @@ serve(async (req) => {
     if (access) {
       logStep("User has purchased access", { accessId: access.id });
       return new Response(JSON.stringify({ 
-        hasAccess: true,
-        isPaid: true,
-        hasPurchased: true,
-        price: stream.access_price,
-        purchasedAt: access.created_at,
-        previewUrl: stream.preview_video_url
+        hasAccess: true, isPaid: true, hasPurchased: true, price: stream.access_price, purchasedAt: access.created_at, previewUrl: stream.preview_video_url
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
@@ -152,10 +128,7 @@ serve(async (req) => {
     // User needs to purchase access
     logStep("User needs to purchase access");
     return new Response(JSON.stringify({ 
-      hasAccess: false,
-      isPaid: true,
-      price: stream.access_price,
-      previewUrl: stream.preview_video_url
+      hasAccess: false, isPaid: true, price: stream.access_price, previewUrl: stream.preview_video_url
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

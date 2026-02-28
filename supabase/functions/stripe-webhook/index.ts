@@ -353,7 +353,7 @@ serve(async (req) => {
             if (userId) {
               await processAffiliateCommission(userId, platformEarnings, "stream_access");
             }
-          } else if (paymentType === "product_order" || (items && !paymentType)) {
+          } else if (paymentType === "product_order" || (!paymentType && metadata.seller_ids)) {
             // Handle product order - platform takes 20%
             const platformEarnings = totalAmount * SHOP_COMMISSION;
             
