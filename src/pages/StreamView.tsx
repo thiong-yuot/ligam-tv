@@ -194,7 +194,7 @@ const StreamView = () => {
     }
 
     try {
-      const result = await createStreamCheckout.mutateAsync(id!);
+      const result = await createStreamCheckout.mutateAsync(streamId);
       if (result.url) {
         window.location.href = result.url;
       }
@@ -208,10 +208,10 @@ const StreamView = () => {
   };
 
   const handleSendMessage = async () => {
-    if (!chatMessage.trim() || !id) return;
+    if (!chatMessage.trim() || !streamId) return;
 
     try {
-      await sendMessage.mutateAsync({ streamId: id, message: chatMessage });
+      await sendMessage.mutateAsync({ streamId, message: chatMessage });
       setChatMessage("");
     } catch (error) {
       toast({
