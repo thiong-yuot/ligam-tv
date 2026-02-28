@@ -438,6 +438,7 @@ export type Database = {
           preview_video_url: string | null
           price: number
           short_description: string | null
+          slug: string | null
           thumbnail_url: string | null
           title: string
           total_duration_minutes: number | null
@@ -460,6 +461,7 @@ export type Database = {
           preview_video_url?: string | null
           price?: number
           short_description?: string | null
+          slug?: string | null
           thumbnail_url?: string | null
           title: string
           total_duration_minutes?: number | null
@@ -482,6 +484,7 @@ export type Database = {
           preview_video_url?: string | null
           price?: number
           short_description?: string | null
+          slug?: string | null
           thumbnail_url?: string | null
           title?: string
           total_duration_minutes?: number | null
@@ -1710,6 +1713,7 @@ export type Database = {
           product_type: string | null
           sale_price: number | null
           seller_id: string | null
+          slug: string | null
           stock_quantity: number | null
         }
         Insert: {
@@ -1726,6 +1730,7 @@ export type Database = {
           product_type?: string | null
           sale_price?: number | null
           seller_id?: string | null
+          slug?: string | null
           stock_quantity?: number | null
         }
         Update: {
@@ -1742,6 +1747,7 @@ export type Database = {
           product_type?: string | null
           sale_price?: number | null
           seller_id?: string | null
+          slug?: string | null
           stock_quantity?: number | null
         }
         Relationships: []
@@ -2281,6 +2287,7 @@ export type Database = {
         Returns: undefined
       }
       generate_referral_code: { Args: never; Returns: string }
+      generate_slug: { Args: { input_text: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
