@@ -61,7 +61,7 @@ const Search = () => {
                   <h2 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><Radio className="w-3.5 h-3.5" /> Streams</h2>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {filteredStreams.slice(0, 4).map(s => (
-                      <Link key={s.id} to={`/stream/${s.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
+                      <Link key={s.id} to={`/stream/${(s as any).profile_username || s.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
                         <p className="text-xs font-medium text-foreground truncate">{s.title}</p>
                         <p className="text-[10px] text-muted-foreground">{s.is_live ? "Live" : "Offline"}</p>
                       </Link>
