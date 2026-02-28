@@ -8,7 +8,7 @@ import { useEarningsSummary } from "@/hooks/useEarnings";
 import { useStreams } from "@/hooks/useStreams";
 import {
   Video, DollarSign, Eye, Clock, Play, Loader2, BarChart3, User,
-  ClipboardList,
+  ClipboardList, Link2,
 } from "lucide-react";
 
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
@@ -100,6 +100,7 @@ const Dashboard = () => {
             {[
               { label: "Analytics", icon: BarChart3, path: "/analytics" },
               { label: "Monetization", icon: DollarSign, path: "/monetization" },
+              { label: "Payment Links", icon: Link2, path: "/payment-links" },
             ].map((action) => (
               <Link key={action.label} to={action.path} className="flex-1">
                 <Button variant="outline" size="sm" className="w-full gap-1.5">
