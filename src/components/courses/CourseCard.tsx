@@ -31,7 +31,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
   const isBestseller = course.average_rating >= 4.7 && course.total_reviews > 500;
 
   const handleCardClick = () => {
-    navigate(`/courses/${course.id}`);
+    navigate(`/courses/${(course as any).slug || course.id}`);
   };
 
   const handleInstructorClick = (e: React.MouseEvent) => {

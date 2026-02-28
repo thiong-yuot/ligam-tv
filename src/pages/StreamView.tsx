@@ -67,8 +67,9 @@ const StreamView = () => {
   const { user } = useAuth();
   const { tier } = useSubscription();
   const { data: stream, isLoading } = useStream(id || "");
-  const { data: accessInfo, isLoading: accessLoading, refetch: refetchAccess } = useCheckStreamAccess(id || "");
-  const messages = useChatMessages(id || "");
+  const streamId = stream?.id || "";
+  const { data: accessInfo, isLoading: accessLoading, refetch: refetchAccess } = useCheckStreamAccess(streamId);
+  const messages = useChatMessages(streamId);
   const sendMessage = useSendMessage();
   const { data: allProducts = [] } = useProducts();
   const { data: allCourses = [] } = useCourses();
@@ -110,8 +111,8 @@ const StreamView = () => {
     const accessParam = searchParams.get('access');
     const sessionId = searchParams.get('session_id');
     
-    if (accessParam === 'granted' && sessionId && id) {
-      verifyStreamAccess.mutate({ sessionId, streamId: id }, {
+    if (accessParam === 'granted' && sessionId && streamId) {
+      verifyStreamAccess.mutate({ sessionId, streamId }, {
         onSuccess: () => {
           toast({
             title: "Access Granted!",
@@ -668,7 +669,7 @@ const StreamView = () => {
                     <span className="font-medium">Gigs</span>
                   </div>
                   {streamerPackages.slice(0, 3).map((pkg) => (
-                    <Link key={pkg.id} to={`/freelance/${streamerFreelancer.id}`} className="block p-3 rounded-lg border border-border hover:border-primary/50 transition-colors">
+                    <Link key={pkg.id} to={`/freelance/${stream?.profiles?.username || streamerFreelancer.id}`} className="block p-3 rounded-lg border border-border hover:border-primary/50 transition-colors">
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="text-sm font-medium text-foreground">{pkg.name}</p>
@@ -688,7 +689,7 @@ const StreamView = () => {
                     <span className="font-medium">Courses</span>
                   </div>
                   {streamerCourses.slice(0, 3).map((course) => (
-                    <Link key={course.id} to={`/courses/${course.id}`} className="flex items-center gap-3 p-2 rounded-lg border border-border hover:border-primary/50 transition-colors">
+                    <Link key={course.id} to={`/courses/${(course as any).slug || course.id}`} className="flex items-center gap-3 p-2 rounded-lg border border-border hover:border-primary/50 transition-colors">
                       <div className="w-12 h-9 rounded overflow-hidden flex-shrink-0 bg-muted">
                         {course.thumbnail_url ? (
                           <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />

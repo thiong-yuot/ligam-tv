@@ -58,30 +58,73 @@ export const useStreams = (categoryId?: string, isLive?: boolean) => {
         query = query.eq("is_live", isLive);
       }
       
-      const { data, error } = await query;
+      const { data: streams, error } = await query;
       if (error) throw error;
-      return data as unknown as Stream[];
+
+      // Fetch usernames for streams
+      const userIds = [...new Set((streams || []).map(s => s.user_id))];
+      let profileMap: Record<string, string> = {};
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, username")
+          .in("user_id", userIds);
+        if (profiles) {
+          profiles.forEach(p => {
+            if (p.username) profileMap[p.user_id] = p.username;
+          });
+        }
+      }
+
+      return (streams || []).map(s => ({
+        ...s,
+        profile_username: profileMap[s.user_id] || null,
+      })) as unknown as Stream[];
     },
   });
 };
 
-export const useStream = (id: string) => {
+export const useStream = (idOrUsername: string) => {
   return useQuery({
-    queryKey: ["stream", id],
+    queryKey: ["stream", idOrUsername],
     queryFn: async () => {
       // Skip demo IDs - they don't exist in database
-      if (id.startsWith('demo-') || id.startsWith('sample-')) {
+      if (idOrUsername.startsWith('demo-') || idOrUsername.startsWith('sample-')) {
         return null;
       }
       
-      // Fetch stream data
-      const { data: stream, error: streamError } = await supabase
-        .from("streams")
-        .select("*")
-        .eq("id", id)
-        .maybeSingle();
+      let stream: any = null;
+
+      // Check if it's a UUID (contains hyphens and is 36 chars)
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrUsername);
       
-      if (streamError) throw streamError;
+      if (isUuid) {
+        const { data, error } = await supabase
+          .from("streams")
+          .select("*")
+          .eq("id", idOrUsername)
+          .maybeSingle();
+        if (error) throw error;
+        stream = data;
+      } else {
+        // Lookup by username: find profile → user_id → stream
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("user_id")
+          .eq("username", idOrUsername)
+          .maybeSingle();
+        
+        if (profile) {
+          const { data, error } = await supabase
+            .from("streams")
+            .select("*")
+            .eq("user_id", profile.user_id)
+            .maybeSingle();
+          if (error) throw error;
+          stream = data;
+        }
+      }
+      
       if (!stream) return null;
 
       // Fetch profile data separately (no FK relationship)
@@ -108,7 +151,7 @@ export const useStream = (id: string) => {
         categories: category,
       } as unknown as Stream;
     },
-    enabled: !!id && !id.startsWith('demo-') && !id.startsWith('sample-'),
+    enabled: !!idOrUsername && !idOrUsername.startsWith('demo-') && !idOrUsername.startsWith('sample-'),
     refetchInterval: 5000,
   });
 };
