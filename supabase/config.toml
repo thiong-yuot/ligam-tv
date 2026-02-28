@@ -54,3 +54,6 @@ verify_jwt = false
 
 [functions.download-digital-product]
 verify_jwt = false
+
+[functions.pay-link]
+verify_jwt = false

@@ -1506,6 +1506,51 @@ export type Database = {
           },
         ]
       }
+      payment_links: {
+        Row: {
+          amount: number
+          created_at: string
+          creator_id: string
+          currency: string
+          description: string | null
+          id: string
+          paid_at: string | null
+          paid_by_email: string | null
+          slug: string
+          status: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          creator_id: string
+          currency?: string
+          description?: string | null
+          id?: string
+          paid_at?: string | null
+          paid_by_email?: string | null
+          slug?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          creator_id?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          paid_at?: string | null
+          paid_by_email?: string | null
+          slug?: string
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       post_comments: {
         Row: {
           content: string

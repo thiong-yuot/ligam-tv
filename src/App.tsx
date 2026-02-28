@@ -55,6 +55,8 @@ import Affiliates from "./pages/Affiliates";
 import UserProfile from "./pages/UserProfile";
 import MyOrders from "./pages/MyOrders";
 import SellerOrders from "./pages/SellerOrders";
+import PaymentLinks from "./pages/PaymentLinks";
+import PayLink from "./pages/PayLink";
 
 const queryClient = new QueryClient();
 
@@ -119,6 +121,8 @@ const App = () => (
                 <Route path="/search" element={<Search />} />
                 <Route path="/affiliates" element={<Affiliates />} />
                 <Route path="/my-orders" element={<MyOrders />} />
+                <Route path="/payment-links" element={<PaymentLinks />} />
+                <Route path="/pay/:slug" element={<PayLink />} />
                 <Route path="/user/:username" element={<UserProfile />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
