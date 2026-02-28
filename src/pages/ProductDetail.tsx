@@ -36,10 +36,11 @@ const ProductDetail = () => {
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id!);
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq("id", id!)
+        .eq(isUuid ? "id" : "slug", id!)
         .single();
       if (error) throw error;
       return data as Product;

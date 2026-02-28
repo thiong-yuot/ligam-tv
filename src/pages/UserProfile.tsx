@@ -260,7 +260,7 @@ const UserProfile = () => {
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {streams.map((stream) => (
-                <Link key={stream.id} to={`/stream/${stream.id}`} className="group">
+                <Link key={stream.id} to={`/stream/${profile.username}`} className="group">
                   <div className="aspect-video bg-muted rounded-lg overflow-hidden relative">
                     {stream.thumbnail_url ? (
                       <img src={stream.thumbnail_url} alt={stream.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
@@ -326,7 +326,7 @@ const UserProfile = () => {
                 </div>
               )}
               <Button size="sm" variant="outline" className="h-7 text-xs" asChild>
-                <Link to={`/freelance/${freelancer.id}`}>View services</Link>
+                <Link to={`/freelance/${profile.username}`}>View services</Link>
               </Button>
             </div>
           </section>

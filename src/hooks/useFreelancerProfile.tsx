@@ -54,20 +54,41 @@ export const useMyFreelancerProfile = () => {
   });
 };
 
-export const useFreelancerById = (id: string) => {
+export const useFreelancerById = (idOrUsername: string) => {
   return useQuery({
-    queryKey: ["freelancer", id],
+    queryKey: ["freelancer", idOrUsername],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("freelancers")
-        .select("*")
-        .eq("id", id)
-        .single();
+      // Check if it's a UUID
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrUsername);
       
-      if (error) throw error;
-      return data as FreelancerProfile;
+      if (isUuid) {
+        const { data, error } = await supabase
+          .from("freelancers")
+          .select("*")
+          .eq("id", idOrUsername)
+          .single();
+        if (error) throw error;
+        return data as FreelancerProfile;
+      } else {
+        // Lookup by username
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("user_id")
+          .eq("username", idOrUsername)
+          .maybeSingle();
+        
+        if (!profile) throw new Error("Profile not found");
+        
+        const { data, error } = await supabase
+          .from("freelancers")
+          .select("*")
+          .eq("user_id", profile.user_id)
+          .single();
+        if (error) throw error;
+        return data as FreelancerProfile;
+      }
     },
-    enabled: !!id,
+    enabled: !!idOrUsername,
   });
 };
 

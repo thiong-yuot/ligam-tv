@@ -106,6 +106,7 @@ const Browse = () => {
                       id={stream.id}
                       title={stream.title}
                       streamer={stream.user_id}
+                      username={(stream as any).profile_username || undefined}
                       category={stream.categories?.name || "Uncategorized"}
                       thumbnail={stream.thumbnail_url || ""}
                       avatar=""

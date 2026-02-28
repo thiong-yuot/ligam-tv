@@ -260,7 +260,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
               <span>Courses</span>
             </div>
             <Link
-              to={`/courses/${stream.courses[0].id}`}
+              to={`/courses/${(stream.courses[0] as any).slug || stream.courses[0].id}`}
               className="flex items-center gap-2 p-1.5 rounded bg-muted/50 hover:bg-muted transition-colors group/course"
             >
               <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
@@ -283,7 +283,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
         {/* Freelance Gig - Only show for some cards */}
         {showFreelancer && stream.freelancer && (
           <Link
-            to={`/freelance/${stream.freelancer.id}`}
+            to={`/freelance/${stream.profile?.username || stream.freelancer.id}`}
             className="flex items-center gap-2 p-1.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors border border-primary/20"
           >
             <Briefcase className="w-4 h-4 text-primary flex-shrink-0" />
