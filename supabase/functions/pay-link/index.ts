@@ -68,15 +68,7 @@ serve(async (req) => {
       },
     });
 
-    // Mark the link as paid
-    await supabaseAdmin
-      .from("payment_links")
-      .update({
-        status: "paid",
-        paid_at: new Date().toISOString(),
-        stripe_payment_intent_id: session.id,
-      })
-      .eq("id", link.id);
+    // Don't mark as paid yet — the webhook will handle that after successful payment
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

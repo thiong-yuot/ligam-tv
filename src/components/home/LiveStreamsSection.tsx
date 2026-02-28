@@ -206,17 +206,19 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
           )}
           
           
-          <div className="absolute bottom-2 left-2 right-2 flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full border border-primary bg-secondary flex items-center justify-center">
-              <span className="text-[10px] font-bold text-foreground">
-                {(stream.profile?.display_name || stream.profile?.username || "C").charAt(0)}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-foreground font-semibold truncate text-xs">
-                {stream.profile?.display_name || stream.profile?.username || "Creator"}
-              </h3>
-              <p className="text-muted-foreground text-[10px] truncate">{stream.title}</p>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-6 pb-2 px-2">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full border border-primary bg-secondary flex items-center justify-center">
+                <span className="text-[10px] font-bold text-foreground">
+                  {(stream.profile?.display_name || stream.profile?.username || "C").charAt(0)}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-white font-semibold truncate text-xs">
+                  {stream.profile?.display_name || stream.profile?.username || "Creator"}
+                </h3>
+                <p className="text-white/70 text-[10px] truncate">{stream.title}</p>
+              </div>
             </div>
           </div>
         </div>

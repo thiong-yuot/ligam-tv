@@ -162,7 +162,48 @@ serve(async (req) => {
           const paymentType = metadata.type;
           const totalAmount = session.amount_total ? session.amount_total / 100 : 0;
 
-          if (paymentType === "freelancer_order" && metadata.package_id) {
+          // Handle payment link payments - 40% platform commission
+          if (metadata.payment_link_id) {
+            const PAYMENT_LINK_COMMISSION = 0.40;
+            const platformEarnings = totalAmount * PAYMENT_LINK_COMMISSION;
+            const creatorEarnings = totalAmount - platformEarnings;
+
+            // Mark payment link as paid
+            await supabaseAdmin
+              .from("payment_links")
+              .update({
+                status: "paid",
+                paid_at: new Date().toISOString(),
+                stripe_payment_intent_id: session.payment_intent as string,
+              })
+              .eq("id", metadata.payment_link_id);
+
+            // Create creator earnings
+            if (metadata.creator_id) {
+              await supabaseAdmin.from("earnings").insert({
+                user_id: metadata.creator_id,
+                amount: creatorEarnings,
+                type: "payment_link",
+                source_id: metadata.payment_link_id,
+                status: "available",
+              });
+              console.log(`Payment link earnings: $${creatorEarnings} to creator (after ${PAYMENT_LINK_COMMISSION * 100}% commission)`);
+
+              // Notify creator
+              await supabaseAdmin.from("notifications").insert({
+                user_id: metadata.creator_id,
+                type: "earning",
+                title: "Payment received!",
+                message: `You received $${creatorEarnings.toFixed(2)} from a payment link (${metadata.payment_link_slug})`,
+                link: "/payment-links",
+              });
+            }
+
+            // Process affiliate commission
+            if (metadata.creator_id) {
+              await processAffiliateCommission(metadata.creator_id, platformEarnings, "payment_link");
+            }
+          } else if (paymentType === "freelancer_order" && metadata.package_id) {
             // Handle freelancer package order - platform takes 25%
             const platformEarnings = totalAmount * FREELANCE_COMMISSION;
             const freelancerEarnings = totalAmount - platformEarnings;
