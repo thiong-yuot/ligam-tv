@@ -37,7 +37,7 @@ const CourseCard = ({ course, showInstructor = true }: CourseCardProps) => {
   const handleInstructorClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (creatorProfile?.username) {
-      navigate(`/user/${creatorProfile.username}`);
+      navigate(`/${creatorProfile.username}`);
     }
   };
 
