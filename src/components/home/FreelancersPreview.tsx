@@ -59,7 +59,7 @@ const FreelancersPreview = ({ compact }: FreelancersPreviewProps) => {
       ) : featured.length > 0 ? (
         <div className="space-y-2">
           {featured.map((f) => (
-            <Link key={f.id} to={`/freelance/${(f as any).profile_username || f.id}`} className="flex items-center gap-2.5 p-2.5 bg-card border border-border rounded-lg hover:border-muted-foreground/30 transition-colors">
+            <Link key={f.id} to={`/freelance/${f.id}`} className="flex items-center gap-2.5 p-2.5 bg-card border border-border rounded-lg hover:border-muted-foreground/30 transition-colors">
               <Avatar className="w-8 h-8 flex-shrink-0">
                 <AvatarFallback className="text-xs">{f.name.charAt(0)}</AvatarFallback>
               </Avatar>

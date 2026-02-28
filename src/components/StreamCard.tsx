@@ -5,7 +5,6 @@ interface StreamCardProps {
   id: string;
   title: string;
   streamer: string;
-  username?: string;
   category: string;
   thumbnail: string;
   avatar: string;
@@ -17,7 +16,6 @@ const StreamCard = ({
   id,
   title,
   streamer,
-  username,
   category,
   thumbnail,
   avatar,
@@ -31,7 +29,7 @@ const StreamCard = ({
   };
 
   return (
-    <Link to={username ? `/stream/${username}` : `/stream/${id}`} className="group block">
+    <Link to={`/stream/${id}`} className="group block">
       <div className="relative rounded-xl overflow-hidden bg-card border border-border hover-lift">
         {/* Thumbnail */}
         <div className="relative aspect-video overflow-hidden">

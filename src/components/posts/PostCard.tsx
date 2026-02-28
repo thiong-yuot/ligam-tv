@@ -34,7 +34,7 @@ const PostCard = ({ post }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
 
   const handleShare = useCallback(async () => {
-    const url = `${window.location.origin}/${post.profile?.username || post.user_id}`;
+    const url = `${window.location.origin}/user/${post.profile?.username || post.user_id}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: displayName + "'s post", text: post.content || "", url });
@@ -54,7 +54,7 @@ const PostCard = ({ post }: PostCardProps) => {
     <article className="border-b border-border/30 py-4 first:pt-0">
       {/* Header row */}
       <div className="flex items-start gap-3">
-        <Link to={`/${username}`} className="shrink-0">
+        <Link to={`/user/${username}`} className="shrink-0">
           <div className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-xs font-semibold text-muted-foreground">
             {initials}
           </div>
@@ -63,7 +63,7 @@ const PostCard = ({ post }: PostCardProps) => {
         <div className="flex-1 min-w-0">
           {/* Name row */}
           <div className="flex items-center gap-1.5 flex-wrap">
-            <Link to={`/${username}`} className="text-sm font-semibold text-foreground hover:underline truncate">
+            <Link to={`/user/${username}`} className="text-sm font-semibold text-foreground hover:underline truncate">
               {displayName}
             </Link>
             {post.profile?.is_verified && <CheckCircle className="w-3.5 h-3.5 text-primary shrink-0" />}

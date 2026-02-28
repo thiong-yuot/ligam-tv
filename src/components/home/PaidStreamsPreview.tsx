@@ -68,7 +68,7 @@ const PaidStreamsPreview = () => {
             {streams.map((stream) => (
               <Link
                 key={stream.id}
-                to={`/stream/${stream.profile?.username || stream.id}`}
+                to={`/stream/${stream.id}`}
                 className="bg-card border border-border rounded-lg overflow-hidden hover:border-muted-foreground/30 transition-all group"
               >
                 <div className="aspect-video relative overflow-hidden bg-muted">

@@ -274,7 +274,7 @@ const EnrollmentCard = ({ enrollment }: { enrollment: Enrollment }) => {
           <Progress value={enrollment.progress_percentage} className="h-2" />
         </div>
 
-        <Link to={`/learn/${(course as any).slug || course.id}`} className="block">
+        <Link to={`/learn/${course.id}`} className="block">
           <Button className="w-full bg-primary hover:bg-primary/90">
             {enrollment.progress_percentage > 0 ? (
               <>

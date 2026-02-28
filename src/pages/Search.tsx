@@ -61,7 +61,7 @@ const Search = () => {
                   <h2 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><Radio className="w-3.5 h-3.5" /> Streams</h2>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {filteredStreams.slice(0, 4).map(s => (
-                      <Link key={s.id} to={`/stream/${(s as any).profile_username || s.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
+                      <Link key={s.id} to={`/stream/${s.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
                         <p className="text-xs font-medium text-foreground truncate">{s.title}</p>
                         <p className="text-[10px] text-muted-foreground">{s.is_live ? "Live" : "Offline"}</p>
                       </Link>
@@ -92,7 +92,7 @@ const Search = () => {
                   <h2 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Freelancers</h2>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {filteredFreelancers.slice(0, 4).map(f => (
-                      <Link key={f.id} to={`/freelance/${(f as any).profile_username || f.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
+                      <Link key={f.id} to={`/freelance/${f.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
                         <div className="flex items-center gap-2 mb-1">
                           <Avatar className="w-6 h-6"><AvatarFallback className="text-[10px]">{f.name.charAt(0)}</AvatarFallback></Avatar>
                           <p className="text-xs font-medium text-foreground truncate">{f.name}</p>
@@ -109,7 +109,7 @@ const Search = () => {
                   <h2 className="text-sm font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" /> Courses</h2>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {filteredCourses.slice(0, 4).map(c => (
-                      <Link key={c.id} to={`/courses/${(c as any).slug || c.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
+                      <Link key={c.id} to={`/courses/${c.id}`} className="bg-card border border-border rounded-lg p-3 hover:border-muted-foreground/30 transition-colors">
                         <p className="text-xs font-medium text-foreground truncate">{c.title}</p>
                         <p className="text-xs text-primary font-bold mt-0.5">{c.price === 0 ? "Free" : `$${c.price.toFixed(2)}`}</p>
                       </Link>

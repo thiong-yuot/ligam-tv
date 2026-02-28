@@ -44,7 +44,6 @@ export interface StreamCredentials {
 export const useStreams = (categoryId?: string, isLive?: boolean) => {
   return useQuery({
     queryKey: ["streams", categoryId, isLive],
-    staleTime: 60000,
     queryFn: async () => {
       let query = supabase
         .from("streams")
@@ -59,73 +58,30 @@ export const useStreams = (categoryId?: string, isLive?: boolean) => {
         query = query.eq("is_live", isLive);
       }
       
-      const { data: streams, error } = await query;
+      const { data, error } = await query;
       if (error) throw error;
-
-      // Fetch usernames for streams
-      const userIds = [...new Set((streams || []).map(s => s.user_id))];
-      let profileMap: Record<string, string> = {};
-      if (userIds.length > 0) {
-        const { data: profiles } = await supabase
-          .from("profiles")
-          .select("user_id, username")
-          .in("user_id", userIds);
-        if (profiles) {
-          profiles.forEach(p => {
-            if (p.username) profileMap[p.user_id] = p.username;
-          });
-        }
-      }
-
-      return (streams || []).map(s => ({
-        ...s,
-        profile_username: profileMap[s.user_id] || null,
-      })) as unknown as Stream[];
+      return data as unknown as Stream[];
     },
   });
 };
 
-export const useStream = (idOrUsername: string) => {
+export const useStream = (id: string) => {
   return useQuery({
-    queryKey: ["stream", idOrUsername],
+    queryKey: ["stream", id],
     queryFn: async () => {
       // Skip demo IDs - they don't exist in database
-      if (idOrUsername.startsWith('demo-') || idOrUsername.startsWith('sample-')) {
+      if (id.startsWith('demo-') || id.startsWith('sample-')) {
         return null;
       }
       
-      let stream: any = null;
-
-      // Check if it's a UUID (contains hyphens and is 36 chars)
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrUsername);
+      // Fetch stream data
+      const { data: stream, error: streamError } = await supabase
+        .from("streams")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
       
-      if (isUuid) {
-        const { data, error } = await supabase
-          .from("streams")
-          .select("*")
-          .eq("id", idOrUsername)
-          .maybeSingle();
-        if (error) throw error;
-        stream = data;
-      } else {
-        // Lookup by username: find profile → user_id → stream
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("user_id")
-          .eq("username", idOrUsername)
-          .maybeSingle();
-        
-        if (profile) {
-          const { data, error } = await supabase
-            .from("streams")
-            .select("*")
-            .eq("user_id", profile.user_id)
-            .maybeSingle();
-          if (error) throw error;
-          stream = data;
-        }
-      }
-      
+      if (streamError) throw streamError;
       if (!stream) return null;
 
       // Fetch profile data separately (no FK relationship)
@@ -152,9 +108,8 @@ export const useStream = (idOrUsername: string) => {
         categories: category,
       } as unknown as Stream;
     },
-    enabled: !!idOrUsername && !idOrUsername.startsWith('demo-') && !idOrUsername.startsWith('sample-'),
-    staleTime: 30000,
-    refetchInterval: 30000,
+    enabled: !!id && !id.startsWith('demo-') && !id.startsWith('sample-'),
+    refetchInterval: 5000,
   });
 };
 
@@ -238,8 +193,7 @@ export const useStreamStatus = () => {
       if (error) throw error;
       return data;
     },
-    staleTime: 30000,
-    refetchInterval: 30000,
+    refetchInterval: 5000,
   });
 };
 

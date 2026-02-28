@@ -20,7 +20,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   const handleSellerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (sellerProfile?.username) {
-      navigate(`/${sellerProfile.username}`);
+      navigate(`/user/${sellerProfile.username}`);
     }
   };
   
@@ -124,7 +124,7 @@ const ProductCard = ({ product, onAddToCart, viewMode = "grid" }: ProductCardPro
   return (
     <div
       className="group relative rounded-lg bg-card border border-border overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 cursor-pointer"
-      onClick={() => navigate(`/shop/${(product as any).slug || product.id}`)}
+      onClick={() => navigate(`/shop/${product.id}`)}
     >
       <div className="relative aspect-[3/2] overflow-hidden">
         {product.image_url ? (

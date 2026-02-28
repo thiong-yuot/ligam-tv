@@ -79,7 +79,6 @@ export interface CourseReview {
 export const useCourses = (category?: string) => {
   return useQuery({
     queryKey: ["courses", category],
-    staleTime: 60000,
     queryFn: async () => {
       let query = supabase
         .from("courses")
@@ -102,7 +101,6 @@ export const useCourses = (category?: string) => {
 export const useFeaturedCourses = () => {
   return useQuery({
     queryKey: ["courses", "featured"],
-    staleTime: 60000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("courses")
@@ -118,38 +116,25 @@ export const useFeaturedCourses = () => {
   });
 };
 
-// Fetch course by ID or slug with sections and lessons
-export const useCourse = (courseIdOrSlug: string | undefined) => {
+// Fetch course by ID with sections and lessons
+export const useCourse = (courseId: string | undefined) => {
   return useQuery({
-    queryKey: ["course", courseIdOrSlug],
+    queryKey: ["course", courseId],
     queryFn: async () => {
-      if (!courseIdOrSlug) return null;
+      if (!courseId) return null;
 
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(courseIdOrSlug);
+      const { data: course, error: courseError } = await supabase
+        .from("courses")
+        .select("*")
+        .eq("id", courseId)
+        .single();
 
-      let course: any = null;
-      if (isUuid) {
-        const { data, error } = await supabase
-          .from("courses")
-          .select("*")
-          .eq("id", courseIdOrSlug)
-          .single();
-        if (error) throw error;
-        course = data;
-      } else {
-        const { data, error } = await supabase
-          .from("courses")
-          .select("*")
-          .eq("slug", courseIdOrSlug)
-          .single();
-        if (error) throw error;
-        course = data;
-      }
+      if (courseError) throw courseError;
 
       const { data: sections, error: sectionsError } = await supabase
         .from("course_sections")
         .select("*")
-        .eq("course_id", course.id)
+        .eq("course_id", courseId)
         .order("sort_order", { ascending: true });
 
       if (sectionsError) throw sectionsError;
@@ -169,7 +154,7 @@ export const useCourse = (courseIdOrSlug: string | undefined) => {
 
       return { ...course, sections: sectionsWithLessons } as Course & { sections: CourseSection[] };
     },
-    enabled: !!courseIdOrSlug,
+    enabled: !!courseId,
   });
 };
 
@@ -370,28 +355,15 @@ export const useUserEnrollments = () => {
   });
 };
 
-// Check enrollment (supports both UUID and slug)
-export const useCheckEnrollment = (courseIdOrSlug: string | undefined) => {
+// Check enrollment
+export const useCheckEnrollment = (courseId: string | undefined) => {
   return useQuery({
-    queryKey: ["enrollment", courseIdOrSlug],
+    queryKey: ["enrollment", courseId],
     queryFn: async () => {
-      if (!courseIdOrSlug) return null;
+      if (!courseId) return null;
 
       const { data: session } = await supabase.auth.getSession();
       if (!session.session) return null;
-
-      // Resolve slug to UUID if needed
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(courseIdOrSlug);
-      let courseId = courseIdOrSlug;
-      if (!isUuid) {
-        const { data: course } = await supabase
-          .from("courses")
-          .select("id")
-          .eq("slug", courseIdOrSlug)
-          .maybeSingle();
-        if (!course) return null;
-        courseId = course.id;
-      }
 
       const { data, error } = await supabase
         .from("enrollments")
@@ -403,7 +375,7 @@ export const useCheckEnrollment = (courseIdOrSlug: string | undefined) => {
       if (error) throw error;
       return data as Enrollment | null;
     },
-    enabled: !!courseIdOrSlug,
+    enabled: !!courseId,
   });
 };
 

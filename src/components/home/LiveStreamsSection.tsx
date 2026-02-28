@@ -153,7 +153,7 @@ const useLiveStreamsWithServices = () => {
       
       return streamsWithServices;
     },
-    staleTime: 60000, // Cache for 60 seconds
+    staleTime: 30000, // Cache for 30 seconds
   });
 };
 
@@ -171,7 +171,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
   return (
     <div ref={ref} className="bg-card border border-border rounded-lg overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
       {/* Stream Preview */}
-      <Link to={`/stream/${stream.profile?.username || stream.id}`} className="block relative">
+      <Link to={`/stream/${stream.id}`} className="block relative">
         <div className="aspect-video relative overflow-hidden">
           <img
             src={stream.thumbnail_url || "/placeholder.svg"}
@@ -260,7 +260,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
               <span>Courses</span>
             </div>
             <Link
-              to={`/courses/${(stream.courses[0] as any).slug || stream.courses[0].id}`}
+              to={`/courses/${stream.courses[0].id}`}
               className="flex items-center gap-2 p-1.5 rounded bg-muted/50 hover:bg-muted transition-colors group/course"
             >
               <div className="w-6 h-6 rounded overflow-hidden flex-shrink-0">
@@ -283,7 +283,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
         {/* Freelance Gig - Only show for some cards */}
         {showFreelancer && stream.freelancer && (
           <Link
-            to={`/freelance/${stream.profile?.username || stream.freelancer.id}`}
+            to={`/freelance/${stream.freelancer.id}`}
             className="flex items-center gap-2 p-1.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors border border-primary/20"
           >
             <Briefcase className="w-4 h-4 text-primary flex-shrink-0" />

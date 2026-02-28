@@ -36,11 +36,10 @@ const ProductDetail = () => {
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id!);
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .eq(isUuid ? "id" : "slug", id!)
+        .eq("id", id!)
         .single();
       if (error) throw error;
       return data as Product;
@@ -232,7 +231,7 @@ const ProductDetail = () => {
               {/* Seller */}
               <div className="flex items-center justify-between">
                 <Link
-                  to={sellerProfile?.username ? `/${sellerProfile.username}` : "#"}
+                  to={sellerProfile?.username ? `/user/${sellerProfile.username}` : "#"}
                   className="flex items-center gap-1.5 hover:underline"
                 >
                   <span className="text-sm font-medium text-foreground">
