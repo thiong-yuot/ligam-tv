@@ -171,7 +171,7 @@ const StreamCardWithServices = React.forwardRef<HTMLDivElement, { stream: Stream
   return (
     <div ref={ref} className="bg-card border border-border rounded-lg overflow-hidden hover:border-muted-foreground/30 transition-all duration-300 group">
       {/* Stream Preview */}
-      <Link to={stream.profile?.username ? `/${stream.profile.username}` : `/stream/${stream.id}`} className="block relative">
+      <Link to={`/stream/${stream.profile?.username || stream.id}`} className="block relative">
         <div className="aspect-video relative overflow-hidden">
           <img
             src={stream.thumbnail_url || "/placeholder.svg"}
