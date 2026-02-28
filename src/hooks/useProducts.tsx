@@ -19,6 +19,7 @@ export interface Product {
 export const useProducts = (category?: string) => {
   return useQuery({
     queryKey: ["products", category],
+    staleTime: 60000,
     queryFn: async () => {
       let query = supabase
         .from("products")
