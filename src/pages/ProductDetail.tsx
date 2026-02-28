@@ -231,7 +231,7 @@ const ProductDetail = () => {
               {/* Seller */}
               <div className="flex items-center justify-between">
                 <Link
-                  to={sellerProfile?.username ? `/user/${sellerProfile.username}` : "#"}
+                  to={sellerProfile?.username ? `/${sellerProfile.username}` : "#"}
                   className="flex items-center gap-1.5 hover:underline"
                 >
                   <span className="text-sm font-medium text-foreground">
